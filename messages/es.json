@@ -1,0 +1,120 @@
+{
+  "Navigation": {
+    "home": "Inicio",
+    "about": "Sobre nosotros",
+    "programs": "Programas",
+    "apply": "Aplicar",
+    "impact": "Impacto",
+    "contact": "Contacto",
+    "privacy": "Privacidad",
+    "admin": "Admin"
+  },
+  "LocaleSwitcher": {
+    "label": "Idioma",
+    "es": "Español",
+    "en": "Inglés"
+  },
+  "Shell": {
+    "tagline": "Voluntariado, pasantías y español con impacto real.",
+    "footer": "Base arquitectónica bilingüe para crecer el MVP con una sola aplicación Next.js."
+  },
+  "NotFound": {
+    "title": "Página no encontrada",
+    "description": "La ruta solicitada no existe o todavía no fue implementada dentro del MVP.",
+    "backHome": "Volver al inicio"
+  },
+  "Pages": {
+    "home": {
+      "eyebrow": "Sitio público bilingüe",
+      "title": "Conectamos personas con programas interculturales en Costa Rica.",
+      "description": "Esta base presenta la organización, sus programas y el flujo inicial para captar voluntariado internacional desde una sola app fullstack.",
+      "highlightOne": "Promoción clara de voluntariado, pasantías y clases de español.",
+      "highlightTwo": "Arquitectura lista para integrar formularios, correo y base de datos.",
+      "highlightThree": "Ruta pública separada conceptualmente del panel administrativo."
+    },
+    "about": {
+      "eyebrow": "Organización",
+      "title": "Sobre Pura Vida Interculturas",
+      "description": "Espacio institucional para comunicar propósito, experiencia local y propuesta de valor internacional de la organización.",
+      "highlightOne": "Contenido pensado para fortalecer la visibilidad internacional.",
+      "highlightTwo": "Preparado para SEO, contenido bilingüe y narrativa institucional.",
+      "highlightThree": "Ideal para sumar historia, misión, visión y equipo en siguientes iteraciones."
+    },
+    "programs": {
+      "eyebrow": "Oferta principal",
+      "title": "Programas disponibles",
+      "description": "Listado inicial para voluntariado, pasantías y clases de español con espacio para filtros y publicación dinámica.",
+      "highlightOne": "Preparado para categorías, estado de publicación y destacados.",
+      "highlightTwo": "Compatible con slugs por programa y SEO individual.",
+      "highlightThree": "Listo para conectar con MongoDB cuando se implemente persistencia."
+    },
+    "programDetail": {
+      "eyebrow": "Detalle de programa",
+      "title": "Vista de detalle del programa",
+      "description": "Pantalla reservada para mostrar descripción completa, ubicación, duración, requisitos y qué incluye cada programa.",
+      "highlightOne": "La URL dinámica usa slug para futuras páginas indexables.",
+      "highlightTwo": "Se podrá alimentar con contenido bilingüe desde translations.es y translations.en.",
+      "highlightThree": "Es el punto natural para conectar el CTA hacia la postulación."
+    },
+    "apply": {
+      "eyebrow": "Captación",
+      "title": "Aplicar a un programa",
+      "description": "Pantalla preparada para alojar el formulario abierto del MVP con consentimiento de privacidad y datos mínimos necesarios.",
+      "highlightOne": "Más adelante capturará nombre, correo, país, fecha estimada y mensaje.",
+      "highlightTwo": "La arquitectura ya contempla validación centralizada cliente/servidor.",
+      "highlightThree": "Después del envío, el flujo dirige a una confirmación dedicada."
+    },
+    "applySuccess": {
+      "eyebrow": "Confirmación",
+      "title": "Solicitud recibida",
+      "description": "Página de éxito para agradecer la postulación y preparar futuras confirmaciones automáticas por correo.",
+      "highlightOne": "Refuerza confianza luego del envío del formulario.",
+      "highlightTwo": "Sirve como punto de integración para analytics del embudo.",
+      "highlightThree": "Más adelante podrá mostrar próximos pasos personalizados."
+    },
+    "impact": {
+      "eyebrow": "Transparencia",
+      "title": "Impacto y destino de recursos",
+      "description": "Sección destinada a comunicar resultados, uso de recursos y representación visual del impacto institucional.",
+      "highlightOne": "Alineada con el requerimiento de mostrar impacto o distribución de recursos.",
+      "highlightTwo": "Preparada para incorporar gráficos con Recharts en próximas fases.",
+      "highlightThree": "Ayuda a sostener credibilidad frente a audiencia internacional."
+    },
+    "contact": {
+      "eyebrow": "Relación inicial",
+      "title": "Contacto",
+      "description": "Pantalla para centralizar canales de atención, ubicación y futura recepción de mensajes directos.",
+      "highlightOne": "Puede evolucionar hacia formulario de contacto y datos institucionales.",
+      "highlightTwo": "Mantiene la captación abierta sin exigir cuentas de usuario.",
+      "highlightThree": "Ayuda a resolver dudas antes de iniciar una solicitud."
+    },
+    "privacy": {
+      "eyebrow": "Datos personales",
+      "title": "Política de privacidad",
+      "description": "Base inicial para documentar consentimiento explícito, tratamiento mínimo de datos y cumplimiento del flujo de postulación.",
+      "highlightOne": "Esencial para el consentimiento requerido en la aplicación.",
+      "highlightTwo": "Sirve como referencia para versiones de privacidad futuras.",
+      "highlightThree": "Se integrará con validaciones y registro de aceptación en solicitudes."
+    }
+  },
+  "ProgramsUi": {
+    "empty": "Todavía no hay programas publicados. El catálogo administrativo ya está preparado para la siguiente iteración.",
+    "featured": "Destacado",
+    "viewDetails": "Ver detalle",
+    "backToPrograms": "Volver a programas",
+    "applyNow": "Ir a la solicitud",
+    "categories": {
+      "volunteer": "Voluntariado",
+      "internships": "Pasantías",
+      "spanish-classes": "Clases de español"
+    },
+    "labels": {
+      "location": "Ubicación",
+      "duration": "Duración",
+      "availability": "Disponibilidad",
+      "requirements": "Requisitos",
+      "included": "Qué incluye",
+      "programSnapshot": "Resumen del programa"
+    }
+  }
+}

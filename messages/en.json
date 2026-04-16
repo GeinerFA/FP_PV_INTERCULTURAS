@@ -1,0 +1,120 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "about": "About",
+    "programs": "Programs",
+    "apply": "Apply",
+    "impact": "Impact",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "admin": "Admin"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "es": "Spanish",
+    "en": "English"
+  },
+  "Shell": {
+    "tagline": "Volunteer, internship and Spanish experiences with real impact.",
+    "footer": "Bilingual architectural base prepared to grow the MVP inside a single Next.js application."
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The requested route does not exist or has not been implemented in the MVP yet.",
+    "backHome": "Back to home"
+  },
+  "Pages": {
+    "home": {
+      "eyebrow": "Bilingual public site",
+      "title": "We connect people with intercultural programs in Costa Rica.",
+      "description": "This base introduces the organization, its programs and the initial funnel to attract international volunteers from a single fullstack application.",
+      "highlightOne": "Clear promotion of volunteering, internships and Spanish classes.",
+      "highlightTwo": "Architecture ready for forms, email and database integration.",
+      "highlightThree": "Public routing cleanly separated from the admin panel."
+    },
+    "about": {
+      "eyebrow": "Organization",
+      "title": "About Pura Vida Interculturas",
+      "description": "Institutional space to communicate purpose, local experience and the international value proposition of the organization.",
+      "highlightOne": "Content structure aimed at strengthening international visibility.",
+      "highlightTwo": "Ready for SEO, bilingual content and institutional storytelling.",
+      "highlightThree": "Ideal for mission, vision, history and team content in upcoming iterations."
+    },
+    "programs": {
+      "eyebrow": "Core offering",
+      "title": "Available programs",
+      "description": "Initial listing for volunteering, internships and Spanish classes with room for filters and dynamic publishing.",
+      "highlightOne": "Prepared for categories, publication status and featured programs.",
+      "highlightTwo": "Compatible with per-program slugs and SEO metadata.",
+      "highlightThree": "Ready to connect to MongoDB once persistence is implemented."
+    },
+    "programDetail": {
+      "eyebrow": "Program detail",
+      "title": "Program detail view",
+      "description": "Reserved screen to show full description, location, duration, requirements and inclusions for each program.",
+      "highlightOne": "The dynamic URL uses a slug for future indexable pages.",
+      "highlightTwo": "It will consume bilingual content from translations.es and translations.en.",
+      "highlightThree": "This is the natural handoff point to the application CTA."
+    },
+    "apply": {
+      "eyebrow": "Acquisition",
+      "title": "Apply to a program",
+      "description": "Prepared screen for the open MVP application form with privacy consent and only the minimum required data.",
+      "highlightOne": "Later it will capture full name, email, country, start date and message.",
+      "highlightTwo": "The architecture already expects centralized client/server validation.",
+      "highlightThree": "After submission, the flow leads to a dedicated success page."
+    },
+    "applySuccess": {
+      "eyebrow": "Confirmation",
+      "title": "Application received",
+      "description": "Success page meant to acknowledge the submission and prepare future automated email confirmations.",
+      "highlightOne": "Builds trust immediately after form submission.",
+      "highlightTwo": "Useful later as an analytics conversion touchpoint.",
+      "highlightThree": "Can evolve into personalized next-step guidance."
+    },
+    "impact": {
+      "eyebrow": "Transparency",
+      "title": "Impact and resource allocation",
+      "description": "Section intended to communicate outcomes, resource use and visual representation of institutional impact.",
+      "highlightOne": "Aligned with the requirement to display impact or resource distribution.",
+      "highlightTwo": "Prepared for future charts powered by Recharts.",
+      "highlightThree": "Supports trust for an international audience."
+    },
+    "contact": {
+      "eyebrow": "Initial relationship",
+      "title": "Contact",
+      "description": "Screen to centralize communication channels, location details and future inbound contact messages.",
+      "highlightOne": "Can evolve into a contact form and richer institutional data.",
+      "highlightTwo": "Keeps the funnel open without requiring user accounts.",
+      "highlightThree": "Helps resolve questions before somebody starts an application."
+    },
+    "privacy": {
+      "eyebrow": "Personal data",
+      "title": "Privacy policy",
+      "description": "Initial base to document explicit consent, minimum data handling and compliance around the application flow.",
+      "highlightOne": "Essential for the consent required in the application form.",
+      "highlightTwo": "Acts as the anchor for future privacy versioning.",
+      "highlightThree": "Will connect to validation and consent tracking in applications."
+    }
+  },
+  "ProgramsUi": {
+    "empty": "There are no published programs yet. The admin catalog is already prepared for the next iteration.",
+    "featured": "Featured",
+    "viewDetails": "View details",
+    "backToPrograms": "Back to programs",
+    "applyNow": "Go to application",
+    "categories": {
+      "volunteer": "Volunteer",
+      "internships": "Internships",
+      "spanish-classes": "Spanish classes"
+    },
+    "labels": {
+      "location": "Location",
+      "duration": "Duration",
+      "availability": "Availability",
+      "requirements": "Requirements",
+      "included": "What is included",
+      "programSnapshot": "Program snapshot"
+    }
+  }
+}
