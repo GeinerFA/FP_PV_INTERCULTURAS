@@ -1,3 +1,6 @@
+import { getLocale, getTranslations } from "next-intl/server";
+
+import type { AppLocale } from "@/config/i18n";
 import type { Program } from "@/types/program";
 
 type AdminProgramFormShellProps = {
@@ -13,34 +16,42 @@ function getFieldValue(program: Program | null | undefined, field: string) {
   return field;
 }
 
-export function AdminProgramFormShell({ mode, program }: AdminProgramFormShellProps) {
+export async function AdminProgramFormShell({
+  mode,
+  program,
+}: AdminProgramFormShellProps) {
   const isEdit = mode === "edit";
+  const [t, locale] = await Promise.all([
+    getTranslations("AdminProgramForm"),
+    getLocale(),
+  ]);
+  const activeLocale = locale as AppLocale;
 
   return (
     <div className="space-y-8">
       <div className="rounded-3xl border border-teal-500/20 bg-teal-500/10 p-6 text-sm leading-7 text-teal-50">
         <p className="font-semibold uppercase tracking-[0.18em] text-teal-200">
-          {isEdit ? "Edit preparation" : "Create preparation"}
+          {isEdit ? t("mode.edit") : t("mode.create")}
         </p>
         <p className="mt-3">
           {isEdit
-            ? "This screen already loads the program entity from the shared service layer. Next iteration only needs real form state, submit actions and persistence."
-            : "This screen mirrors the future program model so the CRUD form can land without redefining the domain contract."}
+            ? t("intro.edit")
+            : t("intro.create")}
         </p>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
         <section className="space-y-6">
           <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
-            <h2 className="text-lg font-semibold text-white">Core identity</h2>
+            <h2 className="text-lg font-semibold text-white">{t("sections.coreIdentity")}</h2>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               {[
-                { label: "Internal ID", value: program?.id ?? "Generated on save" },
-                { label: "Slug", value: program?.slug ?? "future-program-slug" },
-                { label: "Category", value: program?.category ?? "volunteer | internships | spanish-classes" },
-                { label: "Status", value: program?.status ?? "draft" },
-                { label: "Featured", value: String(program?.featured ?? false) },
-                { label: "Cover image", value: program?.coverImage ?? "https://..." },
+                { label: t("fields.internalId"), value: program?.id ?? t("placeholders.generatedOnSave") },
+                { label: t("fields.slug"), value: program?.slug ?? t("placeholders.futureSlug") },
+                { label: t("fields.category"), value: program?.category ?? t("placeholders.categoryOptions") },
+                { label: t("fields.status"), value: program?.status ?? "draft" },
+                { label: t("fields.featured"), value: String(program?.featured ?? false) },
+                { label: t("fields.coverImage"), value: program?.coverImage ?? "https://..." },
               ].map((field) => (
                 <div key={field.label} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -53,32 +64,32 @@ export function AdminProgramFormShell({ mode, program }: AdminProgramFormShellPr
           </article>
 
           <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
-            <h2 className="text-lg font-semibold text-white">Localized presentation</h2>
+            <h2 className="text-lg font-semibold text-white">{t("sections.localizedPresentation")}</h2>
             <div className="mt-5 grid gap-4 lg:grid-cols-2">
               {(["es", "en"] as const).map((locale) => (
                 <div key={locale} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                    {locale.toUpperCase()} translation
+                    {t("translationLocale", { locale: locale.toUpperCase() })}
                   </p>
                   <div className="mt-4 space-y-4 text-sm text-slate-200">
                     <div>
-                      <p className="font-semibold text-white">Title</p>
+                      <p className="font-semibold text-white">{t("fields.title")}</p>
                       <p className="mt-1 text-slate-400">
-                        {program?.translations[locale].title ?? getFieldValue(program, "Program title")}
+                        {program?.translations[locale].title ?? getFieldValue(program, t("placeholders.programTitle"))}
                       </p>
                     </div>
                     <div>
-                      <p className="font-semibold text-white">Short description</p>
+                      <p className="font-semibold text-white">{t("fields.shortDescription")}</p>
                       <p className="mt-1 text-slate-400">
                         {program?.translations[locale].shortDescription ??
-                          getFieldValue(program, "Short description for cards and lists")}
+                          getFieldValue(program, t("placeholders.shortDescription"))}
                       </p>
                     </div>
                     <div>
-                      <p className="font-semibold text-white">Full description</p>
+                      <p className="font-semibold text-white">{t("fields.fullDescription")}</p>
                       <p className="mt-1 text-slate-400">
                         {program?.translations[locale].fullDescription ??
-                          getFieldValue(program, "Full long-form program description")}
+                          getFieldValue(program, t("placeholders.fullDescription"))}
                       </p>
                     </div>
                   </div>
@@ -88,22 +99,20 @@ export function AdminProgramFormShell({ mode, program }: AdminProgramFormShellPr
           </article>
 
           <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
-            <h2 className="text-lg font-semibold text-white">Operational details</h2>
+            <h2 className="text-lg font-semibold text-white">{t("sections.operationalDetails")}</h2>
             <div className="mt-5 grid gap-4 md:grid-cols-3">
               {[
                 {
-                  label: "Location",
-                  value: program ? `${program.location.es} / ${program.location.en}` : "Localized location",
+                  label: t("fields.location"),
+                  value: program ? program.location[activeLocale] : t("placeholders.localizedLocation"),
                 },
                 {
-                  label: "Duration",
-                  value: program ? `${program.duration.es} / ${program.duration.en}` : "Localized duration",
+                  label: t("fields.duration"),
+                  value: program ? program.duration[activeLocale] : t("placeholders.localizedDuration"),
                 },
                 {
-                  label: "Availability",
-                  value: program
-                    ? `${program.availability.es} / ${program.availability.en}`
-                    : "Localized availability",
+                  label: t("fields.availability"),
+                  value: program ? program.availability[activeLocale] : t("placeholders.localizedAvailability"),
                 },
               ].map((field) => (
                 <div key={field.label} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
@@ -119,12 +128,12 @@ export function AdminProgramFormShell({ mode, program }: AdminProgramFormShellPr
 
         <aside className="space-y-6">
           <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
-            <h2 className="text-lg font-semibold text-white">Requirements</h2>
+            <h2 className="text-lg font-semibold text-white">{t("sections.requirements")}</h2>
             <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
-              {(program?.translations.es.requirements ?? [
-                "Capture a structured list per locale.",
-                "Reuse the shared validator before persistence exists.",
-                "Keep compatibility with future form arrays.",
+              {(program?.translations[activeLocale].requirements ?? [
+                t("requirements.0"),
+                t("requirements.1"),
+                t("requirements.2"),
               ]).map((item) => (
                 <li key={item} className="rounded-2xl bg-slate-900/70 px-4 py-3">
                   {item}
@@ -134,12 +143,12 @@ export function AdminProgramFormShell({ mode, program }: AdminProgramFormShellPr
           </article>
 
           <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
-            <h2 className="text-lg font-semibold text-white">What is included</h2>
+            <h2 className="text-lg font-semibold text-white">{t("sections.included")}</h2>
             <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
-              {(program?.translations.es.included ?? [
-                "Initial onboarding notes.",
-                "Support details that will later sync to public detail pages.",
-                "A future save action connected to MongoDB/Mongoose.",
+              {(program?.translations[activeLocale].included ?? [
+                t("included.0"),
+                t("included.1"),
+                t("included.2"),
               ]).map((item) => (
                 <li key={item} className="rounded-2xl bg-slate-900/70 px-4 py-3">
                   {item}
@@ -149,16 +158,13 @@ export function AdminProgramFormShell({ mode, program }: AdminProgramFormShellPr
           </article>
 
           <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6 text-sm leading-7 text-slate-300">
-            <h2 className="text-lg font-semibold text-white">SEO and audit preview</h2>
-            <p className="mt-4">
-              SEO titles/descriptions, createdBy, updatedBy and timestamps are already part of the entity.
-              Persistence and auth can plug into these fields without reshaping the model.
-            </p>
+            <h2 className="text-lg font-semibold text-white">{t("sections.seoAuditPreview")}</h2>
+            <p className="mt-4">{t("seoAuditDescription")}</p>
             <div className="mt-4 space-y-2 text-xs uppercase tracking-[0.18em] text-slate-500">
-              <p>Created by: {program?.createdBy ?? "future-auth-user"}</p>
-              <p>Updated by: {program?.updatedBy ?? "future-auth-user"}</p>
-              <p>Created at: {program?.createdAt ?? "auto-generated"}</p>
-              <p>Updated at: {program?.updatedAt ?? "auto-generated"}</p>
+              <p>{t("audit.createdBy")}: {program?.createdBy ?? t("placeholders.futureAuthUser")}</p>
+              <p>{t("audit.updatedBy")}: {program?.updatedBy ?? t("placeholders.futureAuthUser")}</p>
+              <p>{t("audit.createdAt")}: {program?.createdAt ?? t("placeholders.autoGenerated")}</p>
+              <p>{t("audit.updatedAt")}: {program?.updatedAt ?? t("placeholders.autoGenerated")}</p>
             </div>
           </article>
         </aside>

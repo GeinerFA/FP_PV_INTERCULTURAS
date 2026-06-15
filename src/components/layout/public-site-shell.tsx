@@ -1,4 +1,3 @@
-import NextLink from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { siteConfig } from "@/config/site";
@@ -32,12 +31,9 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
                   {t(`Navigation.${item.labelKey}`)}
                 </Link>
               ))}
-              <NextLink
-                href="/admin"
-                className="font-semibold text-teal-300 hover:text-teal-200"
-              >
+              <Link href="/admin" className="font-semibold text-teal-300 hover:text-teal-200">
                 {t("Navigation.admin")}
-              </NextLink>
+              </Link>
             </nav>
           </div>
         </div>

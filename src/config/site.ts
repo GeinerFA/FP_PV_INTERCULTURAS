@@ -13,14 +13,11 @@ export const siteConfig = {
     { href: "/privacy", labelKey: "privacy" },
   ],
   adminNavigation: [
-    { href: "/admin", label: "Dashboard" },
-    { href: "/admin/programs", label: "Programs" },
-    { href: "/admin/applications", label: "Applications" },
-    { href: "/admin/reports", label: "Reports" },
-    { href: "/admin/activity", label: "Activity" },
-    { href: "/admin/settings", label: "Settings" },
+    { href: "/admin", labelKey: "dashboard" },
+    { href: "/admin/programs", labelKey: "programs" },
+    { href: "/admin/applications", labelKey: "applications" },
+    { href: "/admin/reports", labelKey: "reports" },
+    { href: "/admin/activity", labelKey: "activity" },
+    { href: "/admin/settings", labelKey: "settings" },
   ],
 } as const;
-
-export const adminNotice =
-  "Área administrativa preparada a nivel de routing y layout. La autenticación llegará en una fase posterior con Auth.js.";

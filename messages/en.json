@@ -18,6 +18,215 @@
     "tagline": "Volunteer, internship and Spanish experiences with real impact.",
     "footer": "Bilingual architectural base prepared to grow the MVP inside a single Next.js application."
   },
+  "AdminShell": {
+    "notice": "Administrative area prepared at the routing and layout level. Authentication will arrive in a later phase with Auth.js.",
+    "login": "Login placeholder",
+    "navigation": {
+      "dashboard": "Dashboard",
+      "programs": "Programs",
+      "applications": "Applications",
+      "reports": "Reports",
+      "activity": "Activity",
+      "settings": "Settings"
+    }
+  },
+  "AdminPages": {
+    "login": {
+      "title": "Admin login",
+      "description": "Reserved screen for MVP administrative access. In a later phase it will connect to Auth.js and Google OAuth.",
+      "sections": [
+        "Keeps admin entry separate from the public site.",
+        "Allows the MVP to anticipate access states and security messaging.",
+        "Authentication is still intentionally out of scope at this stage."
+      ]
+    },
+    "dashboard": {
+      "title": "Admin dashboard",
+      "description": "Operational summary to monitor programs, applications, reports and general configuration from one administrative base.",
+      "sections": [
+        "This will become the protected entry point for the internal team.",
+        "It can later consolidate MVP metrics and early alerts.",
+        "It is already connected to the shared admin layout."
+      ]
+    },
+    "programs": {
+      "title": "Programs management",
+      "description": "Administrative listing to create, edit, publish or unpublish programs according to the functional map defined in the master document.",
+      "sections": [
+        "Prepared for program CRUD.",
+        "Compatible with slugs, statuses and bilingual content.",
+        "It will connect to models and services in a later iteration."
+      ]
+    },
+    "programsNew": {
+      "title": "Create program",
+      "description": "Future form to register new volunteering, internship or Spanish programs from the internal panel.",
+      "sections": [
+        "It should include short content, extended content and SEO.",
+        "It is aligned with the programs model from the master document.",
+        "It still works as an architectural placeholder."
+      ]
+    },
+    "programsEdit": {
+      "title": "Edit program",
+      "description": "Dynamic route prepared to update an existing program through its internal identifier.",
+      "sections": [
+        "The [id]/edit structure is already defined.",
+        "It will support editing, publishing and later auditing.",
+        "It is the administrative counterpart of the public slug detail."
+      ]
+    },
+    "applications": {
+      "title": "Applications inbox",
+      "description": "Applications queue to review submissions, filter them by status and coordinate internal follow-up.",
+      "sections": [
+        "Designed to support process states and traceability.",
+        "It will connect to validation and persistence later on.",
+        "It is a central piece of the operational MVP."
+      ]
+    },
+    "applicationDetail": {
+      "title": "Application detail",
+      "description": "Individual view to inspect the applicant information, their program of interest and the management history.",
+      "sections": [
+        "The dynamic [id] route already exists.",
+        "It will support status updates and consent review.",
+        "It can evolve into contextual logs and internal notes."
+      ],
+      "placeholderLabel": "Application placeholder ID"
+    },
+    "reports": {
+      "title": "Reports",
+      "description": "Area reserved for basic MVP reports, with future CSV export and summarized visualizations.",
+      "sections": [
+        "Aligned with functional requirement RF-09.",
+        "It will be ideal for program and application metrics.",
+        "It is ready to grow without mixing responsibilities."
+      ]
+    },
+    "activity": {
+      "title": "Activity log",
+      "description": "Section to register relevant administrative actions and maintain a basic operational log.",
+      "sections": [
+        "It responds to functional requirement RF-10.",
+        "It can later rely on activity_logs.",
+        "It helps provide traceability to the internal panel."
+      ]
+    },
+    "settings": {
+      "title": "Site settings",
+      "description": "Area for branding, contact data, social links, impact graphics and site notification emails.",
+      "sections": [
+        "Related to site_settings in the data model.",
+        "It will help avoid scattered hardcodes.",
+        "The architecture already separates this responsibility into a dedicated route."
+      ]
+    }
+  },
+  "AdminProgramsOverview": {
+    "yes": "Yes",
+    "no": "No",
+    "stats": {
+      "catalogSize": {
+        "label": "Catalog size",
+        "description": "Single source of truth for admin and public routes."
+      },
+      "publishedNow": {
+        "label": "Published now",
+        "description": "Only published items appear in the localized public catalog."
+      },
+      "featuredHighlights": {
+        "label": "Featured highlights",
+        "description": "Prepared for curated promotion on marketing surfaces."
+      }
+    },
+    "table": {
+      "heading": "Programs ready for future CRUD",
+      "description": "This view already reflects category, publication state, featured flag and edit entry points.",
+      "newProgram": "New program shell",
+      "openEditor": "Open editor shell"
+    },
+    "columns": {
+      "program": "Program",
+      "category": "Category",
+      "status": "Status",
+      "featured": "Featured",
+      "availability": "Availability",
+      "actions": "Actions"
+    },
+    "categories": {
+      "volunteer": "Volunteer",
+      "internships": "Internship",
+      "spanish-classes": "Spanish classes"
+    },
+    "statuses": {
+      "draft": "Draft",
+      "published": "Published"
+    }
+  },
+  "AdminProgramForm": {
+    "mode": {
+      "create": "Create preparation",
+      "edit": "Edit preparation"
+    },
+    "intro": {
+      "create": "This screen mirrors the future program model so the CRUD form can land without redefining the domain contract.",
+      "edit": "This screen already loads the program entity from the shared service layer. Next iteration only needs real form state, submit actions and persistence."
+    },
+    "sections": {
+      "coreIdentity": "Core identity",
+      "localizedPresentation": "Localized presentation",
+      "operationalDetails": "Operational details",
+      "requirements": "Requirements",
+      "included": "What is included",
+      "seoAuditPreview": "SEO and audit preview"
+    },
+    "fields": {
+      "internalId": "Internal ID",
+      "slug": "Slug",
+      "category": "Category",
+      "status": "Status",
+      "featured": "Featured",
+      "coverImage": "Cover image",
+      "title": "Title",
+      "shortDescription": "Short description",
+      "fullDescription": "Full description",
+      "location": "Location",
+      "duration": "Duration",
+      "availability": "Availability"
+    },
+    "translationLocale": "{locale} translation",
+    "requirements": {
+      "0": "Capture a structured list per locale.",
+      "1": "Reuse the shared validator before persistence exists.",
+      "2": "Keep compatibility with future form arrays."
+    },
+    "included": {
+      "0": "Initial onboarding notes.",
+      "1": "Support details that will later sync to public detail pages.",
+      "2": "A future save action connected to MongoDB/Mongoose."
+    },
+    "seoAuditDescription": "SEO titles/descriptions, createdBy, updatedBy and timestamps are already part of the entity. Persistence and auth can plug into these fields without reshaping the model.",
+    "audit": {
+      "createdBy": "Created by",
+      "updatedBy": "Updated by",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at"
+    },
+    "placeholders": {
+      "generatedOnSave": "Generated on save",
+      "futureSlug": "future-program-slug",
+      "categoryOptions": "volunteer | internships | spanish-classes",
+      "programTitle": "Program title",
+      "shortDescription": "Short description for cards and lists",
+      "fullDescription": "Full long-form program description",
+      "localizedLocation": "Localized location",
+      "localizedDuration": "Localized duration",
+      "localizedAvailability": "Localized availability",
+      "futureAuthUser": "future-auth-user",
+      "autoGenerated": "auto-generated"
+    }
+  },
   "NotFound": {
     "title": "Page not found",
     "description": "The requested route does not exist or has not been implemented in the MVP yet.",

@@ -1,7 +1,8 @@
+import { notFound } from "next/navigation";
+
 import { AdminPageTemplate } from "@/features/admin/components/admin-page-template";
 import { AdminProgramFormShell } from "@/features/programs/components/admin-program-form-shell";
 import { getAdminProgramById } from "@/services/programs/program-service";
-import { notFound } from "next/navigation";
 
 type AdminProgramEditPageProps = {
   params: Promise<{ id: string }>;

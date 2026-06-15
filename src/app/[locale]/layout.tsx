@@ -2,7 +2,6 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 
-import { PublicSiteShell } from "@/components/layout/public-site-shell";
 import { locales } from "@/config/i18n";
 import { routing } from "@/i18n/routing";
 
@@ -31,7 +30,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <PublicSiteShell>{children}</PublicSiteShell>
+      {children}
     </NextIntlClientProvider>
   );
 }
