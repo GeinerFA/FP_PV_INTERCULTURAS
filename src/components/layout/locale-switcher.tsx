@@ -21,7 +21,7 @@ export function LocaleSwitcher() {
   const pathname = usePathname();
 
   return (
-    <div className="flex items-center gap-2 rounded-full border border-white/20 bg-white/10 p-1 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+    <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50/80 p-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-700 shadow-sm backdrop-blur">
       {locales.map((locale) => {
         const isActive = locale === currentLocale;
 
@@ -30,7 +30,9 @@ export function LocaleSwitcher() {
             key={locale}
             href={getLocalizedPathname(pathname, locale)}
             className={`rounded-full px-3 py-1 transition ${
-              isActive ? "bg-white text-slate-900" : "text-white/80 hover:text-white"
+              isActive
+                ? "bg-white text-emerald-800 shadow-sm"
+                : "text-slate-500 hover:text-emerald-700"
             }`}
           >
             {locale}

@@ -7,7 +7,8 @@
     "impact": "Impacto",
     "contact": "Contacto",
     "privacy": "Privacidad",
-    "admin": "Admin"
+    "admin": "Admin",
+    "faqs": "Preguntas frecuentes"
   },
   "LocaleSwitcher": {
     "label": "Idioma",
@@ -15,8 +16,9 @@
     "en": "Inglés"
   },
   "Shell": {
-    "tagline": "Voluntariado, pasantías y español con impacto real.",
-    "footer": "Base arquitectónica bilingüe para crecer el MVP con una sola aplicación Next.js."
+    "tagline": "Voluntariado, pasantías y español con acompañamiento local e impacto intercultural.",
+    "footer": "Pura Vida Interculturas conecta experiencias educativas y comunitarias desde una base bilingüe lista para crecer.",
+    "contactAction": "Ir a la sección de contacto"
   },
   "AdminShell": {
     "notice": "Área administrativa preparada a nivel de routing y layout. La autenticación llegará en una fase posterior con Auth.js.",
@@ -242,12 +244,12 @@
       "highlightThree": "Ruta pública separada conceptualmente del panel administrativo."
     },
     "about": {
-      "eyebrow": "Organización",
+      "eyebrow": "Información institucional",
       "title": "Sobre Pura Vida Interculturas",
-      "description": "Espacio institucional para comunicar propósito, experiencia local y propuesta de valor internacional de la organización.",
-      "highlightOne": "Contenido pensado para fortalecer la visibilidad internacional.",
-      "highlightTwo": "Preparado para SEO, contenido bilingüe y narrativa institucional.",
-      "highlightThree": "Ideal para sumar historia, misión, visión y equipo en siguientes iteraciones."
+      "description": "Conocé la organización, su trabajo en Pérez Zeledón y la forma en que articula programas interculturales con acompañamiento local.",
+      "highlightOne": "Presenta el origen, propósito y experiencia territorial de la organización.",
+      "highlightTwo": "Aclara que el sitio público convive con una operación local y una red internacional de participantes.",
+      "highlightThree": "Mantiene el enfoque institucional sin convertir esta página en la nueva home."
     },
     "programs": {
       "eyebrow": "Oferta principal",
@@ -324,6 +326,170 @@
       "requirements": "Requisitos",
       "included": "Qué incluye",
       "programSnapshot": "Resumen del programa"
+    }
+  },
+  "Home": {
+    "metadata": {
+      "title": "Inicio",
+      "description": "Historia, programas destacados, preguntas frecuentes y próximos pasos para vivir una experiencia intercultural con Pura Vida Interculturas."
+    },
+    "hero": {
+      "eyebrow": "Experiencias interculturales en Costa Rica",
+      "title": "Viví una experiencia con propósito, acompañamiento local y conexión real con la comunidad.",
+      "description": "Pura Vida Interculturas acompaña voluntariados, pasantías y aprendizaje de español desde Pérez Zeledón, con una propuesta cercana, bilingüe y enfocada en impacto humano.",
+      "primaryAction": "Explorar programas",
+      "secondaryAction": "Comenzar aplicación",
+      "contactAction": "Hablar con el equipo"
+    },
+    "story": {
+      "eyebrow": "Nuestra historia",
+      "title": "Una organización nacida para conectar aprendizaje, servicio y cultura local.",
+      "description": "Trabajamos para que cada experiencia internacional tenga contexto, cuidado y una relación respetuosa con las comunidades que reciben a las personas participantes.",
+      "points": {
+        "mission": "Acompañamos procesos de voluntariado, pasantías y español con una mirada humana, organizada y situada en el territorio.",
+        "bridge": "Creamos puentes entre visitantes internacionales, aliados locales y metas de aprendizaje mutuo.",
+        "support": "Priorizamos claridad, orientación y seguimiento para que cada persona llegue mejor preparada a su experiencia."
+      }
+    },
+    "history": {
+      "eyebrow": "Recorrido",
+      "title": "Construimos esta propuesta paso a paso junto con la comunidad.",
+      "description": "El proyecto creció desde relaciones locales concretas hasta una oferta más clara para personas que buscan voluntariado, pasantías o inmersión cultural en Costa Rica.",
+      "milestones": {
+        "foundation": {
+          "year": "Origen",
+          "title": "Escucha local y primeras alianzas",
+          "description": "La iniciativa comenzó identificando necesidades reales de acompañamiento, intercambio cultural y articulación con actores comunitarios de la zona sur."
+        },
+        "growth": {
+          "year": "Desarrollo",
+          "title": "Programas con foco educativo y social",
+          "description": "Se consolidaron rutas para voluntariado, apoyo operativo e inmersión en español con una narrativa más clara para audiencias internacionales."
+        },
+        "today": {
+          "year": "Hoy",
+          "title": "Una puerta de entrada más simple y bilingüe",
+          "description": "Este sitio organiza la historia institucional, los programas destacados y los siguientes pasos para facilitar decisiones informadas."
+        }
+      }
+    },
+    "offerings": {
+      "eyebrow": "Qué ofrecemos",
+      "title": "Tres caminos para vincularte con Pura Vida Interculturas.",
+      "description": "Cada línea combina acompañamiento local, claridad operativa y espacio para construir una experiencia significativa según tus objetivos.",
+      "cards": {
+        "volunteer": {
+          "title": "Voluntariado",
+          "description": "Participá en procesos comunitarios con apoyo del equipo local y una propuesta enfocada en intercambio respetuoso e impacto concreto."
+        },
+        "internships": {
+          "title": "Pasantías",
+          "description": "Desarrollá experiencia aplicada dentro de una organización social con tareas reales, documentación y mejora de procesos."
+        },
+        "spanish": {
+          "title": "Español e inmersión cultural",
+          "description": "Aprendé español en contexto mientras sumás vivencias locales, acompañamiento cercano y objetivos adaptados a tu ritmo."
+        }
+      }
+    },
+    "info": {
+      "eyebrow": "Información útil",
+      "title": "Te ayudamos a llegar con expectativas claras.",
+      "description": "Antes de aplicar o elegir programa, compartimos la información clave que normalmente define si una experiencia se siente cuidada y viable.",
+      "cards": {
+        "readiness": {
+          "title": "Preparación previa",
+          "description": "Orientamos sobre tiempos, disponibilidad, tipo de participación y nivel de acompañamiento esperado antes de confirmar interés."
+        },
+        "localSupport": {
+          "title": "Acompañamiento local",
+          "description": "La propuesta prioriza contexto territorial, comunicación clara y coordinación humana durante la llegada y adaptación."
+        },
+        "fit": {
+          "title": "Elección adecuada",
+          "description": "No todo programa encaja con todas las personas; por eso facilitamos rutas para comparar opciones, resolver dudas y decidir mejor."
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "Programas destacados",
+      "title": "Empezá por una muestra curada de experiencias activas.",
+      "description": "Seleccionamos algunos programas publicados para que puedas entender rápidamente el tipo de propuesta, duración y contexto disponible hoy.",
+      "featuredLabel": "Destacado",
+      "browsePrograms": "Ver todos los programas",
+      "viewProgram": "Conocer programa",
+      "emptyTitle": "Todavía no hay programas destacados visibles.",
+      "emptyDescription": "La página principal sigue lista para orientarte. Mientras se actualizan los destacados, podés revisar el catálogo completo y elegir el camino que mejor se ajuste a tus objetivos."
+    },
+    "cta": {
+      "title": "¿Ya tenés una idea de lo que buscás?",
+      "description": "Podés avanzar directo a la aplicación o revisar el catálogo completo antes de tomar una decisión. La idea es que entiendas bien el contexto antes de comprometerte.",
+      "primaryAction": "Ir a la aplicación",
+      "secondaryAction": "Comparar programas"
+    },
+    "contact": {
+      "eyebrow": "Contacto",
+      "title": "Conversemos antes de que tomes el siguiente paso.",
+      "description": "Si todavía estás comparando opciones, este punto te ayuda a ordenar dudas frecuentes y encontrar la ruta correcta dentro del flujo público sin salir de la home.",
+      "cards": {
+        "questions": {
+          "title": "Resolvé dudas comunes",
+          "description": "Usá la página de preguntas frecuentes para aclarar elegibilidad, tiempos, idioma y tipo de acompañamiento disponible."
+        },
+        "programFit": {
+          "title": "Elegí el programa adecuado",
+          "description": "Revisá programas destacados y catálogo completo para entender qué opción se alinea mejor con tu perfil e intereses."
+        },
+        "ready": {
+          "title": "Avanzá cuando estés listo",
+          "description": "Cuando ya tengas claridad, la aplicación abierta te permite compartir interés inicial y preparar una conversación más concreta con el equipo."
+        }
+      },
+      "actions": {
+        "programs": "Revisar programas",
+        "apply": "Aplicar ahora",
+        "faqs": "Ver preguntas frecuentes"
+      }
+    }
+  },
+  "Faqs": {
+    "metadata": {
+      "title": "Preguntas frecuentes",
+      "description": "Respuestas iniciales sobre programas, tiempos, idioma y próximos pasos dentro del flujo público de Pura Vida Interculturas."
+    },
+    "eyebrow": "Guía rápida",
+    "title": "Preguntas frecuentes para empezar con más claridad.",
+    "description": "Esta página reúne respuestas iniciales para que puedas entender mejor cómo funciona la experiencia antes de elegir programa o iniciar una aplicación.",
+    "entries": {
+      "programTypes": {
+        "question": "¿Qué tipo de programas ofrece Pura Vida Interculturas?",
+        "answer": "La organización presenta oportunidades de voluntariado, pasantías y aprendizaje de español con enfoque intercultural. Cada programa publicado detalla objetivo, duración, ubicación y disponibilidad."
+      },
+      "whoCanApply": {
+        "question": "¿Necesito experiencia previa para participar?",
+        "answer": "Depende del programa. Algunas experiencias priorizan actitud, apertura cultural y compromiso; otras pueden pedir perfil académico o habilidades específicas. La mejor referencia siempre es la ficha del programa."
+      },
+      "language": {
+        "question": "¿Debo hablar español antes de llegar?",
+        "answer": "No siempre. Hay programas donde alcanza con inglés funcional y disposición para aprender, mientras que otros se benefician de cierto nivel de español. La información localizada de cada programa aclara este punto."
+      },
+      "nextStep": {
+        "question": "¿Qué hago si todavía no sé qué programa elegir?",
+        "answer": "Primero revisá los programas destacados o el catálogo completo. Si seguís con dudas, usá la sección de contacto de la home para retomar preguntas frecuentes y después avanzar a la aplicación cuando tengas más claridad."
+      }
+    },
+    "emptyState": {
+      "title": "Todavía no publicamos preguntas frecuentes para este idioma.",
+      "description": "Mientras completamos esta guía, igual podés revisar programas, iniciar la aplicación o volver a la sección de contacto para seguir el flujo público principal."
+    },
+    "nextSteps": {
+      "title": "¿Tu duda sigue abierta?",
+      "description": "Entonces lo correcto es volver al flujo principal: compará programas, iniciá una aplicación o regresá a la sección de contacto de la home para ordenar tu siguiente acción."
+    },
+    "actions": {
+      "programs": "Explorar programas",
+      "apply": "Iniciar aplicación",
+      "contact": "Ir al contacto"
     }
   }
 }

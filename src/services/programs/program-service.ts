@@ -50,6 +50,15 @@ export async function listPublicPrograms(locale: AppLocale): Promise<LocalizedPr
     .map((program) => localizeProgram(program, locale));
 }
 
+export async function listFeaturedPublicPrograms(
+  locale: AppLocale,
+  limit = 3,
+): Promise<LocalizedProgram[]> {
+  const programs = await listPublicPrograms(locale);
+
+  return programs.filter((program) => program.featured).slice(0, limit);
+}
+
 export async function getPublicProgramBySlug(
   slug: string,
   locale: AppLocale,

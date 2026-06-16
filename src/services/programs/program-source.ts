@@ -9,8 +9,8 @@ const rawProgramCatalog = [
     featured: true,
     coverImage: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
     location: {
-      es: "Pérez Zeledón, Costa Rica",
-      en: "Pérez Zeledón, Costa Rica",
+      es: "San Ramòn, Costa Rica",
+      en: "San Ramòn, Costa Rica",
     },
     duration: {
       es: "2 a 12 semanas",

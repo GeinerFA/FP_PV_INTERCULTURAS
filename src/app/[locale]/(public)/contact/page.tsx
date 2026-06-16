@@ -1,15 +1,13 @@
-import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 
-import { PublicPageTemplate } from "@/features/public/components/public-page-template";
-import { buildMetadata } from "@/lib/metadata";
+import type { AppLocale } from "@/config/i18n";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Pages.contact");
+type ContactPageProps = {
+  params: Promise<{ locale: AppLocale }>;
+};
 
-  return buildMetadata({ title: t("title"), description: t("description") });
-}
+export default async function ContactPage({ params }: ContactPageProps) {
+  const { locale } = await params;
 
-export default function ContactPage() {
-  return <PublicPageTemplate pageKey="contact" />;
+  redirect(`/${locale}#contact`);
 }

@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { PublicPageTemplate } from "@/features/public/components/public-page-template";
+import type { AppLocale } from "@/config/i18n";
+import { PublicHomePage } from "@/features/public/components/public-home-page";
 import { buildMetadata } from "@/lib/metadata";
 
+type LocaleHomePageProps = {
+  params: Promise<{ locale: AppLocale }>;
+};
+
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Pages.home");
+  const t = await getTranslations("Home.metadata");
 
   return buildMetadata({
     title: t("title"),
@@ -13,6 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function LocaleHomePage() {
-  return <PublicPageTemplate pageKey="home" />;
+export default async function LocaleHomePage({ params }: LocaleHomePageProps) {
+  const { locale } = await params;
+
+  return <PublicHomePage locale={locale} />;
 }

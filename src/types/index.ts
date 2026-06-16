@@ -4,7 +4,15 @@ export type AdminRouteItem = {
 };
 
 export type PublicRouteItem = {
-  href: "/" | "/about" | "/programs" | "/apply" | "/impact" | "/contact" | "/privacy";
+  href:
+    | "/"
+    | "/about"
+    | "/faqs"
+    | "/programs"
+    | "/apply"
+    | "/impact"
+    | "/contact"
+    | "/privacy";
   labelKey: string;
 };
 

@@ -7,7 +7,8 @@
     "impact": "Impact",
     "contact": "Contact",
     "privacy": "Privacy",
-    "admin": "Admin"
+    "admin": "Admin",
+    "faqs": "FAQs"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -15,8 +16,9 @@
     "en": "English"
   },
   "Shell": {
-    "tagline": "Volunteer, internship and Spanish experiences with real impact.",
-    "footer": "Bilingual architectural base prepared to grow the MVP inside a single Next.js application."
+    "tagline": "Volunteer, internship and Spanish experiences with local guidance and intercultural impact.",
+    "footer": "Pura Vida Interculturas connects educational and community-based experiences from a bilingual foundation that is ready to grow.",
+    "contactAction": "Go to contact section"
   },
   "AdminShell": {
     "notice": "Administrative area prepared at the routing and layout level. Authentication will arrive in a later phase with Auth.js.",
@@ -242,12 +244,12 @@
       "highlightThree": "Public routing cleanly separated from the admin panel."
     },
     "about": {
-      "eyebrow": "Organization",
+      "eyebrow": "Institutional information",
       "title": "About Pura Vida Interculturas",
-      "description": "Institutional space to communicate purpose, local experience and the international value proposition of the organization.",
-      "highlightOne": "Content structure aimed at strengthening international visibility.",
-      "highlightTwo": "Ready for SEO, bilingual content and institutional storytelling.",
-      "highlightThree": "Ideal for mission, vision, history and team content in upcoming iterations."
+      "description": "Learn about the organization, its work in Pérez Zeledón and the way it connects intercultural programs with local guidance.",
+      "highlightOne": "Presents the origin, purpose and territorial experience behind the organization.",
+      "highlightTwo": "Clarifies that the public site is backed by a local operation and an international participant network.",
+      "highlightThree": "Keeps the institutional focus without turning this page into the new home experience."
     },
     "programs": {
       "eyebrow": "Core offering",
@@ -324,6 +326,170 @@
       "requirements": "Requirements",
       "included": "What is included",
       "programSnapshot": "Program snapshot"
+    }
+  },
+  "Home": {
+    "metadata": {
+      "title": "Home",
+      "description": "Story, featured programs, FAQs and next steps for an intercultural experience with Pura Vida Interculturas."
+    },
+    "hero": {
+      "eyebrow": "Intercultural experiences in Costa Rica",
+      "title": "Choose an experience built on purpose, local guidance and real community connection.",
+      "description": "Pura Vida Interculturas supports volunteering, internships and Spanish learning from Pérez Zeledón through a close, bilingual proposal centered on human impact.",
+      "primaryAction": "Explore programs",
+      "secondaryAction": "Start application",
+      "contactAction": "Talk to the team"
+    },
+    "story": {
+      "eyebrow": "Our story",
+      "title": "An organization created to connect learning, service and local culture.",
+      "description": "We work so that every international experience includes context, care and a respectful relationship with the communities that welcome participants.",
+      "points": {
+        "mission": "We support volunteering, internships and Spanish learning through a human, organized and place-aware approach.",
+        "bridge": "We build bridges between international visitors, local partners and shared learning goals.",
+        "support": "We prioritize clarity, orientation and follow-up so every participant arrives better prepared for the experience."
+      }
+    },
+    "history": {
+      "eyebrow": "Journey",
+      "title": "This proposal was built step by step together with the community.",
+      "description": "The project grew from concrete local relationships into a clearer offer for people seeking volunteering, internships or cultural immersion in Costa Rica.",
+      "milestones": {
+        "foundation": {
+          "year": "Origin",
+          "title": "Local listening and first partnerships",
+          "description": "The initiative started by identifying real needs around guidance, cultural exchange and coordination with community actors in the southern region."
+        },
+        "growth": {
+          "year": "Development",
+          "title": "Programs with educational and social focus",
+          "description": "The team consolidated paths for volunteering, operational support and Spanish immersion with a clearer story for international audiences."
+        },
+        "today": {
+          "year": "Today",
+          "title": "A simpler bilingual entry point",
+          "description": "This site now organizes the institutional story, featured programs and next steps so visitors can make better informed decisions."
+        }
+      }
+    },
+    "offerings": {
+      "eyebrow": "What we offer",
+      "title": "Three ways to engage with Pura Vida Interculturas.",
+      "description": "Each path combines local support, operational clarity and room to build a meaningful experience around your goals.",
+      "cards": {
+        "volunteer": {
+          "title": "Volunteering",
+          "description": "Join community-based processes with support from the local team and an approach centered on respectful exchange and tangible impact."
+        },
+        "internships": {
+          "title": "Internships",
+          "description": "Develop applied experience inside a social organization through real tasks, documentation and process improvement work."
+        },
+        "spanish": {
+          "title": "Spanish and cultural immersion",
+          "description": "Learn Spanish in context while gaining local experiences, close support and goals adapted to your pace."
+        }
+      }
+    },
+    "info": {
+      "eyebrow": "Useful information",
+      "title": "We help you arrive with clear expectations.",
+      "description": "Before you apply or choose a program, we surface the information that usually determines whether an experience feels supported and viable.",
+      "cards": {
+        "readiness": {
+          "title": "Preparation before arrival",
+          "description": "We orient visitors around timing, availability, participation style and expected support before interest is confirmed."
+        },
+        "localSupport": {
+          "title": "Local guidance",
+          "description": "The proposal prioritizes territorial context, clear communication and human coordination during arrival and adaptation."
+        },
+        "fit": {
+          "title": "Finding the right fit",
+          "description": "Not every program fits every person, so we make it easier to compare options, resolve questions and decide with better context."
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "Featured programs",
+      "title": "Start with a curated snapshot of active experiences.",
+      "description": "We highlight a few published programs so visitors can quickly understand the type of opportunity, duration and context currently available.",
+      "featuredLabel": "Featured",
+      "browsePrograms": "Browse all programs",
+      "viewProgram": "View program",
+      "emptyTitle": "There are no visible featured programs yet.",
+      "emptyDescription": "The home page still gives clear guidance. While featured items are being updated, visitors can review the full catalog and choose the path that best matches their goals."
+    },
+    "cta": {
+      "title": "Do you already know what you are looking for?",
+      "description": "You can move directly into the application or review the full catalog first. The goal is to help visitors understand the context before they commit.",
+      "primaryAction": "Go to application",
+      "secondaryAction": "Compare programs"
+    },
+    "contact": {
+      "eyebrow": "Contact",
+      "title": "Let’s talk before you take the next step.",
+      "description": "If you are still comparing options, this section helps you organize common questions and find the right path inside the public flow without leaving the home page.",
+      "cards": {
+        "questions": {
+          "title": "Resolve common questions",
+          "description": "Use the FAQ page to clarify eligibility, timing, language expectations and the type of support available."
+        },
+        "programFit": {
+          "title": "Choose the right program",
+          "description": "Review featured programs and the full catalog to understand which option aligns best with your profile and interests."
+        },
+        "ready": {
+          "title": "Move forward when ready",
+          "description": "Once you have enough clarity, the open application helps you share initial interest and prepare a more concrete conversation with the team."
+        }
+      },
+      "actions": {
+        "programs": "Review programs",
+        "apply": "Apply now",
+        "faqs": "View FAQs"
+      }
+    }
+  },
+  "Faqs": {
+    "metadata": {
+      "title": "FAQs",
+      "description": "Initial answers about programs, timing, language and next steps inside the public Pura Vida Interculturas flow."
+    },
+    "eyebrow": "Quick guidance",
+    "title": "Frequently asked questions for a clearer starting point.",
+    "description": "This page gathers the first answers visitors usually need in order to understand how the experience works before choosing a program or starting an application.",
+    "entries": {
+      "programTypes": {
+        "question": "What kinds of programs does Pura Vida Interculturas offer?",
+        "answer": "The organization presents volunteering, internships and Spanish learning opportunities with an intercultural focus. Each published program explains its goal, duration, location and current availability."
+      },
+      "whoCanApply": {
+        "question": "Do I need previous experience to participate?",
+        "answer": "It depends on the program. Some experiences mainly expect attitude, cultural openness and commitment, while others may require an academic profile or specific skills. The best reference is always the program page itself."
+      },
+      "language": {
+        "question": "Do I need to speak Spanish before arriving?",
+        "answer": "Not always. Some programs work well with functional English and willingness to learn, while others benefit from some Spanish. The localized program information clarifies this for each opportunity."
+      },
+      "nextStep": {
+        "question": "What should I do if I still do not know which program to choose?",
+        "answer": "Start by reviewing the featured programs or the full catalog. If questions remain, return to the home contact section, review the FAQs again and then move to the application once you have more clarity."
+      }
+    },
+    "emptyState": {
+      "title": "We have not published FAQ entries for this locale yet.",
+      "description": "While this guide is being completed, visitors can still review programs, start the application or return to the contact section to continue through the main public flow."
+    },
+    "nextSteps": {
+      "title": "Is your question still open?",
+      "description": "Then the right move is to return to the main flow: compare programs, start an application or go back to the home contact section to decide your next action."
+    },
+    "actions": {
+      "programs": "Explore programs",
+      "apply": "Start application",
+      "contact": "Go to contact"
     }
   }
 }

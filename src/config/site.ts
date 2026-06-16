@@ -7,9 +7,9 @@ export const siteConfig = {
     { href: "/", labelKey: "home" },
     { href: "/about", labelKey: "about" },
     { href: "/programs", labelKey: "programs" },
+    { href: "/faqs", labelKey: "faqs" },
     { href: "/apply", labelKey: "apply" },
     { href: "/impact", labelKey: "impact" },
-    { href: "/contact", labelKey: "contact" },
     { href: "/privacy", labelKey: "privacy" },
   ],
   adminNavigation: [
