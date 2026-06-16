@@ -16,9 +16,17 @@
     "en": "Inglés"
   },
   "Shell": {
-    "tagline": "Voluntariado, pasantías y español con acompañamiento local e impacto intercultural.",
+    "tagline": "",
     "footer": "Pura Vida Interculturas conecta experiencias educativas y comunitarias desde una base bilingüe lista para crecer.",
-    "contactAction": "Ir a la sección de contacto"
+    "contactAction": "Ir a la sección de contacto",
+    "accountMenuLabel": "Abrir acciones de cuenta administrativa",
+    "accountMenuTitle": "Acciones de cuenta administrativa",
+    "accountMenuDescription": "Panel y configuración ya están disponibles. Cambio de contraseña y cierre de sesión quedan como acciones futuras hasta implementar autenticación.",
+    "accountDashboard": "Abrir panel administrativo",
+    "accountSettings": "Abrir configuración administrativa",
+    "accountChangePasswordFuture": "Cambiar contraseña (futuro)",
+    "accountSignOutFuture": "Cerrar sesión (futuro)",
+    "futureActionBadge": "Todavía no está conectado: la autenticación sigue fuera de alcance."
   },
   "AdminShell": {
     "notice": "Área administrativa preparada a nivel de routing y layout. La autenticación llegará en una fase posterior con Auth.js.",

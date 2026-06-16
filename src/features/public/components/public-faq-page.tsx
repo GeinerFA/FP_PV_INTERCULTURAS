@@ -44,8 +44,8 @@ export async function PublicFaqPage({ locale }: PublicFaqPageProps) {
 
   return (
     <div className="space-y-8">
-      <section className="animate-fade-up rounded-3xl border border-emerald-100 bg-[linear-gradient(135deg,#ecfdf5_0%,#ffffff_60%,#fef3c7_100%)] p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-700">
+      <section className="animate-fade-up rounded-3xl border border-emerald-200 bg-[linear-gradient(135deg,#dff3e7_0%,#f8fbf8_60%,#f6dfad_100%)] p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]">
+        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
           {faqs.eyebrow}
         </p>
         <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
@@ -55,7 +55,7 @@ export async function PublicFaqPage({ locale }: PublicFaqPageProps) {
       </section>
 
       {entries.length === 0 ? (
-        <section className="animate-fade-up rounded-3xl border border-dashed border-emerald-200 bg-emerald-50/60 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.3)]" style={{ animationDelay: "80ms" }}>
+        <section className="animate-fade-up rounded-3xl border border-dashed border-emerald-300 bg-emerald-100/70 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.3)]" style={{ animationDelay: "80ms" }}>
           <h2 className="text-2xl font-semibold text-slate-950">{faqs.emptyState.title}</h2>
           <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">
             {faqs.emptyState.description}
@@ -64,7 +64,7 @@ export async function PublicFaqPage({ locale }: PublicFaqPageProps) {
       ) : (
         <section className="grid gap-5">
           {entries.map((entry) => (
-            <article key={entry.question} className="animate-fade-up rounded-3xl border border-emerald-100 bg-white/95 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_-54px_rgba(21,128,61,0.28)]">
+            <article key={entry.question} className="animate-fade-up rounded-3xl border border-emerald-200 bg-white/95 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_-54px_rgba(21,128,61,0.26)]">
               <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
                 {entry.question}
               </h2>
@@ -74,25 +74,25 @@ export async function PublicFaqPage({ locale }: PublicFaqPageProps) {
         </section>
       )}
 
-      <section className="animate-fade-up rounded-3xl border border-emerald-100 bg-[linear-gradient(135deg,#ffffff_0%,#ecfdf5_58%,#fef3c7_100%)] p-8 text-slate-900 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.35)]" style={{ animationDelay: "120ms" }}>
+      <section className="animate-fade-up rounded-3xl border border-emerald-200 bg-[linear-gradient(135deg,#f8fbf8_0%,#dff3e7_58%,#f6dfad_100%)] p-8 text-slate-900 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.35)]" style={{ animationDelay: "120ms" }}>
         <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{faqs.nextSteps.title}</h2>
         <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{faqs.nextSteps.description}</p>
         <div className="mt-8 flex flex-wrap gap-4">
           <LocaleLink
             href="/programs"
-            className="inline-flex rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-600"
+            className="inline-flex rounded-full bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700"
           >
             {faqs.actions.programs}
           </LocaleLink>
           <LocaleLink
             href="/apply"
-            className="inline-flex rounded-full border border-emerald-200 bg-white px-5 py-3 text-sm font-semibold text-emerald-800 transition hover:-translate-y-0.5 hover:border-emerald-300 hover:bg-emerald-50"
+            className="inline-flex rounded-full border border-emerald-300 bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100"
           >
             {faqs.actions.apply}
           </LocaleLink>
           <Link
             href={contactHref}
-            className="inline-flex rounded-full border border-amber-200 bg-amber-50/80 px-5 py-3 text-sm font-semibold text-amber-900 transition hover:-translate-y-0.5 hover:border-amber-300 hover:bg-amber-100"
+            className="inline-flex rounded-full border border-amber-300 bg-amber-100/80 px-5 py-3 text-sm font-semibold text-amber-950 transition hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-200"
           >
             {faqs.actions.contact}
           </Link>

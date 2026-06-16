@@ -1,3 +1,4 @@
+import { ThemeInit } from "../../.flowbite-react/init";
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
+        <ThemeInit />
         {children}
       </body>
     </html>

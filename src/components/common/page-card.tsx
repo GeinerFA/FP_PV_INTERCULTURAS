@@ -14,8 +14,8 @@ export function PageCard({
   children,
 }: PageCardProps) {
   return (
-    <section className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-teal-700">
+    <section className="rounded-3xl border border-emerald-200 bg-white/95 p-8 shadow-[0_20px_50px_-45px_rgba(15,23,42,0.4)]">
+      <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
         {eyebrow}
       </p>
       <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight text-slate-950 md:text-5xl">
@@ -29,7 +29,7 @@ export function PageCard({
         {highlights.map((highlight) => (
           <article
             key={highlight}
-            className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-700"
+            className="rounded-2xl border border-emerald-200 bg-emerald-100/70 p-5 text-sm leading-6 text-slate-700"
           >
             {highlight}
           </article>

@@ -18,7 +18,15 @@
   "Shell": {
     "tagline": "Volunteer, internship and Spanish experiences with local guidance and intercultural impact.",
     "footer": "Pura Vida Interculturas connects educational and community-based experiences from a bilingual foundation that is ready to grow.",
-    "contactAction": "Go to contact section"
+    "contactAction": "Go to contact section",
+    "accountMenuLabel": "Open admin account actions",
+    "accountMenuTitle": "Admin account actions",
+    "accountMenuDescription": "Dashboard and settings are available now. Password change and sign out stay as future account actions until authentication is implemented.",
+    "accountDashboard": "Open admin dashboard",
+    "accountSettings": "Open admin settings",
+    "accountChangePasswordFuture": "Change password (future)",
+    "accountSignOutFuture": "Sign out (future)",
+    "futureActionBadge": "Not wired yet — authentication is still out of scope."
   },
   "AdminShell": {
     "notice": "Administrative area prepared at the routing and layout level. Authentication will arrive in a later phase with Auth.js.",
