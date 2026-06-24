@@ -119,9 +119,10 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
   };
 
   return (
-    <div className="flex flex-col gap-8">
-      <section className="animate-fade-up relative overflow-hidden rounded-[2rem] border border-emerald-200 bg-[linear-gradient(135deg,#cdebd8_0%,#f8fbf8_54%,#f6dfad_100%)] px-8 py-10 text-slate-900 shadow-[0_24px_70px_-48px_rgba(21,128,61,0.4)] md:px-12 md:py-14">
+    <div className="flex flex-col gap-14">
+      <section className="animate-fade-up relative overflow-hidden pb-12 text-slate-900 md:pb-16">
         <div className="animate-soft-float pointer-events-none absolute right-10 top-10 hidden h-28 w-28 rounded-full bg-emerald-100/55 blur-2xl lg:block" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-200/45 to-transparent" />
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
           {home.hero.eyebrow}
         </p>
@@ -154,8 +155,8 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <section className="animate-fade-up rounded-3xl border border-emerald-200 bg-white/95 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]" style={{ animationDelay: "80ms" }}>
+      <div className="grid gap-12 lg:grid-cols-2">
+        <section className="animate-fade-up pt-2" style={{ animationDelay: "80ms" }}>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
             {home.story.eyebrow}
           </p>
@@ -165,14 +166,15 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
           <p className="mt-4 text-base leading-8 text-slate-600">{home.story.description}</p>
           <div className="mt-6 grid gap-4">
             {Object.entries(home.story.points).map(([key, point]) => (
-              <article key={key} className="rounded-2xl bg-emerald-100/80 p-5 text-sm leading-7 text-slate-700 transition hover:-translate-y-0.5 hover:bg-emerald-100">
-                {point}
+              <article key={key} className="flex gap-3 text-sm leading-7 text-slate-700">
+                <span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-500/70" />
+                <span>{point}</span>
               </article>
             ))}
           </div>
         </section>
 
-        <section className="animate-fade-up rounded-3xl border border-amber-200 bg-white/95 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]" style={{ animationDelay: "140ms" }}>
+        <section className="animate-fade-up pt-2" style={{ animationDelay: "140ms" }}>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
             {home.history.eyebrow}
           </p>
@@ -180,9 +182,10 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
             {home.history.title}
           </h2>
           <p className="mt-4 text-base leading-8 text-slate-600">{home.history.description}</p>
-          <div className="mt-6 space-y-4">
+          <div className="mt-6 space-y-5">
             {Object.entries(home.history.milestones).map(([key, milestone]) => (
-              <article key={key} className="rounded-2xl border border-amber-200 bg-amber-100/75 p-5 transition hover:-translate-y-0.5 hover:bg-amber-100">
+              <article key={key} className="pl-5 relative">
+                <span aria-hidden="true" className="absolute left-0 top-2 h-2 w-2 rounded-full bg-amber-400/80" />
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                   {milestone.year}
                 </p>
@@ -194,7 +197,7 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         </section>
       </div>
 
-      <section className="animate-fade-up rounded-3xl border border-emerald-200 bg-white/95 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]" style={{ animationDelay: "180ms" }}>
+      <section className="animate-fade-up pt-2" style={{ animationDelay: "180ms" }}>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
           {home.offerings.eyebrow}
         </p>
@@ -215,9 +218,10 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
           </LocaleLink>
         </div>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
           {Object.entries(home.offerings.cards).map(([key, card]) => (
-            <article key={key} className="rounded-3xl bg-emerald-100/75 p-6 transition hover:-translate-y-1 hover:bg-emerald-100 hover:shadow-md">
+            <article key={key} className="relative pl-5">
+              <span aria-hidden="true" className="absolute left-0 top-2 h-2 w-2 rounded-full bg-emerald-500/70" />
               <h3 className="text-xl font-semibold text-slate-950">{card.title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">{card.description}</p>
             </article>
@@ -225,7 +229,7 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         </div>
       </section>
 
-      <section className="animate-fade-up rounded-3xl border border-amber-200 bg-white/95 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]" style={{ animationDelay: "220ms" }}>
+      <section className="animate-fade-up pt-2" style={{ animationDelay: "220ms" }}>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
           {home.info.eyebrow}
         </p>
@@ -234,9 +238,10 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         </h2>
         <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{home.info.description}</p>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
           {Object.entries(home.info.cards).map(([key, card]) => (
-            <article key={key} className="rounded-3xl border border-amber-200 bg-amber-100/70 p-6 transition hover:-translate-y-1 hover:bg-amber-100 hover:shadow-md">
+            <article key={key} className="relative pl-5">
+              <span aria-hidden="true" className="absolute left-0 top-2 h-2 w-2 rounded-full bg-amber-400/80" />
               <h3 className="text-lg font-semibold text-slate-950">{card.title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">{card.description}</p>
             </article>
@@ -244,7 +249,7 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         </div>
       </section>
 
-      <section className="animate-fade-up rounded-3xl border border-emerald-200 bg-white/95 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]" style={{ animationDelay: "260ms" }}>
+      <section className="animate-fade-up pt-2" style={{ animationDelay: "260ms" }}>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
           {home.featured.eyebrow}
         </p>
@@ -266,24 +271,24 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         </div>
 
         {featuredPrograms.length === 0 ? (
-          <article className="mt-8 rounded-3xl border border-dashed border-emerald-300 bg-emerald-100/70 p-8">
+          <article className="mt-8 max-w-2xl">
             <h3 className="text-xl font-semibold text-slate-950">{home.featured.emptyTitle}</h3>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
               {home.featured.emptyDescription}
             </p>
           </article>
         ) : (
-          <div className="mt-8 grid gap-6 lg:grid-cols-3">
+          <div className="mt-8 grid gap-8 lg:grid-cols-3">
             {featuredPrograms.map((program) => (
               <article
                 key={program.id}
-                className="overflow-hidden rounded-3xl border border-emerald-200 bg-white shadow-[0_20px_50px_-45px_rgba(15,23,42,0.55)] transition hover:-translate-y-1 hover:shadow-[0_28px_70px_-44px_rgba(21,128,61,0.32)]"
+                className="overflow-hidden"
               >
                 <div
-                  className="h-44 bg-cover bg-center"
+                  className="h-44 rounded-[1.75rem] bg-cover bg-center"
                   style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.14), rgba(15, 23, 42, 0.24)), url(${program.coverImage})` }}
                 />
-                <div className="p-6">
+                <div className="px-1 py-5">
                   <div className="flex flex-wrap gap-3">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${categoryTheme[program.category]}`}
@@ -327,7 +332,7 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         )}
       </section>
 
-      <section className="animate-fade-up rounded-[2rem] border border-emerald-200 bg-[linear-gradient(135deg,#f8fbf8_0%,#dff3e7_52%,#f6dfad_100%)] px-8 py-10 text-slate-900 shadow-[0_24px_70px_-48px_rgba(21,128,61,0.28)] md:px-12" style={{ animationDelay: "320ms" }}>
+      <section className="animate-fade-up bg-[linear-gradient(135deg,rgba(248,251,248,0.56)_0%,rgba(223,243,231,0.4)_52%,rgba(246,223,173,0.3)_100%)] px-0 py-8 text-slate-900 md:py-10" style={{ animationDelay: "320ms" }}>
         <h2 className="text-3xl font-semibold tracking-tight text-slate-950">{home.cta.title}</h2>
         <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{home.cta.description}</p>
         <div className="mt-8 flex flex-wrap gap-4">
@@ -346,7 +351,7 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         </div>
       </section>
 
-      <section id="contact" className="animate-fade-up scroll-mt-24 rounded-3xl border border-emerald-200 bg-white/95 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]" style={{ animationDelay: "360ms" }}>
+      <section id="contact" className="animate-fade-up scroll-mt-24 pt-2" style={{ animationDelay: "360ms" }}>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
           {home.contact.eyebrow}
         </p>
@@ -357,9 +362,10 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
           {home.contact.description}
         </p>
 
-        <div className="mt-8 grid gap-5 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
           {Object.entries(home.contact.cards).map(([key, card]) => (
-            <article key={key} className="rounded-3xl bg-emerald-100/75 p-6 transition hover:-translate-y-1 hover:bg-emerald-100 hover:shadow-md">
+            <article key={key} className="relative pl-5">
+              <span aria-hidden="true" className="absolute left-0 top-2 h-2 w-2 rounded-full bg-emerald-500/70" />
               <h3 className="text-lg font-semibold text-slate-950">{card.title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">{card.description}</p>
             </article>

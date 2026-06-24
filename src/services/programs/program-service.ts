@@ -1,7 +1,11 @@
-import type { AppLocale } from "@/config/i18n";
+import { defaultLocale, locales, type AppLocale } from "@/config/i18n";
 import type { LocalizedProgram, Program } from "@/types/program";
 
 import { getProgramRepository } from "./program-repository";
+
+function resolveProgramLocale(locale: string): AppLocale {
+  return locales.includes(locale as AppLocale) ? (locale as AppLocale) : defaultLocale;
+}
 
 function sortPrograms(programs: Program[]) {
   return [...programs].sort((left, right) => {
@@ -14,8 +18,9 @@ function sortPrograms(programs: Program[]) {
 }
 
 export function localizeProgram(program: Program, locale: AppLocale): LocalizedProgram {
-  const translation = program.translations[locale];
-  const seo = program.seo[locale];
+  const resolvedLocale = resolveProgramLocale(locale);
+  const translation = program.translations[resolvedLocale] ?? program.translations[defaultLocale];
+  const seo = program.seo[resolvedLocale] ?? program.seo[defaultLocale];
 
   return {
     id: program.id,
@@ -24,9 +29,9 @@ export function localizeProgram(program: Program, locale: AppLocale): LocalizedP
     status: program.status,
     featured: program.featured,
     coverImage: program.coverImage,
-    location: program.location[locale],
-    duration: program.duration[locale],
-    availability: program.availability[locale],
+    location: program.location[resolvedLocale] ?? program.location[defaultLocale],
+    duration: program.duration[resolvedLocale] ?? program.duration[defaultLocale],
+    availability: program.availability[resolvedLocale] ?? program.availability[defaultLocale],
     title: translation.title,
     shortDescription: translation.shortDescription,
     fullDescription: translation.fullDescription,

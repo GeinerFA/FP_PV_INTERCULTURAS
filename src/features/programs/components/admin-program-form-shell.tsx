@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
-import type { AppLocale } from "@/config/i18n";
+import { locales, type AppLocale } from "@/config/i18n";
 import type { Program } from "@/types/program";
 
 type AdminProgramFormShellProps = {
@@ -66,7 +66,7 @@ export async function AdminProgramFormShell({
           <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
             <h2 className="text-lg font-semibold text-white">{t("sections.localizedPresentation")}</h2>
             <div className="mt-5 grid gap-4 lg:grid-cols-2">
-              {(["es", "en"] as const).map((locale) => (
+              {locales.map((locale) => (
                 <div key={locale} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                     {t("translationLocale", { locale: locale.toUpperCase() })}

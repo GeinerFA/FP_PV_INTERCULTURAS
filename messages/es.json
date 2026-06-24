@@ -10,18 +10,13 @@
     "admin": "Admin",
     "faqs": "Preguntas frecuentes"
   },
-  "LocaleSwitcher": {
-    "label": "Idioma",
-    "es": "Español",
-    "en": "Inglés"
-  },
   "Shell": {
     "tagline": "",
-    "footer": "Pura Vida Interculturas conecta experiencias educativas y comunitarias desde una base bilingüe lista para crecer.",
+    "footer": "Pura Vida Interculturas conecta experiencias educativas y comunitarias desde una base clara y cercana lista para crecer.",
     "contactAction": "Ir a la sección de contacto",
-    "accountMenuLabel": "Abrir acciones de cuenta administrativa",
-    "accountMenuTitle": "Acciones de cuenta administrativa",
-    "accountMenuDescription": "Panel y configuración ya están disponibles. Cambio de contraseña y cierre de sesión quedan como acciones futuras hasta implementar autenticación.",
+    "accountMenuLabel": "Abrir menú administrativo",
+    "accountMenuTitle": "Área administrativa",
+    "accountMenuDescription": "Panel y configuración ya están disponibles. Cambio de contraseña y cierre de sesión siguen como acciones futuras hasta implementar autenticación.",
     "accountDashboard": "Abrir panel administrativo",
     "accountSettings": "Abrir configuración administrativa",
     "accountChangePasswordFuture": "Cambiar contraseña (futuro)",
@@ -64,7 +59,7 @@
       "description": "Listado administrativo para crear, editar, publicar o despublicar programas según el mapa funcional definido en el documento maestro.",
       "sections": [
         "Preparado para CRUD de programas.",
-        "Compatible con slugs, estados y contenido bilingüe.",
+        "Compatible con slugs, estados y contenido editorial centralizado.",
         "Más adelante se conectará a modelos y servicios."
       ]
     },
@@ -185,7 +180,7 @@
     },
     "sections": {
       "coreIdentity": "Identidad base",
-      "localizedPresentation": "Presentación localizada",
+      "localizedPresentation": "Contenido principal del programa",
       "operationalDetails": "Detalles operativos",
       "requirements": "Requisitos",
       "included": "Qué incluye",
@@ -205,9 +200,9 @@
       "duration": "Duración",
       "availability": "Disponibilidad"
     },
-    "translationLocale": "Traducción {locale}",
+    "translationLocale": "Contenido {locale}",
     "requirements": {
-      "0": "Capturar una lista estructurada por locale.",
+      "0": "Capturar una lista estructurada de requisitos.",
       "1": "Reutilizar el validador compartido antes de que exista persistencia.",
       "2": "Mantener compatibilidad con futuros arrays del formulario."
     },
@@ -244,7 +239,7 @@
   },
   "Pages": {
     "home": {
-      "eyebrow": "Sitio público bilingüe",
+      "eyebrow": "Sitio público principal",
       "title": "Conectamos personas con programas interculturales en Costa Rica.",
       "description": "Esta base presenta la organización, sus programas y el flujo inicial para captar voluntariado internacional desde una sola app fullstack.",
       "highlightOne": "Promoción clara de voluntariado, pasantías y clases de español.",
@@ -272,7 +267,7 @@
       "title": "Vista de detalle del programa",
       "description": "Pantalla reservada para mostrar descripción completa, ubicación, duración, requisitos y qué incluye cada programa.",
       "highlightOne": "La URL dinámica usa slug para futuras páginas indexables.",
-      "highlightTwo": "Se podrá alimentar con contenido bilingüe desde translations.es y translations.en.",
+      "highlightTwo": "Se podrá alimentar con contenido editorial y SEO desde el catálogo central.",
       "highlightThree": "Es el punto natural para conectar el CTA hacia la postulación."
     },
     "apply": {
@@ -344,7 +339,7 @@
     "hero": {
       "eyebrow": "Experiencias interculturales en Costa Rica",
       "title": "Viví una experiencia con propósito, acompañamiento local y conexión real con la comunidad.",
-      "description": "Pura Vida Interculturas acompaña voluntariados, pasantías y aprendizaje de español desde Pérez Zeledón, con una propuesta cercana, bilingüe y enfocada en impacto humano.",
+      "description": "Pura Vida Interculturas acompaña voluntariados, pasantías y aprendizaje de español desde Pérez Zeledón, con una propuesta cercana y enfocada en impacto humano.",
       "primaryAction": "Explorar programas",
       "secondaryAction": "Comenzar aplicación",
       "contactAction": "Hablar con el equipo"
@@ -376,7 +371,7 @@
         },
         "today": {
           "year": "Hoy",
-          "title": "Una puerta de entrada más simple y bilingüe",
+          "title": "Una puerta de entrada más simple y clara",
           "description": "Este sitio organiza la historia institucional, los programas destacados y los siguientes pasos para facilitar decisiones informadas."
         }
       }

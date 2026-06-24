@@ -35,22 +35,23 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
   } as const;
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#edf7f0_0%,#f7f4e8_48%,#eff5f1_100%)] text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-slate-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-4">
-          <div className="mb-3 flex justify-end">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.32),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_36%,#eff6f1_100%)] text-slate-900">
+      <header className="sticky top-0 z-20 bg-white/42 backdrop-blur-lg">
+        <div className="mx-auto flex max-w-6xl items-start justify-between gap-4 px-6 py-3 md:items-center">
+          <div className="min-w-0 flex-1">
+            <PublicNavbar locale={locale} navigationLabels={navigationLabels} />
+          </div>
+          <div className="shrink-0 pt-0.5">
             <PublicHeaderControls locale={locale} labels={headerControlsLabels} />
           </div>
-
-          <PublicNavbar locale={locale} navigationLabels={navigationLabels} />
         </div>
       </header>
 
-      <main className="mx-auto flex max-w-6xl flex-1 flex-col gap-10 px-6 py-10">
+      <main className="mx-auto flex max-w-6xl flex-1 flex-col gap-14 px-6 py-10 md:py-12">
         {children}
       </main>
 
-      <footer className="border-t border-emerald-200/80 bg-emerald-50/30">
+      <footer className="bg-white/18 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-8 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
           <div>
             <p>{t("Shell.footer")}</p>

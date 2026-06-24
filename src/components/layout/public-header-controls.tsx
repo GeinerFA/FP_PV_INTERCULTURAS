@@ -3,8 +3,6 @@
 import NextLink from "next/link";
 import { Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem } from "flowbite-react";
 
-import { LocaleSwitcher } from "./locale-switcher";
-
 export type PublicHeaderControlsLabels = {
   accountMenuLabel: string;
   accountMenuTitle: string;
@@ -26,21 +24,19 @@ export function PublicHeaderControls({ locale, labels }: PublicHeaderControlsPro
   const adminSettingsHref = `/${locale}/admin/settings`;
 
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2">
-      <LocaleSwitcher />
-
+    <div className="flex w-full flex-wrap items-center justify-end gap-2 text-right">
       <Dropdown
         arrowIcon={false}
         inline
         placement="bottom-end"
-        className="w-64 rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-200/50"
+        className="w-64 rounded-2xl border border-slate-200/70 bg-white/95 shadow-lg shadow-slate-200/50"
         label={
-          <div className="rounded-full border border-slate-200 bg-white p-1 shadow-sm transition hover:bg-slate-50">
+          <div className="rounded-full bg-white/35 p-1 transition hover:bg-white/60">
             <Avatar
               rounded
               placeholderInitials="PV"
               alt={labels.accountMenuLabel}
-              className="cursor-pointer bg-slate-100 text-slate-700"
+              className="cursor-pointer bg-slate-100/90 text-slate-700"
             />
           </div>
         }

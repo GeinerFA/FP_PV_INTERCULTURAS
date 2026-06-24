@@ -43,8 +43,8 @@ export async function PublicFaqPage({ locale }: PublicFaqPageProps) {
   const contactHref = `/${locale}#contact`;
 
   return (
-    <div className="space-y-8">
-      <section className="animate-fade-up rounded-3xl border border-emerald-200 bg-[linear-gradient(135deg,#dff3e7_0%,#f8fbf8_60%,#f6dfad_100%)] p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.45)]">
+    <div className="space-y-12">
+      <section className="animate-fade-up pb-10">
         <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
           {faqs.eyebrow}
         </p>
@@ -55,16 +55,16 @@ export async function PublicFaqPage({ locale }: PublicFaqPageProps) {
       </section>
 
       {entries.length === 0 ? (
-        <section className="animate-fade-up rounded-3xl border border-dashed border-emerald-300 bg-emerald-100/70 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.3)]" style={{ animationDelay: "80ms" }}>
+        <section className="animate-fade-up pt-2" style={{ animationDelay: "80ms" }}>
           <h2 className="text-2xl font-semibold text-slate-950">{faqs.emptyState.title}</h2>
           <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">
             {faqs.emptyState.description}
           </p>
         </section>
       ) : (
-        <section className="grid gap-5">
+        <section className="space-y-8">
           {entries.map((entry) => (
-            <article key={entry.question} className="animate-fade-up rounded-3xl border border-emerald-200 bg-white/95 p-8 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.35)] transition hover:-translate-y-0.5 hover:shadow-[0_26px_70px_-54px_rgba(21,128,61,0.26)]">
+            <article key={entry.question} className="animate-fade-up py-1">
               <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
                 {entry.question}
               </h2>
@@ -74,7 +74,7 @@ export async function PublicFaqPage({ locale }: PublicFaqPageProps) {
         </section>
       )}
 
-      <section className="animate-fade-up rounded-3xl border border-emerald-200 bg-[linear-gradient(135deg,#f8fbf8_0%,#dff3e7_58%,#f6dfad_100%)] p-8 text-slate-900 shadow-[0_24px_60px_-50px_rgba(15,23,42,0.35)]" style={{ animationDelay: "120ms" }}>
+      <section className="animate-fade-up bg-[linear-gradient(135deg,rgba(248,251,248,0.55)_0%,rgba(223,243,231,0.38)_58%,rgba(246,223,173,0.28)_100%)] py-8 text-slate-900" style={{ animationDelay: "120ms" }}>
         <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{faqs.nextSteps.title}</h2>
         <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{faqs.nextSteps.description}</p>
         <div className="mt-8 flex flex-wrap gap-4">

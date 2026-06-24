@@ -1,10 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
-import { Navbar, NavbarCollapse, NavbarToggle } from "flowbite-react";
+import { useState } from "react";
 
+import { locales } from "@/config/i18n";
 import { siteConfig } from "@/config/site";
+
+const localePrefixPattern = new RegExp(`^/(?:${locales.join("|")})(?=/|$)`);
 
 type NavigationLabels = Record<(typeof siteConfig.publicNavigation)[number]["labelKey"] | "contact" | "admin", string>;
 
@@ -26,7 +30,7 @@ function getNormalizedPathname(pathname: string | null) {
     return "/";
   }
 
-  const withoutLocale = pathname.replace(/^\/(es|en)(?=\/|$)/, "");
+  const withoutLocale = pathname.replace(localePrefixPattern, "");
 
   return withoutLocale || "/";
 }
@@ -35,29 +39,54 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
   const pathname = usePathname();
   const normalizedPathname = getNormalizedPathname(pathname);
   const contactHref = `/${locale}#contact`;
+  const [isOpen, setIsOpen] = useState(false);
+
+  const navItems = siteConfig.publicNavigation.filter((item) => item.href !== "/");
 
   return (
-    <Navbar
-      fluid
-      rounded
-      className="rounded-3xl border border-slate-200 bg-white px-4 py-2.5 shadow-sm md:px-5"
-    >
-      <NextLink href={`/${locale}`} className="flex items-center gap-3 text-slate-950">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold uppercase tracking-[0.22em] text-slate-700">
-          PV
-        </div>
-        <div>
-          <span className="block text-base font-semibold tracking-tight text-slate-950 md:text-lg">{siteConfig.name}</span>
-        </div>
-      </NextLink>
+    <nav className="w-full" aria-label="Public navigation">
+      <div className="flex flex-wrap items-center justify-between gap-4 md:flex-nowrap md:items-center">
+        <div className="flex min-w-0 items-center gap-4">
+          <NextLink href={`/${locale}`} className="group flex min-w-0 items-center gap-3 text-slate-950">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/85 p-1.5 shadow-[0_12px_28px_rgba(15,23,42,0.08)] ring-1 ring-slate-200/80 transition group-hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)]">
+              <Image
+                src="/branding/logo.png"
+                alt={`${siteConfig.name} logo`}
+                width={1254}
+                height={1254}
+                className="h-full w-full object-contain"
+                priority
+              />
+            </span>
+            <div className="min-w-0">
+              <span className="block truncate text-base font-semibold tracking-tight text-slate-950 transition group-hover:text-emerald-900 md:text-lg">
+                {siteConfig.name}
+              </span>
+            </div>
+          </NextLink>
 
-      <div className="flex items-center md:order-2">
-        <NavbarToggle className="rounded-full border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 focus:ring-slate-200 md:hidden" />
-      </div>
+          <button
+            type="button"
+            aria-expanded={isOpen}
+            aria-controls="public-navbar-links"
+            aria-label="Toggle navigation"
+            onClick={() => setIsOpen((current) => !current)}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/45 text-slate-700 transition hover:bg-white/65 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-emerald-200 md:hidden"
+          >
+            <span className="sr-only">Toggle navigation</span>
+            <span className="flex flex-col gap-1">
+              <span className="h-0.5 w-4 rounded-full bg-current" />
+              <span className="h-0.5 w-4 rounded-full bg-current" />
+              <span className="h-0.5 w-4 rounded-full bg-current" />
+            </span>
+          </button>
+        </div>
 
-      <NavbarCollapse className="mt-4 w-full border-t border-slate-100 pt-4 md:mt-0 md:border-0 md:pt-0">
-        <div className="flex w-full flex-col gap-2 md:flex-row md:flex-wrap md:items-center md:justify-end md:gap-1.5">
-          {siteConfig.publicNavigation.filter((item) => item.href !== "/").map((item) => {
+        <div
+          id="public-navbar-links"
+          className={`${isOpen ? "flex" : "hidden"} w-full flex-col gap-2 text-sm md:flex md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-start md:gap-5`}
+        >
+          {navItems.map((item) => {
             const href = getLocalizedHref(locale, item.href);
             const isActive = normalizedPathname === item.href;
 
@@ -66,25 +95,29 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
                 key={item.href}
                 href={href}
                 aria-current={isActive ? "page" : undefined}
-                className={`rounded-full px-3.5 py-2 text-sm font-medium transition ${
+                onClick={() => setIsOpen(false)}
+                className={`inline-flex items-center py-1 text-sm font-medium transition ${
                   isActive
-                    ? "bg-slate-100 text-slate-950 ring-1 ring-slate-200"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+                    ? "text-slate-950"
+                    : "text-slate-600 hover:text-slate-950"
                 }`}
               >
-                {navigationLabels[item.labelKey]}
+                <span className={isActive ? "border-b border-emerald-500/60 pb-0.5" : "pb-0.5"}>
+                  {navigationLabels[item.labelKey]}
+                </span>
               </NextLink>
             );
           })}
 
           <NextLink
             href={contactHref}
-            className="rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-900 transition hover:border-slate-300 hover:bg-slate-50"
+            onClick={() => setIsOpen(false)}
+            className="inline-flex items-center py-1 text-sm font-semibold text-emerald-900 transition hover:text-emerald-700"
           >
-            {navigationLabels.contact}
+            <span className="border-b border-emerald-400/45 pb-0.5">{navigationLabels.contact}</span>
           </NextLink>
         </div>
-      </NavbarCollapse>
-    </Navbar>
+      </div>
+    </nav>
   );
 }

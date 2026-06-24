@@ -22,18 +22,18 @@ export async function PublicProgramsCatalog({ locale }: PublicProgramsCatalogPro
 
   if (programs.length === 0) {
     return (
-      <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-sm text-slate-600">
+      <div className="max-w-2xl text-sm leading-7 text-slate-600">
         {t("empty")}
       </div>
     );
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="grid gap-10 lg:grid-cols-2">
       {programs.map((program) => (
         <article
           key={program.id}
-          className="flex h-full flex-col rounded-3xl border border-emerald-200 bg-white/95 p-6 shadow-[0_20px_50px_-45px_rgba(15,23,42,0.4)]"
+          className="flex h-full flex-col"
         >
           <div className="flex flex-wrap items-center gap-3">
             <span
@@ -54,19 +54,19 @@ export async function PublicProgramsCatalog({ locale }: PublicProgramsCatalogPro
           <p className="mt-3 text-sm leading-7 text-slate-600">{program.shortDescription}</p>
 
           <dl className="mt-6 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl bg-emerald-100/70 p-4">
+            <div>
               <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 {t("labels.location")}
               </dt>
               <dd className="mt-2 text-sm font-medium text-slate-900">{program.location}</dd>
             </div>
-            <div className="rounded-2xl bg-emerald-100/70 p-4">
+            <div>
               <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 {t("labels.duration")}
               </dt>
               <dd className="mt-2 text-sm font-medium text-slate-900">{program.duration}</dd>
             </div>
-            <div className="rounded-2xl bg-emerald-100/70 p-4">
+            <div>
               <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 {t("labels.availability")}
               </dt>
@@ -74,7 +74,7 @@ export async function PublicProgramsCatalog({ locale }: PublicProgramsCatalogPro
             </div>
           </dl>
 
-          <div className="mt-6 flex items-center justify-between gap-4 border-t border-emerald-200 pt-5">
+          <div className="mt-6 flex items-center justify-between gap-4 pt-3">
             <p className="text-sm text-slate-500">{program.seoDescription}</p>
             <Link
               href={{ pathname: "/programs/[slug]", params: { slug: program.slug } }}
