@@ -1,0 +1,59 @@
+## Goal
+Implement the chained apply slices for `module-2-application-flow` through the real public intake flow and finish the minimum safe legacy-Atlas compatibility remediation.
+
+## Instructions
+- Keep technical artifacts in English.
+- Respect the current Spanish-only runtime and legacy `/en/...` redirect behavior.
+- Deliver reviewable increments only: PR 1 foundation/persistence, PR 2 public intake, PR 3 admin operations.
+- Do not expand public intake into admin UI, auth, email, or reporting.
+- Keep this continuation scoped to the minimum safe compatibility remediation for legacy Atlas data on reads and writes.
+
+## Discoveries
+- `pnpm` is not on PATH in this environment; project commands must run through `corepack pnpm`.
+- The existing repo already follows a pure TypeScript validator pattern in `src/validators/program.ts`, so the new application domain can stay consistent without adding a schema validation library.
+- Deferring the `MONGODB_URI` guard until connection time keeps build and static analysis green before runtime secrets are configured.
+- Next.js `"use server"` modules can export only async functions, so shared cookie constants for the apply flow must live outside `actions.ts`.
+- A short-lived httpOnly cookie cleanly gates `/apply/success` direct access while keeping the public slice server-first and localized.
+- In Next.js server actions, `redirect()` throws, so status-action redirects must stay outside broad `try/catch` blocks or they will be treated as failures.
+- The live `fp_pv_interculturas.applications` collection still contains legacy documents where `birthDate` is stored as a BSON Date, `identityDocument` can be null, `applicationType.code` remains `volunteering`, `applicationTypeHistory` can be empty, and `statusHistory` still uses `{from,to,reason,changedAt,changedBy}` entries.
+- Repository-side normalization is the correct compatibility boundary: keep read parsing strict by normalizing legacy shapes before `parseApplication`, while leaving submission/update validation strict for new writes.
+- `corepack pnpm dlx tsx` can execute source imports for Atlas-backed verification after sourcing `.env.local`, which makes service-level create/update checks feasible without adding a permanent test runner.
+- Mongoose model caching can preserve an outdated nested schema across hot reloads; after a contract migration, `models.Application` must be explicitly dropped in non-production so `/es/apply` stops validating against the stale pre-legacy snapshot.
+- Next.js server-action forms can be verified without a browser by replaying the rendered multipart POST contract, including the hidden `$ACTION_*` inputs emitted in the HTML.
+- Atlas database names are capped at 38 bytes, so isolated empty-state runtimes need a short temporary database name when swapping `MONGODB_URI`.
+
+## Accomplished
+- ✅ Added `mongoose` dependency and a cached Atlas connection helper with lazy `MONGODB_URI` validation in `src/lib/mongoose.ts`.
+- ✅ Created the shared application domain contract (`src/types/application.ts`) and re-exported it from `src/types/index.ts`.
+- ✅ Added application validators, Mongoose schema/index, and repository/service scaffolding for create/list/find/update-status with seeded general application type and status history.
+- ✅ Replaced the placeholder public `/apply` route with a real submission flow backed by a route-local server action, a client form using `useActionState`, and localized validation/recovery feedback.
+- ✅ Added success-cookie gating and a real confirmation body for `/apply/success`, plus Spanish runtime copy updates for the public application flow.
+- ✅ Delivered the admin inbox page with persisted application summaries, explicit empty state, and locale-aware links into detail views.
+- ✅ Delivered the admin application detail page with persisted baseline fields, status history context, server-action status updates, and route-specific not-found handling.
+- ✅ Ran `corepack pnpm lint`, `corepack pnpm exec tsc --noEmit`, and `corepack pnpm build` successfully after the legacy-contract remediation.
+- ✅ Reworked the application contract to the live Atlas validator: `applicationType` now persists the legacy `volunteering` snapshot, `status` now uses `pending | in_process | resolved | cancelled`, nullable fields stay nullable, and `birthDate` / `createdAt` / `updatedAt` persist as BSON dates.
+- ✅ Reworked status and type history persistence to the legacy `{from,to,reason,changedAt,changedBy}` shape and seeded new applications with the observed creation-history entry.
+- ✅ Added repository-side read normalization for legacy/null/date data and backward compatibility mapping for older in-app status labels so admin list/detail continue to read both legacy records and newer normalized data.
+- ✅ Added minimal server-side error logging in the public apply action so real create failures are no longer swallowed without context.
+- ✅ Verified against the real Atlas-backed runtime that `/es/apply` can submit successfully via the actual server-action form POST and land on `/es/apply/success` without the generic failure state.
+- ✅ Verified against the real Atlas-backed runtime that `/es/apply/success` direct access redirects with HTTP 307 back to `/es/apply`.
+- ✅ Verified against the real Atlas-backed runtime that `/es/admin/applications` returns HTTP 200 and `/es/admin/applications/6a3dd65d734620e6e4b2eb53` returns HTTP 200 while rendering the newly created submission data.
+- ✅ Added a non-production `ApplicationModel` recompilation guard in `src/models/application.ts` so local hot-reload sessions stop reusing the stale pre-remediation schema.
+- ✅ Re-ran `corepack pnpm build` successfully on the current branch before final verification closure.
+- ✅ Verified the `/es/apply` failure path against the real runtime by submitting invalid multipart form data and confirming HTTP 200, no success cookie, no redirect, and localized field-level validation feedback.
+- ✅ Verified the live admin inbox now renders the new verification record, its detail page returns HTTP 200 with persisted applicant data, and an end-to-end status form POST redirects to `?status=updated` while the updated status becomes visible in both detail and list views.
+- ✅ Verified unknown admin application access returns HTTP 404 with not-found copy.
+- ✅ Verified the admin empty state safely on an isolated runtime at port `3100` using a temporary empty Atlas database name, which rendered the expected empty-state title and description without touching the populated real collection.
+
+## Next Steps
+- Hand off to `sdd-verify` or archive-ready review with the completed runtime evidence for tasks 4.2 and 4.3.
+
+## Relevant Files
+- src/models/application.ts — aligned the Mongoose schema export with non-production model recompilation so hot reload uses the legacy-compatible nested schema.
+- src/types/application.ts — shared legacy Atlas statuses, minimal application-type snapshots, nullable fields, and legacy history entry shapes.
+- src/validators/application.ts — strict parsing for the legacy persistence contract and nullable/date/object history fields.
+- src/services/applications/application-service.ts — seeds new writes with the legacy `volunteering` type and initial status-history entry.
+- src/services/applications/application-repository.ts — normalizes legacy reads and persists legacy status/history updates.
+- src/app/[locale]/(public)/apply/actions.ts — logs real create failures before returning the recoverable public error state.
+- openspec/changes/module-2-application-flow/tasks.md — now marks verification tasks 4.2 and 4.3 complete based on real runtime evidence.
+- sdd/module-2-application-flow/apply-progress — merged prior slices with the final verification closure evidence for Module 2.

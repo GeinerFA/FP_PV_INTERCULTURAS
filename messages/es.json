@@ -83,22 +83,21 @@
     },
     "applications": {
       "title": "Bandeja de solicitudes",
-      "description": "Bandeja de solicitudes para revisar postulaciones, filtrarlas por estado y coordinar seguimiento interno.",
+      "description": "Bandeja operativa para revisar las solicitudes recibidas, detectar su estado actual y abrir el detalle administrativo de cada persona postulante.",
       "sections": [
-        "Pensada para soportar estados y trazabilidad del proceso.",
-        "Se conectará a validaciones y persistencia más adelante.",
-        "Es una pieza central del MVP operativo."
+        "Muestra nombre, contacto, fecha de envío y estado actual de cada solicitud registrada.",
+        "Permite detectar rápidamente si la bandeja está vacía o si hay trabajo pendiente por revisar.",
+        "Funciona sobre la persistencia real del flujo de aplicación del módulo 2."
       ]
     },
     "applicationDetail": {
       "title": "Detalle de solicitud",
-      "description": "Vista individual para consultar la información de la persona postulante, su programa de interés y el historial de gestión.",
+      "description": "Vista individual para revisar los datos persistidos de la persona postulante, su estado actual y el historial administrativo del flujo.",
       "sections": [
-        "La ruta dinámica [id] ya existe.",
-        "Servirá para cambiar estados y revisar consentimientos.",
-        "Puede evolucionar hacia bitácora contextual y notas internas."
-      ],
-      "placeholderLabel": "ID placeholder de la solicitud"
+        "Carga la solicitud real desde la capa de servicios compartida del dominio applications.",
+        "Permite cambiar el estado dentro del conjunto aprobado: pendiente, en proceso, finalizado y cancelado.",
+        "Muestra la trazabilidad básica del estado sin expandirse todavía a notas internas ni reporting."
+      ]
     },
     "reports": {
       "title": "Reportes",
@@ -272,19 +271,19 @@
     },
     "apply": {
       "eyebrow": "Captación",
-      "title": "Aplicar a un programa",
-      "description": "Pantalla preparada para alojar el formulario abierto del MVP con consentimiento de privacidad y datos mínimos necesarios.",
-      "highlightOne": "Más adelante capturará nombre, correo, país, fecha estimada y mensaje.",
-      "highlightTwo": "La arquitectura ya contempla validación centralizada cliente/servidor.",
-      "highlightThree": "Después del envío, el flujo dirige a una confirmación dedicada."
+      "title": "Iniciá tu solicitud",
+      "description": "Compartinos tus datos base para que el equipo revise tu interés y te acompañe en los próximos pasos del proceso.",
+      "highlightOne": "Un solo formulario general para la primera versión operativa del flujo.",
+      "highlightTwo": "La solicitud se valida y se registra directamente en la base de datos del proyecto.",
+      "highlightThree": "Si el envío sale bien, te llevamos a una confirmación dedicada."
     },
     "applySuccess": {
       "eyebrow": "Confirmación",
       "title": "Solicitud recibida",
-      "description": "Página de éxito para agradecer la postulación y preparar futuras confirmaciones automáticas por correo.",
-      "highlightOne": "Refuerza confianza luego del envío del formulario.",
-      "highlightTwo": "Sirve como punto de integración para analytics del embudo.",
-      "highlightThree": "Más adelante podrá mostrar próximos pasos personalizados."
+      "description": "Recibimos tu información correctamente y ya quedó lista para la revisión inicial del equipo.",
+      "highlightOne": "La confirmación solo aparece después de un envío aceptado.",
+      "highlightTwo": "Podés volver a explorar programas o regresar al inicio del sitio.",
+      "highlightThree": "El flujo queda preparado para sumar correo y seguimiento en módulos futuros."
     },
     "impact": {
       "eyebrow": "Transparencia",
@@ -329,6 +328,150 @@
       "requirements": "Requisitos",
       "included": "Qué incluye",
       "programSnapshot": "Resumen del programa"
+    }
+  },
+  "ApplicationFlow": {
+    "form": {
+      "introTitle": "Completá tu solicitud general",
+      "introDescription": "Este primer formulario nos permite conocer tus datos básicos, tu disponibilidad y el contexto inicial de tu interés antes de coordinar el seguimiento.",
+      "requiredLegend": "Todos los campos son obligatorios.",
+      "privacyNotice": "Al enviar esta solicitud compartís información básica para que el equipo de Pura Vida Interculturas pueda revisar tu interés y darte seguimiento dentro de este flujo inicial del MVP.",
+      "submitLabel": "Enviar solicitud",
+      "submittingLabel": "Enviando solicitud...",
+      "validation": {
+        "required": "Completá este campo para continuar.",
+        "invalidEmail": "Ingresá un correo electrónico válido.",
+        "invalidDate": "Ingresá una fecha válida."
+      },
+      "errors": {
+        "submissionFailed": "No pudimos registrar tu solicitud en este momento. Intentá nuevamente en unos minutos."
+      },
+      "fields": {
+        "firstName": {
+          "label": "Nombre",
+          "placeholder": "Tu nombre"
+        },
+        "lastName": {
+          "label": "Apellido",
+          "placeholder": "Tu apellido"
+        },
+        "email": {
+          "label": "Correo electrónico",
+          "placeholder": "nombre@correo.com"
+        },
+        "phone": {
+          "label": "Teléfono",
+          "placeholder": "+506 0000 0000"
+        },
+        "nationality": {
+          "label": "Nacionalidad",
+          "placeholder": "Tu nacionalidad"
+        },
+        "residenceCountry": {
+          "label": "País de residencia",
+          "placeholder": "País donde vivís actualmente"
+        },
+        "residenceCity": {
+          "label": "Ciudad de residencia",
+          "placeholder": "Ciudad donde vivís actualmente"
+        },
+        "birthDate": {
+          "label": "Fecha de nacimiento",
+          "placeholder": ""
+        },
+        "identityDocument": {
+          "label": "Documento de identidad",
+          "placeholder": "Pasaporte, cédula u otro documento"
+        },
+        "availability": {
+          "label": "Disponibilidad",
+          "placeholder": "Contanos cuándo podrías participar o viajar"
+        },
+        "message": {
+          "label": "Mensaje",
+          "placeholder": "Compartí por qué te interesa aplicar y cualquier contexto útil para el equipo"
+        }
+      }
+    },
+    "success": {
+      "badgeLabel": "Confirmado",
+      "title": "Tu solicitud ya fue enviada",
+      "description": "Gracias por compartir tu información. El equipo ya puede revisar tu solicitud general y continuar con el siguiente contacto cuando corresponda.",
+      "nextStepsTitle": "Qué sigue",
+      "nextSteps": [
+        "Tu solicitud queda registrada con estado inicial pendiente dentro del flujo administrativo.",
+        "El equipo puede revisar tus datos base y dar seguimiento según disponibilidad y contexto.",
+        "Mientras tanto, podés seguir explorando los programas y conocer mejor la propuesta de la organización."
+      ],
+      "primaryActionLabel": "Volver al inicio",
+      "secondaryActionLabel": "Explorar programas"
+    },
+    "admin": {
+      "list": {
+        "heading": "Solicitudes registradas",
+        "description": "Revisá la bandeja actual y abrí cada detalle para seguir el flujo administrativo básico del módulo.",
+        "openDetail": "Abrir detalle",
+        "columns": {
+          "applicant": "Postulante",
+          "contact": "Contacto",
+          "submittedAt": "Enviado",
+          "status": "Estado",
+          "actions": "Acciones"
+        },
+        "empty": {
+          "title": "Todavía no hay solicitudes registradas.",
+          "description": "Cuando llegue la primera aplicación real desde el flujo público, esta bandeja mostrará su resumen y estado actual para revisión administrativa."
+        },
+        "statuses": {
+          "pending": "Pendiente",
+          "in_process": "En proceso",
+          "resolved": "Finalizado",
+          "cancelled": "Cancelado"
+        }
+      },
+      "detail": {
+        "applicantLabel": "Postulante",
+        "submittedAt": "Enviada {value}",
+        "feedback": {
+          "updated": "El estado de la solicitud se actualizó correctamente.",
+          "invalid": "No pudimos procesar el estado enviado. Probá nuevamente desde la lista aprobada.",
+          "no-change": "Elegí un estado diferente para registrar un nuevo cambio en el historial.",
+          "failed": "No pudimos actualizar la solicitud en este momento. Intentá nuevamente."
+        },
+        "fields": {
+          "email": "Correo electrónico",
+          "phone": "Teléfono",
+          "nationality": "Nacionalidad",
+          "residenceCountry": "País de residencia",
+          "residenceCity": "Ciudad de residencia",
+          "birthDate": "Fecha de nacimiento",
+          "identityDocument": "Documento de identidad",
+          "availability": "Disponibilidad",
+          "message": "Mensaje"
+        },
+        "statusCard": {
+          "title": "Actualizar estado",
+          "description": "Guardá el siguiente paso administrativo usando solo los estados aprobados para este MVP.",
+          "selectLabel": "Estado de la solicitud",
+          "submitLabel": "Guardar estado"
+        },
+        "history": {
+          "title": "Historial de estados",
+          "description": "Cada cambio aceptado queda reflejado en la línea de tiempo de esta solicitud.",
+          "changedBy": "Cambio registrado por {actor}"
+        },
+        "statuses": {
+          "pending": "Pendiente",
+          "in_process": "En proceso",
+          "resolved": "Finalizado",
+          "cancelled": "Cancelado"
+        }
+      },
+      "notFound": {
+        "title": "No encontramos esa solicitud.",
+        "description": "El identificador solicitado no coincide con un registro existente o ya no está disponible dentro de la bandeja administrativa actual.",
+        "backToList": "Volver a la bandeja"
+      }
     }
   },
   "Home": {

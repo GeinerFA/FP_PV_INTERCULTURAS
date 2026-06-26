@@ -16,4 +16,5 @@ export type PublicRouteItem = {
   labelKey: string;
 };
 
+export * from "./application";
 export * from "./program";
