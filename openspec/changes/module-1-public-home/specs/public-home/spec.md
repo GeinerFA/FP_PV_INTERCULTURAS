@@ -24,13 +24,20 @@ The system MUST replace the placeholder home with a localized landing page that 
 - THEN the story, history, offerings, flexible block, actions, and contact section MUST still render
 - AND the featured area MUST provide a localized path to browse programs without failing the page
 
-### Requirement: Bilingual section parity
+### Requirement: Spanish-only active locale surface
 
-The system SHOULD keep the same section structure and visitor actions across Spanish and English home variants, and MAY use temporary fallback copy only while English text is pending manual review.
+The system MUST treat Spanish as the only active public locale surface for this MVP slice, and MUST NOT normalize unsupported locale home URLs into the Spanish runtime.
 
-#### Scenario: Locale switch preserves home information structure
+#### Scenario: Visitor opens a supported public home URL
 
-- GIVEN the home content exists for Spanish and English
-- WHEN the visitor changes locale on the home page
-- THEN both locale variants expose the same section order and action targets
-- AND any temporary fallback remains inside the matching section instead of removing content
+- GIVEN a visitor opens `/es`
+- WHEN the home page renders
+- THEN the localized Spanish home experience is available
+- AND its actions stay within the supported Spanish public flow
+
+#### Scenario: Visitor opens an unsupported locale home URL
+
+- GIVEN a visitor opens a home URL under an unsupported locale prefix
+- WHEN the request reaches the runtime middleware
+- THEN the request MUST NOT be rewritten or redirected to the supported Spanish path
+- AND the unsupported locale URL remains unsupported unless a future change restores that compatibility

@@ -1,22 +1,26 @@
+import { defaultPublicPhoneDialCode } from "@/features/applications/phone-country-options";
+
 export const applicationFormFieldNames = [
   "firstName",
   "lastName",
   "email",
   "phone",
   "nationality",
-  "residenceCountry",
-  "residenceCity",
   "birthDate",
-  "identityDocument",
-  "availability",
   "message",
 ] as const;
 
 export type ApplicationFormFieldName = (typeof applicationFormFieldNames)[number];
 
-export type ApplicationFormValues = Record<ApplicationFormFieldName, string>;
+export type ApplicationFormValues = Record<ApplicationFormFieldName, string> & {
+  phoneDialCode: string;
+};
 
-export type ApplicationFormValidationCode = "required" | "invalidEmail" | "invalidDate";
+export type ApplicationFormValidationCode =
+  | "required"
+  | "invalidEmail"
+  | "invalidDate"
+  | "invalidSelection";
 
 export type ApplicationSubmissionErrorCode = "submissionFailed";
 
@@ -32,12 +36,9 @@ export const emptyApplicationFormValues: ApplicationFormValues = {
   lastName: "",
   email: "",
   phone: "",
+  phoneDialCode: defaultPublicPhoneDialCode,
   nationality: "",
-  residenceCountry: "",
-  residenceCity: "",
   birthDate: "",
-  identityDocument: "",
-  availability: "",
   message: "",
 };
 

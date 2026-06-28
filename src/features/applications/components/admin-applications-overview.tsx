@@ -27,7 +27,7 @@ export async function AdminApplicationsOverview() {
 
   if (applications.length === 0) {
     return (
-      <div className="rounded-3xl border border-dashed border-white/15 bg-slate-950/30 p-8 text-center">
+      <div className="surface-dark-soft rounded-3xl border-dashed p-8 text-center">
         <h2 className="text-xl font-semibold text-white">{t("empty.title")}</h2>
         <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-400">
           {t("empty.description")}
@@ -53,7 +53,7 @@ export async function AdminApplicationsOverview() {
     <div className="space-y-8">
       <div className="grid gap-4 md:grid-cols-4">
         {applicationStatuses.map((status) => (
-          <article key={status} className="rounded-2xl border border-white/10 bg-slate-950/40 p-5">
+          <article key={status} className="surface-dark-panel rounded-2xl p-5">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
               {t(`statuses.${status}`)}
             </p>
@@ -62,7 +62,7 @@ export async function AdminApplicationsOverview() {
         ))}
       </div>
 
-      <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-950/40">
+      <div className="surface-dark-soft overflow-hidden rounded-3xl">
         <div className="border-b border-white/10 px-6 py-5">
           <h2 className="text-xl font-semibold text-white">{t("heading")}</h2>
           <p className="mt-2 text-sm text-slate-400">{t("description")}</p>

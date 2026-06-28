@@ -1,9 +1,10 @@
-import Link from "next/link";
 import { getMessages } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
 import { Link as LocaleLink } from "@/i18n/navigation";
 import { listFeaturedPublicPrograms } from "@/services/programs/program-service";
+
+import { PublicHomeVideoCarousel } from "./public-home-video-carousel";
 
 type HomeMessages = {
   hero: {
@@ -120,38 +121,47 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
 
   return (
     <div className="flex flex-col gap-14">
-      <section className="animate-fade-up relative overflow-hidden pb-12 text-slate-900 md:pb-16">
-        <div className="animate-soft-float pointer-events-none absolute right-10 top-10 hidden h-28 w-28 rounded-full bg-emerald-100/55 blur-2xl lg:block" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-emerald-200/45 to-transparent" />
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
-          {home.hero.eyebrow}
-        </p>
-        <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight text-slate-950 md:text-6xl">
-          {home.hero.title}
-        </h1>
-        <p className="mt-5 max-w-3xl text-base leading-8 text-slate-700 md:text-lg">
-          {home.hero.description}
-        </p>
+      <PublicHomeVideoCarousel
+        slides={[
+          { src: "/videos/animal.mp4", alt: "Video principal de la experiencia intercultural" },
+          { src: "/videos/nature.mp4", alt: "Video del entorno natural de Pérez Zeledón" },
+        ]}
+      />
 
-        <div className="mt-8 flex flex-wrap gap-4">
-          <LocaleLink
-            href="/programs"
-            className="inline-flex rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700"
-          >
-            {home.hero.primaryAction}
-          </LocaleLink>
-          <LocaleLink
-            href="/apply"
-            className="inline-flex rounded-full border border-emerald-300 bg-white/85 px-6 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-white"
-          >
-            {home.hero.secondaryAction}
-          </LocaleLink>
-          <Link
-            href="#contact"
-            className="inline-flex rounded-full border border-amber-300 bg-amber-100/80 px-6 py-3 text-sm font-semibold text-amber-950 transition hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-200"
-          >
-            {home.hero.contactAction}
-          </Link>
+      <section className="animate-fade-up mt-2 md:-mt-2 lg:-mt-6" style={{ animationDelay: "40ms" }}>
+        <div className="surface-soft-strong relative z-10 overflow-hidden rounded-[2rem] px-6 py-8 md:px-8 md:py-10 lg:px-10">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
+              {home.hero.eyebrow}
+            </p>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl lg:text-6xl">
+              {home.hero.title}
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">
+              {home.hero.description}
+            </p>
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-4">
+            <LocaleLink
+              href="/programs"
+              className="inline-flex rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700"
+            >
+              {home.hero.primaryAction}
+            </LocaleLink>
+            <LocaleLink
+              href="/apply"
+              className="inline-flex rounded-full border border-emerald-300 bg-white px-6 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100"
+            >
+              {home.hero.secondaryAction}
+            </LocaleLink>
+            <LocaleLink
+              href="/contact"
+              className="inline-flex rounded-full border border-amber-300 bg-amber-100/80 px-6 py-3 text-sm font-semibold text-amber-950 transition hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-200"
+            >
+              {home.hero.contactAction}
+            </LocaleLink>
+          </div>
         </div>
       </section>
 
@@ -271,7 +281,7 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         </div>
 
         {featuredPrograms.length === 0 ? (
-          <article className="mt-8 max-w-2xl">
+          <article className="surface-soft mt-8 max-w-2xl rounded-[1.75rem] px-6 py-6">
             <h3 className="text-xl font-semibold text-slate-950">{home.featured.emptyTitle}</h3>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">
               {home.featured.emptyDescription}
@@ -280,15 +290,12 @@ export async function PublicHomePage({ locale }: PublicHomePageProps) {
         ) : (
           <div className="mt-8 grid gap-8 lg:grid-cols-3">
             {featuredPrograms.map((program) => (
-              <article
-                key={program.id}
-                className="overflow-hidden"
-              >
+              <article key={program.id} className="surface-soft overflow-hidden rounded-[2rem] p-3">
                 <div
                   className="h-44 rounded-[1.75rem] bg-cover bg-center"
                   style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.14), rgba(15, 23, 42, 0.24)), url(${program.coverImage})` }}
                 />
-                <div className="px-1 py-5">
+                <div className="px-3 py-5">
                   <div className="flex flex-wrap gap-3">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${categoryTheme[program.category]}`}

@@ -178,12 +178,9 @@ export function parseApplicationSubmission(
     email: assertEmail(object.email, `${path}.email`),
     phone: assertString(object.phone, `${path}.phone`),
     nationality: assertString(object.nationality, `${path}.nationality`),
-    residenceCountry: assertString(object.residenceCountry, `${path}.residenceCountry`),
-    residenceCity: assertString(object.residenceCity, `${path}.residenceCity`),
     birthDate: assertIsoDate(object.birthDate, `${path}.birthDate`),
-    identityDocument: assertString(object.identityDocument, `${path}.identityDocument`),
     message: assertString(object.message, `${path}.message`),
-    availability: assertString(object.availability, `${path}.availability`),
+    availability: assertNullableString(object.availability, `${path}.availability`),
   };
 }
 

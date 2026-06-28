@@ -21,6 +21,50 @@ body {
   color: var(--foreground);
 }
 
+.surface-soft {
+  border: 1px solid rgb(255 255 255 / 0.7);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.88), rgb(255 255 255 / 0.76));
+  box-shadow: 0 24px 70px -52px rgb(15 23 42 / 0.34);
+  backdrop-filter: blur(16px);
+}
+
+.surface-soft-strong {
+  border: 1px solid rgb(255 255 255 / 0.8);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.82));
+  box-shadow: 0 28px 90px -58px rgb(15 23 42 / 0.42);
+  backdrop-filter: blur(18px);
+}
+
+.surface-soft-success {
+  border: 1px solid rgb(167 243 208 / 0.9);
+  background: linear-gradient(180deg, rgb(236 253 245 / 0.96), rgb(220 252 231 / 0.84));
+  box-shadow: 0 22px 60px -48px rgb(22 101 52 / 0.35);
+}
+
+.surface-dark-soft {
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background: linear-gradient(180deg, rgb(15 23 42 / 0.46), rgb(15 23 42 / 0.32));
+  box-shadow: 0 28px 85px -62px rgb(2 6 23 / 0.85);
+  backdrop-filter: blur(18px);
+}
+
+.surface-dark-soft-strong {
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: linear-gradient(180deg, rgb(15 23 42 / 0.56), rgb(15 23 42 / 0.4));
+  box-shadow: 0 30px 90px -60px rgb(2 6 23 / 0.95);
+  backdrop-filter: blur(20px);
+}
+
+.surface-dark-panel {
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background: rgb(15 23 42 / 0.34);
+}
+
+.surface-dark-panel-muted {
+  border: 1px solid rgb(255 255 255 / 0.06);
+  background: rgb(255 255 255 / 0.04);
+}
+
 a {
   transition: color 150ms ease;
 }

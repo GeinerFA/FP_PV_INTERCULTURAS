@@ -29,7 +29,7 @@ export async function AdminProgramFormShell({
 
   return (
     <div className="space-y-8">
-      <div className="rounded-3xl border border-teal-500/20 bg-teal-500/10 p-6 text-sm leading-7 text-teal-50">
+      <div className="rounded-3xl border border-teal-400/25 bg-teal-500/12 p-6 text-sm leading-7 text-teal-50 shadow-[0_24px_60px_-48px_rgba(20,184,166,0.7)] backdrop-blur">
         <p className="font-semibold uppercase tracking-[0.18em] text-teal-200">
           {isEdit ? t("mode.edit") : t("mode.create")}
         </p>
@@ -42,7 +42,7 @@ export async function AdminProgramFormShell({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
         <section className="space-y-6">
-          <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
+          <article className="surface-dark-soft rounded-3xl p-6">
             <h2 className="text-lg font-semibold text-white">{t("sections.coreIdentity")}</h2>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               {[
@@ -53,7 +53,7 @@ export async function AdminProgramFormShell({
                 { label: t("fields.featured"), value: String(program?.featured ?? false) },
                 { label: t("fields.coverImage"), value: program?.coverImage ?? "https://..." },
               ].map((field) => (
-                <div key={field.label} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                <div key={field.label} className="surface-dark-panel rounded-2xl p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                     {field.label}
                   </p>
@@ -63,11 +63,11 @@ export async function AdminProgramFormShell({
             </div>
           </article>
 
-          <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
+          <article className="surface-dark-soft rounded-3xl p-6">
             <h2 className="text-lg font-semibold text-white">{t("sections.localizedPresentation")}</h2>
             <div className="mt-5 grid gap-4 lg:grid-cols-2">
               {locales.map((locale) => (
-                <div key={locale} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                <div key={locale} className="surface-dark-panel rounded-2xl p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                     {t("translationLocale", { locale: locale.toUpperCase() })}
                   </p>
@@ -98,7 +98,7 @@ export async function AdminProgramFormShell({
             </div>
           </article>
 
-          <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
+          <article className="surface-dark-soft rounded-3xl p-6">
             <h2 className="text-lg font-semibold text-white">{t("sections.operationalDetails")}</h2>
             <div className="mt-5 grid gap-4 md:grid-cols-3">
               {[
@@ -115,7 +115,7 @@ export async function AdminProgramFormShell({
                   value: program ? program.availability[activeLocale] : t("placeholders.localizedAvailability"),
                 },
               ].map((field) => (
-                <div key={field.label} className="rounded-2xl border border-white/10 bg-slate-900/70 p-4">
+                <div key={field.label} className="surface-dark-panel rounded-2xl p-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                     {field.label}
                   </p>
@@ -127,7 +127,7 @@ export async function AdminProgramFormShell({
         </section>
 
         <aside className="space-y-6">
-          <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
+          <article className="surface-dark-soft rounded-3xl p-6">
             <h2 className="text-lg font-semibold text-white">{t("sections.requirements")}</h2>
             <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
               {(program?.translations[activeLocale].requirements ?? [
@@ -135,14 +135,14 @@ export async function AdminProgramFormShell({
                 t("requirements.1"),
                 t("requirements.2"),
               ]).map((item) => (
-                <li key={item} className="rounded-2xl bg-slate-900/70 px-4 py-3">
+                <li key={item} className="surface-dark-panel-muted rounded-2xl px-4 py-3">
                   {item}
                 </li>
               ))}
             </ul>
           </article>
 
-          <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
+          <article className="surface-dark-soft rounded-3xl p-6">
             <h2 className="text-lg font-semibold text-white">{t("sections.included")}</h2>
             <ul className="mt-4 space-y-3 text-sm leading-7 text-slate-300">
               {(program?.translations[activeLocale].included ?? [
@@ -150,14 +150,14 @@ export async function AdminProgramFormShell({
                 t("included.1"),
                 t("included.2"),
               ]).map((item) => (
-                <li key={item} className="rounded-2xl bg-slate-900/70 px-4 py-3">
+                <li key={item} className="surface-dark-panel-muted rounded-2xl px-4 py-3">
                   {item}
                 </li>
               ))}
             </ul>
           </article>
 
-          <article className="rounded-3xl border border-white/10 bg-slate-950/40 p-6 text-sm leading-7 text-slate-300">
+          <article className="surface-dark-soft rounded-3xl p-6 text-sm leading-7 text-slate-300">
             <h2 className="text-lg font-semibold text-white">{t("sections.seoAuditPreview")}</h2>
             <p className="mt-4">{t("seoAuditDescription")}</p>
             <div className="mt-4 space-y-2 text-xs uppercase tracking-[0.18em] text-slate-500">

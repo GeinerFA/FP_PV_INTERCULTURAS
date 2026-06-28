@@ -2,7 +2,7 @@
 
 ## Technical Approach
 
-Replace the localized home placeholder with a dedicated server-rendered public home assembled from focused public feature components and message-driven content. The design keeps the existing `src/app/[locale]/(public)` split, reuses the read-only `program-service` for featured previews, adds a localized FAQs route, and updates the shared public shell so FAQ is a first-class destination while Contact resolves to the home anchor.
+Replace the localized home placeholder with a dedicated server-rendered public home assembled from focused public feature components and message-driven content. The design keeps the existing `src/app/[locale]/(public)` split, reuses the read-only `program-service` for featured previews, adds a localized FAQs route, and updates the shared public shell so FAQ is a first-class destination while Contact resolves to the home anchor. The active product surface remains Spanish-only, and unsupported non-Spanish locale paths are not normalized.
 
 ## Architecture Decisions
 
@@ -53,7 +53,7 @@ Visitor -> /[locale]/contact -> redirect -> /[locale]#contact
 | `src/config/site.ts` | Modify | Replace `/contact` nav item with `/faqs`; keep contact as explicit anchor behavior instead of route config. |
 | `src/i18n/routing.ts` | Modify | Register `/faqs`; keep `/contact` only if redirect route remains. |
 | `src/services/programs/program-service.ts` | Modify | Add a small read-only helper for featured published programs or reuse `listPublicPrograms` with local filtering. |
-| `messages/es.json`, `messages/en.json` | Modify | Add `Home`, `Faqs`, and shell/navigation copy using Spanish-first structure and temporary English fallback only during development. |
+| `messages/es.json` | Modify | Keep the existing message namespaces aligned with the current Spanish-first public copy. |
 
 ## Interfaces / Contracts
 
@@ -66,7 +66,7 @@ type FaqEntry = {
 };
 ```
 
-Message namespaces should be split by surface (`Home`, `Faqs`, `Navigation`, `Shell`) so both locales keep identical structure.
+Message namespaces should be split by surface (`Home`, `Faqs`, `Navigation`, `Shell`) so the active Spanish runtime stays consistent with the locale-aware app structure.
 
 ## Testing Strategy
 
@@ -74,7 +74,7 @@ Message namespaces should be split by surface (`Home`, `Faqs`, `Navigation`, `Sh
 |-------|-------------|----------|
 | Static quality | Routing/types/messages wiring | `pnpm lint` and `pnpm exec tsc --noEmit` |
 | Integration gap | Home fallback when no featured programs exist | Manual browser verification because no runner is configured |
-| Integration gap | FAQ route, locale switch, and contact anchor/redirect behavior | Manual verification across `/es` and `/en` |
+| Integration gap | FAQ route and contact anchor/redirect behavior | Manual verification on `/es` |
 
 ## Migration / Rollout
 
@@ -82,4 +82,4 @@ No migration required. Rollout is file-based and reversible by restoring the pla
 
 ## Open Questions
 
-- [ ] Who performs the mandatory manual English content review before this slice is considered production-ready?
+- [ ] Should a future cleanup pass simplify the wider locale-aware folder structure now that Spanish is the only supported locale?

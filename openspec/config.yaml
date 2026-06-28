@@ -40,7 +40,7 @@ testing:
 
 rules:
   proposal:
-    - Anchor every change in the current bilingual MVP structure and localized routing.
+    - Anchor every change in the current Spanish-first MVP structure and localized routing.
     - Include rollback notes when a change touches routing, locale handling, or shared program services.
   specs:
     - Use Given/When/Then scenarios.

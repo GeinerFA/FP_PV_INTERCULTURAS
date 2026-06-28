@@ -54,10 +54,7 @@ export async function AdminApplicationDetail({
     { key: "email", value: application.email },
     { key: "phone", value: application.phone },
     { key: "nationality", value: application.nationality },
-    { key: "residenceCountry", value: formatOptionalText(application.residenceCountry) },
-    { key: "residenceCity", value: formatOptionalText(application.residenceCity) },
     { key: "birthDate", value: application.birthDate ? formatDateOnly(application.birthDate, locale) : "—" },
-    { key: "identityDocument", value: formatOptionalText(application.identityDocument) },
     { key: "availability", value: formatOptionalText(application.availability) },
   ] as const;
 
@@ -65,14 +62,14 @@ export async function AdminApplicationDetail({
     <div className="space-y-8">
       {feedback ? (
         <div
-          className={`rounded-2xl border px-4 py-3 text-sm ${feedback === "updated" ? "border-emerald-400/30 bg-emerald-500/10 text-emerald-100" : "border-amber-400/30 bg-amber-500/10 text-amber-100"}`}
+          className={`rounded-2xl border px-4 py-3 text-sm shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)] backdrop-blur ${feedback === "updated" ? "border-emerald-400/30 bg-emerald-500/12 text-emerald-100" : "border-amber-400/30 bg-amber-500/12 text-amber-100"}`}
         >
           {feedback === "updated" ? t("feedback.updated") : t(`feedback.${feedback}`)}
         </div>
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]">
-        <section className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
+        <section className="surface-dark-soft rounded-3xl p-6">
           <div className="flex flex-col gap-4 border-b border-white/10 pb-6 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -109,7 +106,7 @@ export async function AdminApplicationDetail({
         </section>
 
         <div className="space-y-6">
-          <section className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
+          <section className="surface-dark-soft rounded-3xl p-6">
             <h2 className="text-lg font-semibold text-white">{t("statusCard.title")}</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">{t("statusCard.description")}</p>
 
@@ -141,13 +138,13 @@ export async function AdminApplicationDetail({
             </form>
           </section>
 
-          <section className="rounded-3xl border border-white/10 bg-slate-950/40 p-6">
+          <section className="surface-dark-soft rounded-3xl p-6">
             <h2 className="text-lg font-semibold text-white">{t("history.title")}</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">{t("history.description")}</p>
 
             <ol className="mt-6 space-y-4">
                {history.map((entry, index) => (
-                 <li key={`${entry.changedAt}-${entry.to}-${index}`} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                 <li key={`${entry.changedAt}-${entry.to}-${index}`} className="surface-dark-panel-muted rounded-2xl p-4">
                    <div className="flex flex-wrap items-center justify-between gap-3">
                      <span
                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[entry.to]}`}

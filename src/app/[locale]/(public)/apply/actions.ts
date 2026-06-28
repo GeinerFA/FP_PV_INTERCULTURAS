@@ -12,6 +12,12 @@ import {
   type ApplicationFormValidationCode,
   type ApplicationFormValues,
 } from "@/features/applications/public-application-form-contract";
+import { isSupportedCountryName } from "@/features/applications/country-options";
+import {
+  defaultPublicPhoneDialCode,
+  isSupportedPhoneDialCode,
+  normalizePhoneNumber,
+} from "@/features/applications/phone-country-options";
 import {
   publicApplicationSuccessCookieMaxAgeSeconds,
   publicApplicationSuccessCookieName,
@@ -26,10 +32,22 @@ function readFieldValue(formData: FormData, field: ApplicationFormFieldName): st
 }
 
 function readApplicationFormValues(formData: FormData): ApplicationFormValues {
-  return applicationFormFieldNames.reduce<ApplicationFormValues>((values, field) => {
-    values[field] = readFieldValue(formData, field);
-    return values;
-  }, { ...emptyApplicationFormValues });
+  const phoneDialCodeValue = formData.get("phoneDialCode");
+  const phoneDialCode =
+    typeof phoneDialCodeValue === "string" && isSupportedPhoneDialCode(phoneDialCodeValue)
+      ? phoneDialCodeValue
+      : defaultPublicPhoneDialCode;
+
+  return applicationFormFieldNames.reduce<ApplicationFormValues>(
+    (values, field) => {
+      values[field] = readFieldValue(formData, field);
+      return values;
+    },
+    {
+      ...emptyApplicationFormValues,
+      phoneDialCode,
+    },
+  );
 }
 
 function isValidEmail(value: string): boolean {
@@ -55,6 +73,10 @@ function validateApplicationForm(values: ApplicationFormValues) {
 
   if (!fieldErrors.birthDate && !isValidDate(values.birthDate)) {
     fieldErrors.birthDate = "invalidDate";
+  }
+
+  if (!fieldErrors.nationality && !isSupportedCountryName(values.nationality)) {
+    fieldErrors.nationality = "invalidSelection";
   }
 
   return fieldErrors;
@@ -86,7 +108,11 @@ export async function submitApplicationAction(
   }
 
   try {
-    await createApplication(values);
+    await createApplication({
+      ...values,
+      phone: normalizePhoneNumber(values.phoneDialCode, values.phone),
+      availability: null,
+    });
   } catch (error) {
     console.error("[apply] Failed to create application", {
       error,

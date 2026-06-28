@@ -10,15 +10,12 @@ const rawProgramCatalog = [
     coverImage: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
     location: {
       es: "San Ramòn, Costa Rica",
-      en: "San Ramòn, Costa Rica",
     },
     duration: {
       es: "2 a 12 semanas",
-      en: "2 to 12 weeks",
     },
     availability: {
       es: "Disponible todo el año",
-      en: "Available year-round",
     },
     translations: {
       es: {
@@ -38,34 +35,12 @@ const rawProgramCatalog = [
           "Orientación cultural y apoyo básico para adaptación en la zona.",
         ],
       },
-      en: {
-        title: "Community learning volunteer program",
-        shortDescription:
-          "Support after-school learning, creative activities and intercultural exchange with children and teenagers in the local community.",
-        fullDescription:
-          "This program is designed for participants who want to contribute directly to community-based educational initiatives. Activities may include basic English support, guided reading, recreational dynamics, workshop assistance and small project coordination together with the local team.",
-        requirements: [
-          "Intermediate English or Spanish to communicate with the local team.",
-          "Comfort working with children and teenagers in community settings.",
-          "Proactive, respectful attitude and openness to intercultural exchange.",
-        ],
-        included: [
-          "Initial onboarding about the organization and local context.",
-          "Operational guidance from the coordination team.",
-          "Cultural orientation and basic support for settling into the area.",
-        ],
-      },
     },
     seo: {
       es: {
         title: "Voluntariado educativo en Costa Rica",
         description:
           "Descubrí un programa de voluntariado comunitario con apoyo educativo, intercambio cultural y acompañamiento local en Costa Rica.",
-      },
-      en: {
-        title: "Community education volunteering in Costa Rica",
-        description:
-          "Explore a community volunteer program focused on education, cultural exchange and local support in Costa Rica.",
       },
     },
     createdBy: "seed-system",
@@ -82,15 +57,12 @@ const rawProgramCatalog = [
     coverImage: "https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=1200&q=80",
     location: {
       es: "San Isidro de El General, Costa Rica",
-      en: "San Isidro de El General, Costa Rica",
     },
     duration: {
       es: "4 a 16 semanas",
-      en: "4 to 16 weeks",
     },
     availability: {
       es: "Convocatoria trimestral",
-      en: "Quarterly intake",
     },
     translations: {
       es: {
@@ -110,34 +82,12 @@ const rawProgramCatalog = [
           "Carta de participación al completar la pasantía.",
         ],
       },
-      en: {
-        title: "Social impact operations internship",
-        shortDescription:
-          "Built for students who want hands-on experience in program coordination, documentation and operational improvement inside a social organization.",
-        fullDescription:
-          "This internship provides practical exposure to the daily operations of Pura Vida Interculturas. Participants may support information gathering, administrative coordination, process follow-up, knowledge documentation and improvement proposals aligned with the organization’s MVP goals.",
-        requirements: [
-          "Be a current student or recent graduate in a related field.",
-          "Comfort working with documentation, spreadsheets or applied research.",
-          "Strong interest in social organizations and process improvement.",
-        ],
-        included: [
-          "Basic mentorship around institutional operations.",
-          "Space to develop academic deliverables or small applied projects.",
-          "Participation letter upon successful completion.",
-        ],
-      },
     },
     seo: {
       es: {
         title: "Pasantía en impacto social",
         description:
           "Conocé una pasantía orientada a operaciones, documentación y mejora continua dentro de una organización con enfoque intercultural.",
-      },
-      en: {
-        title: "Social impact internship",
-        description:
-          "Discover an internship focused on operations, documentation and continuous improvement inside an intercultural organization.",
       },
     },
     createdBy: "seed-system",
@@ -154,15 +104,12 @@ const rawProgramCatalog = [
     coverImage: "https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=1200&q=80",
     location: {
       es: "Modalidad presencial en Pérez Zeledón",
-      en: "In-person in Pérez Zeledón",
     },
     duration: {
       es: "1 a 8 semanas",
-      en: "1 to 8 weeks",
     },
     availability: {
       es: "Inicio flexible según nivel",
-      en: "Flexible start based on level",
     },
     translations: {
       es: {
@@ -182,34 +129,12 @@ const rawProgramCatalog = [
           "Actividades de inmersión cultural coordinadas con el equipo local.",
         ],
       },
-      en: {
-        title: "Spanish classes and cultural immersion",
-        shortDescription:
-          "Learn practical Spanish while joining cultural experiences and building direct connection with the local community.",
-        fullDescription:
-          "This program blends conversational learning, cultural context and close support for participants who want to improve their Spanish in a real environment. It can be paired with community activities, local excursions and personal goals related to travel, study or volunteering.",
-        requirements: [
-          "No previous level is required; content adapts from beginner to intermediate learners.",
-          "Interest in actively joining guided cultural experiences.",
-          "Commitment to attendance and consistent practice.",
-        ],
-        included: [
-          "Initial language level assessment.",
-          "Learning plan tailored to pace and participant goals.",
-          "Cultural immersion activities coordinated with the local team.",
-        ],
-      },
     },
     seo: {
       es: {
         title: "Clases de español en Costa Rica",
         description:
           "Aprendé español con acompañamiento local e inmersión cultural dentro del entorno de Pura Vida Interculturas.",
-      },
-      en: {
-        title: "Spanish classes in Costa Rica",
-        description:
-          "Study Spanish with local guidance and cultural immersion through Pura Vida Interculturas.",
       },
     },
     createdBy: "seed-system",
@@ -226,15 +151,12 @@ const rawProgramCatalog = [
     coverImage: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=1200&q=80",
     location: {
       es: "Comunidades rurales del sur de Costa Rica",
-      en: "Rural communities in southern Costa Rica",
     },
     duration: {
       es: "3 a 10 semanas",
-      en: "3 to 10 weeks",
     },
     availability: {
       es: "Próxima apertura de cupos",
-      en: "Upcoming intake opening",
     },
     translations: {
       es: {
@@ -254,34 +176,12 @@ const rawProgramCatalog = [
           "Definición final de inclusiones en la siguiente iteración administrativa.",
         ],
       },
-      en: {
-        title: "Family support volunteer program",
-        shortDescription:
-          "Program in preparation to strengthen community support activities, family workshops and local accompaniment.",
-        fullDescription:
-          "This proposal remains in draft while the team finalizes scheduling, partnerships and operational scope. The goal is to shape a volunteer experience focused on family support, socio-educational activities and coordination with community stakeholders in the region.",
-        requirements: [
-          "Sensitivity for working with families and diverse community contexts.",
-          "Availability to adapt to schedules defined by the local coordination team.",
-          "Respect for community processes and responsible communication.",
-        ],
-        included: [
-          "Contextual onboarding once the call is published.",
-          "Operational follow-up from the coordination team.",
-          "Final inclusion details in the next administrative iteration.",
-        ],
-      },
     },
     seo: {
       es: {
         title: "Voluntariado de acompañamiento familiar",
         description:
           "Programa en borrador para apoyo familiar y trabajo comunitario dentro de futuras convocatorias de Pura Vida Interculturas.",
-      },
-      en: {
-        title: "Family support volunteering",
-        description:
-          "Draft program for future family support and community-based volunteering opportunities at Pura Vida Interculturas.",
       },
     },
     createdBy: "seed-system",

@@ -31,6 +31,8 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
     privacyNotice: t("privacyNotice"),
     submitLabel: t("submitLabel"),
     submittingLabel: t("submittingLabel"),
+    phoneDialCodeLabel: t("phoneDialCodeLabel"),
+    searchableSelect: t.raw("searchableSelect") as PublicApplicationFormCopy["searchableSelect"],
     fields: t.raw("fields") as PublicApplicationFormCopy["fields"],
     validation: t.raw("validation") as PublicApplicationFormCopy["validation"],
     errors: t.raw("errors") as PublicApplicationFormCopy["errors"],

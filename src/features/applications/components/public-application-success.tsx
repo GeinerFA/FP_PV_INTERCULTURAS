@@ -20,7 +20,7 @@ export function PublicApplicationSuccess({
   secondaryActionLabel,
 }: PublicApplicationSuccessProps) {
   return (
-    <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 md:p-8">
+    <div className="surface-soft-success rounded-3xl p-6 md:p-8">
       <div className="max-w-3xl space-y-4">
         <div className="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-900">
           {badgeLabel}

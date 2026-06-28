@@ -8,7 +8,7 @@ Define the shared localized shell used across public routes.
 
 ### Requirement: Shared localized public navigation and footer
 
-The system MUST use a shared public shell across localized public routes with organization identity, localized navigation labels, locale switching, and footer information suitable for visitor-facing pages.
+The system MUST use a shared public shell across localized public routes with organization identity, localized navigation labels, and footer information suitable for visitor-facing pages.
 
 #### Scenario: Public page renders inside the shared shell
 

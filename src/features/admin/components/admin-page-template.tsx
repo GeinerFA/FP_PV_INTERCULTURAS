@@ -15,7 +15,7 @@ export async function AdminPageTemplate({
   const sections = t.raw(`${pageKey}.sections`) as string[];
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur">
+    <section className="surface-dark-soft rounded-3xl p-8">
       <h1 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
         {t(`${pageKey}.title`)}
       </h1>
@@ -27,7 +27,7 @@ export async function AdminPageTemplate({
         {sections.map((section) => (
           <article
             key={section}
-            className="rounded-2xl border border-white/10 bg-slate-950/40 p-5 text-sm leading-6 text-slate-300"
+            className="surface-dark-panel rounded-2xl p-5 text-sm leading-6 text-slate-300"
           >
             {section}
           </article>

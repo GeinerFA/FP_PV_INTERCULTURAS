@@ -39,22 +39,14 @@ export type ApplicationSubmissionInput = {
   email: string;
   phone: string;
   nationality: string;
-  residenceCountry: string;
-  residenceCity: string;
   birthDate: string;
-  identityDocument: string;
   message: string;
-  availability: string;
+  availability?: string | null;
 };
 
 export type CreateApplicationRecordInput = Omit<
   ApplicationSubmissionInput,
-  | "birthDate"
-  | "identityDocument"
-  | "message"
-  | "availability"
-  | "residenceCountry"
-  | "residenceCity"
+  "birthDate" | "message" | "availability"
 > & {
   birthDate: Date | null;
   identityDocument: string | null;

@@ -333,15 +333,21 @@
   "ApplicationFlow": {
     "form": {
       "introTitle": "Completá tu solicitud general",
-      "introDescription": "Este primer formulario nos permite conocer tus datos básicos, tu disponibilidad y el contexto inicial de tu interés antes de coordinar el seguimiento.",
+      "introDescription": "Este primer formulario nos permite conocer tus datos básicos y el contexto inicial de tu interés antes de coordinar el seguimiento.",
       "requiredLegend": "Todos los campos son obligatorios.",
       "privacyNotice": "Al enviar esta solicitud compartís información básica para que el equipo de Pura Vida Interculturas pueda revisar tu interés y darte seguimiento dentro de este flujo inicial del MVP.",
       "submitLabel": "Enviar solicitud",
       "submittingLabel": "Enviando solicitud...",
+      "phoneDialCodeLabel": "Prefijo telefónico",
+      "searchableSelect": {
+        "searchPlaceholder": "Buscá para filtrar la lista",
+        "noResults": "No encontramos coincidencias."
+      },
       "validation": {
         "required": "Completá este campo para continuar.",
         "invalidEmail": "Ingresá un correo electrónico válido.",
-        "invalidDate": "Ingresá una fecha válida."
+        "invalidDate": "Ingresá una fecha válida.",
+        "invalidSelection": "Seleccioná una opción válida de la lista."
       },
       "errors": {
         "submissionFailed": "No pudimos registrar tu solicitud en este momento. Intentá nuevamente en unos minutos."
@@ -361,31 +367,15 @@
         },
         "phone": {
           "label": "Teléfono",
-          "placeholder": "+506 0000 0000"
+          "placeholder": "0000 0000"
         },
         "nationality": {
           "label": "Nacionalidad",
-          "placeholder": "Tu nacionalidad"
-        },
-        "residenceCountry": {
-          "label": "País de residencia",
-          "placeholder": "País donde vivís actualmente"
-        },
-        "residenceCity": {
-          "label": "Ciudad de residencia",
-          "placeholder": "Ciudad donde vivís actualmente"
+          "placeholder": "Seleccioná tu país"
         },
         "birthDate": {
           "label": "Fecha de nacimiento",
           "placeholder": ""
-        },
-        "identityDocument": {
-          "label": "Documento de identidad",
-          "placeholder": "Pasaporte, cédula u otro documento"
-        },
-        "availability": {
-          "label": "Disponibilidad",
-          "placeholder": "Contanos cuándo podrías participar o viajar"
         },
         "message": {
           "label": "Mensaje",
@@ -442,10 +432,7 @@
           "email": "Correo electrónico",
           "phone": "Teléfono",
           "nationality": "Nacionalidad",
-          "residenceCountry": "País de residencia",
-          "residenceCity": "Ciudad de residencia",
           "birthDate": "Fecha de nacimiento",
-          "identityDocument": "Documento de identidad",
           "availability": "Disponibilidad",
           "message": "Mensaje"
         },

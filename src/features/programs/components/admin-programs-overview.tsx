@@ -22,21 +22,21 @@ export async function AdminProgramsOverview() {
   return (
     <div className="space-y-8">
       <div className="grid gap-4 md:grid-cols-3">
-        <article className="rounded-2xl border border-white/10 bg-slate-950/40 p-5">
+        <article className="surface-dark-panel rounded-2xl p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
             {t("stats.catalogSize.label")}
           </p>
           <p className="mt-3 text-3xl font-semibold text-white">{programs.length}</p>
           <p className="mt-2 text-sm text-slate-400">{t("stats.catalogSize.description")}</p>
         </article>
-        <article className="rounded-2xl border border-white/10 bg-slate-950/40 p-5">
+        <article className="surface-dark-panel rounded-2xl p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
             {t("stats.publishedNow.label")}
           </p>
           <p className="mt-3 text-3xl font-semibold text-white">{publishedCount}</p>
           <p className="mt-2 text-sm text-slate-400">{t("stats.publishedNow.description")}</p>
         </article>
-        <article className="rounded-2xl border border-white/10 bg-slate-950/40 p-5">
+        <article className="surface-dark-panel rounded-2xl p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
             {t("stats.featuredHighlights.label")}
           </p>
@@ -45,7 +45,7 @@ export async function AdminProgramsOverview() {
         </article>
       </div>
 
-      <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-950/40">
+      <div className="surface-dark-soft overflow-hidden rounded-3xl">
         <div className="flex flex-col gap-4 border-b border-white/10 px-6 py-5 md:flex-row md:items-center md:justify-between">
           <div>
             <h2 className="text-xl font-semibold text-white">{t("table.heading")}</h2>
