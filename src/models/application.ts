@@ -93,6 +93,35 @@ const applicationTypeHistoryEntrySchema = new Schema(
   { _id: false },
 );
 
+const applicationCurriculumSchema = new Schema(
+  {
+    fileName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    contentType: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    sizeBytes: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    uploadedAt: {
+      type: Date,
+      required: true,
+    },
+    data: {
+      type: Buffer,
+      required: true,
+    },
+  },
+  { _id: false },
+);
+
 const applicationSchema = new Schema(
   {
     firstName: {
@@ -153,6 +182,10 @@ const applicationSchema = new Schema(
       type: String,
       default: null,
       trim: true,
+    },
+    curriculum: {
+      type: applicationCurriculumSchema,
+      default: null,
     },
     applicationType: {
       type: applicationTypeSnapshotSchema,

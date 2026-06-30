@@ -7,7 +7,9 @@ import type { AppLocale } from "@/config/i18n";
 import {
   applicationFormFieldNames,
   emptyApplicationFormValues,
+  requiredApplicationFormFieldNames,
   type ApplicationSubmissionActionState,
+  type ApplicationFormErrorFieldName,
   type ApplicationFormFieldName,
   type ApplicationFormValidationCode,
   type ApplicationFormValues,
@@ -24,6 +26,16 @@ import {
   publicApplicationSuccessCookieValue,
 } from "@/features/applications/public-application-flow";
 import { createApplication } from "@/services/applications/application-service";
+
+const supportedCurriculumContentTypes = new Set([
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+]);
+
+const supportedCurriculumExtensions = [".pdf", ".doc", ".docx"];
+
+const maxCurriculumFileSizeBytes = 5 * 1024 * 1024;
 
 function readFieldValue(formData: FormData, field: ApplicationFormFieldName): string {
   const value = formData.get(field);
@@ -59,9 +71,9 @@ function isValidDate(value: string): boolean {
 }
 
 function validateApplicationForm(values: ApplicationFormValues) {
-  const fieldErrors: Partial<Record<ApplicationFormFieldName, ApplicationFormValidationCode>> = {};
+  const fieldErrors: Partial<Record<ApplicationFormErrorFieldName, ApplicationFormValidationCode>> = {};
 
-  for (const field of applicationFormFieldNames) {
+  for (const field of requiredApplicationFormFieldNames) {
     if (values[field].length === 0) {
       fieldErrors[field] = "required";
     }
@@ -82,9 +94,51 @@ function validateApplicationForm(values: ApplicationFormValues) {
   return fieldErrors;
 }
 
+function readCurriculumFile(formData: FormData): File | null {
+  const value = formData.get("curriculum");
+
+  if (!(value instanceof File) || value.size === 0) {
+    return null;
+  }
+
+  return value;
+}
+
+function validateCurriculumFile(file: File | null): ApplicationFormValidationCode | null {
+  if (!file) {
+    return null;
+  }
+
+  const normalizedName = file.name.trim().toLowerCase();
+  const hasSupportedExtension = supportedCurriculumExtensions.some((extension) =>
+    normalizedName.endsWith(extension),
+  );
+  const hasSupportedContentType = file.type.length === 0 || supportedCurriculumContentTypes.has(file.type);
+
+  if (!hasSupportedExtension || !hasSupportedContentType) {
+    return "invalidFileType";
+  }
+
+  if (file.size > maxCurriculumFileSizeBytes) {
+    return "fileTooLarge";
+  }
+
+  return null;
+}
+
+async function buildCurriculumPayload(file: File) {
+  return {
+    fileName: file.name.trim() || "curriculum",
+    contentType: file.type,
+    sizeBytes: file.size,
+    uploadedAt: new Date().toISOString(),
+    data: Buffer.from(await file.arrayBuffer()),
+  };
+}
+
 function buildErrorState(
   values: ApplicationFormValues,
-  fieldErrors: Partial<Record<ApplicationFormFieldName, ApplicationFormValidationCode>>,
+  fieldErrors: Partial<Record<ApplicationFormErrorFieldName, ApplicationFormValidationCode>>,
   formError?: ApplicationSubmissionActionState["formError"],
 ): ApplicationSubmissionActionState {
   return {
@@ -102,16 +156,26 @@ export async function submitApplicationAction(
 ): Promise<ApplicationSubmissionActionState> {
   const values = readApplicationFormValues(formData);
   const fieldErrors = validateApplicationForm(values);
+  const curriculumFile = readCurriculumFile(formData);
+  const curriculumError = validateCurriculumFile(curriculumFile);
+
+  if (curriculumError) {
+    fieldErrors.curriculum = curriculumError;
+  }
 
   if (Object.keys(fieldErrors).length > 0) {
     return buildErrorState(values, fieldErrors);
   }
 
   try {
+    const curriculum = curriculumFile ? await buildCurriculumPayload(curriculumFile) : null;
+
     await createApplication({
       ...values,
       phone: normalizePhoneNumber(values.phoneDialCode, values.phone),
+      message: values.message.length > 0 ? values.message : null,
       availability: null,
+      curriculum,
     });
   } catch (error) {
     console.error("[apply] Failed to create application", {

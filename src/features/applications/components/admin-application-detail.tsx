@@ -40,6 +40,14 @@ function formatDateOnly(value: string, locale: string): string {
   }).format(new Date(value));
 }
 
+function formatFileSize(sizeBytes: number): string {
+  if (sizeBytes < 1024 * 1024) {
+    return `${Math.max(1, Math.round(sizeBytes / 1024))} KB`;
+  }
+
+  return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export async function AdminApplicationDetail({
   application,
   updateAction,
@@ -100,7 +108,29 @@ export async function AdminApplicationDetail({
               </dt>
               <dd className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-200">
                  {formatOptionalText(application.message)}
-               </dd>
+                </dd>
+            </div>
+            <div className="md:col-span-2">
+              <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                {t("fields.curriculum")}
+              </dt>
+              <dd className="mt-2 text-sm leading-6 text-slate-200">
+                {application.curriculum ? (
+                  <div className="flex flex-col gap-3">
+                    <p>
+                      {application.curriculum.fileName} · {formatFileSize(application.curriculum.sizeBytes)}
+                    </p>
+                    <a
+                      href={`/${locale}/admin/applications/${application.id}/curriculum`}
+                      className="inline-flex w-fit rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:border-teal-400 hover:text-teal-200"
+                    >
+                      {t("curriculum.downloadLabel")}
+                    </a>
+                  </div>
+                ) : (
+                  "—"
+                )}
+              </dd>
             </div>
           </dl>
         </section>

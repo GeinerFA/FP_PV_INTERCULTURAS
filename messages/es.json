@@ -25,6 +25,7 @@
   },
   "AdminShell": {
     "notice": "Área administrativa preparada a nivel de routing y layout. La autenticación llegará en una fase posterior con Auth.js.",
+    "homeLabel": "Volver al inicio público",
     "login": "Placeholder de acceso",
     "navigation": {
       "dashboard": "Panel",
@@ -334,7 +335,7 @@
     "form": {
       "introTitle": "Completá tu solicitud general",
       "introDescription": "Este primer formulario nos permite conocer tus datos básicos y el contexto inicial de tu interés antes de coordinar el seguimiento.",
-      "requiredLegend": "Todos los campos son obligatorios.",
+      "requiredLegend": "Todos los campos son obligatorios, excepto el mensaje y el curriculum.",
       "privacyNotice": "Al enviar esta solicitud compartís información básica para que el equipo de Pura Vida Interculturas pueda revisar tu interés y darte seguimiento dentro de este flujo inicial del MVP.",
       "submitLabel": "Enviar solicitud",
       "submittingLabel": "Enviando solicitud...",
@@ -347,7 +348,9 @@
         "required": "Completá este campo para continuar.",
         "invalidEmail": "Ingresá un correo electrónico válido.",
         "invalidDate": "Ingresá una fecha válida.",
-        "invalidSelection": "Seleccioná una opción válida de la lista."
+        "invalidSelection": "Seleccioná una opción válida de la lista.",
+        "invalidFileType": "Subí un archivo PDF, DOC o DOCX válido.",
+        "fileTooLarge": "El archivo debe pesar 5 MB o menos."
       },
       "errors": {
         "submissionFailed": "No pudimos registrar tu solicitud en este momento. Intentá nuevamente en unos minutos."
@@ -378,8 +381,14 @@
           "placeholder": ""
         },
         "message": {
-          "label": "Mensaje",
-          "placeholder": "Compartí por qué te interesa aplicar y cualquier contexto útil para el equipo"
+          "label": "Mensaje (opcional)",
+          "placeholder": "Compartí por qué te interesa aplicar y cualquier contexto útil para el equipo",
+          "description": "Opcional. Si querés, podés contarnos tu motivación o cualquier contexto útil para el equipo."
+        },
+        "curriculum": {
+          "label": "Curriculum",
+          "placeholder": "",
+          "description": "Opcional. Podés adjuntar tu curriculum en formato PDF, DOC o DOCX de hasta 5 MB."
         }
       }
     },
@@ -434,7 +443,11 @@
           "nationality": "Nacionalidad",
           "birthDate": "Fecha de nacimiento",
           "availability": "Disponibilidad",
-          "message": "Mensaje"
+          "message": "Mensaje",
+          "curriculum": "Curriculum"
+        },
+        "curriculum": {
+          "downloadLabel": "Descargar curriculum"
         },
         "statusCard": {
           "title": "Actualizar estado",

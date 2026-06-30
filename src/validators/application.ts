@@ -3,6 +3,8 @@ import {
   applicationTypeCodes,
   type Application,
   type ApplicationChangeActor,
+  type ApplicationCurriculumSummary,
+  type ApplicationCurriculumUpload,
   type ApplicationStatus,
   type ApplicationStatusHistoryEntry,
   type ApplicationSubmissionInput,
@@ -48,6 +50,20 @@ function assertNullableString(value: unknown, path: string): string | null {
   return assertString(value, path);
 }
 
+function assertOptionalNullableString(value: unknown, path: string): string | null {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  if (typeof value !== "string") {
+    throw new Error(`${path} must be a string when provided.`);
+  }
+
+  const normalizedValue = value.trim();
+
+  return normalizedValue.length > 0 ? normalizedValue : null;
+}
+
 function assertEnum<T extends string>(value: unknown, allowed: readonly T[], path: string): T {
   if (typeof value !== "string" || !allowed.includes(value as T)) {
     throw new Error(`${path} must be one of: ${allowed.join(", ")}.`);
@@ -78,6 +94,50 @@ function assertEmail(value: unknown, path: string): string {
   }
 
   return email;
+}
+
+function assertInteger(value: unknown, path: string): number {
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
+    throw new Error(`${path} must be a non-negative integer.`);
+  }
+
+  return value;
+}
+
+function assertBinaryData(value: unknown, path: string): Buffer {
+  if (Buffer.isBuffer(value)) {
+    return value;
+  }
+
+  if (!(value instanceof Uint8Array)) {
+    throw new Error(`${path} must be binary data.`);
+  }
+
+  return Buffer.from(value);
+}
+
+function assertApplicationCurriculumSummary(
+  value: unknown,
+  path: string,
+): ApplicationCurriculumSummary {
+  const object = assertPlainObject(value, path);
+
+  return {
+    fileName: assertString(object.fileName, `${path}.fileName`),
+    contentType: assertString(object.contentType, `${path}.contentType`),
+    sizeBytes: assertInteger(object.sizeBytes, `${path}.sizeBytes`),
+    uploadedAt: assertIsoDate(object.uploadedAt, `${path}.uploadedAt`),
+  };
+}
+
+function assertApplicationCurriculumUpload(value: unknown, path: string): ApplicationCurriculumUpload {
+  const object = assertPlainObject(value, path);
+  const summary = assertApplicationCurriculumSummary(object, path);
+
+  return {
+    ...summary,
+    data: assertBinaryData(object.data, `${path}.data`),
+  };
 }
 
 function assertApplicationTypeSnapshot(value: unknown, path: string): ApplicationTypeSnapshot {
@@ -179,8 +239,12 @@ export function parseApplicationSubmission(
     phone: assertString(object.phone, `${path}.phone`),
     nationality: assertString(object.nationality, `${path}.nationality`),
     birthDate: assertIsoDate(object.birthDate, `${path}.birthDate`),
-    message: assertString(object.message, `${path}.message`),
+    message: assertOptionalNullableString(object.message, `${path}.message`),
     availability: assertNullableString(object.availability, `${path}.availability`),
+    curriculum:
+      object.curriculum === null || object.curriculum === undefined
+        ? null
+        : assertApplicationCurriculumUpload(object.curriculum, `${path}.curriculum`),
   };
 }
 
@@ -236,6 +300,10 @@ export function parseApplication(value: unknown, path = "application"): Applicat
     identityDocument: assertNullableString(object.identityDocument, `${path}.identityDocument`),
     message: assertNullableString(object.message, `${path}.message`),
     availability: assertNullableString(object.availability, `${path}.availability`),
+    curriculum:
+      object.curriculum === null || object.curriculum === undefined
+        ? null
+        : assertApplicationCurriculumSummary(object.curriculum, `${path}.curriculum`),
     applicationType: assertApplicationTypeSnapshot(object.applicationType, `${path}.applicationType`),
     applicationTypeHistory: assertApplicationTypeHistory(
       object.applicationTypeHistory,

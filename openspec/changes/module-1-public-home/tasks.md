@@ -46,4 +46,4 @@ Chain strategy: pending
 ## Phase 4: Verification
 
 - [x] 4.1 Run `pnpm lint` and `pnpm exec tsc --noEmit`; fix any route, message-shape, or server-component typing regressions before review.
-- [ ] 4.2 Manually verify `/es` for full home section order, featured-program fallback, FAQ navigation, `/es#contact`, and `/es/contact` redirect behavior.
+- [x] 4.2 Manually verify `/es` for full home section order, featured-program fallback, FAQ navigation, `/es#contact`, and `/es/contact` redirect behavior.

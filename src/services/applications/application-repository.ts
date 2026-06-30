@@ -1,10 +1,11 @@
-import { Types } from "mongoose";
+import { type HydratedDocument, Types } from "mongoose";
 
 import { connectToDatabase } from "@/lib/mongoose";
-import { ApplicationModel } from "@/models/application";
+import { ApplicationModel, type ApplicationDocument } from "@/models/application";
 import type {
   Application,
   ApplicationChangeActor,
+  ApplicationCurriculumUpload,
   ApplicationStatus,
   ApplicationTypeSnapshot,
   CreateApplicationRecordInput,
@@ -33,6 +34,7 @@ type RawApplicationDocument = {
   identityDocument: unknown;
   message: unknown;
   availability: unknown;
+  curriculum: unknown;
   applicationType: unknown;
   applicationTypeHistory: unknown;
   status: unknown;
@@ -67,6 +69,28 @@ function normalizeDateLike(value: unknown, fallback: string): string {
 
 function normalizeNullableText(value: unknown): string | null {
   return typeof value === "string" ? value : null;
+}
+
+function normalizeCurriculum(value: unknown) {
+  if (!isPlainObject(value)) {
+    return null;
+  }
+
+  const fileName = isNonEmptyString(value.fileName) ? value.fileName.trim() : null;
+  const contentType = isNonEmptyString(value.contentType) ? value.contentType.trim() : null;
+  const sizeBytes = typeof value.sizeBytes === "number" && Number.isFinite(value.sizeBytes) ? value.sizeBytes : null;
+  const uploadedAt = normalizeDateLike(value.uploadedAt, new Date(0).toISOString());
+
+  if (!fileName || !contentType || sizeBytes === null) {
+    return null;
+  }
+
+  return {
+    fileName,
+    contentType,
+    sizeBytes,
+    uploadedAt,
+  };
 }
 
 function normalizeStatus(value: unknown): ApplicationStatus {
@@ -229,6 +253,7 @@ function normalizeApplicationDocument(document: RawApplicationDocument) {
     identityDocument: normalizeNullableText(document.identityDocument),
     message: normalizeNullableText(document.message),
     availability: normalizeNullableText(document.availability),
+    curriculum: normalizeCurriculum(document.curriculum),
     applicationType,
     applicationTypeHistory: normalizeApplicationTypeHistory(
       document.applicationTypeHistory,
@@ -246,6 +271,7 @@ export type ApplicationRepository = {
   create(input: CreateApplicationRecordInput): Promise<Application>;
   list(): Promise<Application[]>;
   findById(id: string): Promise<Application | null>;
+  findCurriculumById(id: string): Promise<ApplicationCurriculumUpload | null>;
   updateStatus(input: UpdateApplicationStatusInput): Promise<Application | null>;
 };
 
@@ -257,14 +283,18 @@ const mongoApplicationRepository: ApplicationRepository = {
   async create(input) {
     await connectToDatabase();
 
-    const document = await ApplicationModel.create(input);
+    const document = (await ApplicationModel.create(input)) as HydratedDocument<ApplicationDocument>;
 
     return mapApplicationDocument(document.toObject() as RawApplicationDocument);
   },
   async list() {
     await connectToDatabase();
 
-    const documents = await ApplicationModel.find({}).sort({ createdAt: -1 }).lean().exec();
+    const documents = await ApplicationModel.find({})
+      .select({ "curriculum.data": 0 })
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
 
     return documents.map((document) => mapApplicationDocument(document as RawApplicationDocument));
   },
@@ -275,9 +305,50 @@ const mongoApplicationRepository: ApplicationRepository = {
 
     await connectToDatabase();
 
-    const document = await ApplicationModel.findById(id).lean().exec();
+    const document = await ApplicationModel.findById(id).select({ "curriculum.data": 0 }).lean().exec();
 
     return document ? mapApplicationDocument(document as RawApplicationDocument) : null;
+  },
+  async findCurriculumById(id) {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    await connectToDatabase();
+
+    const document = await ApplicationModel.findById(id).select({ curriculum: 1 }).exec();
+    const curriculum = document?.get("curriculum") as
+      | {
+          fileName?: unknown;
+          contentType?: unknown;
+          sizeBytes?: unknown;
+          uploadedAt?: unknown;
+          data?: unknown;
+        }
+      | null
+      | undefined;
+
+    if (!curriculum) {
+      return null;
+    }
+
+    if (
+      !isNonEmptyString(curriculum.fileName) ||
+      !isNonEmptyString(curriculum.contentType) ||
+      typeof curriculum.sizeBytes !== "number" ||
+      !(curriculum.uploadedAt instanceof Date) ||
+      !Buffer.isBuffer(curriculum.data)
+    ) {
+      return null;
+    }
+
+    return {
+      fileName: curriculum.fileName.trim(),
+      contentType: curriculum.contentType.trim(),
+      sizeBytes: curriculum.sizeBytes,
+      uploadedAt: curriculum.uploadedAt.toISOString(),
+      data: curriculum.data,
+    };
   },
   async updateStatus({ id, nextStatus, changedBy, reason }) {
     if (!Types.ObjectId.isValid(id)) {
@@ -311,6 +382,7 @@ const mongoApplicationRepository: ApplicationRepository = {
       },
       { returnDocument: "after" },
     )
+      .select({ "curriculum.data": 0 })
       .lean()
       .exec();
 

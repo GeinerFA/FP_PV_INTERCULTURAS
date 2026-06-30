@@ -1,6 +1,7 @@
 import type {
   Application,
   ApplicationChangeActor,
+  ApplicationCurriculumUpload,
   ApplicationStatus,
   ApplicationStatusHistoryEntry,
   ApplicationSubmissionInput,
@@ -54,8 +55,9 @@ export async function createApplication(input: unknown): Promise<Application> {
     ...submission,
     birthDate: new Date(submission.birthDate),
     identityDocument: null,
-    message: submission.message,
+    message: submission.message ?? null,
     availability: submission.availability ?? null,
+    curriculum: submission.curriculum ?? null,
     residenceCountry: null,
     residenceCity: null,
     fullName: buildFullName(submission.firstName, submission.lastName),
@@ -78,6 +80,12 @@ export async function getApplicationById(id: string): Promise<Application | null
   const repository = getApplicationRepository();
 
   return repository.findById(id);
+}
+
+export async function getApplicationCurriculumById(id: string): Promise<ApplicationCurriculumUpload | null> {
+  const repository = getApplicationRepository();
+
+  return repository.findCurriculumById(id);
 }
 
 export async function updateApplicationStatus(

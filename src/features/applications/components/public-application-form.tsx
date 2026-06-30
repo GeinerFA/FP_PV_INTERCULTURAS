@@ -4,8 +4,10 @@ import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 import {
+  applicationAttachmentFieldNames,
   applicationFormFieldNames,
   initialApplicationSubmissionState,
+  type ApplicationFormErrorFieldName,
   type ApplicationFormFieldName,
   type ApplicationSubmissionActionState,
 } from "@/features/applications/public-application-form-contract";
@@ -22,6 +24,7 @@ import {
 type FieldCopy = {
   label: string;
   placeholder: string;
+  description?: string;
 };
 
 type PublicApplicationFormCopy = {
@@ -36,12 +39,14 @@ type PublicApplicationFormCopy = {
     searchPlaceholder: string;
     noResults: string;
   };
-  fields: Record<ApplicationFormFieldName, FieldCopy>;
+  fields: Record<ApplicationFormFieldName | (typeof applicationAttachmentFieldNames)[number], FieldCopy>;
   validation: {
     required: string;
     invalidEmail: string;
     invalidDate: string;
     invalidSelection: string;
+    invalidFileType: string;
+    fileTooLarge: string;
   };
   errors: {
     submissionFailed: string;
@@ -208,7 +213,7 @@ function CountryField({
 }
 
 function getValidationMessage(
-  code: ApplicationSubmissionActionState["fieldErrors"][ApplicationFormFieldName],
+  code: ApplicationSubmissionActionState["fieldErrors"][ApplicationFormErrorFieldName],
   copy: PublicApplicationFormCopy,
 ) {
   if (!code) {
@@ -272,6 +277,9 @@ export function PublicApplicationForm({ action, copy }: PublicApplicationFormPro
                 <label htmlFor={fieldId} className="mb-2 block text-sm font-semibold text-slate-900">
                   {fieldCopy.label}
                 </label>
+                {fieldCopy.description ? (
+                  <p className="mb-3 text-sm leading-6 text-slate-600">{fieldCopy.description}</p>
+                ) : null}
                 {isTextArea ? (
                   <textarea
                     id={fieldId}
@@ -296,6 +304,37 @@ export function PublicApplicationForm({ action, copy }: PublicApplicationFormPro
                     className="min-h-12 w-full rounded-2xl border border-white/75 bg-white/80 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
                   />
                 )}
+                {errorMessage ? (
+                  <p id={`${fieldId}-error`} className="mt-2 text-sm text-rose-600">
+                    {errorMessage}
+                  </p>
+                ) : null}
+              </div>
+            );
+          })}
+
+          {applicationAttachmentFieldNames.map((name) => {
+            const fieldCopy = copy.fields[name];
+            const errorMessage = getValidationMessage(state.fieldErrors[name], copy);
+            const fieldId = `application-${name}`;
+
+            return (
+              <div key={name} className="md:col-span-2">
+                <label htmlFor={fieldId} className="mb-2 block text-sm font-semibold text-slate-900">
+                  {fieldCopy.label}
+                </label>
+                {fieldCopy.description ? (
+                  <p className="mb-3 text-sm leading-6 text-slate-600">{fieldCopy.description}</p>
+                ) : null}
+                <input
+                  id={fieldId}
+                  name={name}
+                  type="file"
+                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                  aria-invalid={errorMessage ? true : undefined}
+                  aria-describedby={errorMessage ? `${fieldId}-error` : undefined}
+                  className="block min-h-12 w-full rounded-2xl border border-white/75 bg-white/80 px-4 py-3 text-sm text-slate-900 file:mr-4 file:rounded-full file:border-0 file:bg-emerald-800 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-emerald-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                />
                 {errorMessage ? (
                   <p id={`${fieldId}-error`} className="mt-2 text-sm text-rose-600">
                     {errorMessage}

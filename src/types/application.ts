@@ -33,6 +33,17 @@ export type ApplicationTypeHistoryEntry = {
   changedBy: ApplicationChangeActor;
 };
 
+export type ApplicationCurriculumSummary = {
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  uploadedAt: string;
+};
+
+export type ApplicationCurriculumUpload = ApplicationCurriculumSummary & {
+  data: Buffer;
+};
+
 export type ApplicationSubmissionInput = {
   firstName: string;
   lastName: string;
@@ -40,18 +51,20 @@ export type ApplicationSubmissionInput = {
   phone: string;
   nationality: string;
   birthDate: string;
-  message: string;
+  message?: string | null;
   availability?: string | null;
+  curriculum?: ApplicationCurriculumUpload | null;
 };
 
 export type CreateApplicationRecordInput = Omit<
   ApplicationSubmissionInput,
-  "birthDate" | "message" | "availability"
+  "birthDate" | "message" | "availability" | "curriculum"
 > & {
   birthDate: Date | null;
   identityDocument: string | null;
   message: string | null;
   availability: string | null;
+  curriculum: ApplicationCurriculumUpload | null;
   residenceCountry: string | null;
   residenceCity: string | null;
   fullName: string;
@@ -82,6 +95,7 @@ export type Application = {
   identityDocument: string | null;
   message: string | null;
   availability: string | null;
+  curriculum: ApplicationCurriculumSummary | null;
   applicationType: ApplicationTypeSnapshot;
   applicationTypeHistory: ApplicationTypeHistoryEntry[];
   status: ApplicationStatus;
