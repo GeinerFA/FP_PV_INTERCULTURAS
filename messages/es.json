@@ -249,10 +249,58 @@
     "about": {
       "eyebrow": "Información institucional",
       "title": "Sobre Pura Vida Interculturas",
-      "description": "Conocé la organización, su trabajo en Pérez Zeledón y la forma en que articula programas interculturales con acompañamiento local.",
-      "highlightOne": "Presenta el origen, propósito y experiencia territorial de la organización.",
-      "highlightTwo": "Aclara que el sitio público convive con una operación local y una red internacional de participantes.",
-      "highlightThree": "Mantiene el enfoque institucional sin convertir esta página en la nueva home."
+      "description": "Conocé cómo nació la organización, qué la mueve hoy y de qué manera acompaña experiencias interculturales con una base local cercana.",
+      "history": {
+        "eyebrow": "Historia",
+        "title": "Un recorrido construido desde San Ramòn",
+        "description": "La organización fue creciendo junto a familias anfitrionas, aliados comunitarios y personas participantes que buscaban una experiencia con más contexto, cuidado y vínculo humano.",
+        "milestones": {
+          "origin": {
+            "year": "Inicio",
+            "title": "Una red local que empezó acompañando llegadas",
+            "description": "El proyecto nació organizando experiencias de voluntariado y aprendizaje con apoyo cercano desde el territorio, para que cada llegada tuviera orientación real y no solo logística básica."
+          },
+          "community": {
+            "year": "Crecimiento",
+            "title": "Más articulación con comunidades y organizaciones aliadas",
+            "description": "Con el tiempo se consolidó una forma de trabajo que conecta personas visitantes con iniciativas locales, siempre buscando respeto mutuo, claridad y seguimiento constante."
+          },
+          "today": {
+            "year": "Hoy",
+            "title": "Una propuesta intercultural con acompañamiento continuo",
+            "description": "Actualmente Pura Vida Interculturas presenta programas, resuelve dudas y prepara a cada participante para vivir una experiencia mejor alineada con la realidad del entorno y de la comunidad anfitriona."
+          }
+        }
+      },
+      "mission": {
+        "eyebrow": "Misión",
+        "title": "Acompañar experiencias con propósito y contexto",
+        "description": "La misión es facilitar intercambios que aporten aprendizaje, servicio y cercanía cultural sin perder de vista el bienestar de las personas involucradas.",
+        "pillars": {
+          "care": "Acompañamiento humano antes, durante y después de cada experiencia para que la participación no se sienta improvisada.",
+          "bridge": "Puentes claros entre participantes internacionales, familias anfitrionas, organizaciones aliadas y equipo local.",
+          "clarity": "Información práctica y expectativas transparentes para que cada decisión se tome con mejor preparación."
+        }
+      },
+      "methodology": {
+        "eyebrow": "Metodología",
+        "title": "Cómo se sostiene el trabajo día a día",
+        "description": "La metodología combina orientación previa, acompañamiento local y seguimiento continuo para que la experiencia sea útil tanto para la persona participante como para la comunidad que la recibe.",
+        "steps": {
+          "listen": {
+            "title": "Escuchar el objetivo de cada persona",
+            "description": "Antes de recomendar un programa, el equipo busca entender motivaciones, tiempos, expectativas y nivel de autonomía para orientar mejor la experiencia."
+          },
+          "prepare": {
+            "title": "Preparar con información real del contexto",
+            "description": "La organización comparte detalles prácticos, culturales y comunitarios para reducir incertidumbre y llegar con expectativas más responsables."
+          },
+          "accompany": {
+            "title": "Acompañar con seguimiento cercano",
+            "description": "Durante la experiencia se mantiene una presencia local para resolver dudas, cuidar la comunicación y sostener el vínculo con las personas anfitrionas y aliadas."
+          }
+        }
+      }
     },
     "programs": {
       "eyebrow": "Oferta principal",
@@ -287,12 +335,70 @@
       "highlightThree": "El flujo queda preparado para sumar correo y seguimiento en módulos futuros."
     },
     "impact": {
-      "eyebrow": "Transparencia",
-      "title": "Impacto y destino de recursos",
-      "description": "Sección destinada a comunicar resultados, uso de recursos y representación visual del impacto institucional.",
-      "highlightOne": "Alineada con el requerimiento de mostrar impacto o distribución de recursos.",
-      "highlightTwo": "Preparada para incorporar gráficos con Recharts en próximas fases.",
-      "highlightThree": "Ayuda a sostener credibilidad frente a audiencia internacional."
+      "eyebrow": "Historias y resultados",
+      "title": "Impacto construido desde experiencias reales",
+      "description": "Esta página reúne voces, escenas y aprendizajes que ayudan a entender cómo se viven los programas y qué valor deja el acompañamiento local en cada proceso.",
+      "story": {
+        "eyebrow": "Qué queremos mostrar",
+        "title": "Impacto humano antes que discurso promocional",
+        "description": "En vez de convertir esta sección en una campaña, el objetivo es ofrecer una mirada concreta sobre lo que ocurre en la experiencia: relaciones, aprendizajes compartidos y presencia cotidiana en la comunidad."
+      },
+      "testimonials": {
+        "eyebrow": "Testimonios",
+        "title": "Voces que explican mejor la experiencia",
+        "description": "Los testimonios ayudan a entender el impacto desde la perspectiva de quienes participaron, acompañaron o recibieron el intercambio.",
+        "entries": {
+          "participant": {
+            "quote": "Llegué con ganas de aprender español y terminé entendiendo mucho mejor cómo relacionarme con la comunidad desde el respeto y la escucha.",
+            "name": "Participante internacional",
+            "role": "Programa de inmersión y voluntariado"
+          },
+          "host": {
+            "quote": "El acompañamiento del equipo hizo que la experiencia fuera clara para todos. Siempre hubo alguien disponible para orientar y cuidar el proceso.",
+            "name": "Familia anfitriona",
+            "role": "Red local de apoyo"
+          },
+          "ally": {
+            "quote": "Trabajar con personas visitantes funciona mejor cuando hay preparación previa y seguimiento real. Esa articulación es lo que más valoramos.",
+            "name": "Organización aliada",
+            "role": "Trabajo comunitario local"
+          }
+        }
+      },
+      "gallery": {
+        "eyebrow": "Escenas del proceso",
+        "title": "Momentos que cuentan la historia",
+        "description": "Mientras se curan imágenes definitivas, este MVP mantiene bloques visuales estáticos para representar actividades, convivencia y aprendizaje sin agregar interacciones nuevas.",
+        "items": {
+          "community": {
+            "title": "Trabajo compartido con aliados locales",
+            "caption": "Espacios de colaboración donde la experiencia se conecta con necesidades reales y con una coordinación cercana en territorio.",
+            "alt": "Representación visual de trabajo comunitario acompañado por el equipo local",
+            "accent": "emerald"
+          },
+          "culture": {
+            "title": "Convivencia cultural y vida cotidiana",
+            "caption": "El intercambio también ocurre en conversaciones, rutinas y aprendizajes pequeños que ayudan a comprender mejor el contexto local.",
+            "alt": "Representación visual de convivencia intercultural en un entorno cotidiano",
+            "accent": "amber"
+          },
+          "learning": {
+            "title": "Aprendizaje con acompañamiento continuo",
+            "caption": "Cada programa busca sostener una experiencia formativa con preparación previa, orientación durante la estancia y seguimiento posterior.",
+            "alt": "Representación visual de una experiencia de aprendizaje con acompañamiento",
+            "accent": "sky"
+          }
+        }
+      },
+      "principles": {
+        "eyebrow": "Principios de esta página",
+        "title": "Lo que cuidamos al mostrar impacto",
+        "items": {
+          "static": "El contenido permanece estático e informativo en esta etapa, sin formularios, captación extra ni comportamiento analítico nuevo.",
+          "credible": "Se priorizan testimonios y escenas comprensibles por encima de promesas vacías o métricas poco contextualizadas.",
+          "localized": "La narrativa sigue la estructura localizada actual del sitio para que futuras traducciones puedan ampliarse sin cambiar la arquitectura."
+        }
+      }
     },
     "contact": {
       "eyebrow": "Relación inicial",
@@ -303,12 +409,37 @@
       "highlightThree": "Ayuda a resolver dudas antes de iniciar una solicitud."
     },
     "privacy": {
-      "eyebrow": "Datos personales",
-      "title": "Política de privacidad",
-      "description": "Base inicial para documentar consentimiento explícito, tratamiento mínimo de datos y cumplimiento del flujo de postulación.",
-      "highlightOne": "Esencial para el consentimiento requerido en la aplicación.",
-      "highlightTwo": "Sirve como referencia para versiones de privacidad futuras.",
-      "highlightThree": "Se integrará con validaciones y registro de aceptación en solicitudes."
+      "eyebrow": "Información básica",
+      "title": "Privacidad y uso general de datos",
+      "description": "Esta página explica de forma simple qué información puede compartirse en el sitio, para qué se usa y cómo se trata dentro del alcance actual del MVP.",
+      "intro": {
+        "eyebrow": "Antes de compartir información",
+        "title": "Una guía breve, no una política legal extensa",
+        "description": "Queremos que las personas visitantes entiendan lo esencial sin leer lenguaje jurídico complejo. Por eso este contenido resume el uso general de datos del sitio y del formulario público disponible hoy."
+      },
+      "sections": {
+        "collect": {
+          "title": "Qué datos pueden compartirse",
+          "description": "Si una persona completa el formulario público, puede compartir datos básicos como nombre, correo, teléfono, nacionalidad, fecha de nacimiento, mensaje y curriculum opcional."
+        },
+        "use": {
+          "title": "Para qué se usan",
+          "description": "La información se utiliza para revisar el interés en los programas, dar seguimiento inicial y mantener comunicación básica sobre el proceso cuando corresponda."
+        },
+        "care": {
+          "title": "Cómo se maneja hoy",
+          "description": "Dentro de este MVP, el tratamiento se mantiene enfocado en la operación básica del sitio y del flujo de aplicación. Esta página no implica automatizaciones legales, consentimiento avanzado ni procesos de compliance adicionales."
+        }
+      },
+      "commitments": {
+        "eyebrow": "Compromisos básicos",
+        "title": "Lo que esta página sí deja claro",
+        "items": {
+          "clarity": "Explicamos el uso general de datos en un lenguaje accesible para que cualquier visitante pueda entender el alcance actual del sitio.",
+          "limits": "No prometemos funciones que todavía no existen, como registro formal de consentimientos, paneles de preferencias o flujos legales automatizados.",
+          "contact": "Si una persona necesita más contexto sobre su información, puede usar los canales de contacto públicos para hacer preguntas antes de compartir datos."
+        }
+      }
     }
   },
   "ProgramsUi": {
@@ -395,11 +526,11 @@
     "success": {
       "badgeLabel": "Confirmado",
       "title": "Tu solicitud ya fue enviada",
-      "description": "Gracias por compartir tu información. El equipo ya puede revisar tu solicitud general y continuar con el siguiente contacto cuando corresponda.",
-      "nextStepsTitle": "Qué sigue",
+      "description": "Gracias por compartir tu información. El equipo revisara tu solicitud general se pondra en contacto cuando corresponda.",
+      "nextStepsTitle": "Qué sigue?",
       "nextSteps": [
-        "Tu solicitud queda registrada con estado inicial pendiente dentro del flujo administrativo.",
-        "El equipo puede revisar tus datos base y dar seguimiento según disponibilidad y contexto.",
+        "Tu solicitud queda registrada dentro del flujo administrativo.",
+        "El equipo puede revisar tus datos dar seguimiento según disponibilidad.",
         "Mientras tanto, podés seguir explorando los programas y conocer mejor la propuesta de la organización."
       ],
       "primaryActionLabel": "Volver al inicio",
