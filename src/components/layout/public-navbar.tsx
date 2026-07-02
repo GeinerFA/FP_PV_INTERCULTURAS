@@ -47,22 +47,18 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
     <nav className="w-full" aria-label="Public navigation">
       <div className="flex flex-wrap items-center justify-between gap-4 md:flex-nowrap md:items-center">
         <div className="flex min-w-0 items-center gap-4">
-          <NextLink href={`/${locale}`} className="group flex min-w-0 items-center gap-3 text-slate-950">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white/85 p-1.5 shadow-[0_12px_28px_rgba(15,23,42,0.08)] ring-1 ring-slate-200/80 transition group-hover:shadow-[0_14px_30px_rgba(15,23,42,0.12)]">
-              <Image
-                src="/branding/logo.png"
-                alt={`${siteConfig.name} logo`}
-                width={1254}
-                height={1254}
-                className="h-full w-full object-contain"
-                priority
-              />
-            </span>
-            <div className="min-w-0">
-              <span className="block truncate text-base font-semibold tracking-tight text-slate-950 transition group-hover:text-emerald-900 md:text-lg">
-                {siteConfig.name}
-              </span>
-            </div>
+          <NextLink
+            href={`/${locale}`}
+            className="group inline-flex min-w-0 items-center rounded-2xl py-1 text-slate-950 transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-200/80 focus:ring-offset-2 focus:ring-offset-transparent"
+          >
+            <Image
+              src="/branding/nuevo-logo.png"
+              alt={siteConfig.name}
+              width={2420}
+              height={778}
+              className="h-11 w-auto object-contain md:h-14"
+              priority
+            />
           </NextLink>
 
           <button
