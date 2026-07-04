@@ -3,7 +3,7 @@ import { AdminProgramsOverview } from "@/features/programs/components/admin-prog
 
 export default function AdminProgramsPage() {
   return (
-    <AdminPageTemplate pageKey="programs">
+    <AdminPageTemplate pageKey="programs" variant="workspace">
       <AdminProgramsOverview />
     </AdminPageTemplate>
   );

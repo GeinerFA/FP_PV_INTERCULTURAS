@@ -3,7 +3,7 @@ import { AdminApplicationsOverview } from "@/features/applications/components/ad
 
 export default async function AdminApplicationsPage() {
   return (
-    <AdminPageTemplate pageKey="applications">
+    <AdminPageTemplate pageKey="applications" variant="workspace">
       <AdminApplicationsOverview />
     </AdminPageTemplate>
   );

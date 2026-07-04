@@ -3,7 +3,7 @@ import { AdminProgramFormShell } from "@/features/programs/components/admin-prog
 
 export default function AdminProgramsNewPage() {
   return (
-    <AdminPageTemplate pageKey="programsNew">
+    <AdminPageTemplate pageKey="programsNew" variant="workspace">
       <AdminProgramFormShell mode="create" />
     </AdminPageTemplate>
   );

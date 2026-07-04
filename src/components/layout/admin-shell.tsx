@@ -11,9 +11,9 @@ export async function AdminShell({ children }: AdminShellProps) {
   const [locale, t] = await Promise.all([getLocale(), getTranslations("AdminShell")]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="mx-auto grid min-h-screen max-w-7xl gap-0 lg:grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="border-r border-white/10 bg-slate-900/70 px-6 py-8">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(45,212,191,0.16),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(14,165,233,0.12),transparent_32%),linear-gradient(180deg,#020617_0%,#0f172a_45%,#020617_100%)] text-slate-100">
+      <div className="mx-auto grid min-h-screen max-w-[88rem] gap-4 px-4 py-4 lg:grid-cols-[288px_minmax(0,1fr)] lg:px-6 lg:py-6">
+        <aside className="surface-dark-soft flex h-full flex-col rounded-[32px] border border-white/10 px-6 py-7 shadow-[0_24px_80px_-48px_rgba(15,23,42,1)] lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)]">
           <div className="flex flex-col gap-6">
             <Link
               href="/"
@@ -40,33 +40,36 @@ export async function AdminShell({ children }: AdminShellProps) {
             </Link>
 
             <div>
-              <Link href="/admin" className="text-xl font-semibold tracking-tight text-white">
+              <div className="mb-4 h-px w-20 bg-gradient-to-r from-teal-300/80 to-transparent" />
+              <Link href="/admin" className="inline-flex text-xl font-semibold tracking-tight text-white">
                 {siteConfig.adminName}
               </Link>
               <p className="mt-3 text-sm leading-6 text-slate-300">{t("notice")}</p>
             </div>
           </div>
 
-          <nav className="mt-8 flex flex-col gap-2 text-sm">
+          <nav className="mt-10 flex flex-col gap-2 text-sm">
             {siteConfig.adminNavigation.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-xl px-4 py-3 text-slate-200 transition hover:bg-white/10 hover:text-white"
+                className="rounded-2xl border border-transparent px-4 py-3 text-slate-200 transition hover:border-white/10 hover:bg-white/5 hover:text-white"
               >
                 {t(`navigation.${item.labelKey}`)}
               </Link>
             ))}
             <Link
               href="/admin/login"
-              className="rounded-xl border border-teal-500/30 px-4 py-3 font-semibold text-teal-300 transition hover:bg-teal-500/10"
+              className="mt-2 rounded-2xl border border-teal-500/30 px-4 py-3 font-semibold text-teal-300 transition hover:bg-teal-500/10"
             >
               {t("login")}
             </Link>
           </nav>
         </aside>
 
-        <main className="px-6 py-8 md:px-10">{children}</main>
+        <main className="min-w-0 py-2 lg:py-4">
+          <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
+        </main>
       </div>
     </div>
   );

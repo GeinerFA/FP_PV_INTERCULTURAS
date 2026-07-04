@@ -4,44 +4,68 @@ import type { AdminPageKey } from "@/features/admin/content/pages";
 
 type AdminPageTemplateProps = {
   pageKey: AdminPageKey;
+  variant?: "workspace" | "placeholder";
   headerAction?: React.ReactNode;
+  sections?: string[];
   children?: React.ReactNode;
 };
 
 export async function AdminPageTemplate({
   pageKey,
+  variant = "placeholder",
   headerAction,
+  sections,
   children,
 }: AdminPageTemplateProps) {
   const t = await getTranslations("AdminPages");
-  const sections = t.raw(`${pageKey}.sections`) as string[];
+  const isWorkspace = variant === "workspace";
+  const translatedSections = isWorkspace ? [] : ((t.raw(`${pageKey}.sections`) as string[]) ?? []);
+  const resolvedSections = sections ?? translatedSections;
 
   return (
-    <section className="surface-dark-soft rounded-3xl p-8">
-      <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div>
+    <section
+      className={`relative overflow-hidden rounded-[32px] border border-white/10 ${
+        isWorkspace
+          ? "bg-[linear-gradient(180deg,rgba(15,23,42,0.96)_0%,rgba(15,23,42,0.88)_100%)] px-6 py-6 shadow-[0_30px_80px_-45px_rgba(8,145,178,0.55)] md:px-8 md:py-8"
+          : "surface-dark-soft p-8"
+      }`}
+    >
+      {isWorkspace ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-[radial-gradient(circle_at_top,rgba(45,212,191,0.18),transparent_62%)]"
+        />
+      ) : null}
+
+      <div className="relative flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+        <div className="max-w-3xl">
+          <div className="mb-4 h-px w-20 bg-gradient-to-r from-teal-300/80 to-transparent" />
           <h1 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">
             {t(`${pageKey}.title`)}
           </h1>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300 md:text-lg">
+          <p className="mt-4 text-base leading-7 text-slate-300 md:text-lg">
             {t(`${pageKey}.description`)}
           </p>
         </div>
-        {headerAction ? <div className="md:shrink-0">{headerAction}</div> : null}
+        {headerAction ? (
+          <div className="md:shrink-0 md:self-center">{headerAction}</div>
+        ) : null}
       </div>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        {sections.map((section) => (
-          <article
-            key={section}
-            className="surface-dark-panel rounded-2xl p-5 text-sm leading-6 text-slate-300"
-          >
-            {section}
-          </article>
-        ))}
-      </div>
+      {resolvedSections.length > 0 ? (
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {resolvedSections.map((section) => (
+            <article
+              key={section}
+              className="surface-dark-panel rounded-2xl p-5 text-sm leading-6 text-slate-300"
+            >
+              {section}
+            </article>
+          ))}
+        </div>
+      ) : null}
 
-      {children ? <div className="mt-8">{children}</div> : null}
+      {children ? <div className="relative mt-8">{children}</div> : null}
     </section>
   );
 }

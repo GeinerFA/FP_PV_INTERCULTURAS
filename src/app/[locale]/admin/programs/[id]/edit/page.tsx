@@ -19,7 +19,7 @@ export default async function AdminProgramEditPage({
   }
 
   return (
-    <AdminPageTemplate pageKey="programsEdit">
+    <AdminPageTemplate pageKey="programsEdit" variant="workspace">
       <AdminProgramFormShell mode="edit" program={program} />
     </AdminPageTemplate>
   );

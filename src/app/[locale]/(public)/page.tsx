@@ -7,6 +7,7 @@ import { buildMetadata } from "@/lib/metadata";
 
 type LocaleHomePageProps = {
   params: Promise<{ locale: AppLocale }>;
+  searchParams: Promise<{ featured?: string }>;
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,8 +19,8 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default async function LocaleHomePage({ params }: LocaleHomePageProps) {
-  const { locale } = await params;
+export default async function LocaleHomePage({ params, searchParams }: LocaleHomePageProps) {
+  const [{ locale }, { featured }] = await Promise.all([params, searchParams]);
 
-  return <PublicHomePage locale={locale} />;
+  return <PublicHomePage locale={locale} forceEmptyFeatured={featured === "empty"} />;
 }

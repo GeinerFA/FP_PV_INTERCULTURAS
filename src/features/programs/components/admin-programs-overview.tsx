@@ -17,11 +17,50 @@ export async function AdminProgramsOverview() {
   ]);
   const activeLocale = locale as AppLocale;
   const publishedCount = programs.filter((program) => program.status === "published").length;
+  const draftCount = programs.filter((program) => program.status === "draft").length;
   const featuredCount = programs.filter((program) => program.featured).length;
+  const categoryCounts = {
+    volunteer: programs.filter((program) => program.category === "volunteer").length,
+    internships: programs.filter((program) => program.category === "internships").length,
+    "spanish-classes": programs.filter((program) => program.category === "spanish-classes").length,
+  } as const;
+
+  if (programs.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="grid gap-4 md:grid-cols-3">
+          {[
+            { key: "catalogSize", value: 0 },
+            { key: "publishedNow", value: 0 },
+            { key: "draftBacklog", value: 0 },
+          ].map((item) => (
+            <article key={item.key} className="surface-dark-panel rounded-2xl p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                {t(`stats.${item.key}.label`)}
+              </p>
+              <p className="mt-3 text-3xl font-semibold text-white">{item.value}</p>
+              <p className="mt-2 text-sm text-slate-400">{t(`stats.${item.key}.description`)}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="surface-dark-soft rounded-3xl border border-dashed border-white/10 p-8">
+          <h2 className="text-xl font-semibold text-white">{t("empty.title")}</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">{t("empty.description")}</p>
+          <Link
+            href="/admin/programs/new"
+            className="mt-6 inline-flex rounded-full bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-teal-400"
+          >
+            {t("empty.cta")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 xl:grid-cols-4">
         <article className="surface-dark-panel rounded-2xl p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
             {t("stats.catalogSize.label")}
@@ -38,10 +77,51 @@ export async function AdminProgramsOverview() {
         </article>
         <article className="surface-dark-panel rounded-2xl p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            {t("stats.draftBacklog.label")}
+          </p>
+          <p className="mt-3 text-3xl font-semibold text-white">{draftCount}</p>
+          <p className="mt-2 text-sm text-slate-400">{t("stats.draftBacklog.description")}</p>
+        </article>
+        <article className="surface-dark-panel rounded-2xl p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
             {t("stats.featuredHighlights.label")}
           </p>
           <p className="mt-3 text-3xl font-semibold text-white">{featuredCount}</p>
           <p className="mt-2 text-sm text-slate-400">{t("stats.featuredHighlights.description")}</p>
+        </article>
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.6fr)]">
+        <article className="surface-dark-soft rounded-3xl p-6">
+          <h2 className="text-lg font-semibold text-white">{t("summary.heading")}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">{t("summary.description")}</p>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {Object.entries(categoryCounts).map(([category, count]) => (
+              <div key={category} className="surface-dark-panel-muted rounded-2xl px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  {t(`categories.${category as keyof typeof categoryCounts}`)}
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-white">{count}</p>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="surface-dark-soft rounded-3xl p-6 text-sm leading-7 text-slate-300">
+          <h2 className="text-lg font-semibold text-white">{t("actions.heading")}</h2>
+          <p className="mt-2 text-slate-400">{t("actions.description")}</p>
+          <div className="mt-5 space-y-3">
+            <Link
+              href="/admin/programs/new"
+              className="inline-flex w-full items-center justify-center rounded-full bg-teal-500 px-5 py-3 font-semibold text-slate-950 transition hover:bg-teal-400"
+            >
+              {t("actions.create")}
+            </Link>
+            <p className="surface-dark-panel-muted rounded-2xl px-4 py-3 text-sm leading-6 text-slate-300">
+              {t("actions.note")}
+            </p>
+          </div>
         </article>
       </div>
 
@@ -92,7 +172,9 @@ export async function AdminProgramsOverview() {
                     </span>
                   </td>
                   <td className="px-6 py-5 text-slate-200">
-                    {program.featured ? t("yes") : t("no")}
+                    <span className="inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]">
+                      {program.featured ? t("yes") : t("no")}
+                    </span>
                   </td>
                   <td className="px-6 py-5 text-slate-200">{program.availability[activeLocale]}</td>
                   <td className="px-6 py-5">

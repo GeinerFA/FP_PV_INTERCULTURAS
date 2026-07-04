@@ -101,12 +101,16 @@ const categoryTheme = {
 
 type PublicHomePageProps = {
   locale: AppLocale;
+  forceEmptyFeatured?: boolean;
 };
 
-export async function PublicHomePage({ locale }: PublicHomePageProps) {
+export async function PublicHomePage({
+  locale,
+  forceEmptyFeatured = false,
+}: PublicHomePageProps) {
   const [messages, featuredPrograms] = await Promise.all([
     getMessages(),
-    listFeaturedPublicPrograms(locale),
+    forceEmptyFeatured ? Promise.resolve([]) : listFeaturedPublicPrograms(locale),
   ]);
 
   const home = messages.Home as HomeMessages;

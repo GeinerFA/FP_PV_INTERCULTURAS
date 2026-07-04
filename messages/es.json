@@ -24,9 +24,9 @@
     "futureActionBadge": "Todavía no está conectado: la autenticación sigue fuera de alcance."
   },
   "AdminShell": {
-    "notice": "Área administrativa preparada a nivel de routing y layout. La autenticación llegará en una fase posterior con Auth.js.",
+    "notice": "Espacio administrativo operativo para revisar programas y solicitudes actuales. La autenticación seguirá llegando en una fase posterior con Auth.js.",
     "homeLabel": "Volver al inicio público",
-    "login": "Placeholder de acceso",
+    "login": "Vista previa de acceso",
     "navigation": {
       "dashboard": "Panel",
       "programs": "Programas",
@@ -48,38 +48,38 @@
     },
     "dashboard": {
       "title": "Panel administrativo",
-      "description": "Resumen operativo para monitorear programas, postulaciones, reportes y configuración general desde una sola base administrativa.",
+      "description": "Resumen operativo con datos reales del catálogo de programas y de la bandeja de solicitudes desde una sola vista administrativa.",
       "sections": [
-        "Será el punto de entrada protegido del equipo interno.",
-        "Puede consolidar métricas y alertas tempranas del MVP.",
-        "Ya quedó conectado al layout compartido del panel."
+        "Consolida datos reales disponibles hoy, sin inventar métricas ni flujos protegidos.",
+        "Prioriza navegación directa hacia solicitudes y gestión de programas.",
+        "Mantiene el layout compartido del panel para el resto de rutas administrativas."
       ]
     },
     "programs": {
       "title": "Gestión de programas",
-      "description": "Listado administrativo para crear, editar, publicar o despublicar programas según el mapa funcional definido en el documento maestro.",
+      "description": "Vista operativa del catálogo actual con estado, disponibilidad, destacado y acceso directo a la vista previa de edición.",
       "sections": [
-        "Preparado para CRUD de programas.",
-        "Compatible con slugs, estados y contenido editorial centralizado.",
-        "Más adelante se conectará a modelos y servicios."
+        "Usa el catálogo real disponible hoy para rutas administrativas y públicas.",
+        "Mantiene visibles los puntos de entrada de creación y edición sin fingir persistencia.",
+        "Favorece lectura densa para revisar el catálogo rápidamente."
       ]
     },
     "programsNew": {
       "title": "Crear programa",
-      "description": "Formulario futuro para registrar nuevos programas de voluntariado, pasantías o español desde el panel interno.",
+      "description": "Vista previa del espacio de creación con el contrato actual del programa, antes de conectar acciones de guardado o publicación.",
       "sections": [
-        "Deberá incluir contenido corto, contenido extendido y SEO.",
-        "Está alineado con el modelo programs del documento maestro.",
-        "Todavía funciona como placeholder arquitectónico."
+        "Muestra los campos y paneles que deberá cubrir el flujo definitivo.",
+        "No expone guardado, publicación ni acciones autenticadas todavía.",
+        "Sirve para validar el alcance real del formulario antes de persistir cambios."
       ]
     },
     "programsEdit": {
       "title": "Editar programa",
-      "description": "Ruta dinámica preparada para actualizar un programa existente mediante su identificador interno.",
+      "description": "Vista previa de edición que carga datos reales del programa seleccionado sin prometer persistencia todavía.",
       "sections": [
-        "La estructura [id]/edit ya quedó definida.",
-        "Servirá para edición, publicación y auditoría posterior.",
-        "Es el equivalente administrativo del detalle público por slug."
+        "Carga la entidad actual desde la capa de servicios compartida.",
+        "Mantiene el comportamiento not-found cuando el identificador no existe.",
+        "Deja explícito que la persistencia llegará en una iteración posterior."
       ]
     },
     "applications": {
@@ -128,6 +128,62 @@
       ]
     }
   },
+  "AdminDashboardOverview": {
+    "applications": {
+      "eyebrow": "Carga de solicitudes",
+      "title": "Solicitudes activas",
+      "description": "Resumen real de la bandeja actual para detectar volumen, pendientes y seguimiento en proceso.",
+      "cta": "Abrir solicitudes",
+      "recentHeading": "Actividad reciente",
+      "empty": "Todavía no hay solicitudes registradas. Cuando lleguen nuevas postulaciones, esta vista mostrará el estado real de la bandeja.",
+      "stats": {
+        "total": {
+          "label": "Total recibidas",
+          "description": "Conteo actual de solicitudes disponibles en la bandeja administrativa."
+        },
+        "pending": {
+          "label": "Pendientes",
+          "description": "Solicitudes que todavía no avanzaron a una revisión en proceso."
+        },
+        "inProcess": {
+          "label": "En proceso",
+          "description": "Casos que ya tienen seguimiento administrativo activo."
+        }
+      },
+      "statuses": {
+        "pending": "Pendiente",
+        "in_process": "En proceso",
+        "resolved": "Finalizada",
+        "cancelled": "Cancelada"
+      }
+    },
+    "programs": {
+      "eyebrow": "Estado del catálogo",
+      "title": "Programas administrados",
+      "description": "Resumen real del catálogo actual para revisar qué ya está publicado y qué sigue en borrador.",
+      "cta": "Abrir programas",
+      "recentHeading": "Últimos programas actualizados",
+      "empty": "Todavía no hay programas en el catálogo administrativo. Cuando existan, esta vista resumirá su estado real.",
+      "stats": {
+        "total": {
+          "label": "Total en catálogo",
+          "description": "Cantidad actual de programas disponibles en la fuente administrativa."
+        },
+        "published": {
+          "label": "Publicados",
+          "description": "Programas que ya pueden aparecer en el catálogo público localizado."
+        },
+        "drafts": {
+          "label": "En borrador",
+          "description": "Programas que todavía requieren definición antes de publicarse."
+        }
+      },
+      "statuses": {
+        "draft": "Borrador",
+        "published": "Publicado"
+      }
+    }
+  },
   "AdminProgramsOverview": {
     "yes": "Sí",
     "no": "No",
@@ -140,16 +196,35 @@
         "label": "Publicados ahora",
         "description": "Solo los elementos publicados aparecen en el catálogo público localizado."
       },
+      "draftBacklog": {
+        "label": "Borradores activos",
+        "description": "Programas que siguen visibles para revisión interna pero todavía no salen al sitio público."
+      },
       "featuredHighlights": {
         "label": "Destacados",
         "description": "Preparado para promoción curada en superficies de marketing."
       }
     },
+    "summary": {
+      "heading": "Lectura rápida del catálogo",
+      "description": "Distribución actual por categoría para detectar dónde ya hay oferta publicada y dónde sigue faltando completar el catálogo."
+    },
+    "actions": {
+      "heading": "Siguiente movimiento",
+      "description": "La creación y edición ya tienen espacio dentro del panel, pero siguen funcionando como vistas previas no persistentes.",
+      "create": "Abrir vista previa de creación",
+      "note": "Todavía no existen acciones reales de guardar o publicar. Esta superficie solo expone el estado actual del catálogo y los puntos de entrada del flujo futuro."
+    },
     "table": {
-      "heading": "Programas listos para el futuro CRUD",
-      "description": "Esta vista ya refleja categoría, estado de publicación, destacado y puntos de entrada para edición.",
-      "newProgram": "Nuevo placeholder de programa",
-      "openEditor": "Abrir placeholder de edición"
+      "heading": "Programas actuales",
+      "description": "Cada fila muestra el estado operativo disponible hoy: categoría, publicación, destacado, disponibilidad y acceso a edición.",
+      "newProgram": "Abrir vista previa de creación",
+      "openEditor": "Abrir vista previa de edición"
+    },
+    "empty": {
+      "title": "Todavía no hay programas cargados",
+      "description": "El panel mantiene visible el punto de entrada para creación, pero no inventa registros ni sugiere que la persistencia ya exista.",
+      "cta": "Abrir vista previa de creación"
     },
     "columns": {
       "program": "Programa",
@@ -171,17 +246,22 @@
   },
   "AdminProgramForm": {
     "mode": {
-      "create": "Preparación de creación",
-      "edit": "Preparación de edición"
+      "create": "Vista previa de creación",
+      "edit": "Vista previa de edición"
     },
     "intro": {
-      "create": "Esta pantalla refleja el futuro modelo de programas para que el formulario CRUD llegue sin redefinir el contrato del dominio.",
-      "edit": "Esta pantalla ya carga la entidad del programa desde la capa de servicios compartida. La siguiente iteración solo necesita estado real del formulario, acciones de envío y persistencia."
+      "create": "Esta pantalla muestra la estructura prevista para crear programas, pero todavía funciona como una vista previa sin guardado ni publicación real.",
+      "edit": "Esta pantalla ya carga la entidad real desde la capa compartida, pero las modificaciones siguen siendo solo una vista previa hasta incorporar persistencia."
+    },
+    "notice": {
+      "title": "Espacio de trabajo en vista previa",
+      "body": "Los campos, paneles y datos que ves ayudan a validar el contrato actual del programa. Guardado, publicación y autenticación administrativa siguen fuera de alcance en esta iteración."
     },
     "sections": {
       "coreIdentity": "Identidad base",
       "localizedPresentation": "Contenido principal del programa",
       "operationalDetails": "Detalles operativos",
+      "boundaries": "Límites reales de esta iteración",
       "requirements": "Requisitos",
       "included": "Qué incluye",
       "seoAuditPreview": "Vista previa SEO y auditoría"
@@ -201,6 +281,11 @@
       "availability": "Disponibilidad"
     },
     "translationLocale": "Contenido {locale}",
+    "boundaries": {
+      "0": "No hay acción de guardado conectada: el panel solo refleja estructura y datos actuales.",
+      "1": "No existe publicación/despublicación real desde esta vista todavía.",
+      "2": "Los campos de auditoría y autoría siguen como referencia del modelo, no como un flujo autenticado ya implementado."
+    },
     "requirements": {
       "0": "Capturar una lista estructurada de requisitos.",
       "1": "Reutilizar el validador compartido antes de que exista persistencia.",
@@ -211,7 +296,7 @@
       "1": "Detalles de soporte que después se sincronizarán con las páginas públicas de detalle.",
       "2": "Una futura acción de guardado conectada con MongoDB/Mongoose."
     },
-    "seoAuditDescription": "Los títulos/descripciones SEO, createdBy, updatedBy y timestamps ya forman parte de la entidad. Persistencia y auth pueden conectarse a estos campos sin remodelar el modelo.",
+    "seoAuditDescription": "Los títulos/descripciones SEO, createdBy, updatedBy y timestamps ya forman parte de la entidad. Persistencia y auth podrán conectarse después sin remodelar el modelo actual.",
     "audit": {
       "createdBy": "Creado por",
       "updatedBy": "Actualizado por",
@@ -228,7 +313,7 @@
       "localizedLocation": "Ubicación localizada",
       "localizedDuration": "Duración localizada",
       "localizedAvailability": "Disponibilidad localizada",
-      "futureAuthUser": "future-auth-user",
+      "pendingWorkflow": "pendiente de flujo autenticado",
       "autoGenerated": "auto-generado"
     }
   },

@@ -32,14 +32,20 @@ type FaqMessages = {
 
 type PublicFaqPageProps = {
   locale: AppLocale;
+  forceEmptyEntries?: boolean;
 };
 
-export async function PublicFaqPage({ locale }: PublicFaqPageProps) {
+export async function PublicFaqPage({
+  locale,
+  forceEmptyEntries = false,
+}: PublicFaqPageProps) {
   const messages = await getMessages();
   const faqs = messages.Faqs as FaqMessages;
-  const entries = Object.values(faqs.entries ?? {}).filter(
-    (entry) => entry.question.trim().length > 0 && entry.answer.trim().length > 0,
-  );
+  const entries = forceEmptyEntries
+    ? []
+    : Object.values(faqs.entries ?? {}).filter(
+        (entry) => entry.question.trim().length > 0 && entry.answer.trim().length > 0,
+      );
   const contactHref = `/${locale}#contact`;
 
   return (
