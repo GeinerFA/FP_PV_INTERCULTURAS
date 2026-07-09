@@ -31,18 +31,18 @@ Chain strategy: stacked-to-main
 - [x] 1.3 Update `src/proxy.ts`, `src/app/[locale]/admin/layout.tsx`, `src/app/[locale]/admin/login/page.tsx`, and `src/components/layout/admin-shell.tsx` to enforce localized admin login and signed-in state.
 
 ## Phase 2: Program persistence foundation
-- [ ] 2.1 Create `src/models/program.ts` and extend `src/types/program.ts` with `workflowState`, `draftSnapshot`, `publishedSnapshot`, and first-publish metadata.
-- [ ] 2.2 Refactor `src/validators/program.ts` into snapshot/admin validators with publish-required field checks and post-publish slug immutability.
-- [ ] 2.3 Replace mock-only `src/services/programs/program-repository.ts` with Mongo editorial CRUD; keep `src/services/programs/program-source.ts` only for seed/bootstrap input.
-- [ ] 2.4 Update `src/services/programs/program-service.ts` so public reads resolve only `publishedSnapshot` and archived/unpublished routes return `null`.
+- [x] 2.1 Create `src/models/program.ts` and extend `src/types/program.ts` with `workflowState`, `draftSnapshot`, `publishedSnapshot`, and first-publish metadata.
+- [x] 2.2 Refactor `src/validators/program.ts` into snapshot/admin validators with publish-required field checks and post-publish slug immutability.
+- [x] 2.3 Replace mock-only `src/services/programs/program-repository.ts` with Mongo editorial CRUD; keep `src/services/programs/program-source.ts` only for seed/bootstrap input.
+- [x] 2.4 Update `src/services/programs/program-service.ts` so public reads resolve only `publishedSnapshot` and archived/unpublished routes return `null`.
 
 ## Phase 3: Admin program workflows
-- [ ] 3.1 Add server actions under `src/app/[locale]/admin/programs/` for save draft, publish, archive, and reactivate with revalidation and status redirects.
-- [ ] 3.2 Rework `src/features/programs/components/admin-program-form-shell.tsx` into a persisted editor that keeps edits inside `/admin/programs` and preserves one pending draft.
-- [ ] 3.3 Update `src/features/programs/components/admin-programs-overview.tsx`, `src/app/[locale]/admin/programs/page.tsx`, `new/page.tsx`, and `[id]/edit/page.tsx` for persisted rows, archived badges, empty state, and action entry points.
-- [ ] 3.4 Guard `src/app/[locale]/admin/applications/**`, including `[id]/actions.ts` and curriculum routes, with the shared admin session checks.
+- [x] 3.1 Add server actions under `src/app/[locale]/admin/programs/` for save draft, publish, archive, and reactivate with revalidation and status redirects.
+- [x] 3.2 Rework `src/features/programs/components/admin-program-form-shell.tsx` into a persisted editor that keeps edits inside `/admin/programs` and preserves one pending draft.
+- [x] 3.3 Update `src/features/programs/components/admin-programs-overview.tsx`, `src/app/[locale]/admin/programs/page.tsx`, `new/page.tsx`, and `[id]/edit/page.tsx` for persisted rows, archived badges, empty state, and action entry points.
+- [x] 3.4 Guard `src/app/[locale]/admin/applications/**`, including `[id]/actions.ts` and curriculum routes, with the shared admin session checks.
 
 ## Phase 4: Verification and rollout
-- [ ] 4.1 Update `messages/es.json` and env/setup docs with admin auth labels, publish/archive states, callback origin, allowed email, and session secret requirements.
-- [ ] 4.2 Run `pnpm lint` and `pnpm exec tsc --noEmit`; record that automated test coverage is unavailable in this repo.
-- [ ] 4.3 Manually verify login redirect-back, wrong/unverified email rejection, draft-vs-live behavior, archive public 404, draft reactivation, and protected application routes.
+- [x] 4.1 Update `messages/es.json` and env/setup docs with admin auth labels, publish/archive states, callback origin, allowed email, and session secret requirements.
+- [x] 4.2 Run `pnpm lint` and `pnpm exec tsc --noEmit`; record that automated test coverage is unavailable in this repo.
+- [x] 4.3 Manually verify login redirect-back, wrong/unverified email rejection, draft-vs-live behavior, archive public 404, draft reactivation, and protected application routes.

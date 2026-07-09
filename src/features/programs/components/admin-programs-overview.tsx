@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { archiveProgramAction, reactivateProgramAction } from "@/app/[locale]/admin/programs/actions";
 import type { AppLocale } from "@/config/i18n";
 import { Link } from "@/i18n/navigation";
 import { listAdminPrograms } from "@/services/programs/program-service";
@@ -7,6 +8,7 @@ import { listAdminPrograms } from "@/services/programs/program-service";
 const statusTheme = {
   draft: "bg-amber-500/10 text-amber-200 ring-amber-500/30",
   published: "bg-emerald-500/10 text-emerald-200 ring-emerald-500/30",
+  archived: "bg-slate-500/10 text-slate-300 ring-slate-500/30",
 } as const;
 
 export async function AdminProgramsOverview() {
@@ -18,7 +20,7 @@ export async function AdminProgramsOverview() {
   const activeLocale = locale as AppLocale;
   const publishedCount = programs.filter((program) => program.status === "published").length;
   const draftCount = programs.filter((program) => program.status === "draft").length;
-  const featuredCount = programs.filter((program) => program.featured).length;
+  const archivedCount = programs.filter((program) => program.status === "archived").length;
   const categoryCounts = {
     volunteer: programs.filter((program) => program.category === "volunteer").length,
     internships: programs.filter((program) => program.category === "internships").length,
@@ -32,7 +34,8 @@ export async function AdminProgramsOverview() {
           {[
             { key: "catalogSize", value: 0 },
             { key: "publishedNow", value: 0 },
-            { key: "draftBacklog", value: 0 },
+             { key: "draftBacklog", value: 0 },
+             { key: "archivedNow", value: 0 },
           ].map((item) => (
             <article key={item.key} className="surface-dark-panel rounded-2xl p-5">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
@@ -60,7 +63,7 @@ export async function AdminProgramsOverview() {
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-4 xl:grid-cols-4">
+       <div className="grid gap-4 xl:grid-cols-4">
         <article className="surface-dark-panel rounded-2xl p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
             {t("stats.catalogSize.label")}
@@ -84,10 +87,10 @@ export async function AdminProgramsOverview() {
         </article>
         <article className="surface-dark-panel rounded-2xl p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-            {t("stats.featuredHighlights.label")}
+            {t("stats.archivedNow.label")}
           </p>
-          <p className="mt-3 text-3xl font-semibold text-white">{featuredCount}</p>
-          <p className="mt-2 text-sm text-slate-400">{t("stats.featuredHighlights.description")}</p>
+          <p className="mt-3 text-3xl font-semibold text-white">{archivedCount}</p>
+          <p className="mt-2 text-sm text-slate-400">{t("stats.archivedNow.description")}</p>
         </article>
       </div>
 
@@ -178,18 +181,39 @@ export async function AdminProgramsOverview() {
                   </td>
                   <td className="px-6 py-5 text-slate-200">{program.availability[activeLocale]}</td>
                   <td className="px-6 py-5">
-                    <Link
-                      href={{
-                        pathname: "/admin/programs/[id]/edit",
-                        params: { id: program.id },
-                      }}
-                      className="inline-flex rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/10"
-                    >
-                      {t("table.openEditor")}
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+                     <div className="flex flex-wrap gap-2">
+                       <Link
+                         href={{
+                           pathname: "/admin/programs/[id]/edit",
+                           params: { id: program.id },
+                         }}
+                         className="inline-flex rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/10"
+                       >
+                         {t("table.openEditor")}
+                       </Link>
+                       {program.status === "archived" ? (
+                         <form action={reactivateProgramAction.bind(null, activeLocale, program.id)}>
+                           <button
+                             type="submit"
+                             className="inline-flex rounded-full border border-sky-400/30 px-4 py-2 text-xs font-semibold text-sky-100 transition hover:bg-sky-500/10"
+                           >
+                             {t("table.reactivate")}
+                           </button>
+                         </form>
+                       ) : (
+                         <form action={archiveProgramAction.bind(null, activeLocale, program.id)}>
+                           <button
+                             type="submit"
+                             className="inline-flex rounded-full border border-rose-400/30 px-4 py-2 text-xs font-semibold text-rose-100 transition hover:bg-rose-500/10"
+                           >
+                             {t("table.archive")}
+                           </button>
+                         </form>
+                       )}
+                     </div>
+                   </td>
+                 </tr>
+               ))}
             </tbody>
           </table>
         </div>

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
+import { requireAdminSession } from "@/lib/admin-session";
 import {
   getApplicationById,
   updateApplicationStatus,
@@ -24,6 +25,8 @@ export async function updateApplicationStatusAction(
   id: string,
   formData: FormData,
 ): Promise<void> {
+  await requireAdminSession({ locale, nextPath: buildDetailPath(locale, id) });
+
   const currentApplication = await getApplicationById(id);
 
   if (!currentApplication) {

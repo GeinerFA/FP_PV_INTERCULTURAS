@@ -16,6 +16,23 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Environment Setup
+
+The admin workspace and persisted program flows require these environment variables:
+
+- `MONGODB_URI`: Mongo connection used by programs and applications persistence.
+- `APP_ORIGIN`: Public app origin used to build the Google OAuth callback URL (for example `http://localhost:3000`).
+- `GOOGLE_CLIENT_ID`: Google OAuth client id for `/api/admin/auth/google`.
+- `GOOGLE_CLIENT_SECRET`: Google OAuth client secret for the callback exchange.
+- `ADMIN_ALLOWED_EMAIL`: Single Google email allowed into `/{locale}/admin` after verification.
+- `ADMIN_SESSION_SECRET`: Secret used to sign the admin session and OAuth state cookies.
+
+Notes:
+
+- The Google OAuth callback must allow `${APP_ORIGIN}/api/admin/auth/google/callback`.
+- The current runtime locale is Spanish-only (`es`), so admin-facing runtime copy should stay aligned with that path.
+- If `ADMIN_ALLOWED_EMAIL` or `ADMIN_SESSION_SECRET` is missing, the admin login flow intentionally fails with a configuration error instead of creating a partial session.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 ## Learn More

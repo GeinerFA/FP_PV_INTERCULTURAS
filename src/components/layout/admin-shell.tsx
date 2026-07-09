@@ -55,31 +55,31 @@ export async function AdminShell({ children, session }: AdminShellProps) {
             <div className="rounded-3xl border border-white/10 bg-white/5 p-4 text-sm text-slate-300">
               {session ? (
                 <div className="space-y-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-200/80">
-                      Sesión iniciada
-                    </p>
-                    <p className="mt-2 break-all text-sm text-white">{session.email}</p>
-                  </div>
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-200/80">
+                        {t("sessionActive")}
+                      </p>
+                      <p className="mt-2 break-all text-sm text-white">{session.email}</p>
+                    </div>
                   <form action={logoutHref} method="post">
                     <button
                       type="submit"
                       className="inline-flex w-full items-center justify-center rounded-2xl border border-white/15 px-4 py-2.5 font-semibold text-white transition hover:border-rose-300/40 hover:bg-rose-500/10"
                     >
-                      Cerrar sesión
+                      {t("logout")}
                     </button>
                   </form>
                 </div>
               ) : (
                 <div className="space-y-3">
                   <p className="text-sm leading-6 text-slate-300">
-                    Iniciá sesión con la cuenta administrativa para usar las rutas protegidas.
+                    {t("loginNotice")}
                   </p>
                   <a
                     href={loginHref}
                     className="inline-flex w-full items-center justify-center rounded-2xl border border-teal-500/30 px-4 py-2.5 font-semibold text-teal-200 transition hover:bg-teal-500/10"
                   >
-                    Continuar con Google
+                    {t("continueWithGoogle")}
                   </a>
                 </div>
               )}

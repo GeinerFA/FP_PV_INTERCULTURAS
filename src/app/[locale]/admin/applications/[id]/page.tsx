@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AdminPageTemplate } from "@/features/admin/components/admin-page-template";
 import { AdminApplicationDetail } from "@/features/applications/components/admin-application-detail";
 import type { AppLocale } from "@/config/i18n";
+import { requireAdminSession } from "@/lib/admin-session";
 import { getApplicationById } from "@/services/applications/application-service";
 
 import { updateApplicationStatusAction } from "./actions";
@@ -17,6 +18,9 @@ export default async function AdminApplicationDetailPage({
   searchParams,
 }: AdminApplicationDetailPageProps) {
   const [{ id, locale }, { status }] = await Promise.all([params, searchParams]);
+
+  await requireAdminSession({ locale, nextPath: `/${locale}/admin/applications/${id}` });
+
   const application = await getApplicationById(id);
 
   if (!application) {

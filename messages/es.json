@@ -24,9 +24,13 @@
     "futureActionBadge": "Todavía no está conectado: la autenticación sigue fuera de alcance."
   },
   "AdminShell": {
-    "notice": "Espacio administrativo operativo para revisar programas y solicitudes actuales. La autenticación seguirá llegando en una fase posterior con Auth.js.",
+    "notice": "Espacio administrativo protegido para revisar programas y solicitudes reales con una sola sesión de Google autorizada.",
     "homeLabel": "Volver al inicio público",
-    "login": "Vista previa de acceso",
+    "login": "Iniciar sesión",
+    "sessionActive": "Sesión iniciada",
+    "logout": "Cerrar sesión",
+    "loginNotice": "Iniciá sesión con la cuenta administrativa autorizada para usar las rutas protegidas.",
+    "continueWithGoogle": "Continuar con Google",
     "navigation": {
       "dashboard": "Panel",
       "programs": "Programas",
@@ -39,11 +43,11 @@
   "AdminPages": {
     "login": {
       "title": "Acceso administrativo",
-      "description": "Pantalla reservada para el acceso administrativo del MVP. En una fase siguiente se conectará con Auth.js y Google OAuth.",
+      "description": "Pantalla reservada para el acceso administrativo con Google y retorno seguro a la ruta protegida solicitada.",
       "sections": [
         "Mantiene separada la entrada al panel desde el sitio público.",
-        "Permite anticipar estados de acceso y mensajes de seguridad.",
-        "Todavía no implementa autenticación, por decisión explícita de alcance."
+        "Acepta solo el correo administrativo configurado y verificado por Google.",
+        "Devuelve a la ruta protegida pedida después de validar la sesión."
       ]
     },
     "dashboard": {
@@ -57,29 +61,29 @@
     },
     "programs": {
       "title": "Gestión de programas",
-      "description": "Vista operativa del catálogo actual con estado, disponibilidad, destacado y acceso directo a la vista previa de edición.",
+      "description": "Vista operativa del catálogo persistido con estado, disponibilidad, destacado y acceso directo al editor con borrador, publicación y archivo.",
       "sections": [
-        "Usa el catálogo real disponible hoy para rutas administrativas y públicas.",
-        "Mantiene visibles los puntos de entrada de creación y edición sin fingir persistencia.",
-        "Favorece lectura densa para revisar el catálogo rápidamente."
+        "Usa la fuente persistida compartida entre rutas administrativas y públicas.",
+        "Mantiene visible cuándo un programa está publicado, en borrador o archivado.",
+        "Favorece lectura densa para revisar el catálogo y abrir acciones rápido."
       ]
     },
     "programsNew": {
       "title": "Crear programa",
-      "description": "Vista previa del espacio de creación con el contrato actual del programa, antes de conectar acciones de guardado o publicación.",
+      "description": "Espacio de creación persistido para guardar borradores y publicar cuando el contenido público esté completo.",
       "sections": [
-        "Muestra los campos y paneles que deberá cubrir el flujo definitivo.",
-        "No expone guardado, publicación ni acciones autenticadas todavía.",
-        "Sirve para validar el alcance real del formulario antes de persistir cambios."
+        "Guarda un único borrador pendiente por programa en la misma ruta administrativa.",
+        "Separa guardar de publicar para no tocar la versión pública antes de tiempo.",
+        "Exige campos públicos completos antes de permitir la publicación."
       ]
     },
     "programsEdit": {
       "title": "Editar programa",
-      "description": "Vista previa de edición que carga datos reales del programa seleccionado sin prometer persistencia todavía.",
+      "description": "Editor persistido que carga el estado administrativo real, conserva el borrador pendiente y permite publicar, archivar o reactivar.",
       "sections": [
         "Carga la entidad actual desde la capa de servicios compartida.",
         "Mantiene el comportamiento not-found cuando el identificador no existe.",
-        "Deja explícito que la persistencia llegará en una iteración posterior."
+        "Mantiene la versión pública intacta hasta que la publicación vuelva a ejecutarse."
       ]
     },
     "applications": {
@@ -196,35 +200,37 @@
         "label": "Publicados ahora",
         "description": "Solo los elementos publicados aparecen en el catálogo público localizado."
       },
-      "draftBacklog": {
-        "label": "Borradores activos",
-        "description": "Programas que siguen visibles para revisión interna pero todavía no salen al sitio público."
+        "draftBacklog": {
+          "label": "Borradores activos",
+          "description": "Programas que siguen visibles para revisión interna pero todavía no salen al sitio público."
+        },
+        "archivedNow": {
+          "label": "Archivados",
+          "description": "Programas retirados del sitio público pero todavía visibles para control administrativo."
+        }
       },
-      "featuredHighlights": {
-        "label": "Destacados",
-        "description": "Preparado para promoción curada en superficies de marketing."
-      }
-    },
     "summary": {
       "heading": "Lectura rápida del catálogo",
       "description": "Distribución actual por categoría para detectar dónde ya hay oferta publicada y dónde sigue faltando completar el catálogo."
     },
     "actions": {
       "heading": "Siguiente movimiento",
-      "description": "La creación y edición ya tienen espacio dentro del panel, pero siguen funcionando como vistas previas no persistentes.",
-      "create": "Abrir vista previa de creación",
-      "note": "Todavía no existen acciones reales de guardar o publicar. Esta superficie solo expone el estado actual del catálogo y los puntos de entrada del flujo futuro."
+      "description": "La creación, edición y cambios de estado ya viven dentro del panel protegido para mantener separado el borrador de la versión pública.",
+      "create": "Crear nuevo programa",
+      "note": "Usá el editor para guardar borradores, publicar cuando el contenido esté completo y archivar sin borrar el registro."
     },
     "table": {
       "heading": "Programas actuales",
-      "description": "Cada fila muestra el estado operativo disponible hoy: categoría, publicación, destacado, disponibilidad y acceso a edición.",
-      "newProgram": "Abrir vista previa de creación",
-      "openEditor": "Abrir vista previa de edición"
+      "description": "Cada fila muestra el estado operativo actual: categoría, publicación, destacado, disponibilidad y puntos de entrada para editar o cambiar estado.",
+      "newProgram": "Crear nuevo programa",
+      "openEditor": "Abrir editor",
+      "archive": "Archivar",
+      "reactivate": "Reactivar"
     },
     "empty": {
       "title": "Todavía no hay programas cargados",
-      "description": "El panel mantiene visible el punto de entrada para creación, pero no inventa registros ni sugiere que la persistencia ya exista.",
-      "cta": "Abrir vista previa de creación"
+      "description": "El panel mantiene visible el punto de entrada para creación y ya permite guardar el primer borrador real sin inventar registros previos.",
+      "cta": "Crear primer programa"
     },
     "columns": {
       "program": "Programa",
@@ -241,26 +247,28 @@
     },
     "statuses": {
       "draft": "Borrador",
-      "published": "Publicado"
+      "published": "Publicado",
+      "archived": "Archivado"
     }
   },
   "AdminProgramForm": {
     "mode": {
-      "create": "Vista previa de creación",
-      "edit": "Vista previa de edición"
+      "create": "Creación persistida",
+      "edit": "Edición persistida"
     },
     "intro": {
-      "create": "Esta pantalla muestra la estructura prevista para crear programas, pero todavía funciona como una vista previa sin guardado ni publicación real.",
-      "edit": "Esta pantalla ya carga la entidad real desde la capa compartida, pero las modificaciones siguen siendo solo una vista previa hasta incorporar persistencia."
+      "create": "Esta pantalla permite guardar un borrador real dentro de /admin/programs y publicar solo cuando el contenido público esté completo.",
+      "edit": "Esta pantalla carga la entidad real desde la capa compartida y conserva un único borrador pendiente separado de la versión pública publicada."
     },
     "notice": {
-      "title": "Espacio de trabajo en vista previa",
-      "body": "Los campos, paneles y datos que ves ayudan a validar el contrato actual del programa. Guardado, publicación y autenticación administrativa siguen fuera de alcance en esta iteración."
+      "title": "Espacio editorial persistido",
+      "body": "Guardado, publicación, archivo y reactivación ya se ejecutan dentro del panel administrativo. La ruta pública solo cambia cuando la publicación se confirma."
     },
     "sections": {
       "coreIdentity": "Identidad base",
       "localizedPresentation": "Contenido principal del programa",
       "operationalDetails": "Detalles operativos",
+      "workflow": "Flujo editorial",
       "boundaries": "Límites reales de esta iteración",
       "requirements": "Requisitos",
       "included": "Qué incluye",
@@ -272,36 +280,60 @@
       "category": "Categoría",
       "status": "Estado",
       "featured": "Destacado",
+      "featuredToggle": "Marcar como destacado en el catálogo",
       "coverImage": "Imagen de portada",
       "title": "Título",
       "shortDescription": "Descripción corta",
       "fullDescription": "Descripción completa",
       "location": "Ubicación",
       "duration": "Duración",
-      "availability": "Disponibilidad"
+      "availability": "Disponibilidad",
+      "seoTitle": "SEO title",
+      "seoDescription": "SEO description"
+    },
+    "categories": {
+      "volunteer": "Voluntariado",
+      "internships": "Pasantía",
+      "spanish-classes": "Clases de español"
+    },
+    "statuses": {
+      "draft": "Borrador",
+      "published": "Publicado",
+      "archived": "Archivado"
+    },
+    "actions": {
+      "saveDraft": "Guardar borrador",
+      "publish": "Publicar",
+      "archive": "Archivar programa",
+      "reactivate": "Reactivar como borrador",
+      "backToOverview": "Volver al listado"
+    },
+    "workflow": {
+      "description": "Guardar actualiza el borrador administrativo. Publicar valida los campos públicos obligatorios y recién ahí actualiza la versión visible en /programs."
+    },
+    "feedback": {
+      "draft-saved": "El borrador se guardó correctamente dentro del panel administrativo.",
+      "published": "El programa quedó publicado y la versión pública ya se revalidó.",
+      "archived": "El programa se archivó. La ruta pública ahora debe resolver como no encontrada.",
+      "reactivated": "El programa volvió a borrador. Seguirá fuera del sitio público hasta publicar otra vez.",
+      "invalid": "No se pudo interpretar el formulario. Revisá categoría, slug y campos estructurados antes de reintentar.",
+      "save-failed": "No se pudo guardar el borrador. Verificá la conexión y el contenido obligatorio del formulario.",
+      "publish-failed": "No se pudo publicar. Revisá campos públicos obligatorios y recordá que el slug no puede cambiar después de la primera publicación."
     },
     "translationLocale": "Contenido {locale}",
     "boundaries": {
-      "0": "No hay acción de guardado conectada: el panel solo refleja estructura y datos actuales.",
-      "1": "No existe publicación/despublicación real desde esta vista todavía.",
-      "2": "Los campos de auditoría y autoría siguen como referencia del modelo, no como un flujo autenticado ya implementado."
+      "0": "Solo existe un borrador pendiente por programa; no hay historial completo de versiones.",
+      "1": "Archivar nunca elimina el registro: solo lo saca del sitio público hasta reactivarlo y publicar otra vez.",
+      "2": "Después de la primera publicación, el slug queda fijo para proteger las rutas públicas existentes."
     },
-    "requirements": {
-      "0": "Capturar una lista estructurada de requisitos.",
-      "1": "Reutilizar el validador compartido antes de que exista persistencia.",
-      "2": "Mantener compatibilidad con futuros arrays del formulario."
-    },
-    "included": {
-      "0": "Notas iniciales de onboarding.",
-      "1": "Detalles de soporte que después se sincronizarán con las páginas públicas de detalle.",
-      "2": "Una futura acción de guardado conectada con MongoDB/Mongoose."
-    },
-    "seoAuditDescription": "Los títulos/descripciones SEO, createdBy, updatedBy y timestamps ya forman parte de la entidad. Persistencia y auth podrán conectarse después sin remodelar el modelo actual.",
+    "seoAuditDescription": "Los títulos/descripciones SEO, createdBy, updatedBy y timestamps ya forman parte de la entidad persistida y acompañan el ciclo de borrador, publicación y archivo.",
     "audit": {
       "createdBy": "Creado por",
       "updatedBy": "Actualizado por",
       "createdAt": "Creado en",
-      "updatedAt": "Actualizado en"
+      "updatedAt": "Actualizado en",
+      "firstPublishedAt": "Primera publicación",
+      "pendingDraft": "Borrador pendiente"
     },
     "placeholders": {
       "generatedOnSave": "Generado al guardar",
@@ -314,7 +346,33 @@
       "localizedDuration": "Duración localizada",
       "localizedAvailability": "Disponibilidad localizada",
       "pendingWorkflow": "pendiente de flujo autenticado",
-      "autoGenerated": "auto-generado"
+      "autoGenerated": "auto-generado",
+      "requirementsLines": "Un requisito por línea",
+      "includedLines": "Un elemento incluido por línea",
+      "seoTitle": "Título SEO visible en buscadores",
+      "seoDescription": "Descripción SEO visible en buscadores",
+      "notPublishedYet": "todavía no publicado"
+    },
+    "yes": "Sí",
+    "no": "No"
+  },
+  "AdminLogin": {
+    "title": "Acceso administrativo",
+    "description": "Ingresá con la cuenta de Google autorizada para abrir el espacio administrativo.",
+    "protectedNotice": "El acceso protege todo /{locale}/admin y te devuelve a la ruta solicitada después de validar la sesión.",
+    "nextLabel": "Destino después de iniciar sesión: {nextPath}",
+    "continueWithGoogle": "Continuar con Google",
+    "rulesTitle": "Reglas del acceso",
+    "rules": {
+      "0": "Solo entra la cuenta configurada como administradora.",
+      "1": "Google debe devolver el correo como verificado.",
+      "2": "Las rutas públicas siguen visibles sin autenticación."
+    },
+    "errors": {
+      "access_denied": "La cuenta de Google no está autorizada para ingresar al panel.",
+      "config": "Falta completar la configuración administrativa antes de iniciar sesión.",
+      "oauth": "No se pudo completar el acceso con Google. Intentá nuevamente.",
+      "state": "La validación del inicio de sesión expiró. Volvé a intentarlo."
     }
   },
   "NotFound": {
