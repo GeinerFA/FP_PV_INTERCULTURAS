@@ -63,6 +63,35 @@ const programSeoEntrySchema = new Schema(
   { _id: false },
 );
 
+const programImageAssetSchema = new Schema(
+  {
+    fileName: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    contentType: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    sizeBytes: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    uploadedAt: {
+      type: Date,
+      required: true,
+    },
+    data: {
+      type: Buffer,
+      required: true,
+    },
+  },
+  { _id: false },
+);
+
 const translationsSchemaDefinition = Object.fromEntries(
   locales.map((locale) => [locale, { type: programTranslationSchema, required: true }]),
 );
@@ -93,6 +122,10 @@ const programSnapshotSchema = new Schema(
       type: String,
       trim: true,
       default: "",
+    },
+    coverImageAsset: {
+      type: programImageAssetSchema,
+      default: null,
     },
     location: {
       type: localizedTextSchema,
@@ -147,6 +180,46 @@ const programSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    title: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    slug: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      default: "",
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    requirements: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    location: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    duration: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    imageUrl: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    active: {
+      type: Boolean,
+      default: false,
     },
   },
   {

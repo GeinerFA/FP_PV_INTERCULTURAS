@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { isHTTPAccessFallbackError } from "next/dist/client/components/http-access-fallback/http-access-fallback";
 import { notFound, redirect } from "next/navigation";
 
 import { locales, type AppLocale } from "@/config/i18n";
@@ -12,8 +14,20 @@ import {
   reactivateAdminProgram,
   saveAdminProgramDraft,
 } from "@/services/programs/program-service";
-import type { LocalizedText, Program, ProgramSnapshot } from "@/types/program";
+import type { LocalizedText, Program, ProgramImageAssetUpload, ProgramSnapshot } from "@/types/program";
 import { parseProgramSnapshot } from "@/validators/program";
+
+const supportedCoverImageContentTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/avif",
+]);
+
+const supportedCoverImageExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"];
+
+const maxCoverImageFileSizeBytes = 2 * 1024 * 1024;
 
 function buildProgramsOverviewPath(locale: AppLocale): string {
   return `/${locale}/admin/programs`;
@@ -39,6 +53,12 @@ function buildStatusUrl(path: string, status: string): string {
   return `${path}?status=${encodeURIComponent(status)}`;
 }
 
+function rethrowFrameworkNavigation(error: unknown): void {
+  if (isRedirectError(error) || isHTTPAccessFallbackError(error)) {
+    throw error;
+  }
+}
+
 function readString(formData: FormData, key: string): string {
   const value = formData.get(key);
 
@@ -60,12 +80,56 @@ function readLocalizedText(formData: FormData, key: "location" | "duration" | "a
   return Object.fromEntries(locales.map((locale) => [locale, readString(formData, `${key}.${locale}`)])) as LocalizedText;
 }
 
-function parseProgramSnapshotFromFormData(formData: FormData): ProgramSnapshot {
+function readCoverImageFile(formData: FormData): File | null {
+  const value = formData.get("coverImageFile");
+
+  if (!(value instanceof File) || value.size === 0) {
+    return null;
+  }
+
+  return value;
+}
+
+function validateCoverImageFile(file: File | null): "invalid-image-type" | "image-too-large" | null {
+  if (!file) {
+    return null;
+  }
+
+  const normalizedName = file.name.trim().toLowerCase();
+  const hasSupportedExtension = supportedCoverImageExtensions.some((extension) => normalizedName.endsWith(extension));
+  const hasSupportedContentType = file.type.length === 0 || supportedCoverImageContentTypes.has(file.type);
+
+  if (!hasSupportedExtension || !hasSupportedContentType) {
+    return "invalid-image-type";
+  }
+
+  if (file.size > maxCoverImageFileSizeBytes) {
+    return "image-too-large";
+  }
+
+  return null;
+}
+
+async function buildCoverImageAsset(file: File): Promise<ProgramImageAssetUpload> {
+  return {
+    fileName: file.name.trim() || "program-cover-image",
+    contentType: file.type,
+    sizeBytes: file.size,
+    uploadedAt: new Date().toISOString(),
+    data: Buffer.from(await file.arrayBuffer()),
+  };
+}
+
+function parseProgramSnapshotFromFormData(
+  formData: FormData,
+  coverImageAsset: ProgramImageAssetUpload | null,
+): ProgramSnapshot {
   return parseProgramSnapshot({
     slug: readString(formData, "slug"),
     category: readString(formData, "category"),
     featured: readBoolean(formData, "featured"),
     coverImage: readString(formData, "coverImage"),
+    coverImageAsset,
     location: readLocalizedText(formData, "location"),
     duration: readLocalizedText(formData, "duration"),
     availability: readLocalizedText(formData, "availability"),
@@ -111,11 +175,20 @@ export async function saveProgramDraftAction(
 ): Promise<void> {
   const nextPath = id ? buildProgramEditPath(locale, id) : buildProgramCreatePath(locale);
   const session = await requireAdminSession({ locale, nextPath });
+  const coverImageFile = readCoverImageFile(formData);
+  const coverImageError = validateCoverImageFile(coverImageFile);
+
+  if (coverImageError) {
+    redirect(buildStatusUrl(nextPath, coverImageError));
+  }
 
   let draftSnapshot: ProgramSnapshot;
 
   try {
-    draftSnapshot = parseProgramSnapshotFromFormData(formData);
+    draftSnapshot = parseProgramSnapshotFromFormData(
+      formData,
+      coverImageFile ? await buildCoverImageAsset(coverImageFile) : null,
+    );
   } catch {
     redirect(buildStatusUrl(nextPath, "invalid"));
   }
@@ -146,7 +219,8 @@ export async function saveProgramDraftAction(
 
     revalidateProgramPaths(locale, updatedProgram);
     redirect(buildStatusUrl(buildProgramEditPath(locale, updatedProgram.id), "draft-saved"));
-  } catch {
+  } catch (error) {
+    rethrowFrameworkNavigation(error);
     redirect(buildStatusUrl(nextPath, "save-failed"));
   }
 }
@@ -158,11 +232,20 @@ export async function publishProgramAction(
 ): Promise<void> {
   const nextPath = id ? buildProgramEditPath(locale, id) : buildProgramCreatePath(locale);
   const session = await requireAdminSession({ locale, nextPath });
+  const coverImageFile = readCoverImageFile(formData);
+  const coverImageError = validateCoverImageFile(coverImageFile);
+
+  if (coverImageError) {
+    redirect(buildStatusUrl(nextPath, coverImageError));
+  }
 
   let draftSnapshot: ProgramSnapshot;
 
   try {
-    draftSnapshot = parseProgramSnapshotFromFormData(formData);
+    draftSnapshot = parseProgramSnapshotFromFormData(
+      formData,
+      coverImageFile ? await buildCoverImageAsset(coverImageFile) : null,
+    );
   } catch {
     redirect(buildStatusUrl(nextPath, "invalid"));
   }
@@ -197,7 +280,8 @@ export async function publishProgramAction(
 
     revalidateProgramPaths(locale, publishedProgram);
     redirect(buildStatusUrl(buildProgramEditPath(locale, publishedProgram.id), "published"));
-  } catch {
+  } catch (error) {
+    rethrowFrameworkNavigation(error);
     if (id) {
       revalidatePath(buildProgramEditPath(locale, id));
     }

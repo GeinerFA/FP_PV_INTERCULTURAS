@@ -2,6 +2,9 @@ import { locales, type AppLocale } from "@/config/i18n";
 import {
   programCategories,
   programStatuses,
+  type ProgramImageAsset,
+  type ProgramImageAssetSummary,
+  type ProgramImageAssetUpload,
   type ProgramRecord,
   type ProgramSnapshot,
   type ProgramSourceEntry,
@@ -72,6 +75,51 @@ function assertIsoDate(value: unknown, path: string): string {
   }
 
   return date;
+}
+
+function assertDateLike(value: unknown, path: string): string {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value.toISOString();
+  }
+
+  return assertIsoDate(value, path);
+}
+
+function assertInteger(value: unknown, path: string): number {
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
+    throw new Error(`${path} must be a non-negative integer.`);
+  }
+
+  return value;
+}
+
+function assertBinaryData(value: unknown, path: string): Buffer {
+  if (Buffer.isBuffer(value)) {
+    return value;
+  }
+
+  if (
+    value &&
+    typeof value === "object" &&
+    "buffer" in value &&
+    Buffer.isBuffer((value as { buffer?: unknown }).buffer)
+  ) {
+    return Buffer.from((value as { buffer: Buffer }).buffer);
+  }
+
+  if (value && typeof value === "object" && "value" in value) {
+    const maybeBuffer = (value as { value?: (asRaw?: boolean) => unknown }).value?.(true);
+
+    if (Buffer.isBuffer(maybeBuffer)) {
+      return Buffer.from(maybeBuffer);
+    }
+  }
+
+  if (!(value instanceof Uint8Array)) {
+    throw new Error(`${path} must be binary data.`);
+  }
+
+  return Buffer.from(value);
 }
 
 function assertLocalizedText(value: unknown, path: string, allowEmpty = false): LocalizedText {
@@ -149,9 +197,47 @@ function assertNullableIsoDate(value: unknown, path: string): string | null {
   return assertIsoDate(value, path);
 }
 
+function assertProgramImageAssetSummary(value: unknown, path: string): ProgramImageAssetSummary {
+  const object = assertPlainObject(value, path);
+
+  return {
+    fileName: assertString(object.fileName, `${path}.fileName`),
+    contentType: assertString(object.contentType, `${path}.contentType`),
+    sizeBytes: assertInteger(object.sizeBytes, `${path}.sizeBytes`),
+    uploadedAt: assertDateLike(object.uploadedAt, `${path}.uploadedAt`),
+  };
+}
+
+function assertProgramImageAsset(value: unknown, path: string): ProgramImageAsset {
+  const object = assertPlainObject(value, path);
+  const summary = assertProgramImageAssetSummary(object, path);
+
+  if (object.data === null || object.data === undefined) {
+    return summary;
+  }
+
+  return {
+    ...summary,
+    data: assertBinaryData(object.data, `${path}.data`),
+  } satisfies ProgramImageAssetUpload;
+}
+
+function isProgramInternalCoverImage(value: string): boolean {
+  return value.startsWith("/api/programs/") && value.includes("/cover-image");
+}
+
 function assertProgramSnapshotPublishable(snapshot: ProgramSnapshot, path: string): ProgramSnapshot {
   assertSlug(snapshot.slug, `${path}.slug`);
-  assertString(snapshot.coverImage, `${path}.coverImage`);
+  const coverImage = assertString(snapshot.coverImage, `${path}.coverImage`);
+  const coverImageAsset =
+    snapshot.coverImageAsset === null || snapshot.coverImageAsset === undefined
+      ? null
+      : assertProgramImageAsset(snapshot.coverImageAsset, `${path}.coverImageAsset`);
+
+  if (isProgramInternalCoverImage(coverImage) && !coverImageAsset) {
+    throw new Error(`${path}.coverImageAsset is required for internal cover image URLs.`);
+  }
+
   assertLocalizedText(snapshot.location, `${path}.location`);
   assertLocalizedText(snapshot.duration, `${path}.duration`);
   assertLocalizedText(snapshot.availability, `${path}.availability`);
@@ -169,6 +255,10 @@ export function parseProgramSnapshot(value: unknown, path = "programSnapshot"): 
     category: assertEnum(object.category, programCategories, `${path}.category`) as ProgramCategory,
     featured: assertBoolean(object.featured, `${path}.featured`),
     coverImage: assertString(object.coverImage, `${path}.coverImage`, true),
+    coverImageAsset:
+      object.coverImageAsset === null || object.coverImageAsset === undefined
+        ? null
+        : assertProgramImageAsset(object.coverImageAsset, `${path}.coverImageAsset`),
     location: assertLocalizedText(object.location, `${path}.location`, true),
     duration: assertLocalizedText(object.duration, `${path}.duration`, true),
     availability: assertLocalizedText(object.availability, `${path}.availability`, true),

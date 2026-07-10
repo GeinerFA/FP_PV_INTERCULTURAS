@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { locales, type AppLocale } from "@/config/i18n";
@@ -8,7 +10,7 @@ import {
   saveProgramDraftAction,
 } from "@/app/[locale]/admin/programs/actions";
 import { Link } from "@/i18n/navigation";
-import type { Program } from "@/types/program";
+import type { Program, ProgramSnapshot } from "@/types/program";
 
 type AdminProgramFormShellProps = {
   mode: "create" | "edit";
@@ -19,6 +21,8 @@ type AdminProgramFormShellProps = {
     | "archived"
     | "reactivated"
     | "invalid"
+    | "invalid-image-type"
+    | "image-too-large"
     | "save-failed"
     | "publish-failed";
 };
@@ -36,7 +40,30 @@ function hasPendingDraft(program: Program | null | undefined): boolean {
     return false;
   }
 
-  return JSON.stringify(program.draftSnapshot) !== JSON.stringify(program.publishedSnapshot);
+  const normalizeSnapshotForDraftComparison = (snapshot: ProgramSnapshot) => ({
+    ...snapshot,
+    coverImage:
+      snapshot.coverImageAsset && snapshot.coverImage.startsWith("/api/programs/")
+        ? "__internal-program-cover-image__"
+        : snapshot.coverImage,
+  });
+
+  return (
+    JSON.stringify(normalizeSnapshotForDraftComparison(program.draftSnapshot)) !==
+    JSON.stringify(normalizeSnapshotForDraftComparison(program.publishedSnapshot))
+  );
+}
+
+function formatFileSize(sizeBytes: number | undefined): string | null {
+  if (typeof sizeBytes !== "number" || Number.isNaN(sizeBytes)) {
+    return null;
+  }
+
+  if (sizeBytes < 1024) {
+    return `${sizeBytes} B`;
+  }
+
+  return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 export async function AdminProgramFormShell({
@@ -56,7 +83,11 @@ export async function AdminProgramFormShell({
   const reactivateAction = program ? reactivateProgramAction.bind(null, activeLocale, program.id) : null;
   const pendingDraft = hasPendingDraft(program);
   const feedbackTone =
-    feedback === "invalid" || feedback === "save-failed" || feedback === "publish-failed"
+    feedback === "invalid" ||
+    feedback === "invalid-image-type" ||
+    feedback === "image-too-large" ||
+    feedback === "save-failed" ||
+    feedback === "publish-failed"
       ? "border-amber-400/30 bg-amber-500/12 text-amber-100"
       : "border-emerald-400/30 bg-emerald-500/12 text-emerald-100";
 
@@ -83,7 +114,11 @@ export async function AdminProgramFormShell({
         </p>
       </div>
 
-      <form className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]" action={saveAction}>
+      <form
+        className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]"
+        action={saveAction}
+      >
+        <input type="hidden" name="coverImage" defaultValue={program?.coverImage ?? ""} />
         <section className="space-y-6">
           <article className="surface-dark-soft rounded-3xl p-6">
             <h2 className="text-lg font-semibold text-white">{t("sections.coreIdentity")}</h2>
@@ -129,17 +164,58 @@ export async function AdminProgramFormShell({
                 <p className="mt-2 text-sm text-slate-100">{t(`statuses.${program?.status ?? "draft"}`)}</p>
               </div>
 
-              <label className="surface-dark-panel rounded-2xl p-4 text-sm text-slate-200">
+              <div className="surface-dark-panel rounded-2xl p-4 text-sm text-slate-200 md:col-span-2">
                 <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
                   {t("fields.coverImage")}
                 </span>
-                <input
-                  name="coverImage"
-                  defaultValue={program?.coverImage ?? ""}
-                  placeholder="https://..."
-                  className="mt-3 min-h-12 w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-sm text-white outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/20"
-                />
-              </label>
+                <label className="mt-3 block">
+                  <span className="sr-only">{t("fields.coverImage")}</span>
+                  <input
+                    type="file"
+                    name="coverImageFile"
+                    accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                    className="block w-full rounded-2xl border border-dashed border-white/15 bg-slate-950 px-4 py-3 text-sm text-slate-200 file:mr-4 file:rounded-full file:border-0 file:bg-teal-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-950 hover:file:bg-teal-400"
+                  />
+                </label>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{t("coverImageUpload.description")}</p>
+                <p className="mt-2 text-xs leading-6 text-slate-500">{t("coverImageUpload.publishBoundary")}</p>
+
+                {program?.coverImage ? (
+                  <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                    <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                        {t("coverImageUpload.currentDraft")}
+                      </p>
+                      <img
+                        src={program.coverImage}
+                        alt={t("coverImageUpload.currentDraftAlt")}
+                        className="mt-3 h-32 w-full rounded-2xl object-cover"
+                      />
+                      {program.draftSnapshot.coverImageAsset ? (
+                        <p className="mt-3 text-xs text-slate-500">
+                          {program.draftSnapshot.coverImageAsset.fileName}
+                          {formatFileSize(program.draftSnapshot.coverImageAsset.sizeBytes)
+                            ? ` · ${formatFileSize(program.draftSnapshot.coverImageAsset.sizeBytes)}`
+                            : ""}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    {program.publishedSnapshot?.coverImage ? (
+                      <div className="rounded-2xl border border-white/10 bg-slate-950/70 p-3">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          {t("coverImageUpload.currentPublished")}
+                        </p>
+                        <img
+                          src={program.publishedSnapshot.coverImage}
+                          alt={t("coverImageUpload.currentPublishedAlt")}
+                          className="mt-3 h-32 w-full rounded-2xl object-cover"
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
 
               <label className="surface-dark-panel flex items-center gap-3 rounded-2xl p-4 text-sm text-slate-200 md:col-span-2">
                 <input
@@ -245,7 +321,7 @@ export async function AdminProgramFormShell({
                 type="submit"
                 className="inline-flex w-full items-center justify-center rounded-full bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-teal-400"
               >
-                {t("actions.saveDraft")}
+                {isEdit ? t("actions.update") : t("actions.saveDraft")}
               </button>
               <button
                 type="submit"
@@ -265,23 +341,21 @@ export async function AdminProgramFormShell({
             {isEdit && archiveAction && reactivateAction ? (
               <div className="mt-5 border-t border-white/10 pt-5">
                 {program?.status === "archived" ? (
-                  <form action={reactivateAction}>
-                    <button
-                      type="submit"
-                      className="inline-flex w-full items-center justify-center rounded-full border border-sky-400/30 bg-sky-500/10 px-5 py-3 text-sm font-semibold text-sky-100 transition hover:bg-sky-500/20"
-                    >
-                      {t("actions.reactivate")}
-                    </button>
-                  </form>
+                  <button
+                    type="submit"
+                    formAction={reactivateAction}
+                    className="inline-flex w-full items-center justify-center rounded-full border border-sky-400/30 bg-sky-500/10 px-5 py-3 text-sm font-semibold text-sky-100 transition hover:bg-sky-500/20"
+                  >
+                    {t("actions.reactivate")}
+                  </button>
                 ) : (
-                  <form action={archiveAction}>
-                    <button
-                      type="submit"
-                      className="inline-flex w-full items-center justify-center rounded-full border border-rose-400/30 bg-rose-500/10 px-5 py-3 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/20"
-                    >
-                      {t("actions.archive")}
-                    </button>
-                  </form>
+                  <button
+                    type="submit"
+                    formAction={archiveAction}
+                    className="inline-flex w-full items-center justify-center rounded-full border border-rose-400/30 bg-rose-500/10 px-5 py-3 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/20"
+                  >
+                    {t("actions.archive")}
+                  </button>
                 )}
               </div>
             ) : null}

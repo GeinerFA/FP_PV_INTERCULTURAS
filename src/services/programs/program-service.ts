@@ -50,6 +50,7 @@ export function createEmptyProgramSnapshot(): ProgramSnapshot {
     category: "volunteer",
     featured: false,
     coverImage: "",
+    coverImageAsset: null,
     location: Object.fromEntries(locales.map((locale) => [locale, ""])) as unknown as ProgramSnapshot["location"],
     duration: Object.fromEntries(locales.map((locale) => [locale, ""])) as unknown as ProgramSnapshot["duration"],
     availability: Object.fromEntries(locales.map((locale) => [locale, ""])) as unknown as ProgramSnapshot["availability"],
@@ -167,6 +168,15 @@ export async function getAdminProgramById(id: string): Promise<Program | null> {
   const program = await repository.findById(id);
 
   return program ? toAdminProgram(program) : null;
+}
+
+export async function getAdminProgramCoverImageById(
+  id: string,
+  state: "draft" | "published",
+) {
+  const repository = getProgramRepository();
+
+  return repository.findCoverImageById(id, state);
 }
 
 export async function createAdminProgram(input: CreateProgramRecordInput): Promise<Program> {

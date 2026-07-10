@@ -25,11 +25,27 @@ export type ProgramSeoEntry = {
   description: string;
 };
 
+export type ProgramImageAssetSummary = {
+  fileName: string;
+  contentType: string;
+  sizeBytes: number;
+  uploadedAt: string;
+};
+
+export type ProgramImageAssetUpload = ProgramImageAssetSummary & {
+  data: Buffer;
+};
+
+export type ProgramImageAsset = ProgramImageAssetSummary | ProgramImageAssetUpload;
+
+export type ProgramCoverImageState = "draft" | "published";
+
 export type ProgramSnapshot = {
   slug: string;
   category: ProgramCategory;
   featured: boolean;
   coverImage: string;
+  coverImageAsset?: ProgramImageAsset | null;
   location: LocalizedText;
   duration: LocalizedText;
   availability: LocalizedText;

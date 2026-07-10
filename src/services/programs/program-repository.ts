@@ -1,10 +1,12 @@
 import { type HydratedDocument, Types } from "mongoose";
 
-import { locales } from "@/config/i18n";
+import { defaultLocale, locales } from "@/config/i18n";
 import { connectToDatabase } from "@/lib/mongoose";
 import { ProgramModel, type ProgramDocument } from "@/models/program";
 import type {
   CreateProgramRecordInput,
+  ProgramCoverImageState,
+  ProgramImageAssetUpload,
   ProgramRecord,
   ProgramSnapshot,
   ProgramWorkflowMutationInput,
@@ -56,6 +58,11 @@ type PersistedProgramMutation = {
   updatedAt: Date;
 };
 
+const programCoverImageProjection = {
+  "draftSnapshot.coverImageAsset.data": 0,
+  "publishedSnapshot.coverImageAsset.data": 0,
+} as const;
+
 function isLegacyProgramDocument(document: RawProgramDocument): boolean {
   return document.draftSnapshot === null || document.draftSnapshot === undefined;
 }
@@ -94,6 +101,45 @@ function normalizeLegacySlug(value: string, fallback: string): string {
     .replace(/^-+|-+$/g, "");
 
   return normalized.length > 0 ? normalized : fallback;
+}
+
+function buildProgramCoverImagePath(id: string, state: ProgramCoverImageState): string {
+  return `/api/programs/${id}/cover-image?state=${state}`;
+}
+
+function normalizeProgramSnapshotCoverImage(
+  id: string,
+  state: ProgramCoverImageState,
+  snapshot: ProgramSnapshot,
+): ProgramSnapshot {
+  const parsedSnapshot = parseProgramSnapshot(snapshot);
+
+  if (!parsedSnapshot.coverImageAsset) {
+    return parsedSnapshot;
+  }
+
+  return parseProgramSnapshot({
+    ...parsedSnapshot,
+    coverImage: buildProgramCoverImagePath(id, state),
+  });
+}
+
+function preserveExistingCoverImageAsset(
+  currentSnapshot: ProgramSnapshot,
+  nextSnapshot: ProgramSnapshot,
+): ProgramSnapshot {
+  if (
+    nextSnapshot.coverImageAsset ||
+    !currentSnapshot.coverImageAsset ||
+    nextSnapshot.coverImage !== currentSnapshot.coverImage
+  ) {
+    return nextSnapshot;
+  }
+
+  return parseProgramSnapshot({
+    ...nextSnapshot,
+    coverImageAsset: currentSnapshot.coverImageAsset,
+  });
 }
 
 function buildLegacyProgramSnapshot(document: RawProgramDocument): ProgramSnapshot {
@@ -231,18 +277,58 @@ function mapSeedSnapshot(seed: (typeof programCatalog)[number]): ProgramSnapshot
   });
 }
 
+function toLegacyCompatibilityFields(snapshot: ProgramSnapshot, active: boolean) {
+  const translation = snapshot.translations[defaultLocale];
+
+  return {
+    title: translation.title,
+    slug: snapshot.slug,
+    description: translation.fullDescription,
+    requirements: translation.requirements.join("\n"),
+    location: snapshot.location[defaultLocale],
+    duration: snapshot.duration[defaultLocale],
+    imageUrl: snapshot.coverImage,
+    active,
+  };
+}
+
+function selectLegacyCompatibilitySnapshot(
+  workflowState: ProgramRecord["workflowState"],
+  draftSnapshot: ProgramSnapshot,
+  publishedSnapshot: ProgramSnapshot | null,
+): ProgramSnapshot {
+  if ((workflowState === "published" || workflowState === "archived") && publishedSnapshot) {
+    return publishedSnapshot;
+  }
+
+  return draftSnapshot;
+}
+
+function toLegacyCompatibilityUpdate(
+  workflowState: ProgramRecord["workflowState"],
+  draftSnapshot: ProgramSnapshot,
+  publishedSnapshot: ProgramSnapshot | null,
+) {
+  return toLegacyCompatibilityFields(
+    selectLegacyCompatibilitySnapshot(workflowState, draftSnapshot, publishedSnapshot),
+    workflowState === "published",
+  );
+}
+
 function toProgramSeedDocument(seed: (typeof programCatalog)[number]) {
   const snapshot = mapSeedSnapshot(seed);
+  const isPublished = seed.status === "published";
 
   return {
     workflowState: seed.status,
     draftSnapshot: snapshot,
-    publishedSnapshot: seed.status === "published" ? snapshot : null,
-    firstPublishedAt: seed.status === "published" ? new Date(seed.updatedAt) : null,
+    publishedSnapshot: isPublished ? snapshot : null,
+    firstPublishedAt: isPublished ? new Date(seed.updatedAt) : null,
     createdBy: seed.createdBy,
     updatedBy: seed.updatedBy,
     createdAt: new Date(seed.createdAt),
     updatedAt: new Date(seed.updatedAt),
+    ...toLegacyCompatibilityFields(snapshot, isPublished),
   };
 }
 
@@ -282,17 +368,17 @@ async function runProgramBootstrap(): Promise<void> {
     return;
   }
 
-  try {
-    await ProgramModel.insertMany(missingSeedPrograms.map((program) => toProgramSeedDocument(program)), {
-      ordered: false,
-    });
-  } catch (error) {
-    const seededCount = await ProgramModel.countDocuments({ draftSnapshot: { $exists: true } }).exec();
-
-    if (seededCount === 0) {
-      throw error;
-    }
-  }
+  await Promise.all(
+    missingSeedPrograms.map(async (program) => {
+      await ProgramModel.collection.updateOne(
+        { "draftSnapshot.slug": program.slug },
+        {
+          $setOnInsert: toProgramSeedDocument(program) as unknown as Record<string, unknown>,
+        },
+        { upsert: true },
+      );
+    }),
+  );
 }
 
 async function ensureProgramBootstrap(): Promise<void> {
@@ -316,14 +402,23 @@ function assertActor(value: string, path: string): string {
   return value.trim();
 }
 
-async function getCurrentRecordOrNull(id: string): Promise<ProgramRecord | null> {
+async function getCurrentRecordOrNull(
+  id: string,
+  options?: { includeAssetData?: boolean },
+): Promise<ProgramRecord | null> {
   if (!Types.ObjectId.isValid(id)) {
     return null;
   }
 
   await ensureProgramBootstrap();
 
-  const document = await ProgramModel.findById(id).lean().exec();
+  const query = ProgramModel.findById(id);
+
+  if (!options?.includeAssetData) {
+    query.select(programCoverImageProjection);
+  }
+
+  const document = await query.lean().exec();
 
   return document ? mapProgramRecord(document as RawProgramDocument) : null;
 }
@@ -331,6 +426,7 @@ async function getCurrentRecordOrNull(id: string): Promise<ProgramRecord | null>
 export type ProgramRepository = {
   list(): Promise<ProgramRecord[]>;
   findById(id: string): Promise<ProgramRecord | null>;
+  findCoverImageById(id: string, state: ProgramCoverImageState): Promise<ProgramImageAssetUpload | null>;
   findPublishedBySlug(slug: string): Promise<ProgramRecord | null>;
   create(input: CreateProgramRecordInput): Promise<ProgramRecord>;
   saveDraft(input: UpdateProgramDraftInput): Promise<ProgramRecord | null>;
@@ -343,12 +439,55 @@ const mongoProgramRepository: ProgramRepository = {
   async list() {
     await ensureProgramBootstrap();
 
-    const documents = await ProgramModel.find({}).sort({ updatedAt: -1 }).lean().exec();
+    const documents = await ProgramModel.find({})
+      .select(programCoverImageProjection)
+      .sort({ updatedAt: -1 })
+      .lean()
+      .exec();
 
     return documents.map((document) => mapProgramRecord(document as RawProgramDocument));
   },
   async findById(id) {
     return getCurrentRecordOrNull(id);
+  },
+  async findCoverImageById(id, state) {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    await ensureProgramBootstrap();
+
+    const selectPath = state === "draft" ? "draftSnapshot.coverImageAsset" : "publishedSnapshot.coverImageAsset";
+    const document = await ProgramModel.findById(id).select({ [selectPath]: 1 }).exec();
+    const coverImageAsset = document?.get(selectPath) as
+      | {
+          fileName?: unknown;
+          contentType?: unknown;
+          sizeBytes?: unknown;
+          uploadedAt?: unknown;
+          data?: unknown;
+        }
+      | null
+      | undefined;
+
+    if (
+      !coverImageAsset ||
+      typeof coverImageAsset.fileName !== "string" ||
+      typeof coverImageAsset.contentType !== "string" ||
+      typeof coverImageAsset.sizeBytes !== "number" ||
+      !(coverImageAsset.uploadedAt instanceof Date) ||
+      !Buffer.isBuffer(coverImageAsset.data)
+    ) {
+      return null;
+    }
+
+    return {
+      fileName: coverImageAsset.fileName.trim(),
+      contentType: coverImageAsset.contentType.trim(),
+      sizeBytes: coverImageAsset.sizeBytes,
+      uploadedAt: coverImageAsset.uploadedAt.toISOString(),
+      data: coverImageAsset.data,
+    };
   },
   async findPublishedBySlug(slug) {
     const normalizedSlug = slug.trim();
@@ -363,6 +502,7 @@ const mongoProgramRepository: ProgramRepository = {
       workflowState: "published",
       "publishedSnapshot.slug": normalizedSlug,
     })
+      .select(programCoverImageProjection)
       .lean()
       .exec();
 
@@ -379,18 +519,44 @@ const mongoProgramRepository: ProgramRepository = {
       firstPublishedAt: null,
       createdBy: assertActor(createdBy, "createProgramRecordInput.createdBy"),
       updatedBy: assertActor(updatedBy, "createProgramRecordInput.updatedBy"),
+      ...toLegacyCompatibilityFields(parsedDraftSnapshot, false),
     })) as HydratedDocument<ProgramDocument>;
 
-    return mapProgramRecord(document.toObject() as RawProgramDocument);
+    const createdRecord = mapProgramRecord(document.toObject() as RawProgramDocument);
+
+    if (!parsedDraftSnapshot.coverImageAsset) {
+      return createdRecord;
+    }
+
+    const normalizedDraftSnapshot = normalizeProgramSnapshotCoverImage(
+      createdRecord.id,
+      "draft",
+      createdRecord.draftSnapshot,
+    );
+    await ProgramModel.updateOne(
+      { _id: createdRecord.id },
+      {
+        $set: {
+          "draftSnapshot.coverImage": normalizedDraftSnapshot.coverImage,
+          imageUrl: normalizedDraftSnapshot.coverImage,
+        },
+      },
+    ).exec();
+
+    return (await getCurrentRecordOrNull(createdRecord.id)) ?? createdRecord;
   },
   async saveDraft({ id, draftSnapshot, updatedBy }) {
-    const currentRecord = await getCurrentRecordOrNull(id);
+    const currentRecord = await getCurrentRecordOrNull(id, { includeAssetData: true });
 
     if (!currentRecord) {
       return null;
     }
 
-    const parsedDraftSnapshot = parseProgramSnapshot(draftSnapshot);
+    const parsedDraftSnapshot = normalizeProgramSnapshotCoverImage(
+      id,
+      "draft",
+      preserveExistingCoverImageAsset(currentRecord.draftSnapshot, parseProgramSnapshot(draftSnapshot)),
+    );
 
     validatePublishedSlugImmutability(currentRecord, parsedDraftSnapshot, "draftSnapshot");
 
@@ -400,17 +566,23 @@ const mongoProgramRepository: ProgramRepository = {
         $set: {
           draftSnapshot: parsedDraftSnapshot,
           updatedBy: assertActor(updatedBy, "updateProgramDraftInput.updatedBy"),
+          ...toLegacyCompatibilityUpdate(
+            currentRecord.workflowState,
+            parsedDraftSnapshot,
+            currentRecord.publishedSnapshot,
+          ),
         },
       },
       { returnDocument: "after" },
     )
+      .select(programCoverImageProjection)
       .lean()
       .exec();
 
     return document ? mapProgramRecord(document as RawProgramDocument) : null;
   },
   async publish({ id, updatedBy }) {
-    const currentRecord = await getCurrentRecordOrNull(id);
+    const currentRecord = await getCurrentRecordOrNull(id, { includeAssetData: true });
 
     if (!currentRecord) {
       return null;
@@ -419,20 +591,24 @@ const mongoProgramRepository: ProgramRepository = {
     validateProgramSnapshotForPublish(currentRecord.draftSnapshot, "draftSnapshot");
     validatePublishedSlugImmutability(currentRecord, currentRecord.draftSnapshot, "draftSnapshot");
 
+    const publishedSnapshot = normalizeProgramSnapshotCoverImage(id, "published", currentRecord.draftSnapshot);
+
     const now = new Date();
     const document = await ProgramModel.findByIdAndUpdate(
       id,
       {
         $set: {
           workflowState: "published",
-          draftSnapshot: currentRecord.draftSnapshot,
-          publishedSnapshot: currentRecord.draftSnapshot,
+          draftSnapshot: publishedSnapshot,
+          publishedSnapshot,
           firstPublishedAt: currentRecord.firstPublishedAt ? new Date(currentRecord.firstPublishedAt) : now,
           updatedBy: assertActor(updatedBy, "publishProgramInput.updatedBy"),
+          ...toLegacyCompatibilityFields(publishedSnapshot, true),
         },
       },
       { returnDocument: "after" },
     )
+      .select(programCoverImageProjection)
       .lean()
       .exec();
 
@@ -451,10 +627,16 @@ const mongoProgramRepository: ProgramRepository = {
         $set: {
           workflowState: "archived",
           updatedBy: assertActor(updatedBy, "programWorkflowMutationInput.updatedBy"),
+          ...toLegacyCompatibilityUpdate(
+            "archived",
+            currentRecord.draftSnapshot,
+            currentRecord.publishedSnapshot,
+          ),
         },
       },
       { returnDocument: "after" },
     )
+      .select(programCoverImageProjection)
       .lean()
       .exec();
 
@@ -473,10 +655,16 @@ const mongoProgramRepository: ProgramRepository = {
         $set: {
           workflowState: "draft",
           updatedBy: assertActor(updatedBy, "programWorkflowMutationInput.updatedBy"),
+          ...toLegacyCompatibilityUpdate(
+            "draft",
+            currentRecord.draftSnapshot,
+            currentRecord.publishedSnapshot,
+          ),
         },
       },
       { returnDocument: "after" },
     )
+      .select(programCoverImageProjection)
       .lean()
       .exec();
 

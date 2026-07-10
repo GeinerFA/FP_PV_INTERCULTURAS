@@ -33,7 +33,13 @@ export async function PublicProgramDetail({ program }: PublicProgramDetailProps)
 
       <div className="grid gap-8 pt-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div>
-          <h2 className="text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
+          {/* eslint-disable-next-line @next/next/no-img-element -- program cover images must support both internal uploads and legacy external URLs without depending on remote image config. */}
+          <img
+            src={program.coverImage}
+            alt={program.title}
+            className="h-72 w-full rounded-[2rem] object-cover shadow-[0_24px_60px_-45px_rgba(15,23,42,0.55)] md:h-96"
+          />
+          <h2 className="mt-6 text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
             {program.title}
           </h2>
           <p className="mt-4 text-base leading-7 text-slate-600">{program.shortDescription}</p>

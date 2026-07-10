@@ -303,6 +303,7 @@
     },
     "actions": {
       "saveDraft": "Guardar borrador",
+      "update": "Actualizar",
       "publish": "Publicar",
       "archive": "Archivar programa",
       "reactivate": "Reactivar como borrador",
@@ -317,6 +318,8 @@
       "archived": "El programa se archivó. La ruta pública ahora debe resolver como no encontrada.",
       "reactivated": "El programa volvió a borrador. Seguirá fuera del sitio público hasta publicar otra vez.",
       "invalid": "No se pudo interpretar el formulario. Revisá categoría, slug y campos estructurados antes de reintentar.",
+      "invalid-image-type": "La imagen de portada debe ser JPG, PNG, WEBP, GIF o AVIF.",
+      "image-too-large": "La imagen de portada debe pesar 2 MB o menos.",
       "save-failed": "No se pudo guardar el borrador. Verificá la conexión y el contenido obligatorio del formulario.",
       "publish-failed": "No se pudo publicar. Revisá campos públicos obligatorios y recordá que el slug no puede cambiar después de la primera publicación."
     },
@@ -325,6 +328,14 @@
       "0": "Solo existe un borrador pendiente por programa; no hay historial completo de versiones.",
       "1": "Archivar nunca elimina el registro: solo lo saca del sitio público hasta reactivarlo y publicar otra vez.",
       "2": "Después de la primera publicación, el slug queda fijo para proteger las rutas públicas existentes."
+    },
+    "coverImageUpload": {
+      "description": "Subí una imagen local de portada en formato JPG, PNG, WEBP, GIF o AVIF de hasta 2 MB. No hace falta pegar una URL.",
+      "publishBoundary": "Guardar solo actualiza el borrador administrativo. La imagen pública actual no cambia hasta que vuelvas a publicar.",
+      "currentDraft": "Imagen actual del borrador",
+      "currentDraftAlt": "Vista previa de la imagen de portada del borrador",
+      "currentPublished": "Imagen pública actual",
+      "currentPublishedAlt": "Vista previa de la imagen de portada publicada"
     },
     "seoAuditDescription": "Los títulos/descripciones SEO, createdBy, updatedBy y timestamps ya forman parte de la entidad persistida y acompañan el ciclo de borrador, publicación y archivo.",
     "audit": {

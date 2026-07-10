@@ -66,12 +66,25 @@ Standard
 - Targeted post-fix runtime checks now pass for `GET /es`, `GET /es/programs`, `GET /es/admin` with a valid signed admin session cookie, and `GET /es/admin/programs` with the same cookie.
 - `GET /es/programs/community-learning-volunteer` still returns `404` in the current local dataset because the collection currently contains only normalized legacy records and not the expected seeded Module 5 sample slug; verify should re-check whether that route is expected to exist in the target environment.
 
+### Remediation note — 2026-07-09 verify refresh
+
+- Fixed the partial-seed bootstrap gap in `src/services/programs/program-repository.ts` so missing `program-source.ts` entries are restored with idempotent collection upserts instead of a best-effort bulk insert that could leave gaps hidden behind existing data.
+- Mirrored the legacy top-level program fields (`title`, `slug`, `description`, `active`, etc.) onto bootstrap seed inserts because the current Atlas `programs` collection still enforces the pre-Module-5 JSON schema validator for new documents.
+- Re-ran the local Next dev server, re-hit the public programs catalog/detail routes, and confirmed the bootstrap restored all four seed entries into the partial dataset without breaking the normalized legacy records.
+- `GET /es/programs/community-learning-volunteer` now returns `200`, and the local `programs` collection now contains six records total: the two normalized legacy published entries plus the four Module 5 seed/bootstrap entries.
+
+### Remediation note — 2026-07-09 create-flow compatibility refresh
+
+- Fixed the remaining non-bootstrap create-path validator failure by adding the same legacy compatibility fields to normal repository writes and by declaring those fields on `src/models/program.ts`, so Mongoose no longer strips them before Atlas validation.
+- Re-verified the real create flow with a new record (`verify-create-1783645208842` / `6a50441b13c596e2dabf998b`): create succeeded as `draft`, save kept the record off the public route, publish exposed it publicly, archive hid it again, and reactivate returned it to `draft` while public reads stayed `null`.
+- Re-confirmed the public published-read routes still answer correctly in the live app: `GET /es/programs -> 200` and `GET /es/programs/community-learning-volunteer -> 200`.
+
 ### Manual verification notes
 
 - ✅ Anonymous `/es/admin`, `/es/admin/programs/new`, `/es/admin/applications`, `/es/admin/applications/fake-id`, and `/es/admin/applications/fake-id/curriculum` requests all redirected into the localized login flow with the expected `next` value preserved.
-- ✅ Hitting `/api/admin/auth/google?next=%2Fes%2Fadmin%2Fapplications` currently falls back to `/es/admin/login?...&error=config`, which accurately reflects the still-incomplete local Google auth environment instead of creating a fake success path.
+- ✅ Hitting `/api/admin/auth/google?next=%2Fes%2Fadmin%2Fapplications` now leaves the app for Google Accounts, confirming the real OAuth initiation route is healthy in the current environment.
 - ⚠️ Wrong-email / unverified-email rejection could not be exercised end-to-end because the local Google OAuth credentials are not fully usable in this environment.
-- ⚠️ Draft-vs-live behavior, archive public 404, and draft reactivation could not be completed through the live UI because the current machine could not reach MongoDB Atlas; public `/es/programs` and `/es/programs/community-learning-volunteer` returned `MongooseServerSelectionError` during runtime verification.
+- ✅ Draft-vs-live behavior, archive public 404, and draft reactivation were re-proved directly against Atlas through the service/runtime layer in this focused pass, even though a full browser click-through was not repeated.
 
 ## Deviations
 
@@ -79,12 +92,12 @@ Standard
 
 ## Issues / Follow-ups
 
-- Manual verification still depends on the local Google OAuth env and live Mongo connectivity; record partial verification only if either dependency blocks the full browser pass.
+- Remaining verify warnings are now limited to Google callback rejection proof plus the empty-overview and unknown-id scenarios.
 
 ## Remaining Tasks
 
-- None inside this PR slice. Full end-to-end auth + Mongo verification still depends on fixing the local Google OAuth and Atlas reachability blockers.
+- None inside this PR slice for the create-flow blocker. Optional follow-up: close the remaining verify warnings by proving wrong-email / unverified-email callback rejection plus the empty-overview and unknown-id scenarios.
 
 ## Status
 
-14/14 tasks complete. Ready for verify, with environment-limited manual evidence recorded for the blocked live scenarios.
+14/14 tasks complete. Focused verify-remediation blocker is fixed, and the report now has real create/save/publish/archive/reactivate evidence; remaining gaps are warning-level scenario coverage only.
