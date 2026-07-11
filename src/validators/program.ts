@@ -17,6 +17,31 @@ import {
 
 type PlainObject = Record<string, unknown>;
 
+export const programPublishRequiredFieldKeys = [
+  "slug",
+  "coverImage",
+  "location",
+  "duration",
+  "availability",
+  "translations.title",
+  "translations.shortDescription",
+  "translations.fullDescription",
+  "translations.requirements",
+  "translations.included",
+  "seo.title",
+  "seo.description",
+] as const;
+
+export type ProgramPublishRequiredFieldKey = (typeof programPublishRequiredFieldKeys)[number];
+
+const programPublishRequiredFieldKeySet = new Set<ProgramPublishRequiredFieldKey>(
+  programPublishRequiredFieldKeys,
+);
+
+export function isProgramPublishRequiredField(fieldKey: ProgramPublishRequiredFieldKey): boolean {
+  return programPublishRequiredFieldKeySet.has(fieldKey);
+}
+
 function assertPlainObject(value: unknown, path: string): PlainObject {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error(`${path} must be an object.`);

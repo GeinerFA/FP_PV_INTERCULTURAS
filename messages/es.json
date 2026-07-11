@@ -266,6 +266,11 @@
       "title": "Espacio editorial persistido",
       "body": "La edición sigue separando borrador, publicación, archivo y reactivación, pero ahora ordena el formulario como una vista previa clara del programa público antes de mostrar metadatos secundarios."
     },
+    "required": {
+      "badge": "* Obligatorio",
+      "legend": "Estos campos sí tienen que estar completos antes de publicar.",
+      "help": "Guardar borrador sigue permitiendo trabajo incompleto. La marca solo aparece en el contenido público que la validación real exige al momento de publicar."
+    },
     "publishedEditWarning": {
       "title": "Este programa publicado sigue en vivo hasta volver a publicarlo",
       "description": "Estás editando el borrador administrativo de un programa que ya tiene una versión pública.",
