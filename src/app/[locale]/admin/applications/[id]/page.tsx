@@ -36,7 +36,7 @@ export default async function AdminApplicationDetailPage({
       : undefined;
 
   return (
-    <AdminPageTemplate pageKey="applicationDetail" variant="workspace">
+    <AdminPageTemplate pageKey="applicationDetail" variant="workspace" useInnerWorkspace>
       <AdminApplicationDetail
         application={application}
         updateAction={updateApplicationStatusAction.bind(null, locale, id)}

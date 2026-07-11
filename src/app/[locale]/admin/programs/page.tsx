@@ -7,6 +7,7 @@ export default function AdminProgramsPage() {
     <AdminPageTemplate
       pageKey="programs"
       variant="workspace"
+      useInnerWorkspace
       headerAction={
         <Link
           href="/admin/programs/new"

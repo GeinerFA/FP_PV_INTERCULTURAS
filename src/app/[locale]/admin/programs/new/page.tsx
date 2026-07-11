@@ -11,7 +11,7 @@ export default async function AdminProgramsNewPage({ searchParams }: AdminProgra
   const { status } = await searchParams;
 
   return (
-    <AdminPageTemplate pageKey="programsNew" variant="workspace">
+    <AdminPageTemplate pageKey="programsNew" variant="workspace" useInnerWorkspace>
       <AdminProgramFormShell mode="create" feedback={status as Parameters<typeof AdminProgramFormShell>[0]["feedback"]} />
     </AdminPageTemplate>
   );

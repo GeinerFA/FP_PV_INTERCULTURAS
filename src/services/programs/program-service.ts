@@ -115,7 +115,7 @@ function localizeProgramSnapshot(
 
 export async function listPublicPrograms(locale: AppLocale): Promise<LocalizedProgram[]> {
   const repository = getProgramRepository();
-  const programs = await repository.list();
+  const programs = await repository.list({ seedBootstrap: true });
 
   return sortProgramRecords(programs)
     .map((program) => ({
@@ -159,7 +159,7 @@ export async function getPublicProgramBySlug(
 export async function listAdminPrograms(): Promise<Program[]> {
   const repository = getProgramRepository();
 
-  return sortPrograms((await repository.list()).map((program) => toAdminProgram(program)));
+  return sortPrograms((await repository.list({ seedBootstrap: false })).map((program) => toAdminProgram(program)));
 }
 
 export async function getAdminProgramById(id: string): Promise<Program | null> {

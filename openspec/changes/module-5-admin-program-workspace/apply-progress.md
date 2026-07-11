@@ -79,6 +79,13 @@ Standard
 - Re-verified the real create flow with a new record (`verify-create-1783645208842` / `6a50441b13c596e2dabf998b`): create succeeded as `draft`, save kept the record off the public route, publish exposed it publicly, archive hid it again, and reactivate returned it to `draft` while public reads stayed `null`.
 - Re-confirmed the public published-read routes still answer correctly in the live app: `GET /es/programs -> 200` and `GET /es/programs/community-learning-volunteer -> 200`.
 
+### Remediation note — 2026-07-10 focused roadmap step 2 batch
+
+- Split repository maintenance from seed backfill in `src/services/programs/program-repository.ts` so admin reads no longer auto-create seed programs during normal overview access.
+- Kept public catalog assumptions explicit by running seed backfill only on public program reads (`listPublicPrograms()` and slug-based public lookup), which preserves the seeded public catalog contract without making the admin empty state unreachable.
+- Reviewed `/[locale]/admin/programs/[id]/edit` again and confirmed the route still returns `notFound()` when `getAdminProgramById(id)` resolves `null`, including invalid Mongo ObjectId inputs that the repository already short-circuits.
+- Extracted the Google callback account-acceptance decision into a small helper so wrong-email and unverified-email denial stays behaviorally identical but easier to reason about and verify deterministically later.
+
 ### Manual verification notes
 
 - ✅ Anonymous `/es/admin`, `/es/admin/programs/new`, `/es/admin/applications`, `/es/admin/applications/fake-id`, and `/es/admin/applications/fake-id/curriculum` requests all redirected into the localized login flow with the expected `next` value preserved.

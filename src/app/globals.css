@@ -65,6 +65,60 @@ body {
   background: rgb(255 255 255 / 0.04);
 }
 
+.admin-inner-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.admin-inner-section {
+  border: 1px solid rgb(148 163 184 / 0.18);
+  background: linear-gradient(180deg, rgb(15 23 42 / 0.9), rgb(15 23 42 / 0.78));
+  box-shadow: 0 28px 70px -54px rgb(2 6 23 / 0.88);
+  backdrop-filter: blur(18px);
+}
+
+.admin-inner-section-subtle {
+  background: linear-gradient(180deg, rgb(15 23 42 / 0.82), rgb(15 23 42 / 0.68));
+}
+
+.admin-inner-section-warning {
+  border-color: rgb(251 191 36 / 0.38);
+  background: linear-gradient(180deg, rgb(120 53 15 / 0.24), rgb(15 23 42 / 0.94));
+  box-shadow: 0 24px 68px -54px rgb(120 53 15 / 0.62);
+}
+
+.admin-inner-panel {
+  border: 1px solid rgb(148 163 184 / 0.18);
+  background: rgb(15 23 42 / 0.58);
+}
+
+.admin-inner-panel-subtle {
+  border: 1px solid rgb(148 163 184 / 0.14);
+  background: rgb(15 23 42 / 0.42);
+}
+
+.admin-inner-table-shell {
+  border: 1px solid rgb(148 163 184 / 0.18);
+  background: rgb(15 23 42 / 0.7);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+.admin-inner-input {
+  border: 1px solid rgb(148 163 184 / 0.22);
+  background: rgb(2 6 23 / 0.38);
+  color: rgb(226 232 240);
+}
+
+.admin-inner-input::placeholder {
+  color: rgb(148 163 184 / 0.9);
+}
+
+.admin-inner-input:focus {
+  border-color: rgb(45 212 191 / 0.85);
+  box-shadow: 0 0 0 3px rgb(45 212 191 / 0.18);
+}
+
 a {
   transition: color 150ms ease;
 }

@@ -23,6 +23,22 @@ type GoogleUserInfo = {
   email_verified?: boolean;
 };
 
+function resolveAcceptedAdminEmail(userInfo: GoogleUserInfo | null): string | null {
+  if (!userInfo) {
+    return null;
+  }
+
+  if (!hasVerifiedAdminEmail(userInfo.email, userInfo.email_verified)) {
+    return null;
+  }
+
+  if (!isAllowedAdminEmail(userInfo.email)) {
+    return null;
+  }
+
+  return userInfo.email;
+}
+
 function getGoogleCredentials() {
   const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
@@ -112,15 +128,13 @@ export async function GET(request: NextRequest) {
 
     const userInfo = await fetchGoogleUserInfo(accessToken);
 
-    if (
-      !userInfo ||
-      !hasVerifiedAdminEmail(userInfo.email, userInfo.email_verified) ||
-      !isAllowedAdminEmail(userInfo.email)
-    ) {
+    const acceptedAdminEmail = resolveAcceptedAdminEmail(userInfo);
+
+    if (!acceptedAdminEmail) {
       return buildLoginRedirect(request, nextPath, "access_denied");
     }
 
-    const sessionToken = await createAdminSessionToken(userInfo.email);
+    const sessionToken = await createAdminSessionToken(acceptedAdminEmail);
     const response = NextResponse.redirect(new URL(nextPath, request.url));
     clearAdminOauthStateCookie(response);
     setAdminSessionCookie(response, sessionToken);

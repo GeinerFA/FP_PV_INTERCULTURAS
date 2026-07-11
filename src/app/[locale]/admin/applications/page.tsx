@@ -13,7 +13,7 @@ export default async function AdminApplicationsPage({ params }: AdminApplication
   await requireAdminSession({ locale, nextPath: `/${locale}/admin/applications` });
 
   return (
-    <AdminPageTemplate pageKey="applications" variant="workspace">
+    <AdminPageTemplate pageKey="applications" variant="workspace" useInnerWorkspace>
       <AdminApplicationsOverview />
     </AdminPageTemplate>
   );

@@ -5,6 +5,7 @@ import type { AdminPageKey } from "@/features/admin/content/pages";
 type AdminPageTemplateProps = {
   pageKey: AdminPageKey;
   variant?: "workspace" | "placeholder";
+  useInnerWorkspace?: boolean;
   headerAction?: React.ReactNode;
   sections?: string[];
   children?: React.ReactNode;
@@ -13,6 +14,7 @@ type AdminPageTemplateProps = {
 export async function AdminPageTemplate({
   pageKey,
   variant = "placeholder",
+  useInnerWorkspace = false,
   headerAction,
   sections,
   children,
@@ -24,11 +26,11 @@ export async function AdminPageTemplate({
 
   return (
     <section
-      className={`relative overflow-hidden rounded-[32px] border border-white/10 ${
-        isWorkspace
-          ? "bg-[linear-gradient(180deg,rgba(15,23,42,0.96)_0%,rgba(15,23,42,0.88)_100%)] px-6 py-6 shadow-[0_30px_80px_-45px_rgba(8,145,178,0.55)] md:px-8 md:py-8"
-          : "surface-dark-soft p-8"
-      }`}
+        className={`relative overflow-hidden rounded-[32px] border border-white/10 ${
+          isWorkspace
+            ? "bg-[linear-gradient(180deg,rgba(15,23,42,0.98)_0%,rgba(15,23,42,0.92)_100%)] px-6 py-6 shadow-[0_34px_88px_-48px_rgba(2,6,23,0.92)] md:px-8 md:py-8"
+            : "surface-dark-soft p-8"
+        }`}
     >
       {isWorkspace ? (
         <div
@@ -65,7 +67,11 @@ export async function AdminPageTemplate({
         </div>
       ) : null}
 
-      {children ? <div className="relative mt-8">{children}</div> : null}
+      {children ? (
+        <div className={`relative mt-10 ${useInnerWorkspace ? "admin-inner-workspace" : ""}`.trim()}>
+          {children}
+        </div>
+      ) : null}
     </section>
   );
 }

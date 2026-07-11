@@ -25,7 +25,8 @@ import { programCatalog } from "./program-source";
 const legacyProgramFallbackCoverImage =
   "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=1200&q=80";
 
-let programBootstrapPromise: Promise<void> | null = null;
+let programRepositoryMaintenancePromise: Promise<void> | null = null;
+let programSeedBootstrapPromise: Promise<void> | null = null;
 
 type RawProgramDocument = {
   _id: Types.ObjectId;
@@ -332,7 +333,7 @@ function toProgramSeedDocument(seed: (typeof programCatalog)[number]) {
   };
 }
 
-async function runProgramBootstrap(): Promise<void> {
+async function runProgramRepositoryMaintenance(): Promise<void> {
   const legacyDocuments = await ProgramModel.find({ draftSnapshot: { $exists: false } }).lean().exec();
 
   if (legacyDocuments.length > 0) {
@@ -351,6 +352,10 @@ async function runProgramBootstrap(): Promise<void> {
   }
 
   await ProgramModel.syncIndexes();
+}
+
+async function runProgramSeedBootstrap(): Promise<void> {
+  await ensureProgramRepositoryMaintenance();
 
   const existingDocuments = await ProgramModel.find({}, { draftSnapshot: 1 }).lean().exec();
   const existingSlugs = new Set(
@@ -381,17 +386,34 @@ async function runProgramBootstrap(): Promise<void> {
   );
 }
 
-async function ensureProgramBootstrap(): Promise<void> {
+async function ensureProgramRepositoryMaintenance(): Promise<void> {
   await connectToDatabase();
 
-  if (!programBootstrapPromise) {
-    programBootstrapPromise = runProgramBootstrap().catch((error) => {
-      programBootstrapPromise = null;
+  if (!programRepositoryMaintenancePromise) {
+    programRepositoryMaintenancePromise = runProgramRepositoryMaintenance().catch((error) => {
+      programRepositoryMaintenancePromise = null;
       throw error;
     });
   }
 
-  await programBootstrapPromise;
+  await programRepositoryMaintenancePromise;
+}
+
+async function ensureProgramBootstrap(options?: { seedBootstrap?: boolean }): Promise<void> {
+  await ensureProgramRepositoryMaintenance();
+
+  if (!options?.seedBootstrap) {
+    return;
+  }
+
+  if (!programSeedBootstrapPromise) {
+    programSeedBootstrapPromise = runProgramSeedBootstrap().catch((error) => {
+      programSeedBootstrapPromise = null;
+      throw error;
+    });
+  }
+
+  await programSeedBootstrapPromise;
 }
 
 function assertActor(value: string, path: string): string {
@@ -410,7 +432,7 @@ async function getCurrentRecordOrNull(
     return null;
   }
 
-  await ensureProgramBootstrap();
+  await ensureProgramRepositoryMaintenance();
 
   const query = ProgramModel.findById(id);
 
@@ -424,7 +446,7 @@ async function getCurrentRecordOrNull(
 }
 
 export type ProgramRepository = {
-  list(): Promise<ProgramRecord[]>;
+  list(options?: { seedBootstrap?: boolean }): Promise<ProgramRecord[]>;
   findById(id: string): Promise<ProgramRecord | null>;
   findCoverImageById(id: string, state: ProgramCoverImageState): Promise<ProgramImageAssetUpload | null>;
   findPublishedBySlug(slug: string): Promise<ProgramRecord | null>;
@@ -436,8 +458,12 @@ export type ProgramRepository = {
 };
 
 const mongoProgramRepository: ProgramRepository = {
-  async list() {
-    await ensureProgramBootstrap();
+  async list(options) {
+    if (options?.seedBootstrap) {
+      await ensureProgramBootstrap({ seedBootstrap: true });
+    } else {
+      await ensureProgramBootstrap();
+    }
 
     const documents = await ProgramModel.find({})
       .select(programCoverImageProjection)
@@ -455,7 +481,7 @@ const mongoProgramRepository: ProgramRepository = {
       return null;
     }
 
-    await ensureProgramBootstrap();
+    await ensureProgramRepositoryMaintenance();
 
     const selectPath = state === "draft" ? "draftSnapshot.coverImageAsset" : "publishedSnapshot.coverImageAsset";
     const document = await ProgramModel.findById(id).select({ [selectPath]: 1 }).exec();
@@ -496,7 +522,7 @@ const mongoProgramRepository: ProgramRepository = {
       return null;
     }
 
-    await ensureProgramBootstrap();
+    await ensureProgramBootstrap({ seedBootstrap: true });
 
     const document = await ProgramModel.findOne({
       workflowState: "published",
@@ -509,7 +535,7 @@ const mongoProgramRepository: ProgramRepository = {
     return document ? mapProgramRecord(document as RawProgramDocument) : null;
   },
   async create({ draftSnapshot, createdBy, updatedBy }) {
-    await ensureProgramBootstrap();
+    await ensureProgramRepositoryMaintenance();
 
     const parsedDraftSnapshot = parseProgramSnapshot(draftSnapshot);
     const document = (await ProgramModel.create({

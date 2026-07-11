@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { applicationStatuses, type Application } from "@/types/application";
 
 type AdminApplicationDetailProps = {
@@ -9,10 +10,10 @@ type AdminApplicationDetailProps = {
 };
 
 const statusTheme = {
-  pending: "bg-amber-500/10 text-amber-200 ring-amber-500/30",
-  in_process: "bg-violet-500/10 text-violet-200 ring-violet-500/30",
-  resolved: "bg-emerald-500/10 text-emerald-200 ring-emerald-500/30",
-  cancelled: "bg-rose-500/10 text-rose-200 ring-rose-500/30",
+  pending: "bg-amber-500/12 text-amber-100 ring-amber-400/30",
+  in_process: "bg-violet-500/12 text-violet-100 ring-violet-400/30",
+  resolved: "bg-emerald-500/12 text-emerald-100 ring-emerald-400/30",
+  cancelled: "bg-rose-500/12 text-rose-100 ring-rose-400/30",
 } as const;
 
 function formatOptionalText(value: string | null): string {
@@ -70,60 +71,56 @@ export async function AdminApplicationDetail({
     <div className="space-y-8">
       {feedback ? (
         <div
-          className={`rounded-2xl border px-4 py-3 text-sm shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)] backdrop-blur ${feedback === "updated" ? "border-emerald-400/30 bg-emerald-500/12 text-emerald-100" : "border-amber-400/30 bg-amber-500/12 text-amber-100"}`}
+          className={`rounded-[28px] border px-4 py-3 text-sm shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)] backdrop-blur ${feedback === "updated" ? "border-emerald-400/30 bg-emerald-500/12 text-emerald-100" : "border-amber-400/30 bg-amber-500/12 text-amber-100"}`}
         >
           {feedback === "updated" ? t("feedback.updated") : t(`feedback.${feedback}`)}
         </div>
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)]">
-        <section className="surface-dark-soft rounded-3xl p-6">
-          <div className="flex flex-col gap-4 border-b border-white/10 pb-6 md:flex-row md:items-start md:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                {t("applicantLabel")}
-              </p>
-              <h2 className="mt-2 text-2xl font-semibold text-white">{application.fullName}</h2>
-              <p className="mt-2 text-sm text-slate-400">{t("submittedAt", { value: formatDate(application.createdAt, locale) })}</p>
-            </div>
+        <AdminWorkspaceSection
+          eyebrow={t("applicantLabel")}
+          title={application.fullName}
+          description={t("submittedAt", { value: formatDate(application.createdAt, locale) })}
+          action={
             <span
               className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[application.status]}`}
             >
               {t(`statuses.${application.status}`)}
             </span>
-          </div>
-
-          <dl className="mt-6 grid gap-5 md:grid-cols-2">
+          }
+        >
+          <dl className="grid gap-5 md:grid-cols-2">
             {fields.map((field) => (
-              <div key={field.key}>
-                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                  {t(`fields.${field.key}`)}
-                </dt>
-                <dd className="mt-2 text-sm leading-6 text-slate-200">{field.value}</dd>
-              </div>
-            ))}
-            <div className="md:col-span-2">
-              <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                {t("fields.message")}
-              </dt>
-              <dd className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-200">
+                <div key={field.key}>
+                 <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                   {t(`fields.${field.key}`)}
+                 </dt>
+                 <dd className="mt-2 text-sm leading-6 text-slate-200">{field.value}</dd>
+                </div>
+             ))}
+             <div className="md:col-span-2">
+               <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                 {t("fields.message")}
+               </dt>
+               <dd className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-200">
                  {formatOptionalText(application.message)}
-                </dd>
-            </div>
-            <div className="md:col-span-2">
-              <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                {t("fields.curriculum")}
-              </dt>
-              <dd className="mt-2 text-sm leading-6 text-slate-200">
-                {application.curriculum ? (
-                  <div className="flex flex-col gap-3">
+               </dd>
+             </div>
+             <div className="md:col-span-2">
+               <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                 {t("fields.curriculum")}
+               </dt>
+               <dd className="mt-2 text-sm leading-6 text-slate-200">
+                 {application.curriculum ? (
+                   <div className="flex flex-col gap-3">
                     <p>
                       {application.curriculum.fileName} · {formatFileSize(application.curriculum.sizeBytes)}
                     </p>
                     <a
                       href={`/${locale}/admin/applications/${application.id}/curriculum`}
-                      className="inline-flex w-fit rounded-full border border-white/15 px-4 py-2 text-sm font-semibold text-white transition hover:border-teal-400 hover:text-teal-200"
-                    >
+                        className="inline-flex w-fit rounded-full border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-teal-300 hover:text-teal-200"
+                      >
                       {t("curriculum.downloadLabel")}
                     </a>
                   </div>
@@ -133,23 +130,20 @@ export async function AdminApplicationDetail({
               </dd>
             </div>
           </dl>
-        </section>
+        </AdminWorkspaceSection>
 
         <div className="space-y-6">
-          <section className="surface-dark-soft rounded-3xl p-6">
-            <h2 className="text-lg font-semibold text-white">{t("statusCard.title")}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">{t("statusCard.description")}</p>
-
-            <form action={updateAction} className="mt-6 space-y-4">
+          <AdminWorkspaceSection title={t("statusCard.title")} description={t("statusCard.description")}>
+            <form action={updateAction} className="space-y-4">
               <div>
-                <label htmlFor="status" className="block text-sm font-semibold text-white">
-                  {t("statusCard.selectLabel")}
-                </label>
+                  <label htmlFor="status" className="block text-sm font-semibold text-slate-50">
+                    {t("statusCard.selectLabel")}
+                  </label>
                 <select
                   id="status"
                   name="status"
                   defaultValue={application.status}
-                  className="mt-2 min-h-12 w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-sm text-white outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-500/20"
+                  className="admin-inner-input mt-2 min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
                 >
                   {applicationStatuses.map((status) => (
                     <option key={status} value={status}>
@@ -166,32 +160,29 @@ export async function AdminApplicationDetail({
                 {t("statusCard.submitLabel")}
               </button>
             </form>
-          </section>
+          </AdminWorkspaceSection>
 
-          <section className="surface-dark-soft rounded-3xl p-6">
-            <h2 className="text-lg font-semibold text-white">{t("history.title")}</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-400">{t("history.description")}</p>
-
-            <ol className="mt-6 space-y-4">
-               {history.map((entry, index) => (
-                 <li key={`${entry.changedAt}-${entry.to}-${index}`} className="surface-dark-panel-muted rounded-2xl p-4">
-                   <div className="flex flex-wrap items-center justify-between gap-3">
-                     <span
-                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[entry.to]}`}
-                     >
-                       {t(`statuses.${entry.to}`)}
-                     </span>
-                    <span className="text-xs uppercase tracking-[0.16em] text-slate-500">
+          <AdminWorkspaceSection title={t("history.title")} description={t("history.description")} tone="subtle">
+            <ol className="space-y-4">
+              {history.map((entry, index) => (
+                <li key={`${entry.changedAt}-${entry.to}-${index}`} className="admin-inner-panel-subtle rounded-2xl p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[entry.to]}`}
+                    >
+                      {t(`statuses.${entry.to}`)}
+                    </span>
+                    <span className="text-xs uppercase tracking-[0.16em] text-slate-400">
                       {formatDate(entry.changedAt, locale)}
                     </span>
                   </div>
-                  <p className="mt-3 text-sm text-slate-300">
-                     {t("history.changedBy", { actor: formatChangedBy(entry.changedBy) })}
-                   </p>
-                 </li>
-               ))}
+                  <p className="mt-3 text-sm text-slate-200">
+                    {t("history.changedBy", { actor: formatChangedBy(entry.changedBy) })}
+                  </p>
+                </li>
+              ))}
             </ol>
-          </section>
+          </AdminWorkspaceSection>
         </div>
       </div>
     </div>

@@ -228,8 +228,10 @@
       "reactivate": "Reactivar"
     },
     "empty": {
+      "eyebrow": "Punto de partida",
       "title": "Todavía no hay programas cargados",
       "description": "El panel mantiene visible el punto de entrada para creación y ya permite guardar el primer borrador real sin inventar registros previos.",
+      "note": "Cuando aparezcan programas reales, esta misma vista seguirá priorizando resumen, próximos pasos y catálogo operativo sin cambiar el flujo editorial.",
       "cta": "Crear primer programa"
     },
     "columns": {
@@ -257,22 +259,37 @@
       "edit": "Edición persistida"
     },
     "intro": {
-      "create": "Esta pantalla permite guardar un borrador real dentro de /admin/programs y publicar solo cuando el contenido público esté completo.",
-      "edit": "Esta pantalla carga la entidad real desde la capa compartida y conserva un único borrador pendiente separado de la versión pública publicada."
+      "create": "Esta pantalla ordena el editor de arriba hacia abajo para cargar primero el contenido que termina viendo la persona usuaria y dejar el control editorial al final.",
+      "edit": "Esta pantalla abre la entidad real y organiza la edición en un flujo vertical: primero el contenido público y después los límites editoriales del borrador pendiente."
     },
     "notice": {
       "title": "Espacio editorial persistido",
-      "body": "Guardado, publicación, archivo y reactivación ya se ejecutan dentro del panel administrativo. La ruta pública solo cambia cuando la publicación se confirma."
+      "body": "La edición sigue separando borrador, publicación, archivo y reactivación, pero ahora ordena el formulario como una vista previa clara del programa público antes de mostrar metadatos secundarios."
+    },
+    "publishedEditWarning": {
+      "title": "Este programa publicado sigue en vivo hasta volver a publicarlo",
+      "description": "Estás editando el borrador administrativo de un programa que ya tiene una versión pública.",
+      "saveBoundary": "Guardar solo actualiza el borrador administrativo pendiente. Revisá los cambios y republicá cuando realmente deban salir al sitio.",
+      "liveBoundary": "La versión pública actual sigue visible hasta que la republicación confirme los cambios nuevos."
     },
     "sections": {
-      "coreIdentity": "Identidad base",
       "localizedPresentation": "Contenido principal del programa",
-      "operationalDetails": "Detalles operativos",
+      "operationalDetails": "Resumen visible del programa",
+      "coverImage": "Imagen de portada",
       "workflow": "Flujo editorial",
+      "editorialMeta": "Metadatos editoriales",
       "boundaries": "Límites reales de esta iteración",
       "requirements": "Requisitos",
       "included": "Qué incluye",
       "seoAuditPreview": "Vista previa SEO y auditoría"
+    },
+    "descriptions": {
+      "localizedPresentation": "Título, descripciones y narrativa pública primero, siguiendo el orden base de la página pública.",
+      "operationalDetails": "Datos de apoyo que completan la ficha visible del programa: ubicación, duración, disponibilidad, categoría y destacado.",
+      "coverImage": "La imagen de portada vive en su propio bloque para evitar que el editor vuelva a leerse como una grilla lateral.",
+      "requirements": "Cargá un requisito por línea para mantener la lectura pública clara y editable.",
+      "included": "Listá por línea lo que forma parte de la experiencia publicada.",
+      "editorialMeta": "Datos internos que sostienen el flujo administrativo pero no deberían liderar la edición del contenido."
     },
     "fields": {
       "internalId": "ID interno",
@@ -703,8 +720,10 @@
           "actions": "Acciones"
         },
         "empty": {
+          "eyebrow": "Estado de la bandeja",
           "title": "Todavía no hay solicitudes registradas.",
-          "description": "Cuando llegue la primera aplicación real desde el flujo público, esta bandeja mostrará su resumen y estado actual para revisión administrativa."
+          "description": "Cuando llegue la primera aplicación real desde el flujo público, esta bandeja mostrará su resumen y estado actual para revisión administrativa.",
+          "note": "La estructura ya queda lista para leer primero el estado de la bandeja y después abrir cada caso individual sin cambiar el workflow existente."
         },
         "statuses": {
           "pending": "Pendiente",
