@@ -70,7 +70,7 @@ function formatFileSize(sizeBytes: number | undefined): string | null {
 
 function RequiredFieldBadge({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-rose-400/30 bg-rose-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-rose-100">
+    <span className="inline-flex items-center rounded-full border border-rose-300/50 bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-rose-700">
       {label}
     </span>
   );
@@ -123,8 +123,8 @@ export async function AdminProgramFormShell({
     feedback === "image-too-large" ||
     feedback === "save-failed" ||
     feedback === "publish-failed"
-      ? "border-amber-400/30 bg-amber-500/12 text-amber-100"
-      : "border-emerald-400/30 bg-emerald-500/12 text-emerald-100";
+      ? "admin-warning-banner"
+      : "admin-success-banner";
 
   return (
     <div className="space-y-10 lg:space-y-12">
@@ -136,21 +136,21 @@ export async function AdminProgramFormShell({
         </div>
       ) : null}
 
-      <div className="rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(15,23,42,0.92),rgba(15,23,42,0.82))] p-7 text-sm leading-7 text-slate-300 shadow-[0_24px_60px_-48px_rgba(2,6,23,0.95)] backdrop-blur md:p-8">
-        <p className="font-semibold uppercase tracking-[0.18em] text-teal-200/90">
+      <div className="rounded-[32px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,244,232,0.84))] p-7 text-sm leading-7 text-slate-700 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.16)] backdrop-blur md:p-8">
+        <p className="font-semibold uppercase tracking-[0.18em] text-emerald-800/90">
           {isEdit ? t("mode.edit") : t("mode.create")}
         </p>
-        <h2 className="mt-4 text-2xl font-semibold text-slate-50">{t("notice.title")}</h2>
+        <h2 className="mt-4 text-2xl font-semibold text-slate-950">{t("notice.title")}</h2>
         <p className="mt-4 max-w-3xl">{isEdit ? t("intro.edit") : t("intro.create")}</p>
-        <p className="mt-5 rounded-2xl border border-slate-700/80 bg-slate-950/35 px-5 py-4 text-sm text-slate-200">
+        <p className="mt-5 rounded-2xl border border-emerald-900/8 bg-white/66 px-5 py-4 text-sm text-slate-700">
           {t("notice.body")}
         </p>
-        <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-slate-700/70 bg-slate-950/25 px-5 py-4 text-sm text-slate-200">
+        <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-emerald-900/8 bg-emerald-50/55 px-5 py-4 text-sm text-slate-700">
           <div className="flex flex-wrap items-center gap-3">
             <RequiredFieldBadge label={requiredBadgeLabel} />
-            <p className="text-sm font-medium text-slate-100">{t("required.legend")}</p>
+            <p className="text-sm font-medium text-slate-900">{t("required.legend")}</p>
           </div>
-          <p className="max-w-3xl text-xs leading-6 text-slate-400">{t("required.help")}</p>
+          <p className="max-w-3xl text-xs leading-6 text-slate-500">{t("required.help")}</p>
         </div>
       </div>
 
@@ -160,9 +160,9 @@ export async function AdminProgramFormShell({
           description={t("publishedEditWarning.description")}
           tone="warning"
         >
-          <div className="space-y-4 text-sm leading-7 text-amber-50">
+          <div className="space-y-4 text-sm leading-7 text-amber-900">
             <p>{t("publishedEditWarning.saveBoundary")}</p>
-            <p className="rounded-2xl border border-amber-300/30 bg-slate-950/35 px-5 py-4 font-medium text-amber-100">
+            <p className="rounded-2xl border border-amber-300/50 bg-amber-50 px-5 py-4 font-medium text-amber-800">
               {t("publishedEditWarning.liveBoundary")}
             </p>
           </div>
@@ -179,16 +179,16 @@ export async function AdminProgramFormShell({
           <div className="space-y-6">
             {locales.map((locale) => (
               <div key={locale} className="admin-inner-panel rounded-[28px] p-6 md:p-7">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal-200/80">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800/80">
                   {t("translationLocale", { locale: locale.toUpperCase() })}
                 </p>
-                <div className="mt-5 space-y-5 text-sm text-slate-200">
+                <div className="mt-5 space-y-5 text-sm text-slate-700">
                   <label className="block space-y-2.5">
                     <LabelWithMarker
                       label={t("fields.title")}
                       markerLabel={requiredBadgeLabel}
                       required={isProgramPublishRequiredField("translations.title")}
-                      className="flex flex-wrap items-center gap-2 font-semibold text-slate-50"
+                      className="flex flex-wrap items-center gap-2 font-semibold text-slate-950"
                     />
                     <input
                       name={`translations.${locale}.title`}
@@ -202,7 +202,7 @@ export async function AdminProgramFormShell({
                       label={t("fields.shortDescription")}
                       markerLabel={requiredBadgeLabel}
                       required={isProgramPublishRequiredField("translations.shortDescription")}
-                      className="flex flex-wrap items-center gap-2 font-semibold text-slate-50"
+                      className="flex flex-wrap items-center gap-2 font-semibold text-slate-950"
                     />
                     <textarea
                       name={`translations.${locale}.shortDescription`}
@@ -217,7 +217,7 @@ export async function AdminProgramFormShell({
                       label={t("fields.fullDescription")}
                       markerLabel={requiredBadgeLabel}
                       required={isProgramPublishRequiredField("translations.fullDescription")}
-                      className="flex flex-wrap items-center gap-2 font-semibold text-slate-50"
+                      className="flex flex-wrap items-center gap-2 font-semibold text-slate-950"
                     />
                     <textarea
                       name={`translations.${locale}.fullDescription`}
@@ -254,12 +254,12 @@ export async function AdminProgramFormShell({
               value: program ? program.availability[activeLocale] : "",
               placeholder: t("placeholders.localizedAvailability"),
             }].map((field) => (
-              <label key={field.key} className="admin-inner-panel flex flex-col gap-3 rounded-[24px] p-5 text-sm text-slate-200">
+              <label key={field.key} className="admin-inner-panel flex flex-col gap-3 rounded-[24px] p-5 text-sm text-slate-700">
                 <LabelWithMarker
                   label={field.label}
                   markerLabel={requiredBadgeLabel}
                   required={isProgramPublishRequiredField(field.key as "location" | "duration" | "availability")}
-                  className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
+                  className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
                 />
                 <input
                   name={`${field.key}.${activeLocale}`}
@@ -270,8 +270,8 @@ export async function AdminProgramFormShell({
               </label>
             ))}
 
-            <label className="admin-inner-panel flex flex-col gap-3 rounded-[24px] p-5 text-sm text-slate-200">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+            <label className="admin-inner-panel flex flex-col gap-3 rounded-[24px] p-5 text-sm text-slate-700">
+              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 {t("fields.category")}
               </span>
               <select
@@ -285,12 +285,12 @@ export async function AdminProgramFormShell({
               </select>
             </label>
 
-            <label className="admin-inner-panel flex items-center gap-4 rounded-[24px] p-5 text-sm text-slate-200">
+            <label className="admin-inner-panel flex items-center gap-4 rounded-[24px] p-5 text-sm text-slate-700">
               <input
                 type="checkbox"
                 name="featured"
                 defaultChecked={program?.featured ?? false}
-                className="h-4 w-4 rounded border-slate-500 bg-slate-950/50 text-teal-400"
+                className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-700"
               />
               <span>{t("fields.featuredToggle")}</span>
             </label>
@@ -298,12 +298,12 @@ export async function AdminProgramFormShell({
         </AdminWorkspaceSection>
 
         <AdminWorkspaceSection title={coverImageSectionTitle} description={coverImageSectionDescription}>
-          <div className="admin-inner-panel space-y-4 rounded-[28px] p-6 text-sm text-slate-200 md:p-7">
+          <div className="admin-inner-panel space-y-4 rounded-[28px] p-6 text-sm text-slate-700 md:p-7">
             <LabelWithMarker
               label={t("fields.coverImage")}
               markerLabel={requiredBadgeLabel}
               required={isProgramPublishRequiredField("coverImage")}
-              className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
+              className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
             />
             <label className="block">
               <span className="sr-only">{t("fields.coverImage")}</span>
@@ -311,16 +311,16 @@ export async function AdminProgramFormShell({
                 type="file"
                 name="coverImageFile"
                 accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
-                className="admin-inner-input block w-full rounded-2xl border-dashed px-4 py-3 text-sm file:mr-4 file:rounded-full file:border-0 file:bg-teal-500 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-950 hover:file:bg-teal-400"
+                className="admin-inner-input block w-full rounded-2xl border-dashed px-4 py-3 text-sm file:mr-4 file:rounded-full file:border-0 file:bg-emerald-700 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-emerald-800"
               />
             </label>
-            <p className="text-sm leading-7 text-slate-300">{t("coverImageUpload.description")}</p>
-            <p className="text-xs leading-6 text-slate-400">{t("coverImageUpload.publishBoundary")}</p>
+            <p className="text-sm leading-7 text-slate-600">{t("coverImageUpload.description")}</p>
+            <p className="text-xs leading-6 text-slate-500">{t("coverImageUpload.publishBoundary")}</p>
 
             {program?.coverImage ? (
               <div className="space-y-5 pt-1">
                 <div className="admin-inner-panel-subtle rounded-2xl p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                     {t("coverImageUpload.currentDraft")}
                   </p>
                   <img
@@ -329,7 +329,7 @@ export async function AdminProgramFormShell({
                     className="mt-3 h-48 w-full rounded-2xl object-cover"
                   />
                   {program.draftSnapshot.coverImageAsset ? (
-                    <p className="mt-4 text-xs text-slate-400">
+                    <p className="mt-4 text-xs text-slate-500">
                       {program.draftSnapshot.coverImageAsset.fileName}
                       {formatFileSize(program.draftSnapshot.coverImageAsset.sizeBytes)
                         ? ` · ${formatFileSize(program.draftSnapshot.coverImageAsset.sizeBytes)}`
@@ -340,7 +340,7 @@ export async function AdminProgramFormShell({
 
                 {program.publishedSnapshot?.coverImage ? (
                   <div className="admin-inner-panel-subtle rounded-2xl p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                       {t("coverImageUpload.currentPublished")}
                     </p>
                     <img
@@ -359,12 +359,12 @@ export async function AdminProgramFormShell({
           title={t("sections.requirements")}
           description={t("descriptions.requirements")}
         >
-          <label className="admin-inner-panel block rounded-[28px] p-5 text-sm text-slate-200 md:p-6">
+          <label className="admin-inner-panel block rounded-[28px] p-5 text-sm text-slate-700 md:p-6">
             <LabelWithMarker
               label={t("sections.requirements")}
               markerLabel={requiredBadgeLabel}
               required={isProgramPublishRequiredField("translations.requirements")}
-              className="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
+              className="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
             />
             <textarea
               name={`translations.${activeLocale}.requirements`}
@@ -377,12 +377,12 @@ export async function AdminProgramFormShell({
         </AdminWorkspaceSection>
 
         <AdminWorkspaceSection title={t("sections.included")} description={t("descriptions.included")}>
-          <label className="admin-inner-panel block rounded-[28px] p-5 text-sm text-slate-200 md:p-6">
+          <label className="admin-inner-panel block rounded-[28px] p-5 text-sm text-slate-700 md:p-6">
             <LabelWithMarker
               label={t("sections.included")}
               markerLabel={requiredBadgeLabel}
               required={isProgramPublishRequiredField("translations.included")}
-              className="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
+              className="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
             />
             <textarea
               name={`translations.${activeLocale}.included`}
@@ -400,12 +400,12 @@ export async function AdminProgramFormShell({
           tone="subtle"
         >
           <div className="space-y-5">
-            <label className="block space-y-2.5 text-sm text-slate-200">
+            <label className="block space-y-2.5 text-sm text-slate-700">
               <LabelWithMarker
                 label={t("fields.seoTitle")}
                 markerLabel={requiredBadgeLabel}
                 required={isProgramPublishRequiredField("seo.title")}
-                className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
+                className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
               />
               <input
                 name={`seo.${activeLocale}.title`}
@@ -414,12 +414,12 @@ export async function AdminProgramFormShell({
                 className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
               />
             </label>
-            <label className="block space-y-2.5 text-sm text-slate-200">
+            <label className="block space-y-2.5 text-sm text-slate-700">
               <LabelWithMarker
                 label={t("fields.seoDescription")}
                 markerLabel={requiredBadgeLabel}
                 required={isProgramPublishRequiredField("seo.description")}
-                className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
+                className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
               />
               <textarea
                 name={`seo.${activeLocale}.description`}
@@ -436,32 +436,32 @@ export async function AdminProgramFormShell({
           <div className="space-y-4">
             <button
               type="submit"
-              className="inline-flex w-full items-center justify-center rounded-full bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-teal-400"
+              className="admin-primary-action inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition"
             >
               {isEdit ? t("actions.update") : t("actions.saveDraft")}
             </button>
             <button
               type="submit"
               formAction={publishAction}
-              className="inline-flex w-full items-center justify-center rounded-full border border-emerald-500/40 bg-emerald-500/10 px-5 py-3 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/16"
+              className="admin-secondary-action inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition"
             >
               {t("actions.publish")}
             </button>
             <Link
               href="/admin/programs"
-              className="inline-flex w-full items-center justify-center rounded-full border border-slate-600 px-5 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-800/80"
+              className="admin-outline-action inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition"
             >
               {t("actions.backToOverview")}
             </Link>
           </div>
 
           {isEdit && archiveAction && reactivateAction ? (
-            <div className="mt-6 border-t border-slate-700 pt-6">
+            <div className="mt-6 border-t border-emerald-900/8 pt-6">
               {program?.status === "archived" ? (
                 <button
                   type="submit"
                   formAction={reactivateAction}
-                  className="inline-flex w-full items-center justify-center rounded-full border border-sky-500/40 bg-sky-500/10 px-5 py-3 text-sm font-semibold text-sky-100 transition hover:bg-sky-500/16"
+                  className="admin-info-action inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition"
                 >
                   {t("actions.reactivate")}
                 </button>
@@ -469,7 +469,7 @@ export async function AdminProgramFormShell({
                 <button
                   type="submit"
                   formAction={archiveAction}
-                  className="inline-flex w-full items-center justify-center rounded-full border border-rose-500/40 bg-rose-500/10 px-5 py-3 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/16"
+                  className="admin-danger-action inline-flex w-full items-center justify-center rounded-full px-5 py-3 text-sm font-semibold transition"
                 >
                   {t("actions.archive")}
                 </button>
@@ -483,12 +483,12 @@ export async function AdminProgramFormShell({
           description={t("descriptions.editorialMeta")}
           tone="subtle"
         >
-          <div className="space-y-5 text-sm text-slate-200">
+          <div className="space-y-5 text-sm text-slate-700">
             <div className="admin-inner-panel-subtle rounded-2xl p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 {t("fields.internalId")}
               </p>
-              <p className="mt-2 text-sm text-slate-100">{program?.id ?? t("placeholders.generatedOnSave")}</p>
+              <p className="mt-2 text-sm text-slate-900">{program?.id ?? t("placeholders.generatedOnSave")}</p>
             </div>
 
             <label className="block space-y-2.5">
@@ -496,7 +496,7 @@ export async function AdminProgramFormShell({
                 label={t("fields.slug")}
                 markerLabel={requiredBadgeLabel}
                 required={isProgramPublishRequiredField("slug")}
-                className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
+                className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
               />
               <input
                 name="slug"
@@ -507,13 +507,13 @@ export async function AdminProgramFormShell({
             </label>
 
             <div className="admin-inner-panel-subtle rounded-2xl p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                 {t("fields.status")}
               </p>
-              <p className="mt-2 text-sm text-slate-100">{t(`statuses.${program?.status ?? "draft"}`)}</p>
+              <p className="mt-2 text-sm text-slate-900">{t(`statuses.${program?.status ?? "draft"}`)}</p>
             </div>
 
-            <div className="admin-inner-panel-subtle rounded-2xl px-5 py-5 text-xs uppercase tracking-[0.18em] text-slate-400">
+            <div className="admin-inner-panel-subtle rounded-2xl px-5 py-5 text-xs uppercase tracking-[0.18em] text-slate-500">
               <p>{t("audit.createdBy")}: {program?.createdBy ?? t("placeholders.pendingWorkflow")}</p>
               <p className="mt-2">{t("audit.updatedBy")}: {program?.updatedBy ?? t("placeholders.pendingWorkflow")}</p>
               <p className="mt-2">{t("audit.createdAt")}: {program?.createdAt ?? t("placeholders.autoGenerated")}</p>
@@ -525,7 +525,7 @@ export async function AdminProgramFormShell({
         </AdminWorkspaceSection>
 
         <AdminWorkspaceSection title={t("sections.boundaries")} tone="subtle">
-          <ul className="space-y-4 text-sm leading-7 text-slate-300">
+          <ul className="space-y-4 text-sm leading-7 text-slate-600">
             {[t("boundaries.0"), t("boundaries.1"), t("boundaries.2")].map((item) => (
               <li key={item} className="admin-inner-panel-subtle rounded-2xl px-5 py-4">
                 {item}

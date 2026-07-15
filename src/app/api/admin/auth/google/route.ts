@@ -5,6 +5,7 @@ import {
   buildAdminLoginPath,
   createAdminOauthStateToken,
   getAdminAppOrigin,
+  getAdminAppRequestUrl,
   readAdminSessionToken,
   resolveLocaleFromAdminPath,
   sanitizeAdminNextPath,
@@ -27,6 +28,12 @@ export async function GET(request: NextRequest) {
   const nextPath = sanitizeAdminNextPath(requestedNextPath, requestedLocale);
 
   try {
+    const adminAppOrigin = getAdminAppOrigin(request);
+
+    if (adminAppOrigin !== request.nextUrl.origin) {
+      return NextResponse.redirect(getAdminAppRequestUrl(request));
+    }
+
     const existingSession = await readAdminSessionToken(
       request.cookies.get(adminSessionCookieName)?.value,
     );
@@ -38,7 +45,7 @@ export async function GET(request: NextRequest) {
     const state = await createAdminOauthStateToken(nextPath);
     const authUrl = new URL("https://accounts.google.com/o/oauth2/v2/auth");
     authUrl.searchParams.set("client_id", getGoogleClientId());
-    authUrl.searchParams.set("redirect_uri", `${getAdminAppOrigin(request)}/api/admin/auth/google/callback`);
+    authUrl.searchParams.set("redirect_uri", `${adminAppOrigin}/api/admin/auth/google/callback`);
     authUrl.searchParams.set("response_type", "code");
     authUrl.searchParams.set("scope", "openid email profile");
     authUrl.searchParams.set("prompt", "select_account");

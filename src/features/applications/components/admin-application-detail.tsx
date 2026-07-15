@@ -10,10 +10,10 @@ type AdminApplicationDetailProps = {
 };
 
 const statusTheme = {
-  pending: "bg-amber-500/12 text-amber-100 ring-amber-400/30",
-  in_process: "bg-violet-500/12 text-violet-100 ring-violet-400/30",
-  resolved: "bg-emerald-500/12 text-emerald-100 ring-emerald-400/30",
-  cancelled: "bg-rose-500/12 text-rose-100 ring-rose-400/30",
+  pending: "bg-amber-50 text-amber-700 ring-amber-200",
+  in_process: "bg-violet-50 text-violet-700 ring-violet-200",
+  resolved: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  cancelled: "bg-rose-50 text-rose-700 ring-rose-200",
 } as const;
 
 function formatOptionalText(value: string | null): string {
@@ -71,7 +71,7 @@ export async function AdminApplicationDetail({
     <div className="space-y-8">
       {feedback ? (
         <div
-          className={`rounded-[28px] border px-4 py-3 text-sm shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)] backdrop-blur ${feedback === "updated" ? "border-emerald-400/30 bg-emerald-500/12 text-emerald-100" : "border-amber-400/30 bg-amber-500/12 text-amber-100"}`}
+          className={`rounded-[28px] border px-4 py-3 text-sm shadow-[0_18px_40px_-32px_rgba(15,23,42,0.18)] backdrop-blur ${feedback === "updated" ? "admin-success-banner" : "admin-warning-banner"}`}
         >
           {feedback === "updated" ? t("feedback.updated") : t(`feedback.${feedback}`)}
         </div>
@@ -93,25 +93,25 @@ export async function AdminApplicationDetail({
           <dl className="grid gap-5 md:grid-cols-2">
             {fields.map((field) => (
                 <div key={field.key}>
-                 <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                 <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                    {t(`fields.${field.key}`)}
                  </dt>
-                 <dd className="mt-2 text-sm leading-6 text-slate-200">{field.value}</dd>
+                 <dd className="mt-2 text-sm leading-6 text-slate-700">{field.value}</dd>
                 </div>
              ))}
              <div className="md:col-span-2">
-               <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+               <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                  {t("fields.message")}
                </dt>
-               <dd className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-200">
+                <dd className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">
                  {formatOptionalText(application.message)}
                </dd>
              </div>
              <div className="md:col-span-2">
-               <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
+                <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                  {t("fields.curriculum")}
                </dt>
-               <dd className="mt-2 text-sm leading-6 text-slate-200">
+                <dd className="mt-2 text-sm leading-6 text-slate-700">
                  {application.curriculum ? (
                    <div className="flex flex-col gap-3">
                     <p>
@@ -119,7 +119,7 @@ export async function AdminApplicationDetail({
                     </p>
                     <a
                       href={`/${locale}/admin/applications/${application.id}/curriculum`}
-                        className="inline-flex w-fit rounded-full border border-slate-600 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-teal-300 hover:text-teal-200"
+                        className="admin-secondary-action inline-flex w-fit rounded-full px-4 py-2 text-sm font-semibold transition"
                       >
                       {t("curriculum.downloadLabel")}
                     </a>
@@ -136,7 +136,7 @@ export async function AdminApplicationDetail({
           <AdminWorkspaceSection title={t("statusCard.title")} description={t("statusCard.description")}>
             <form action={updateAction} className="space-y-4">
               <div>
-                  <label htmlFor="status" className="block text-sm font-semibold text-slate-50">
+                  <label htmlFor="status" className="block text-sm font-semibold text-slate-950">
                     {t("statusCard.selectLabel")}
                   </label>
                 <select
@@ -155,7 +155,7 @@ export async function AdminApplicationDetail({
 
               <button
                 type="submit"
-                className="inline-flex rounded-full bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-teal-400"
+                className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
               >
                 {t("statusCard.submitLabel")}
               </button>
@@ -172,11 +172,11 @@ export async function AdminApplicationDetail({
                     >
                       {t(`statuses.${entry.to}`)}
                     </span>
-                    <span className="text-xs uppercase tracking-[0.16em] text-slate-400">
+                    <span className="text-xs uppercase tracking-[0.16em] text-slate-500">
                       {formatDate(entry.changedAt, locale)}
                     </span>
                   </div>
-                  <p className="mt-3 text-sm text-slate-200">
+                  <p className="mt-3 text-sm text-slate-700">
                     {t("history.changedBy", { actor: formatChangedBy(entry.changedBy) })}
                   </p>
                 </li>

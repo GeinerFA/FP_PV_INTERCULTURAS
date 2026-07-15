@@ -11,7 +11,7 @@ export default function AdminProgramsPage() {
       headerAction={
         <Link
           href="/admin/programs/new"
-          className="inline-flex rounded-full bg-teal-500 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-teal-400"
+          className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
         >
           Nuevo programa
         </Link>

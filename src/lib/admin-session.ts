@@ -325,5 +325,19 @@ export async function hasAdminSession(request: NextRequest): Promise<boolean> {
 }
 
 export function getAdminAppOrigin(request: NextRequest): string {
-  return process.env.APP_ORIGIN?.trim() || request.nextUrl.origin;
+  const configuredOrigin = process.env.APP_ORIGIN?.trim();
+
+  if (!configuredOrigin) {
+    return request.nextUrl.origin;
+  }
+
+  try {
+    return new URL(configuredOrigin).origin;
+  } catch {
+    throw new Error("Invalid APP_ORIGIN environment variable.");
+  }
+}
+
+export function getAdminAppRequestUrl(request: NextRequest): URL {
+  return new URL(`${request.nextUrl.pathname}${request.nextUrl.search}`, getAdminAppOrigin(request));
 }
