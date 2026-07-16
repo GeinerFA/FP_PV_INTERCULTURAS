@@ -2,7 +2,13 @@ import { AdminPageTemplate } from "@/features/admin/components/admin-page-templa
 import { AdminProgramsOverview } from "@/features/programs/components/admin-programs-overview";
 import { Link } from "@/i18n/navigation";
 
-export default function AdminProgramsPage() {
+type AdminProgramsPageProps = {
+  searchParams: Promise<{ status?: string }>;
+};
+
+export default async function AdminProgramsPage({ searchParams }: AdminProgramsPageProps) {
+  const { status } = await searchParams;
+
   return (
     <AdminPageTemplate
       pageKey="programs"
@@ -17,7 +23,7 @@ export default function AdminProgramsPage() {
         </Link>
       }
     >
-      <AdminProgramsOverview />
+      <AdminProgramsOverview feedback={status as Parameters<typeof AdminProgramsOverview>[0]["feedback"]} />
     </AdminPageTemplate>
   );
 }

@@ -10,6 +10,7 @@ import { requireAdminSession } from "@/lib/admin-session";
 import {
   archiveAdminProgram,
   createAdminProgram,
+  deleteAdminProgram,
   publishAdminProgram,
   reactivateAdminProgram,
   saveAdminProgramDraft,
@@ -74,6 +75,10 @@ function readLineArray(formData: FormData, key: string): string[] {
     .split(/\r?\n/)
     .map((entry) => entry.trim())
     .filter((entry) => entry.length > 0);
+}
+
+function hasConfirmedDestructiveIntent(formData: FormData, intent: "archive" | "delete"): boolean {
+  return readString(formData, "destructiveIntent") === intent;
 }
 
 function readLocalizedText(formData: FormData, key: "location" | "duration" | "availability"): LocalizedText {
@@ -290,8 +295,13 @@ export async function publishProgramAction(
   }
 }
 
-export async function archiveProgramAction(locale: AppLocale, id: string): Promise<void> {
+export async function archiveProgramAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildProgramEditPath(locale, id);
+
+  if (!hasConfirmedDestructiveIntent(formData, "archive")) {
+    redirect(buildStatusUrl(nextPath, "destructive-confirmation-required"));
+  }
+
   const session = await requireAdminSession({ locale, nextPath });
 
   const archivedProgram = await archiveAdminProgram({
@@ -305,6 +315,33 @@ export async function archiveProgramAction(locale: AppLocale, id: string): Promi
 
   revalidateProgramPaths(locale, archivedProgram);
   redirect(buildStatusUrl(buildProgramEditPath(locale, archivedProgram.id), "archived"));
+}
+
+export async function deleteProgramAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
+  const nextPath = buildProgramEditPath(locale, id);
+
+  if (!hasConfirmedDestructiveIntent(formData, "delete")) {
+    redirect(buildStatusUrl(nextPath, "destructive-confirmation-required"));
+  }
+
+  const session = await requireAdminSession({ locale, nextPath });
+
+  try {
+    const deletedProgram = await deleteAdminProgram({
+      id,
+      updatedBy: session.email,
+    });
+
+    if (!deletedProgram) {
+      notFound();
+    }
+
+    revalidateProgramPaths(locale, deletedProgram);
+    redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "deleted"));
+  } catch (error) {
+    rethrowFrameworkNavigation(error);
+    redirect(buildStatusUrl(nextPath, "delete-failed"));
+  }
 }
 
 export async function reactivateProgramAction(locale: AppLocale, id: string): Promise<void> {

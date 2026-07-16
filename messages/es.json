@@ -219,13 +219,24 @@
       "create": "Crear nuevo programa",
       "note": "Usá el editor para guardar borradores, publicar cuando el contenido esté completo y archivar sin borrar el registro."
     },
+    "feedback": {
+      "deleted": "El programa se eliminó permanentemente del catálogo administrativo.",
+      "destructive-confirmation-required": "Para archivar desde la tabla primero confirmá la advertencia visible de esa fila."
+    },
     "table": {
       "heading": "Programas actuales",
       "description": "Cada fila muestra el estado operativo actual: categoría, publicación, destacado, disponibilidad y puntos de entrada para editar o cambiar estado.",
       "newProgram": "Crear nuevo programa",
       "openEditor": "Abrir editor",
       "archive": "Archivar",
-      "reactivate": "Reactivar"
+      "reactivate": "Reactivar",
+      "archiveConfirmation": {
+        "title": "Confirmar archivo",
+        "description": "Archivar retira el programa del sitio público sin borrar el registro administrativo.",
+        "warning": "La ruta pública dejará de estar disponible hasta reactivar el programa y publicarlo otra vez.",
+        "confirm": "Sí, archivar",
+        "cancel": "Cancelar"
+      }
     },
     "empty": {
       "eyebrow": "Punto de partida",
@@ -264,17 +275,17 @@
     },
     "notice": {
       "title": "Espacio editorial persistido",
-      "body": "La edición sigue separando borrador, publicación, archivo y reactivación, pero ahora ordena el formulario como una vista previa clara del programa público antes de mostrar metadatos secundarios."
+      "body": "La edición sigue separando borrador, publicación, archivo y reactivación. Ahora la acción principal publica de inmediato, mientras que guardar borrador queda disponible como salida secundaria cuando necesitás trabajo incompleto."
     },
     "required": {
       "badge": "* Obligatorio",
       "legend": "Estos campos sí tienen que estar completos antes de publicar.",
-      "help": "Guardar borrador sigue permitiendo trabajo incompleto. La marca solo aparece en el contenido público que la validación real exige al momento de publicar."
+      "help": "La acción principal publica de inmediato, así que estos campos tienen que estar completos para que el cambio salga al sitio. Guardar borrador sigue disponible como camino secundario para trabajo incompleto."
     },
     "publishedEditWarning": {
       "title": "Este programa publicado sigue en vivo hasta volver a publicarlo",
       "description": "Estás editando el borrador administrativo de un programa que ya tiene una versión pública.",
-      "saveBoundary": "Guardar solo actualiza el borrador administrativo pendiente. Revisá los cambios y republicá cuando realmente deban salir al sitio.",
+      "saveBoundary": "Actualizar y publicar reemplaza en el momento la versión pública. Usá guardar borrador solo cuando necesitás preparar cambios sin mover todavía el sitio.",
       "liveBoundary": "La versión pública actual sigue visible hasta que la republicación confirme los cambios nuevos."
     },
     "sections": {
@@ -326,24 +337,52 @@
     "actions": {
       "saveDraft": "Guardar borrador",
       "update": "Actualizar",
+      "addAndPublish": "Agregar y publicar",
+      "updateAndPublish": "Actualizar y publicar",
       "publish": "Publicar",
       "archive": "Archivar programa",
+      "delete": "Eliminar permanentemente",
       "reactivate": "Reactivar como borrador",
       "backToOverview": "Volver al listado"
     },
+    "rail": {
+      "eyebrow": "Acciones del editor",
+      "statusLabel": "Estado",
+      "pendingDraftLabel": "Borrador pendiente",
+      "noteTitle": "Antes de salir",
+      "noteBody": "Publicar usa este mismo formulario completo. Archivar y eliminar piden una confirmación visible para evitar cambios destructivos por accidente."
+    },
     "workflow": {
-      "description": "Guardar actualiza el borrador administrativo. Publicar valida los campos públicos obligatorios y recién ahí actualiza la versión visible en /programs."
+      "description": "Agregar y publicar / Actualizar y publicar validan los campos públicos obligatorios y actualizan de inmediato la versión visible en /programs. Guardar borrador queda como camino secundario cuando todavía no querés mover la versión pública."
+    },
+    "destructive": {
+      "cancel": "Cancelar",
+      "archive": {
+        "title": "Confirmación de archivo",
+        "description": "Archivar saca el programa del sitio público, pero conserva el registro administrativo.",
+        "warning": "La ficha pública deja de responder hasta que reactivés el programa y vuelvas a publicarlo.",
+        "confirm": "Sí, archivar programa"
+      },
+      "delete": {
+        "title": "Confirmación de eliminación",
+        "description": "Eliminar permanentemente borra el programa y no se puede deshacer desde este panel.",
+        "warning": "Se elimina el registro completo, incluido el borrador pendiente y cualquier versión pública asociada.",
+        "confirm": "Sí, eliminar definitivamente"
+      }
     },
     "feedback": {
       "draft-saved": "El borrador se guardó correctamente dentro del panel administrativo.",
       "published": "El programa quedó publicado y la versión pública ya se revalidó.",
       "archived": "El programa se archivó. La ruta pública ahora debe resolver como no encontrada.",
       "reactivated": "El programa volvió a borrador. Seguirá fuera del sitio público hasta publicar otra vez.",
+      "deleted": "El programa se eliminó permanentemente y las rutas relacionadas ya se revalidaron.",
+      "destructive-confirmation-required": "Antes de archivar o eliminar, confirmá la advertencia visible del panel para evitar cambios destructivos accidentales.",
       "invalid": "No se pudo interpretar el formulario. Revisá categoría, slug y campos estructurados antes de reintentar.",
       "invalid-image-type": "La imagen de portada debe ser JPG, PNG, WEBP, GIF o AVIF.",
       "image-too-large": "La imagen de portada debe pesar 2 MB o menos.",
       "save-failed": "No se pudo guardar el borrador. Verificá la conexión y el contenido obligatorio del formulario.",
-      "publish-failed": "No se pudo publicar. Revisá campos públicos obligatorios y recordá que el slug no puede cambiar después de la primera publicación."
+      "publish-failed": "No se pudo publicar. Revisá campos públicos obligatorios y recordá que el slug no puede cambiar después de la primera publicación.",
+      "delete-failed": "No se pudo eliminar el programa en este momento. Intentá nuevamente desde el editor."
     },
     "translationLocale": "Contenido {locale}",
     "boundaries": {
@@ -353,7 +392,7 @@
     },
     "coverImageUpload": {
       "description": "Subí una imagen local de portada en formato JPG, PNG, WEBP, GIF o AVIF de hasta 2 MB. No hace falta pegar una URL.",
-      "publishBoundary": "Guardar solo actualiza el borrador administrativo. La imagen pública actual no cambia hasta que vuelvas a publicar.",
+      "publishBoundary": "La acción principal publica la nueva imagen enseguida cuando la validación pasa. Si necesitás preparar una imagen sin mover todavía la versión pública, usá guardar borrador.",
       "currentDraft": "Imagen actual del borrador",
       "currentDraftAlt": "Vista previa de la imagen de portada del borrador",
       "currentPublished": "Imagen pública actual",

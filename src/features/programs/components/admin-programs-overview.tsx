@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { archiveProgramAction, reactivateProgramAction } from "@/app/[locale]/admin/programs/actions";
 import type { AppLocale } from "@/config/i18n";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
+import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
 import { Link } from "@/i18n/navigation";
 import { listAdminPrograms } from "@/services/programs/program-service";
 
@@ -12,7 +13,11 @@ const statusTheme = {
   archived: "bg-slate-100 text-slate-700 ring-slate-200",
 } as const;
 
-export async function AdminProgramsOverview() {
+type AdminProgramsOverviewProps = {
+  feedback?: "deleted" | "destructive-confirmation-required";
+};
+
+export async function AdminProgramsOverview({ feedback }: AdminProgramsOverviewProps) {
   const [programs, t, locale] = await Promise.all([
     listAdminPrograms(),
     getTranslations("AdminProgramsOverview"),
@@ -31,6 +36,14 @@ export async function AdminProgramsOverview() {
   if (programs.length === 0) {
     return (
       <div className="space-y-6">
+        {feedback ? (
+          <div
+            className={`${feedback === "deleted" ? "admin-success-banner" : "admin-warning-banner"} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}
+          >
+            {t(`feedback.${feedback}`)}
+          </div>
+        ) : null}
+
         <div className="grid gap-4 xl:grid-cols-4">
           {[
             { key: "catalogSize", value: 0 },
@@ -70,6 +83,14 @@ export async function AdminProgramsOverview() {
 
   return (
     <div className="space-y-8">
+      {feedback ? (
+        <div
+          className={`${feedback === "deleted" ? "admin-success-banner" : "admin-warning-banner"} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}
+        >
+          {t(`feedback.${feedback}`)}
+        </div>
+      ) : null}
+
       <div className="grid gap-4 xl:grid-cols-4">
         {[
           { key: "catalogSize", value: programs.length },
@@ -187,13 +208,19 @@ export async function AdminProgramsOverview() {
                           </button>
                         </form>
                       ) : (
-                        <form action={archiveProgramAction.bind(null, activeLocale, program.id)}>
-                          <button
-                            type="submit"
-                            className="admin-danger-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition"
-                          >
-                            {t("table.archive")}
-                          </button>
+                        <form>
+                          <DestructiveActionConfirmation
+                            title={t("table.archiveConfirmation.title")}
+                            description={t("table.archiveConfirmation.description")}
+                            warning={t("table.archiveConfirmation.warning")}
+                            triggerLabel={t("table.archive")}
+                            confirmLabel={t("table.archiveConfirmation.confirm")}
+                            cancelLabel={t("table.archiveConfirmation.cancel")}
+                            confirmValue="archive"
+                            formAction={archiveProgramAction.bind(null, activeLocale, program.id)}
+                            tone="warning"
+                            className="w-full sm:w-auto"
+                          />
                         </form>
                       )}
                     </div>

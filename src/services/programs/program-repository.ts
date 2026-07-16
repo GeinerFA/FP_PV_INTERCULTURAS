@@ -5,6 +5,7 @@ import { connectToDatabase } from "@/lib/mongoose";
 import { ProgramModel, type ProgramDocument } from "@/models/program";
 import type {
   CreateProgramRecordInput,
+  DeleteProgramInput,
   ProgramCoverImageState,
   ProgramImageAssetUpload,
   ProgramRecord,
@@ -454,6 +455,7 @@ export type ProgramRepository = {
   saveDraft(input: UpdateProgramDraftInput): Promise<ProgramRecord | null>;
   publish(input: PublishProgramInput): Promise<ProgramRecord | null>;
   archive(input: ProgramWorkflowMutationInput): Promise<ProgramRecord | null>;
+  delete(input: DeleteProgramInput): Promise<ProgramRecord | null>;
   reactivate(input: ProgramWorkflowMutationInput): Promise<ProgramRecord | null>;
 };
 
@@ -667,6 +669,17 @@ const mongoProgramRepository: ProgramRepository = {
       .exec();
 
     return document ? mapProgramRecord(document as RawProgramDocument) : null;
+  },
+  async delete({ id }) {
+    const currentRecord = await getCurrentRecordOrNull(id);
+
+    if (!currentRecord) {
+      return null;
+    }
+
+    await ProgramModel.findByIdAndDelete(id).exec();
+
+    return currentRecord;
   },
   async reactivate({ id, updatedBy }) {
     const currentRecord = await getCurrentRecordOrNull(id);

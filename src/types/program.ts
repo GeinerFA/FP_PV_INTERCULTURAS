@@ -96,6 +96,11 @@ export type PublishProgramInput = {
   updatedBy: string;
 };
 
+export type DeleteProgramInput = {
+  id: string;
+  updatedBy: string;
+};
+
 export type ProgramWorkflowMutationInput = {
   id: string;
   updatedBy: string;

@@ -1,6 +1,7 @@
 import { defaultLocale, locales, type AppLocale } from "@/config/i18n";
 import type {
   CreateProgramRecordInput,
+  DeleteProgramInput,
   LocalizedProgram,
   Program,
   ProgramRecord,
@@ -202,6 +203,13 @@ export async function publishAdminProgram(input: PublishProgramInput): Promise<P
 export async function archiveAdminProgram(input: ProgramWorkflowMutationInput): Promise<Program | null> {
   const repository = getProgramRepository();
   const record = await repository.archive(input);
+
+  return record ? toAdminProgram(record) : null;
+}
+
+export async function deleteAdminProgram(input: DeleteProgramInput): Promise<Program | null> {
+  const repository = getProgramRepository();
+  const record = await repository.delete(input);
 
   return record ? toAdminProgram(record) : null;
 }
