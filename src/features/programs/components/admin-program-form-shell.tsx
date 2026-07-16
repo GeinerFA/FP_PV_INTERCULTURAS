@@ -125,7 +125,7 @@ function ProgramEditorActions({
   programStatus,
   compact = false,
 }: ProgramEditorActionsProps) {
-  const buttonClassName = compact ? "px-4 py-2.5 text-sm" : "px-5 py-3 text-sm";
+  const buttonClassName = compact ? "px-3.5 py-2 text-[0.8125rem]" : "px-5 py-3 text-sm";
 
   return (
     <div className="space-y-3">
@@ -306,8 +306,8 @@ export async function AdminProgramFormShell({
       <div className="admin-program-editor-shell">
         <aside className="admin-program-action-rail">
           <div className="admin-program-action-rail-sticky">
-            <section className="admin-action-rail-panel admin-action-rail-panel-compact rounded-[28px] p-5 md:p-6">
-              <div className="space-y-4">
+            <section className="admin-program-action-rail-panel admin-action-rail-panel admin-action-rail-panel-compact rounded-[28px] p-4 md:p-5">
+              <div className="space-y-3.5">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800/85">{t("rail.eyebrow")}</p>
                 <ProgramEditorActions
                   t={t}
@@ -318,6 +318,7 @@ export async function AdminProgramFormShell({
                   archiveAction={archiveAction}
                   deleteAction={deleteAction}
                   programStatus={program?.status}
+                  compact
                 />
               </div>
             </section>
