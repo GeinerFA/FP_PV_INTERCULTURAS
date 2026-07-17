@@ -1,3 +1,5 @@
+import { isIP } from "node:net";
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { NextRequest, NextResponse } from "next/server";
@@ -5,8 +7,10 @@ import type { NextRequest, NextResponse } from "next/server";
 import { defaultLocale, locales, type AppLocale } from "@/config/i18n";
 
 export type AdminSession = {
+  displayName: string | null;
   email: string;
   expiresAt: number;
+  imageUrl: string | null;
 };
 
 type AdminSessionTokenPayload = AdminSession & {
@@ -26,6 +30,7 @@ export const adminOauthStateMaxAgeSeconds = 60 * 10;
 
 const localizedAdminPathPattern = /^\/([a-z]{2}(?:-[a-z]{2})?)\/admin(?:[/?#].*)?$/i;
 const localizedAdminLoginPathPattern = /^\/([a-z]{2}(?:-[a-z]{2})?)\/admin\/login(?:[/?#].*)?$/i;
+const localizedPathPattern = /^\/([a-z]{2}(?:-[a-z]{2})?)(?:[/?#].*)?$/i;
 
 function isSupportedLocale(locale: string): locale is AppLocale {
   return locales.includes(locale as AppLocale);
@@ -167,6 +172,22 @@ export function getAdminHomePath(locale: AppLocale = defaultLocale): string {
   return `/${locale}/admin`;
 }
 
+export function getLocalizedHomePath(locale: AppLocale = defaultLocale): string {
+  return `/${locale}`;
+}
+
+export function resolveLocaleFromLocalizedPath(pathname: string): AppLocale | null {
+  const match = pathname.match(localizedPathPattern);
+
+  if (!match) {
+    return null;
+  }
+
+  const locale = match[1].toLowerCase();
+
+  return isSupportedLocale(locale) ? locale : null;
+}
+
 export function resolveLocaleFromAdminPath(pathname: string): AppLocale | null {
   const match = pathname.match(localizedAdminPathPattern);
 
@@ -199,15 +220,27 @@ export function sanitizeAdminNextPath(
   candidate: string | null | undefined,
   locale: AppLocale = defaultLocale,
 ): string {
-  const fallbackPath = getAdminHomePath(locale);
+  return sanitizeLocalizedNextPath(candidate, locale, { adminOnly: true });
+}
+
+export function sanitizeLocalizedNextPath(
+  candidate: string | null | undefined,
+  locale: AppLocale = defaultLocale,
+  options?: { adminOnly?: boolean },
+): string {
+  const fallbackPath = options?.adminOnly ? getAdminHomePath(locale) : getLocalizedHomePath(locale);
 
   if (!candidate || !candidate.startsWith("/") || candidate.startsWith("//")) {
     return fallbackPath;
   }
 
-  const resolvedLocale = resolveLocaleFromAdminPath(candidate);
+  const resolvedLocale = resolveLocaleFromLocalizedPath(candidate);
 
   if (!resolvedLocale || resolvedLocale !== locale || isLocalizedAdminLoginPath(candidate)) {
+    return fallbackPath;
+  }
+
+  if (options?.adminOnly && !isLocalizedAdminPath(candidate)) {
     return fallbackPath;
   }
 
@@ -221,12 +254,52 @@ export function buildAdminLoginPath(locale: AppLocale, nextPath?: string): strin
   return `/${locale}/admin/login?${searchParams.toString()}`;
 }
 
-export async function createAdminSessionToken(email: string): Promise<string> {
+export function buildAdminGoogleAuthUrl(nextPath: string): string {
+  return `/api/admin/auth/google?next=${encodeURIComponent(nextPath)}`;
+}
+
+function normalizeAdminDisplayName(value: string | null | undefined): string | null {
+  const normalized = value?.trim();
+
+  if (!normalized) {
+    return null;
+  }
+
+  return normalized.slice(0, 120);
+}
+
+function normalizeAdminImageUrl(value: string | null | undefined): string | null {
+  const normalized = value?.trim();
+
+  if (!normalized) {
+    return null;
+  }
+
+  try {
+    const parsed = new URL(normalized);
+
+    if (parsed.protocol !== "https:") {
+      return null;
+    }
+
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
+export async function createAdminSessionToken(session: {
+  displayName?: string | null;
+  email: string;
+  imageUrl?: string | null;
+}): Promise<string> {
   const expiresAt = Date.now() + adminSessionMaxAgeSeconds * 1000;
 
   return createSignedToken({
-    email: normalizeAdminEmail(email),
+    displayName: normalizeAdminDisplayName(session.displayName),
+    email: normalizeAdminEmail(session.email),
     expiresAt,
+    imageUrl: normalizeAdminImageUrl(session.imageUrl),
     issuedAt: Date.now(),
   } satisfies AdminSessionTokenPayload);
 }
@@ -239,8 +312,10 @@ export async function readAdminSessionToken(token: string | undefined): Promise<
   }
 
   return {
+    displayName: typeof payload.displayName === "string" ? payload.displayName : null,
     email: payload.email,
     expiresAt: payload.expiresAt,
+    imageUrl: typeof payload.imageUrl === "string" ? payload.imageUrl : null,
   };
 }
 
@@ -280,11 +355,11 @@ export async function readAdminOauthStateToken(
     return null;
   }
 
-  const locale = resolveLocaleFromAdminPath(payload.nextPath) ?? defaultLocale;
+  const locale = resolveLocaleFromLocalizedPath(payload.nextPath) ?? defaultLocale;
 
   return {
     ...payload,
-    nextPath: sanitizeAdminNextPath(payload.nextPath, locale),
+    nextPath: sanitizeLocalizedNextPath(payload.nextPath, locale),
   };
 }
 
@@ -324,18 +399,91 @@ export async function hasAdminSession(request: NextRequest): Promise<boolean> {
   return Boolean(await readAdminSessionToken(request.cookies.get(adminSessionCookieName)?.value));
 }
 
-export function getAdminAppOrigin(request: NextRequest): string {
+function getRequestOrigin(request: NextRequest): string {
+  const forwardedHost = request.headers.get("x-forwarded-host")?.trim();
+  const host = forwardedHost || request.headers.get("host")?.trim();
+  const forwardedProto = request.headers.get("x-forwarded-proto")?.trim();
+  const protocol = (forwardedProto || request.nextUrl.protocol.replace(/:$/, "") || "http").toLowerCase();
+
+  if (host && !host.startsWith("/")) {
+    try {
+      return new URL(`${protocol}://${host}`).origin;
+    } catch {
+      // Fall through to Next's parsed origin.
+    }
+  }
+
+  return request.nextUrl.origin;
+}
+
+function normalizeOriginHostname(hostname: string): string {
+  return hostname.replace(/^\[/, "").replace(/\]$/, "").toLowerCase();
+}
+
+function isGoogleOauthAllowedHostname(hostname: string): boolean {
+  const normalizedHostname = normalizeOriginHostname(hostname);
+
+  if (normalizedHostname === "localhost") {
+    return true;
+  }
+
+  if (isIP(normalizedHostname) === 0) {
+    return true;
+  }
+
+  return normalizedHostname === "127.0.0.1" || normalizedHostname === "::1";
+}
+
+function parseConfiguredAdminOrigin(): URL | null {
   const configuredOrigin = process.env.APP_ORIGIN?.trim();
 
   if (!configuredOrigin) {
-    return request.nextUrl.origin;
+    return null;
   }
 
   try {
-    return new URL(configuredOrigin).origin;
+    return new URL(configuredOrigin);
   } catch {
     throw new Error("Invalid APP_ORIGIN environment variable.");
   }
+}
+
+export function getAdminRequestOrigin(request: NextRequest): string {
+  return getRequestOrigin(request);
+}
+
+export function getAdminAppOrigin(request: NextRequest): string {
+  const configuredOrigin = parseConfiguredAdminOrigin();
+
+  if (!configuredOrigin) {
+    return getRequestOrigin(request);
+  }
+
+  return configuredOrigin.origin;
+}
+
+export function getAdminGoogleOauthOrigin(request: NextRequest): string {
+  const configuredOrigin = parseConfiguredAdminOrigin();
+
+  if (configuredOrigin) {
+    if (!isGoogleOauthAllowedHostname(configuredOrigin.hostname)) {
+      throw new Error(
+        "APP_ORIGIN must use localhost or a public domain for Google OAuth redirect URIs.",
+      );
+    }
+
+    return configuredOrigin.origin;
+  }
+
+  const requestOrigin = new URL(getRequestOrigin(request));
+
+  if (!isGoogleOauthAllowedHostname(requestOrigin.hostname)) {
+    throw new Error(
+      "Google OAuth requires APP_ORIGIN to be set to localhost or a public domain when the app is opened from a non-localhost host.",
+    );
+  }
+
+  return requestOrigin.origin;
 }
 
 export function getAdminAppRequestUrl(request: NextRequest): URL {

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
-import { getAdminSession, sanitizeAdminNextPath } from "@/lib/admin-session";
+import { buildAdminGoogleAuthUrl, getAdminSession, sanitizeAdminNextPath } from "@/lib/admin-session";
 
 type AdminLoginPageProps = {
   params: Promise<{ locale: AppLocale }>;
@@ -38,7 +38,7 @@ export default async function AdminLoginPage({ params, searchParams }: AdminLogi
     redirect(nextPath);
   }
 
-  const loginHref = `/api/admin/auth/google?next=${encodeURIComponent(nextPath)}`;
+  const loginHref = buildAdminGoogleAuthUrl(nextPath);
   const errorKey = getLoginErrorMessage(resolvedSearchParams.error);
   const errorMessage = errorKey ? t(`errors.${errorKey}`) : null;
 

@@ -45,8 +45,8 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
 
   return (
     <nav className="w-full" aria-label="Public navigation">
-      <div className="flex flex-wrap items-center justify-between gap-4 md:flex-nowrap md:items-center">
-        <div className="flex min-w-0 items-center gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 xl:flex-nowrap xl:gap-5">
+        <div className="flex min-w-0 shrink-0 items-center gap-3 md:gap-4">
           <NextLink
             href={`/${locale}`}
             className="group inline-flex min-w-0 items-center rounded-2xl py-1 text-slate-950 transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-200/80 focus:ring-offset-2 focus:ring-offset-transparent"
@@ -67,7 +67,7 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
             aria-controls="public-navbar-links"
             aria-label="Toggle navigation"
             onClick={() => setIsOpen((current) => !current)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/45 text-slate-700 transition hover:bg-white/65 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-emerald-200 md:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/45 text-slate-700 transition hover:bg-white/65 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-emerald-200 xl:hidden"
           >
             <span className="sr-only">Toggle navigation</span>
             <span className="flex flex-col gap-1">
@@ -80,7 +80,7 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
 
         <div
           id="public-navbar-links"
-          className={`${isOpen ? "flex" : "hidden"} w-full flex-col gap-2 text-sm md:flex md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-start md:gap-5`}
+          className={`${isOpen ? "flex" : "hidden"} w-full flex-col gap-2 text-sm xl:flex xl:min-w-0 xl:flex-1 xl:flex-row xl:flex-nowrap xl:items-center xl:justify-end xl:gap-4 2xl:gap-5`}
         >
           {navItems.map((item) => {
             const href = getLocalizedHref(locale, item.href);
@@ -92,7 +92,7 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
                 href={href}
                 aria-current={isActive ? "page" : undefined}
                 onClick={() => setIsOpen(false)}
-                className={`inline-flex items-center py-1 text-sm font-medium transition ${
+                className={`inline-flex items-center whitespace-nowrap py-1 text-sm font-medium transition ${
                   isActive
                     ? "text-slate-950"
                     : "text-slate-600 hover:text-slate-950"
@@ -108,7 +108,7 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
           <NextLink
             href={contactHref}
             onClick={() => setIsOpen(false)}
-            className="inline-flex items-center py-1 text-sm font-semibold text-emerald-900 transition hover:text-emerald-700"
+            className="inline-flex items-center whitespace-nowrap py-1 text-sm font-semibold text-emerald-900 transition hover:text-emerald-700"
           >
             <span className="border-b border-emerald-400/45 pb-0.5">{navigationLabels.contact}</span>
           </NextLink>

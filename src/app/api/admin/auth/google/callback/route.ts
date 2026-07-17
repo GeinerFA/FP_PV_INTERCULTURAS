@@ -7,20 +7,24 @@ import {
   clearAdminSessionCookie,
   createAdminSessionToken,
   getAdminAppOrigin,
+  getAdminGoogleOauthOrigin,
   hasVerifiedAdminEmail,
   isAllowedAdminEmail,
   readAdminOauthStateToken,
-  resolveLocaleFromAdminPath,
+  resolveLocaleFromLocalizedPath,
   setAdminSessionCookie,
 } from "@/lib/admin-session";
 
 type GoogleTokenResponse = {
   access_token?: string;
+  id_token?: string;
 };
 
 type GoogleUserInfo = {
   email?: string;
   email_verified?: boolean;
+  name?: string;
+  picture?: string;
 };
 
 function resolveAcceptedAdminEmail(userInfo: GoogleUserInfo | null): string | null {
@@ -50,9 +54,17 @@ function getGoogleCredentials() {
   return { clientId, clientSecret };
 }
 
+function getSafeAdminAppOrigin(request: NextRequest): string {
+  try {
+    return getAdminAppOrigin(request);
+  } catch {
+    return request.nextUrl.origin;
+  }
+}
+
 function buildLoginRedirect(request: NextRequest, nextPath: string, error: string) {
-  const locale = resolveLocaleFromAdminPath(nextPath) ?? "es";
-  const loginUrl = new URL(buildAdminLoginPath(locale, nextPath), request.url);
+  const locale = resolveLocaleFromLocalizedPath(nextPath) ?? "es";
+  const loginUrl = new URL(buildAdminLoginPath(locale, nextPath), getSafeAdminAppOrigin(request));
   loginUrl.searchParams.set("error", error);
 
   const response = NextResponse.redirect(loginUrl);
@@ -62,7 +74,60 @@ function buildLoginRedirect(request: NextRequest, nextPath: string, error: strin
   return response;
 }
 
-async function exchangeCodeForAccessToken(request: NextRequest, code: string): Promise<string | null> {
+function decodeBase64UrlSegment(segment: string): string | null {
+  const normalized = segment.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+
+  try {
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+
+    return new TextDecoder().decode(bytes);
+  } catch {
+    return null;
+  }
+}
+
+function readGoogleIdTokenPayload(idToken: string | undefined): GoogleUserInfo | null {
+  if (!idToken) {
+    return null;
+  }
+
+  const [, encodedPayload] = idToken.split(".");
+
+  if (!encodedPayload) {
+    return null;
+  }
+
+  const decodedPayload = decodeBase64UrlSegment(encodedPayload);
+
+  if (!decodedPayload) {
+    return null;
+  }
+
+  try {
+    const payload = JSON.parse(decodedPayload) as {
+      email?: unknown;
+      email_verified?: unknown;
+      name?: unknown;
+      picture?: unknown;
+    };
+
+    return {
+      email: typeof payload.email === "string" ? payload.email : undefined,
+      email_verified: typeof payload.email_verified === "boolean" ? payload.email_verified : undefined,
+      name: typeof payload.name === "string" ? payload.name : undefined,
+      picture: typeof payload.picture === "string" ? payload.picture : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function exchangeCodeForTokens(
+  request: NextRequest,
+  code: string,
+): Promise<{ accessToken: string | null; idToken: string | null }> {
   const { clientId, clientSecret } = getGoogleCredentials();
   const response = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
@@ -74,18 +139,21 @@ async function exchangeCodeForAccessToken(request: NextRequest, code: string): P
       client_secret: clientSecret,
       code,
       grant_type: "authorization_code",
-      redirect_uri: `${getAdminAppOrigin(request)}/api/admin/auth/google/callback`,
+      redirect_uri: `${getAdminGoogleOauthOrigin(request)}/api/admin/auth/google/callback`,
     }),
     cache: "no-store",
   });
 
   if (!response.ok) {
-    return null;
+    return { accessToken: null, idToken: null };
   }
 
   const token = (await response.json()) as GoogleTokenResponse;
 
-  return token.access_token ?? null;
+  return {
+    accessToken: token.access_token ?? null,
+    idToken: token.id_token ?? null,
+  };
 }
 
 async function fetchGoogleUserInfo(accessToken: string): Promise<GoogleUserInfo | null> {
@@ -120,13 +188,13 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const accessToken = await exchangeCodeForAccessToken(request, code);
+    const { accessToken, idToken } = await exchangeCodeForTokens(request, code);
 
     if (!accessToken) {
       return buildLoginRedirect(request, nextPath, "oauth");
     }
 
-    const userInfo = await fetchGoogleUserInfo(accessToken);
+    const userInfo = readGoogleIdTokenPayload(idToken ?? undefined) ?? (await fetchGoogleUserInfo(accessToken));
 
     const acceptedAdminEmail = resolveAcceptedAdminEmail(userInfo);
 
@@ -134,8 +202,12 @@ export async function GET(request: NextRequest) {
       return buildLoginRedirect(request, nextPath, "access_denied");
     }
 
-    const sessionToken = await createAdminSessionToken(acceptedAdminEmail);
-    const response = NextResponse.redirect(new URL(nextPath, request.url));
+    const sessionToken = await createAdminSessionToken({
+      displayName: userInfo?.name,
+      email: acceptedAdminEmail,
+      imageUrl: userInfo?.picture,
+    });
+    const response = NextResponse.redirect(new URL(nextPath, getAdminGoogleOauthOrigin(request)));
     clearAdminOauthStateCookie(response);
     setAdminSessionCookie(response, sessionToken);
 

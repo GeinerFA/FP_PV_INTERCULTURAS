@@ -2,7 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
-import type { AdminSession } from "@/lib/admin-session";
+import { buildAdminGoogleAuthUrl, type AdminSession } from "@/lib/admin-session";
 
 type AdminShellProps = {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ type AdminShellProps = {
 export async function AdminShell({ children, session }: AdminShellProps) {
   const [locale, t] = await Promise.all([getLocale(), getTranslations("AdminShell")]);
   const adminHomePath = `/${locale}/admin`;
-  const loginHref = `/api/admin/auth/google?next=${encodeURIComponent(adminHomePath)}`;
+  const loginHref = buildAdminGoogleAuthUrl(adminHomePath);
   const logoutHref = `/api/admin/auth/logout?next=${encodeURIComponent(adminHomePath)}`;
 
   return (

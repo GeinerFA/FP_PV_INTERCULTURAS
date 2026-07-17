@@ -20,12 +20,37 @@ function formatOptionalText(value: string | null): string {
   return value ?? "—";
 }
 
+function formatActorNameFromEmail(email: string): string | null {
+  const localPart = email.split("@")[0]?.split("+")[0]?.trim();
+
+  if (!localPart) {
+    return null;
+  }
+
+  const tokens = localPart
+    .split(/[._-]+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+
+  if (tokens.length === 0) {
+    return null;
+  }
+
+  return tokens
+    .map((token) => token.charAt(0).toUpperCase() + token.slice(1).toLowerCase())
+    .join(" ");
+}
+
 function formatChangedBy(actor: Application["statusHistory"][number]["changedBy"]): string {
   if (!actor) {
     return "system";
   }
 
-  return actor.email ?? actor.role ?? actor.userId ?? "system";
+  if (actor.email) {
+    return formatActorNameFromEmail(actor.email) ?? actor.email;
+  }
+
+  return actor.role ?? actor.userId ?? "system";
 }
 
 function formatDate(value: string, locale: string): string {

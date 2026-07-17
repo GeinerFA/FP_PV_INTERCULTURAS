@@ -6,9 +6,11 @@ import {
   createAdminOauthStateToken,
   getAdminAppOrigin,
   getAdminAppRequestUrl,
+  getAdminGoogleOauthOrigin,
+  getAdminRequestOrigin,
   readAdminSessionToken,
-  resolveLocaleFromAdminPath,
-  sanitizeAdminNextPath,
+  resolveLocaleFromLocalizedPath,
+  sanitizeLocalizedNextPath,
   setAdminOauthStateCookie,
 } from "@/lib/admin-session";
 
@@ -22,15 +24,24 @@ function getGoogleClientId(): string {
   return clientId;
 }
 
+function getSafeAdminAppOrigin(request: NextRequest): string {
+  try {
+    return getAdminAppOrigin(request);
+  } catch {
+    return request.nextUrl.origin;
+  }
+}
+
 export async function GET(request: NextRequest) {
   const requestedNextPath = request.nextUrl.searchParams.get("next");
-  const requestedLocale = resolveLocaleFromAdminPath(requestedNextPath ?? "") ?? "es";
-  const nextPath = sanitizeAdminNextPath(requestedNextPath, requestedLocale);
+  const requestedLocale = resolveLocaleFromLocalizedPath(requestedNextPath ?? "") ?? "es";
+  const nextPath = sanitizeLocalizedNextPath(requestedNextPath, requestedLocale);
 
   try {
-    const adminAppOrigin = getAdminAppOrigin(request);
+    const adminAppOrigin = getAdminGoogleOauthOrigin(request);
+    const requestOrigin = getAdminRequestOrigin(request);
 
-    if (adminAppOrigin !== request.nextUrl.origin) {
+    if (adminAppOrigin !== requestOrigin) {
       return NextResponse.redirect(getAdminAppRequestUrl(request));
     }
 
@@ -56,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     return response;
   } catch {
-    const loginUrl = new URL(buildAdminLoginPath(requestedLocale, nextPath), request.url);
+    const loginUrl = new URL(buildAdminLoginPath(requestedLocale, nextPath), getSafeAdminAppOrigin(request));
     loginUrl.searchParams.set("error", "config");
 
     return NextResponse.redirect(loginUrl);

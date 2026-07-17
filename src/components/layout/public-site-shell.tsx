@@ -1,7 +1,9 @@
 import NextLink from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import type { AppLocale } from "@/config/i18n";
 import { siteConfig } from "@/config/site";
+import { buildAdminGoogleAuthUrl, getAdminSession, getLocalizedHomePath } from "@/lib/admin-session";
 import { PublicHeaderControls } from "./public-header-controls";
 import { PublicNavbar } from "./public-navbar";
 
@@ -10,7 +12,11 @@ type PublicSiteShellProps = {
 };
 
 export async function PublicSiteShell({ children }: PublicSiteShellProps) {
-  const [locale, t] = await Promise.all([getLocale(), getTranslations()]);
+  const [resolvedLocale, t, session] = await Promise.all([getLocale(), getTranslations(), getAdminSession()]);
+  const locale = resolvedLocale as AppLocale;
+  const adminHref = `/${locale}/admin`;
+  const loginHref = buildAdminGoogleAuthUrl(getLocalizedHomePath(locale));
+  const logoutHref = `/api/admin/auth/logout?next=${encodeURIComponent(adminHref)}`;
   const contactHref = `/${locale}#contact`;
   const navigationLabels = {
     home: t("Navigation.home"),
@@ -27,22 +33,27 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
     accountMenuLabel: t("Shell.accountMenuLabel"),
     accountMenuTitle: t("Shell.accountMenuTitle"),
     accountMenuDescription: t("Shell.accountMenuDescription"),
-    accountDashboard: t("Shell.accountDashboard"),
-    accountSettings: t("Shell.accountSettings"),
-    accountChangePasswordFuture: t("Shell.accountChangePasswordFuture"),
-    accountSignOutFuture: t("Shell.accountSignOutFuture"),
-    futureActionBadge: t("Shell.futureActionBadge"),
+    accountLoginAction: t("Shell.accountLoginAction"),
+    accountSignedInHint: t("Shell.accountSignedInHint"),
+    accountAdminAction: t("Shell.accountAdminAction"),
+    accountLogoutAction: t("Shell.accountLogoutAction"),
   } as const;
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.32),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_36%,#eff6f1_100%)] text-slate-900">
       <header className="sticky top-0 z-20 bg-white/42 backdrop-blur-lg">
-        <div className="mx-auto flex max-w-6xl items-start justify-between gap-4 px-6 py-3 md:items-center">
+        <div className="mx-auto flex max-w-6xl items-start justify-between gap-3 px-6 py-3 md:flex-nowrap md:items-center md:gap-4 lg:gap-6">
           <div className="min-w-0 flex-1">
             <PublicNavbar locale={locale} navigationLabels={navigationLabels} />
           </div>
-          <div className="shrink-0 pt-0.5">
-            <PublicHeaderControls locale={locale} labels={headerControlsLabels} />
+          <div className="shrink-0">
+            <PublicHeaderControls
+              adminHref={adminHref}
+              loginHref={loginHref}
+              logoutHref={logoutHref}
+              labels={headerControlsLabels}
+              session={session}
+            />
           </div>
         </div>
       </header>

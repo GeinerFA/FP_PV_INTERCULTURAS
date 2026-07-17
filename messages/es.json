@@ -14,14 +14,13 @@
     "tagline": "",
     "footer": "Pura Vida Interculturas conecta experiencias educativas y comunitarias desde una base clara y cercana lista para crecer.",
     "contactAction": "Ir a la sección de contacto",
-    "accountMenuLabel": "Abrir menú administrativo",
+    "accountMenuLabel": "Abrir acceso administrativo",
     "accountMenuTitle": "Área administrativa",
-    "accountMenuDescription": "Panel y configuración ya están disponibles. Cambio de contraseña y cierre de sesión siguen como acciones futuras hasta implementar autenticación.",
-    "accountDashboard": "Abrir panel administrativo",
-    "accountSettings": "Abrir configuración administrativa",
-    "accountChangePasswordFuture": "Cambiar contraseña (futuro)",
-    "accountSignOutFuture": "Cerrar sesión (futuro)",
-    "futureActionBadge": "Todavía no está conectado: la autenticación sigue fuera de alcance."
+    "accountMenuDescription": "Accedé con la cuenta administrativa autorizada para entrar al panel protegido sin salir inmediatamente del sitio público.",
+    "accountLoginAction": "Continuar con Google",
+    "accountSignedInHint": "Ya hay una sesión administrativa activa.",
+    "accountAdminAction": "Panel administrativo",
+    "accountLogoutAction": "Cerrar sesión"
   },
   "AdminShell": {
     "notice": "Espacio administrativo protegido para revisar programas y solicitudes reales con una sola sesión de Google autorizada.",

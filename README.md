@@ -21,7 +21,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 The admin workspace and persisted program flows require these environment variables:
 
 - `MONGODB_URI`: Mongo connection used by programs and applications persistence.
-- `APP_ORIGIN`: Optional canonical public app origin for admin OAuth (for example `http://localhost:3000`). When set, the Google login start route first redirects onto that exact host before setting the OAuth state cookie.
+- `APP_ORIGIN`: Canonical app origin for admin OAuth (for example `http://localhost:3000` or your public HTTPS domain). Google OAuth redirect URIs must not use a raw LAN/private IP host.
 - `GOOGLE_CLIENT_ID`: Google OAuth client id for `/api/admin/auth/google`.
 - `GOOGLE_CLIENT_SECRET`: Google OAuth client secret for the callback exchange.
 - `ADMIN_ALLOWED_EMAIL`: Single Google email allowed into `/{locale}/admin` after verification.
@@ -29,8 +29,8 @@ The admin workspace and persisted program flows require these environment variab
 
 Notes:
 
-- If `APP_ORIGIN` is set, the Google OAuth callback must allow `${APP_ORIGIN}/api/admin/auth/google/callback`.
-- If `APP_ORIGIN` is not set, admin OAuth uses the current request origin for both the state cookie and the Google callback URL.
+- The Google OAuth callback must allow `${APP_ORIGIN}/api/admin/auth/google/callback` in Google Cloud.
+- `APP_ORIGIN` should point to `localhost` for local-machine development or to a public domain in shared environments. Raw IP origins such as `http://192.168.x.x:3001` are rejected for Google web OAuth redirect URIs.
 - The current runtime locale is Spanish-only (`es`), so admin-facing runtime copy should stay aligned with that path.
 - If `ADMIN_ALLOWED_EMAIL` or `ADMIN_SESSION_SECRET` is missing, the admin login flow intentionally fails with a configuration error instead of creating a partial session.
 

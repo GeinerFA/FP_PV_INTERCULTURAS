@@ -662,26 +662,6 @@ export async function AdminProgramFormShell({
               </ul>
              </AdminWorkspaceSection>
 
-              <section className="admin-program-bottom-actions admin-action-rail-panel rounded-[28px] p-5 md:p-6">
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("rail.noteTitle")}</p>
-                    <p className="text-sm leading-6 text-slate-600">{t("rail.noteBody")}</p>
-                  </div>
-
-                  <ProgramEditorActions
-                    t={t}
-                    formId={formId}
-                    isEdit={isEdit}
-                    saveAction={saveAction}
-                    reactivateAction={reactivateAction}
-                    archiveAction={archiveAction}
-                    deleteAction={deleteAction}
-                    programStatus={program?.status}
-                    compact
-                  />
-                </div>
-              </section>
              </div>
           </div>
         </form>
