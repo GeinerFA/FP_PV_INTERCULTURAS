@@ -3,7 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
 import { siteConfig } from "@/config/site";
-import { buildAdminGoogleAuthUrl, getAdminSession, getLocalizedHomePath } from "@/lib/admin-session";
+import { buildAdminLoginPath, getAdminSession } from "@/lib/admin-session";
 import { PublicHeaderControls } from "./public-header-controls";
 import { PublicNavbar } from "./public-navbar";
 
@@ -15,7 +15,7 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
   const [resolvedLocale, t, session] = await Promise.all([getLocale(), getTranslations(), getAdminSession()]);
   const locale = resolvedLocale as AppLocale;
   const adminHref = `/${locale}/admin`;
-  const loginHref = buildAdminGoogleAuthUrl(getLocalizedHomePath(locale));
+  const loginHref = buildAdminLoginPath(locale, adminHref);
   const logoutHref = `/api/admin/auth/logout?next=${encodeURIComponent(adminHref)}`;
   const contactHref = `/${locale}#contact`;
   const navigationLabels = {

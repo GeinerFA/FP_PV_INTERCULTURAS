@@ -178,6 +178,7 @@ function ProgramEditorActions({
               formId={formId}
               formAction={archiveAction}
               tone="warning"
+              actionLayout="stacked"
               className="w-full"
             />
           ) : null}
@@ -194,6 +195,7 @@ function ProgramEditorActions({
               formId={formId}
               formAction={deleteAction}
               tone="danger"
+              actionLayout="stacked"
               className="w-full"
             />
           ) : null}

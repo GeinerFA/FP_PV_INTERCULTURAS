@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { archiveProgramAction, reactivateProgramAction } from "@/app/[locale]/admin/programs/actions";
 import type { AppLocale } from "@/config/i18n";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
+import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
 import { Link } from "@/i18n/navigation";
 import { listAdminPrograms } from "@/services/programs/program-service";
@@ -14,31 +15,179 @@ const statusTheme = {
 } as const;
 
 type AdminProgramsOverviewProps = {
-  feedback?: "deleted" | "destructive-confirmation-required";
+  feedback?:
+    | "archived"
+    | "deleted"
+    | "destructive-confirmation-required"
+    | "draft-saved"
+    | "published"
+    | "reactivated";
+  view?: "archived";
 };
 
-export async function AdminProgramsOverview({ feedback }: AdminProgramsOverviewProps) {
-  const [programs, t, locale] = await Promise.all([
-    listAdminPrograms(),
-    getTranslations("AdminProgramsOverview"),
-    getLocale(),
-  ]);
+export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOverviewProps) {
+  const [t, locale] = await Promise.all([getTranslations("AdminProgramsOverview"), getLocale()]);
+
+  let programs: Awaited<ReturnType<typeof listAdminPrograms>>;
+
+  try {
+    programs = await listAdminPrograms();
+  } catch (error) {
+    if (!isKnownAdminMongoUnavailableError(error)) {
+      throw error;
+    }
+
+    return (
+      <AdminWorkspaceSection
+        eyebrow={t("unavailable.eyebrow")}
+        title={t("unavailable.title")}
+        description={t("unavailable.description")}
+        tone="warning"
+      >
+        <p className="max-w-3xl text-sm leading-7 text-slate-700">{t("unavailable.note")}</p>
+      </AdminWorkspaceSection>
+    );
+  }
+
   const activeLocale = locale as AppLocale;
+  const isArchivedView = view === "archived";
+  const visiblePrograms = programs.filter((program) =>
+    isArchivedView ? program.status === "archived" : program.status === "published" || program.status === "draft",
+  );
   const publishedCount = programs.filter((program) => program.status === "published").length;
   const draftCount = programs.filter((program) => program.status === "draft").length;
   const archivedCount = programs.filter((program) => program.status === "archived").length;
   const categoryCounts = {
-    volunteer: programs.filter((program) => program.category === "volunteer").length,
-    internships: programs.filter((program) => program.category === "internships").length,
-    "spanish-classes": programs.filter((program) => program.category === "spanish-classes").length,
+    volunteer: visiblePrograms.filter((program) => program.category === "volunteer").length,
+    internships: visiblePrograms.filter((program) => program.category === "internships").length,
+    "spanish-classes": visiblePrograms.filter((program) => program.category === "spanish-classes").length,
   } as const;
+
+  const tableHeading = isArchivedView ? t("table.archivedHeading") : t("table.heading");
+  const tableDescription = isArchivedView ? t("table.archivedDescription") : t("table.description");
+  const emptyTableMessage = isArchivedView ? t("table.emptyArchived") : t("table.emptyActive");
+  const tableAction = isArchivedView ? (
+    <Link
+      href="/admin/programs"
+      className="admin-outline-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
+    >
+      {t("table.showActive")}
+    </Link>
+  ) : (
+    <div className="flex flex-wrap items-center gap-3">
+      <Link
+        href={{ pathname: "/admin/programs", query: { view: "archived" } }}
+        className="admin-outline-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
+      >
+        {t("table.showArchived")}
+      </Link>
+      <Link
+        href="/admin/programs/new"
+        className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
+      >
+        {t("table.newProgram")}
+      </Link>
+    </div>
+  );
+
+  const feedbackTone = feedback === "destructive-confirmation-required" ? "admin-warning-banner" : "admin-success-banner";
+
+  if (isArchivedView) {
+    return (
+      <div className="space-y-8">
+        {feedback ? (
+          <div
+            className={`${feedbackTone} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}
+          >
+            {t(`feedback.${feedback}`)}
+          </div>
+        ) : null}
+
+        <AdminWorkspaceSection
+          title={tableHeading}
+          description={tableDescription}
+          action={tableAction}
+          className="border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,244,232,0.84))] shadow-[0_32px_80px_-58px_rgba(15,23,42,0.14)]"
+          contentClassName="px-0 pb-0"
+        >
+          {visiblePrograms.length === 0 ? (
+            <div className="px-6 py-8 text-sm leading-7 text-slate-600">{emptyTableMessage}</div>
+          ) : null}
+          <div className="overflow-x-auto">
+            {visiblePrograms.length > 0 ? (
+              <table className="admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
+                <thead className="admin-table-head text-xs uppercase tracking-[0.18em] text-slate-500">
+                  <tr>
+                    <th className="px-6 py-4 font-semibold">{t("columns.program")}</th>
+                    <th className="px-6 py-4 font-semibold">{t("columns.category")}</th>
+                    <th className="px-6 py-4 font-semibold">{t("columns.status")}</th>
+                    <th className="px-6 py-4 font-semibold">{t("columns.featured")}</th>
+                    <th className="px-6 py-4 font-semibold">{t("columns.availability")}</th>
+                    <th className="px-6 py-4 font-semibold">{t("columns.actions")}</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-emerald-900/8 bg-transparent">
+                  {visiblePrograms.map((program) => (
+                    <tr key={program.id} className="align-top">
+                      <td className="px-6 py-5">
+                        <p className="font-semibold text-slate-950">{program.translations[activeLocale].title}</p>
+                        <p className="mt-1 text-xs text-slate-500">/{program.slug}</p>
+                        <p className="mt-2 max-w-sm text-sm text-slate-600">
+                          {program.translations[activeLocale].shortDescription}
+                        </p>
+                      </td>
+                      <td className="px-6 py-5 text-slate-700">{t(`categories.${program.category}`)}</td>
+                      <td className="px-6 py-5">
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[program.status]}`}
+                        >
+                          {t(`statuses.${program.status}`)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5 text-slate-700">
+                        <span className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
+                          {program.featured ? t("yes") : t("no")}
+                        </span>
+                      </td>
+                      <td className="px-6 py-5 text-slate-700">{program.availability[activeLocale]}</td>
+                      <td className="px-6 py-5">
+                        <div className="flex flex-wrap gap-2">
+                          <Link
+                            href={{
+                              pathname: "/admin/programs/[id]/edit",
+                              params: { id: program.id },
+                            }}
+                            className="admin-outline-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition"
+                          >
+                            {t("table.openEditor")}
+                          </Link>
+                          <form action={reactivateProgramAction.bind(null, activeLocale, program.id)}>
+                            <button
+                              type="submit"
+                              className="admin-info-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition"
+                            >
+                              {t("table.reactivate")}
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : null}
+          </div>
+        </AdminWorkspaceSection>
+      </div>
+    );
+  }
 
   if (programs.length === 0) {
     return (
       <div className="space-y-6">
         {feedback ? (
           <div
-            className={`${feedback === "deleted" ? "admin-success-banner" : "admin-warning-banner"} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}
+            className={`${feedbackTone} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}
           >
             {t(`feedback.${feedback}`)}
           </div>
@@ -85,7 +234,7 @@ export async function AdminProgramsOverview({ feedback }: AdminProgramsOverviewP
     <div className="space-y-8">
       {feedback ? (
         <div
-          className={`${feedback === "deleted" ? "admin-success-banner" : "admin-warning-banner"} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}
+          className={`${feedbackTone} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}
         >
           {t(`feedback.${feedback}`)}
         </div>
@@ -130,6 +279,16 @@ export async function AdminProgramsOverview({ feedback }: AdminProgramsOverviewP
             >
               {t("actions.create")}
             </Link>
+            <Link
+              href={
+                isArchivedView
+                  ? "/admin/programs"
+                  : { pathname: "/admin/programs", query: { view: "archived" } }
+              }
+              className="admin-outline-action inline-flex w-full items-center justify-center rounded-full px-5 py-3 font-semibold transition"
+            >
+              {isArchivedView ? t("actions.showActive") : t("actions.showArchived")}
+            </Link>
             <p className="admin-inner-panel-subtle rounded-2xl px-4 py-3 text-sm leading-6 text-slate-600">
               {t("actions.note")}
             </p>
@@ -138,20 +297,17 @@ export async function AdminProgramsOverview({ feedback }: AdminProgramsOverviewP
       </div>
 
       <AdminWorkspaceSection
-        title={t("table.heading")}
-        description={t("table.description")}
-        action={
-          <Link
-            href="/admin/programs/new"
-            className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-          >
-            {t("table.newProgram")}
-          </Link>
-        }
+        title={tableHeading}
+        description={tableDescription}
+        action={tableAction}
         className="border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,244,232,0.84))] shadow-[0_32px_80px_-58px_rgba(15,23,42,0.14)]"
         contentClassName="px-0 pb-0"
         >
+          {visiblePrograms.length === 0 ? (
+            <div className="px-6 py-8 text-sm leading-7 text-slate-600">{emptyTableMessage}</div>
+          ) : null}
           <div className="overflow-x-auto">
+          {visiblePrograms.length > 0 ? (
           <table className="admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
             <thead className="admin-table-head text-xs uppercase tracking-[0.18em] text-slate-500">
               <tr>
@@ -164,7 +320,7 @@ export async function AdminProgramsOverview({ feedback }: AdminProgramsOverviewP
               </tr>
             </thead>
             <tbody className="divide-y divide-emerald-900/8 bg-transparent">
-              {programs.map((program) => (
+              {visiblePrograms.map((program) => (
                 <tr key={program.id} className="align-top">
                   <td className="px-6 py-5">
                     <p className="font-semibold text-slate-950">{program.translations[activeLocale].title}</p>
@@ -208,7 +364,7 @@ export async function AdminProgramsOverview({ feedback }: AdminProgramsOverviewP
                           </button>
                         </form>
                       ) : (
-                        <form>
+                        <form className="w-full max-w-xs min-w-0">
                           <DestructiveActionConfirmation
                             title={t("table.archiveConfirmation.title")}
                             description={t("table.archiveConfirmation.description")}
@@ -219,7 +375,8 @@ export async function AdminProgramsOverview({ feedback }: AdminProgramsOverviewP
                             confirmValue="archive"
                             formAction={archiveProgramAction.bind(null, activeLocale, program.id)}
                             tone="warning"
-                            className="w-full sm:w-auto"
+                            actionLayout="stacked"
+                            className="w-full"
                           />
                         </form>
                       )}
@@ -229,6 +386,7 @@ export async function AdminProgramsOverview({ feedback }: AdminProgramsOverviewP
               ))}
             </tbody>
           </table>
+          ) : null}
         </div>
       </AdminWorkspaceSection>
     </div>

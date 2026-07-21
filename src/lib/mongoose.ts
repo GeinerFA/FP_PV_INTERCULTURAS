@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+const defaultServerSelectionTimeoutMs = 2_000;
+
 type MongooseCache = {
   connection: typeof mongoose | null;
   promise: Promise<typeof mongoose> | null;
@@ -26,6 +28,22 @@ function getMongoDbUri(): string {
   return value;
 }
 
+function getMongoServerSelectionTimeoutMs(): number {
+  const rawValue = process.env.MONGODB_SERVER_SELECTION_TIMEOUT_MS;
+
+  if (!rawValue || rawValue.trim().length === 0) {
+    return defaultServerSelectionTimeoutMs;
+  }
+
+  const parsedValue = Number(rawValue);
+
+  if (!Number.isFinite(parsedValue) || parsedValue <= 0) {
+    throw new Error("MONGODB_SERVER_SELECTION_TIMEOUT_MS must be a positive number.");
+  }
+
+  return Math.floor(parsedValue);
+}
+
 export async function connectToDatabase(): Promise<typeof mongoose> {
   if (mongooseCache.connection) {
     return mongooseCache.connection;
@@ -34,6 +52,7 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   if (!mongooseCache.promise) {
     mongooseCache.promise = mongoose.connect(getMongoDbUri(), {
       bufferCommands: false,
+      serverSelectionTimeoutMS: getMongoServerSelectionTimeoutMs(),
     });
   }
 

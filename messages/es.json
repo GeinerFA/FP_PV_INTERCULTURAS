@@ -132,6 +132,12 @@
     }
   },
   "AdminDashboardOverview": {
+    "unavailable": {
+      "eyebrow": "Panel no disponible",
+      "title": "No se pudo cargar el panel administrativo",
+      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida.",
+      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Este panel no muestra datos simulados cuando la fuente administrativa falla."
+    },
     "applications": {
       "eyebrow": "Carga de solicitudes",
       "title": "Solicitudes activas",
@@ -183,13 +189,20 @@
       },
       "statuses": {
         "draft": "Borrador",
-        "published": "Publicado"
+        "published": "Publicado",
+        "archived": "Archivado"
       }
     }
   },
   "AdminProgramsOverview": {
     "yes": "Sí",
     "no": "No",
+    "unavailable": {
+      "eyebrow": "Vista no disponible",
+      "title": "No se pudo cargar la vista de programas administrativos",
+      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
+      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza el catálogo administrativo real por datos vacíos o simulados."
+    },
     "stats": {
       "catalogSize": {
         "label": "Tamaño del catálogo",
@@ -216,16 +229,29 @@
       "heading": "Siguiente movimiento",
       "description": "La creación, edición y cambios de estado ya viven dentro del panel protegido para mantener separado el borrador de la versión pública.",
       "create": "Crear nuevo programa",
+      "showArchived": "Programas archivados",
+      "showActive": "Volver a programas activos",
       "note": "Usá el editor para guardar borradores, publicar cuando el contenido esté completo y archivar sin borrar el registro."
     },
     "feedback": {
+      "archived": "El programa se archivó y ahora quedó fuera del listado activo.",
       "deleted": "El programa se eliminó permanentemente del catálogo administrativo.",
-      "destructive-confirmation-required": "Para archivar desde la tabla primero confirmá la advertencia visible de esa fila."
+      "destructive-confirmation-required": "Para archivar desde la tabla primero confirmá la advertencia visible de esa fila.",
+      "draft-saved": "El borrador se guardó correctamente y ya volvés al listado activo.",
+      "published": "El programa quedó publicado y ya volvés al listado activo.",
+      "reactivated": "El programa volvió a borrador y ya aparece otra vez en el listado activo."
     },
     "table": {
       "heading": "Programas actuales",
       "description": "Cada fila muestra el estado operativo actual: categoría, publicación, destacado, disponibilidad y puntos de entrada para editar o cambiar estado.",
+      "archivedHeading": "Programas archivados",
+      "archivedDescription": "Esta vista separada muestra solo programas archivados para no mezclar historial retirado con el trabajo activo del panel principal.",
       "newProgram": "Crear nuevo programa",
+      "showArchived": "Programas archivados",
+      "backToActive": "Volver a programas activos",
+      "showActive": "Ver programas activos",
+      "emptyActive": "No hay programas publicados ni en borrador en este momento. Podés revisar el historial archivado o crear un programa nuevo.",
+      "emptyArchived": "No hay programas archivados en este momento.",
       "openEditor": "Abrir editor",
       "archive": "Archivar",
       "reactivate": "Reactivar",
@@ -750,14 +776,20 @@
       "primaryActionLabel": "Volver al inicio",
       "secondaryActionLabel": "Explorar programas"
     },
-    "admin": {
-      "list": {
-        "heading": "Solicitudes registradas",
-        "description": "Revisá la bandeja actual y abrí cada detalle para seguir el flujo administrativo básico del módulo.",
-        "openDetail": "Abrir detalle",
-        "columns": {
-          "applicant": "Postulante",
-          "contact": "Contacto",
+      "admin": {
+        "list": {
+          "heading": "Solicitudes registradas",
+          "description": "Revisá la bandeja actual y abrí cada detalle para seguir el flujo administrativo básico del módulo.",
+          "openDetail": "Abrir detalle",
+          "unavailable": {
+            "eyebrow": "Vista no disponible",
+            "title": "No se pudo cargar la lista administrativa de solicitudes",
+            "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
+            "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no inventa una bandeja vacía cuando la fuente real falla."
+          },
+          "columns": {
+            "applicant": "Postulante",
+            "contact": "Contacto",
           "submittedAt": "Enviado",
           "status": "Estado",
           "actions": "Acciones"

@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
+import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { Link } from "@/i18n/navigation";
 import { listApplications } from "@/services/applications/application-service";
 import { listAdminPrograms } from "@/services/programs/program-service";
@@ -11,13 +12,48 @@ function formatDate(value: string, locale: string): string {
   }).format(new Date(value));
 }
 
+function isKnownAdminMongoUnavailableError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  return (
+    error.name === "MongooseServerSelectionError" ||
+    error.name === "MongoServerSelectionError" ||
+    error.name === "MongoParseError" ||
+    error.message.includes("MONGODB_URI environment variable is required") ||
+    error.message.includes("MONGODB_SERVER_SELECTION_TIMEOUT_MS must be a positive number")
+  );
+}
+
 export async function AdminDashboardOverview() {
-  const [applications, programs, locale, t] = await Promise.all([
-    listApplications(),
-    listAdminPrograms(),
-    getLocale(),
-    getTranslations("AdminDashboardOverview"),
-  ]);
+  const [locale, t] = await Promise.all([getLocale(), getTranslations("AdminDashboardOverview")]);
+
+  const [applicationsResult, programsResult] = await Promise.allSettled([listApplications(), listAdminPrograms()]);
+  const unexpectedError = [applicationsResult, programsResult].find(
+    (result) => result.status === "rejected" && !isKnownAdminMongoUnavailableError(result.reason),
+  );
+
+  if (unexpectedError?.status === "rejected") {
+    throw unexpectedError.reason;
+  }
+
+  if (applicationsResult.status === "rejected" || programsResult.status === "rejected") {
+
+    return (
+      <AdminWorkspaceSection
+        eyebrow={t("unavailable.eyebrow")}
+        title={t("unavailable.title")}
+        description={t("unavailable.description")}
+        tone="warning"
+      >
+        <p className="max-w-3xl text-sm leading-7 text-slate-700">{t("unavailable.note")}</p>
+      </AdminWorkspaceSection>
+    );
+  }
+
+  const applications = applicationsResult.value;
+  const programs = programsResult.value;
 
   const activeLocale = locale as AppLocale;
   const pendingApplications = applications.filter((application) => application.status === "pending").length;

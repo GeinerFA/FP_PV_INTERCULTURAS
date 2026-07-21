@@ -3,11 +3,11 @@ import { AdminProgramsOverview } from "@/features/programs/components/admin-prog
 import { Link } from "@/i18n/navigation";
 
 type AdminProgramsPageProps = {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; view?: string }>;
 };
 
 export default async function AdminProgramsPage({ searchParams }: AdminProgramsPageProps) {
-  const { status } = await searchParams;
+  const { status, view } = await searchParams;
 
   return (
     <AdminPageTemplate
@@ -23,7 +23,10 @@ export default async function AdminProgramsPage({ searchParams }: AdminProgramsP
         </Link>
       }
     >
-      <AdminProgramsOverview feedback={status as Parameters<typeof AdminProgramsOverview>[0]["feedback"]} />
+      <AdminProgramsOverview
+        feedback={status as Parameters<typeof AdminProgramsOverview>[0]["feedback"]}
+        view={view as Parameters<typeof AdminProgramsOverview>[0]["view"]}
+      />
     </AdminPageTemplate>
   );
 }

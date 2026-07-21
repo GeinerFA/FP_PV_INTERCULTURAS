@@ -13,6 +13,34 @@ import type {
 
 import { getProgramRepository } from "./program-repository";
 
+function isRecoverablePublicProgramReadError(error: unknown): boolean {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  if (
+    error.name === "MongooseServerSelectionError" ||
+    error.name === "MongoServerSelectionError" ||
+    error.name === "MongoParseError" ||
+    error.message.includes("MONGODB_URI environment variable is required") ||
+    error.message.includes("MONGODB_SERVER_SELECTION_TIMEOUT_MS must be a positive number")
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+function handleRecoverablePublicProgramReadError<T>(operation: string, error: unknown, fallback: T): T {
+  if (!isRecoverablePublicProgramReadError(error)) {
+    throw error;
+  }
+
+  console.error(`[program-service] ${operation} fallback`, error);
+
+  return fallback;
+}
+
 function resolveProgramLocale(locale: string): AppLocale {
   return locales.includes(locale as AppLocale) ? (locale as AppLocale) : defaultLocale;
 }
@@ -115,23 +143,27 @@ function localizeProgramSnapshot(
 }
 
 export async function listPublicPrograms(locale: AppLocale): Promise<LocalizedProgram[]> {
-  const repository = getProgramRepository();
-  const programs = await repository.list({ seedBootstrap: true });
+  try {
+    const repository = getProgramRepository();
+    const programs = await repository.list({ seedBootstrap: true });
 
-  return sortProgramRecords(programs)
-    .map((program) => ({
-      record: program,
-      snapshot: program.publishedSnapshot,
-    }))
-    .filter(
-      (
-        program,
-      ): program is {
-        record: ProgramRecord;
-        snapshot: ProgramSnapshot;
-      } => program.record.workflowState === "published" && program.snapshot !== null,
-    )
-    .map(({ record, snapshot }) => localizeProgramSnapshot(record, snapshot, locale));
+    return sortProgramRecords(programs)
+      .map((program) => ({
+        record: program,
+        snapshot: program.publishedSnapshot,
+      }))
+      .filter(
+        (
+          program,
+        ): program is {
+          record: ProgramRecord;
+          snapshot: ProgramSnapshot;
+        } => program.record.workflowState === "published" && program.snapshot !== null,
+      )
+      .map(({ record, snapshot }) => localizeProgramSnapshot(record, snapshot, locale));
+  } catch (error) {
+    return handleRecoverablePublicProgramReadError("listPublicPrograms", error, []);
+  }
 }
 
 export async function listFeaturedPublicPrograms(
@@ -147,14 +179,18 @@ export async function getPublicProgramBySlug(
   slug: string,
   locale: AppLocale,
 ): Promise<LocalizedProgram | null> {
-  const repository = getProgramRepository();
-  const program = await repository.findPublishedBySlug(slug);
+  try {
+    const repository = getProgramRepository();
+    const program = await repository.findPublishedBySlug(slug);
 
-  if (!program || program.workflowState !== "published" || !program.publishedSnapshot) {
-    return null;
+    if (!program || program.workflowState !== "published" || !program.publishedSnapshot) {
+      return null;
+    }
+
+    return localizeProgramSnapshot(program, program.publishedSnapshot, locale);
+  } catch (error) {
+    return handleRecoverablePublicProgramReadError("getPublicProgramBySlug", error, null);
   }
-
-  return localizeProgramSnapshot(program, program.publishedSnapshot, locale);
 }
 
 export async function listAdminPrograms(): Promise<Program[]> {

@@ -86,6 +86,12 @@ Standard
 - Reviewed `/[locale]/admin/programs/[id]/edit` again and confirmed the route still returns `notFound()` when `getAdminProgramById(id)` resolves `null`, including invalid Mongo ObjectId inputs that the repository already short-circuits.
 - Extracted the Google callback account-acceptance decision into a small helper so wrong-email and unverified-email denial stays behaviorally identical but easier to reason about and verify deterministically later.
 
+### Remediation note — 2026-07-17 Mongo fast-fail follow-up
+
+- Tightened `src/lib/mongoose.ts` to set `serverSelectionTimeoutMS` to `2000` by default, with an opt-in `MONGODB_SERVER_SELECTION_TIMEOUT_MS` override, so broken Mongo connectivity/config no longer holds public web requests for the Mongoose 30s default.
+- Kept the existing behavior split intact: public program reads still degrade to empty/null through `src/services/programs/program-service.ts`, while admin/backend paths still surface the original connection/config error because they do not catch it.
+- Planned verification for this follow-up is a focused runtime probe against `/es` with an unreachable local Mongo endpoint plus the existing lint/typecheck checks.
+
 ### Manual verification notes
 
 - ✅ Anonymous `/es/admin`, `/es/admin/programs/new`, `/es/admin/applications`, `/es/admin/applications/fake-id`, and `/es/admin/applications/fake-id/curriculum` requests all redirected into the localized login flow with the expected `next` value preserved.

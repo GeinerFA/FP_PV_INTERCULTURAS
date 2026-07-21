@@ -209,7 +209,7 @@ export async function saveProgramDraftAction(
       });
 
       revalidateProgramPaths(locale, createdProgram);
-      redirect(buildStatusUrl(buildProgramEditPath(locale, createdProgram.id), "draft-saved"));
+      redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "draft-saved"));
     }
 
     const updatedProgram = await saveAdminProgramDraft({
@@ -223,7 +223,7 @@ export async function saveProgramDraftAction(
     }
 
     revalidateProgramPaths(locale, updatedProgram);
-    redirect(buildStatusUrl(buildProgramEditPath(locale, updatedProgram.id), "draft-saved"));
+    redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "draft-saved"));
   } catch (error) {
     rethrowFrameworkNavigation(error);
     redirect(buildStatusUrl(nextPath, "save-failed"));
@@ -284,7 +284,7 @@ export async function publishProgramAction(
     }
 
     revalidateProgramPaths(locale, publishedProgram);
-    redirect(buildStatusUrl(buildProgramEditPath(locale, publishedProgram.id), "published"));
+    redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "published"));
   } catch (error) {
     rethrowFrameworkNavigation(error);
     if (id) {
@@ -314,7 +314,7 @@ export async function archiveProgramAction(locale: AppLocale, id: string, formDa
   }
 
   revalidateProgramPaths(locale, archivedProgram);
-  redirect(buildStatusUrl(buildProgramEditPath(locale, archivedProgram.id), "archived"));
+  redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "archived"));
 }
 
 export async function deleteProgramAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
@@ -337,7 +337,7 @@ export async function deleteProgramAction(locale: AppLocale, id: string, formDat
     }
 
     revalidateProgramPaths(locale, deletedProgram);
-    redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "deleted"));
+    redirect(buildProgramsOverviewPath(locale));
   } catch (error) {
     rethrowFrameworkNavigation(error);
     redirect(buildStatusUrl(nextPath, "delete-failed"));
@@ -358,5 +358,5 @@ export async function reactivateProgramAction(locale: AppLocale, id: string): Pr
   }
 
   revalidateProgramPaths(locale, reactivatedProgram);
-  redirect(buildStatusUrl(buildProgramEditPath(locale, reactivatedProgram.id), "reactivated"));
+  redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "reactivated"));
 }

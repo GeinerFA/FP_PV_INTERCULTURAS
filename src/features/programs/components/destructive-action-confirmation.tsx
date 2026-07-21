@@ -14,6 +14,7 @@ type DestructiveActionConfirmationProps = {
   formId?: string;
   formAction?: ComponentProps<"button">["formAction"];
   tone?: "warning" | "danger";
+  actionLayout?: "responsive" | "stacked";
   className?: string;
 };
 
@@ -39,17 +40,23 @@ export function DestructiveActionConfirmation({
   formId,
   formAction,
   tone = "warning",
+  actionLayout = "responsive",
   className,
 }: DestructiveActionConfirmationProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const hiddenFieldId = useId();
+
+  const getIntentFields = (form: HTMLFormElement) => {
+    return Array.from(document.querySelectorAll<HTMLInputElement>("[data-destructive-intent-field]"))
+      .filter((field) => field.form === form);
+  };
 
   const resetIntentFields = (form: HTMLFormElement | null) => {
     if (!form) {
       return;
     }
 
-    form.querySelectorAll<HTMLInputElement>("[data-destructive-intent-field]").forEach((field) => {
+    getIntentFields(form).forEach((field) => {
       field.value = "";
       field.disabled = true;
     });
@@ -74,6 +81,10 @@ export function DestructiveActionConfirmation({
     );
   }
 
+  const actionsClassName =
+    actionLayout === "stacked" ? "flex flex-col gap-2" : "flex flex-col gap-2 sm:flex-row";
+  const actionButtonClassName = actionLayout === "stacked" ? "w-full" : undefined;
+
   return (
     <div
       className={[panelClassName[tone], className, "space-y-3 rounded-[24px] p-4 text-sm"]
@@ -95,12 +106,17 @@ export function DestructiveActionConfirmation({
         <p className="font-medium text-slate-950">{description}</p>
       </div>
       <p className="text-xs leading-6 text-slate-700">{warning}</p>
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className={actionsClassName}>
         <button
           type="submit"
           form={formId}
           formAction={formAction}
-          className="admin-danger-action inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition"
+          className={[
+            "admin-danger-action inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition",
+            actionButtonClassName,
+          ]
+            .filter(Boolean)
+            .join(" ")}
           onClick={(event) => {
             const form = event.currentTarget.form;
 
@@ -110,7 +126,7 @@ export function DestructiveActionConfirmation({
 
             resetIntentFields(form);
 
-            const hiddenField = form.querySelector<HTMLInputElement>(`#${CSS.escape(hiddenFieldId)}`);
+            const hiddenField = getIntentFields(form).find((field) => field.id === hiddenFieldId);
 
             if (hiddenField) {
               hiddenField.disabled = false;
@@ -123,12 +139,17 @@ export function DestructiveActionConfirmation({
         <button
           type="button"
           form={formId}
-          className="admin-outline-action inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition"
+          className={[
+            "admin-outline-action inline-flex items-center justify-center rounded-full px-4 py-2.5 text-sm font-semibold transition",
+            actionButtonClassName,
+          ]
+            .filter(Boolean)
+            .join(" ")}
           onClick={(event) => {
             const form = event.currentTarget.form;
 
             if (form) {
-              const hiddenField = form.querySelector<HTMLInputElement>(`#${CSS.escape(hiddenFieldId)}`);
+              const hiddenField = getIntentFields(form).find((field) => field.id === hiddenFieldId);
 
               if (hiddenField) {
                 hiddenField.value = "";

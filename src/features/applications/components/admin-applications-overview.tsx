@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
+import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
 import { Link } from "@/i18n/navigation";
 import { listApplications } from "@/services/applications/application-service";
 import { applicationStatuses, type ApplicationStatus } from "@/types/application";
@@ -20,11 +21,28 @@ function formatDate(value: string, locale: string): string {
 }
 
 export async function AdminApplicationsOverview() {
-  const [applications, locale, t] = await Promise.all([
-    listApplications(),
-    getLocale(),
-    getTranslations("ApplicationFlow.admin.list"),
-  ]);
+  const [locale, t] = await Promise.all([getLocale(), getTranslations("ApplicationFlow.admin.list")]);
+
+  let applications: Awaited<ReturnType<typeof listApplications>>;
+
+  try {
+    applications = await listApplications();
+  } catch (error) {
+    if (!isKnownAdminMongoUnavailableError(error)) {
+      throw error;
+    }
+
+    return (
+      <AdminWorkspaceSection
+        eyebrow={t("unavailable.eyebrow")}
+        title={t("unavailable.title")}
+        description={t("unavailable.description")}
+        tone="warning"
+      >
+        <p className="max-w-3xl text-sm leading-7 text-slate-700">{t("unavailable.note")}</p>
+      </AdminWorkspaceSection>
+    );
+  }
 
   if (applications.length === 0) {
     return (
