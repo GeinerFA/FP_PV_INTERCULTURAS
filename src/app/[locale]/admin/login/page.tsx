@@ -38,8 +38,13 @@ export default async function AdminLoginPage({ params, searchParams }: AdminLogi
     redirect(nextPath);
   }
 
-  const loginHref = buildAdminGoogleAuthUrl(nextPath);
   const errorKey = getLoginErrorMessage(resolvedSearchParams.error);
+
+  if (!errorKey) {
+    redirect(buildAdminGoogleAuthUrl(nextPath));
+  }
+
+  const loginHref = buildAdminGoogleAuthUrl(nextPath);
   const errorMessage = errorKey ? t(`errors.${errorKey}`) : null;
 
   return (

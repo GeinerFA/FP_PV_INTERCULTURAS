@@ -25,9 +25,18 @@ type ProfileAvatarProps = {
   fallbackClassName: string;
   imageUrl: string | null | undefined;
   initial: string;
+  useUserIcon?: boolean;
 };
 
-function ProfileAvatar({ className, fallbackClassName, imageUrl, initial }: ProfileAvatarProps) {
+function UserAvatarIcon({ className }: { className: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className={className} fill="currentColor">
+      <path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2.25c-3.76 0-6.75 2.07-6.75 4.5 0 .41.34.75.75.75h12c.41 0 .75-.34.75-.75 0-2.43-2.99-4.5-6.75-4.5Z" />
+    </svg>
+  );
+}
+
+function ProfileAvatar({ className, fallbackClassName, imageUrl, initial, useUserIcon = false }: ProfileAvatarProps) {
   if (imageUrl) {
     return (
       <Image
@@ -44,6 +53,14 @@ function ProfileAvatar({ className, fallbackClassName, imageUrl, initial }: Prof
     );
   }
 
+  if (useUserIcon) {
+    return (
+      <span aria-hidden="true" className={fallbackClassName}>
+        <UserAvatarIcon className="h-7 w-7 text-slate-950" />
+      </span>
+    );
+  }
+
   return <span aria-hidden="true" className={fallbackClassName}>{initial}</span>;
 }
 
@@ -55,7 +72,7 @@ export function PublicHeaderControls({
   session,
 }: PublicHeaderControlsProps) {
   const isSignedIn = Boolean(session);
-  const profileLabel = session?.displayName?.trim() || session?.email || "PV";
+  const profileLabel = session?.displayName?.trim() || session?.email || "Pura Vida";
   const profileInitial = profileLabel.charAt(0).toUpperCase() || "P";
   const profileName = session?.displayName?.trim() || session?.email;
   const triggerClassName =
@@ -71,7 +88,8 @@ export function PublicHeaderControls({
             className="block h-full w-full object-cover"
             fallbackClassName="inline-flex h-full w-full items-center justify-center"
             imageUrl={session?.imageUrl}
-            initial={isSignedIn ? profileInitial : "PV"}
+            initial={profileInitial}
+            useUserIcon={!isSignedIn}
           />
         </summary>
 

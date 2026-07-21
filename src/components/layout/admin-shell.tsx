@@ -11,9 +11,10 @@ type AdminShellProps = {
 
 export async function AdminShell({ children, session }: AdminShellProps) {
   const [locale, t] = await Promise.all([getLocale(), getTranslations("AdminShell")]);
+  const homePath = `/${locale}`;
   const adminHomePath = `/${locale}/admin`;
   const loginHref = buildAdminGoogleAuthUrl(adminHomePath);
-  const logoutHref = `/api/admin/auth/logout?next=${encodeURIComponent(adminHomePath)}`;
+  const logoutHref = `/api/admin/auth/logout?next=${encodeURIComponent(homePath)}`;
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.34),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(245,158,11,0.12),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_38%,#eff6f1_100%)] text-slate-900">

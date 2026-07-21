@@ -1,19 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
-  buildAdminLoginPath,
   clearAdminOauthStateCookie,
   clearAdminSessionCookie,
-  resolveLocaleFromAdminPath,
-  sanitizeAdminNextPath,
+  resolveLocaleFromLocalizedPath,
+  sanitizeLocalizedNextPath,
 } from "@/lib/admin-session";
 
 export async function POST(request: NextRequest) {
   const requestedNextPath = request.nextUrl.searchParams.get("next");
-  const locale = resolveLocaleFromAdminPath(requestedNextPath ?? "") ?? "es";
-  const nextPath = sanitizeAdminNextPath(requestedNextPath, locale);
-  const loginUrl = new URL(buildAdminLoginPath(locale, nextPath), request.url);
-  const response = NextResponse.redirect(loginUrl);
+  const locale = resolveLocaleFromLocalizedPath(requestedNextPath ?? "") ?? "es";
+  const nextPath = sanitizeLocalizedNextPath(requestedNextPath, locale);
+  const response = NextResponse.redirect(new URL(nextPath, request.url));
 
   clearAdminOauthStateCookie(response);
   clearAdminSessionCookie(response);
