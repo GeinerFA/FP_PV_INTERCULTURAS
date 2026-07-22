@@ -25,6 +25,7 @@
   "AdminShell": {
     "notice": "Espacio administrativo protegido para revisar programas y solicitudes reales con una sola sesión de Google autorizada.",
     "homeLabel": "Volver al inicio público",
+    "backLabel": "Volver a la página anterior",
     "login": "Iniciar sesión",
     "sessionActive": "Sesión iniciada",
     "logout": "Cerrar sesión",
@@ -34,7 +35,6 @@
       "dashboard": "Panel",
       "programs": "Programas",
       "applications": "Solicitudes",
-      "reports": "Reportes",
       "activity": "Actividad",
       "settings": "Configuración"
     }
@@ -101,15 +101,6 @@
         "Carga la solicitud real desde la capa de servicios compartida del dominio applications.",
         "Permite cambiar el estado dentro del conjunto aprobado: pendiente, en proceso, finalizado y cancelado.",
         "Muestra la trazabilidad básica del estado sin expandirse todavía a notas internas ni reporting."
-      ]
-    },
-    "reports": {
-      "title": "Reportes",
-      "description": "Espacio destinado a reportes básicos del MVP, con futura exportación CSV y visualizaciones resumidas.",
-      "sections": [
-        "Alineado con el requisito funcional RF-09.",
-        "Será ideal para métricas de programas y postulaciones.",
-        "Quedó listo para crecer sin mezclar responsabilidades."
       ]
     },
     "activity": {
@@ -780,7 +771,70 @@
         "list": {
           "heading": "Solicitudes registradas",
           "description": "Revisá la bandeja actual y abrí cada detalle para seguir el flujo administrativo básico del módulo.",
+          "summaryCardDescription": "Coincidencias visibles con los filtros actuales.",
           "openDetail": "Abrir detalle",
+          "emptyFiltered": "No encontramos solicitudes que coincidan con los filtros activos. Ajustá la búsqueda o limpiá los filtros para volver a la bandeja completa.",
+          "applicationTypes": {
+            "volunteering": "Voluntariado"
+          },
+          "filters": {
+            "heading": "Filtrar solicitudes",
+            "description": "Usá estos criterios para definir la bandeja visible ahora y la base reutilizable para futuras exportaciones administrativas.",
+            "disclosureClosedLabel": "Agregar filtros",
+            "disclosureOpenLabel": "Ocultar filtros",
+            "disclosureHint": "Desplegá los filtros cuando necesités refinar la bandeja o preparar futuras exportaciones.",
+            "searchLabel": "Buscar por nombre o correo",
+            "searchPlaceholder": "Ej. Ana o ana@correo.com",
+            "statusLabel": "Estado",
+            "applicationTypeLabel": "Tipo de solicitud",
+            "fromLabel": "Desde",
+            "toLabel": "Hasta",
+            "allStatuses": "Todos los estados",
+            "allApplicationTypes": "Todos los tipos",
+            "applyLabel": "Aplicar filtros",
+            "applyingLabel": "Aplicando filtros...",
+            "resetLabel": "Limpiar filtros",
+            "exportExcelLabel": "Exportar Excel",
+            "exportPdfLabel": "Exportar PDF",
+            "exportDisabledLabel": "No hay resultados para exportar con estos filtros.",
+            "activeBadge": "Filtros activos",
+            "activeSummary": "Hay {count} filtros activos en esta bandeja.",
+            "resultsSummary": "Mostrando {count} de {total} solicitudes.",
+            "updatingResultsLabel": "Actualizando resultados filtrados.",
+            "exportTitle": "Exportación completa de solicitudes",
+            "exportSummaryTitle": "Resumen de exportación",
+            "exportGeneratedAtLabel": "Generado",
+            "exportFiltersLabel": "Filtros aplicados",
+            "exportNoFiltersLabel": "Sin filtros",
+            "exportResultCountLabel": "Solicitudes exportadas",
+            "exportWorksheetName": "Solicitudes",
+            "exportApplicationHeading": "Solicitud",
+            "exportStatusesSummaryLabel": "Estados",
+            "exportUnavailableMessage": "No hay solicitudes para exportar con los filtros actuales.",
+            "exportNoneLabel": "Sin dato",
+            "exportAvailableLabel": "Archivo disponible",
+            "exportFields": {
+              "id": "ID",
+              "status": "Estado",
+              "applicationType": "Tipo de solicitud",
+              "applicationTypeCode": "Código de tipo",
+              "applicationTypeName": "Nombre de tipo",
+              "submittedAt": "Enviada",
+              "updatedAt": "Última actualización",
+              "firstName": "Nombre",
+              "lastName": "Apellido",
+              "fullName": "Nombre completo",
+              "residenceCountry": "País de residencia",
+              "residenceCity": "Ciudad de residencia",
+              "identityDocument": "Documento de identidad",
+              "curriculumFileName": "Nombre del curriculum",
+              "curriculumContentType": "Tipo de archivo del curriculum",
+              "curriculumSize": "Tamaño del curriculum",
+              "curriculumUploadedAt": "Curriculum subido",
+              "statusHistory": "Historial de estados",
+              "applicationTypeHistory": "Historial de tipos"
+            }
+          },
           "unavailable": {
             "eyebrow": "Vista no disponible",
             "title": "No se pudo cargar la lista administrativa de solicitudes",

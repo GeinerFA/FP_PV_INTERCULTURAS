@@ -6,7 +6,6 @@ export const adminPageKeys = [
   "programsEdit",
   "applications",
   "applicationDetail",
-  "reports",
   "activity",
   "settings",
 ] as const;

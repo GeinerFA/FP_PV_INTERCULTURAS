@@ -9,6 +9,10 @@ import type {
   ApplicationTypeSnapshot,
 } from "@/types/application";
 import { parseApplicationStatus, parseApplicationSubmission } from "@/validators/application";
+import {
+  filterAdminApplications,
+  type AdminApplicationListFilters,
+} from "@/features/applications/admin-application-list-filters";
 
 import { getApplicationRepository } from "./application-repository";
 
@@ -70,10 +74,11 @@ export async function createApplication(input: unknown): Promise<Application> {
   });
 }
 
-export async function listApplications(): Promise<Application[]> {
+export async function listApplications(filters?: AdminApplicationListFilters): Promise<Application[]> {
   const repository = getApplicationRepository();
+  const applications = await repository.list();
 
-  return repository.list();
+  return filters ? filterAdminApplications(applications, filters) : applications;
 }
 
 export async function getApplicationById(id: string): Promise<Application | null> {

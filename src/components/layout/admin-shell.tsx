@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { siteConfig } from "@/config/site";
+import { AdminBackButton } from "@/components/layout/admin-back-button";
 import { Link } from "@/i18n/navigation";
 import { buildAdminGoogleAuthUrl, type AdminSession } from "@/lib/admin-session";
 
@@ -111,7 +112,10 @@ export async function AdminShell({ children, session }: AdminShellProps) {
         </aside>
 
         <main className="min-w-0 py-2 lg:py-4">
-          <div className="mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
+          <div className="mx-auto flex max-w-6xl flex-col gap-4">
+            <AdminBackButton locale={locale} label={t("backLabel")} />
+            <div className="flex flex-col gap-6">{children}</div>
+          </div>
         </main>
       </div>
     </div>

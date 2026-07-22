@@ -1,5 +1,13 @@
-import { AdminPageTemplate } from "@/features/admin/components/admin-page-template";
+import { permanentRedirect } from "next/navigation";
 
-export default function AdminReportsPage() {
-  return <AdminPageTemplate pageKey="reports" />;
+import type { AppLocale } from "@/config/i18n";
+
+type AdminReportsPageProps = {
+  params: Promise<{ locale: AppLocale }>;
+};
+
+export default async function AdminReportsPage({ params }: AdminReportsPageProps) {
+  const { locale } = await params;
+
+  permanentRedirect(`/${locale}/admin/applications`);
 }
