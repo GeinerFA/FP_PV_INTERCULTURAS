@@ -4,6 +4,7 @@ import { archiveProgramAction, reactivateProgramAction } from "@/app/[locale]/ad
 import type { AppLocale } from "@/config/i18n";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
+import { getProgramCategoryName } from "@/features/programs/lib/program-category-presentation";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
 import { Link } from "@/i18n/navigation";
 import { listAdminPrograms } from "@/services/programs/program-service";
@@ -57,11 +58,24 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
   const publishedCount = programs.filter((program) => program.status === "published").length;
   const draftCount = programs.filter((program) => program.status === "draft").length;
   const archivedCount = programs.filter((program) => program.status === "archived").length;
-  const categoryCounts = {
-    volunteer: visiblePrograms.filter((program) => program.category === "volunteer").length,
-    internships: visiblePrograms.filter((program) => program.category === "internships").length,
-    "spanish-classes": visiblePrograms.filter((program) => program.category === "spanish-classes").length,
-  } as const;
+  const categoryCounts = Array.from(
+    visiblePrograms.reduce(
+      (accumulator, program) => {
+        const existingCategory = accumulator.get(program.category);
+
+        accumulator.set(program.category, {
+          code: program.category,
+          name: getProgramCategoryName(program.categoryDetails, program.category),
+          count: (existingCategory?.count ?? 0) + 1,
+        });
+
+        return accumulator;
+      },
+      new Map<string, { code: string; name: string; count: number }>(),
+    ),
+  )
+    .map(([, value]) => value)
+    .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name));
 
   const tableHeading = isArchivedView ? t("table.archivedHeading") : t("table.heading");
   const tableDescription = isArchivedView ? t("table.archivedDescription") : t("table.description");
@@ -136,7 +150,7 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
                           {program.translations[activeLocale].shortDescription}
                         </p>
                       </td>
-                      <td className="px-6 py-5 text-slate-700">{t(`categories.${program.category}`)}</td>
+                      <td className="px-6 py-5 text-slate-700">{getProgramCategoryName(program.categoryDetails, program.category)}</td>
                       <td className="px-6 py-5">
                         <span
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[program.status]}`}
@@ -260,12 +274,12 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.6fr)]">
         <AdminWorkspaceSection title={t("summary.heading")} description={t("summary.description")}>
           <div className="grid gap-3 md:grid-cols-3">
-            {Object.entries(categoryCounts).map(([category, count]) => (
-              <div key={category} className="admin-inner-panel-subtle rounded-2xl px-4 py-4">
+            {categoryCounts.map((category) => (
+              <div key={category.code} className="admin-inner-panel-subtle rounded-2xl px-4 py-4">
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                  {t(`categories.${category as keyof typeof categoryCounts}`)}
+                  {category.name}
                 </p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{count}</p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">{category.count}</p>
               </div>
             ))}
           </div>
@@ -329,7 +343,7 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
                       {program.translations[activeLocale].shortDescription}
                     </p>
                   </td>
-                  <td className="px-6 py-5 text-slate-700">{t(`categories.${program.category}`)}</td>
+                  <td className="px-6 py-5 text-slate-700">{getProgramCategoryName(program.categoryDetails, program.category)}</td>
                   <td className="px-6 py-5">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[program.status]}`}

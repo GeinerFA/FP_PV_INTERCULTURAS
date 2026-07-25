@@ -1,4 +1,5 @@
 import { defaultLocale, locales, type AppLocale } from "@/config/i18n";
+import { buildFallbackProgramCategorySummary, getProgramCategoryMap } from "@/services/categories/category-service";
 import type {
   CreateProgramRecordInput,
   DeleteProgramInput,
@@ -10,6 +11,7 @@ import type {
   PublishProgramInput,
   UpdateProgramDraftInput,
 } from "@/types/program";
+import type { ProgramCategorySummary } from "@/types/category";
 
 import { getProgramRepository } from "./program-repository";
 
@@ -65,10 +67,18 @@ function sortProgramRecords(programs: ProgramRecord[]) {
   });
 }
 
-function toAdminProgram(record: ProgramRecord): Program {
+function resolveProgramCategoryDetails(
+  category: string,
+  categoryMap: Map<string, ProgramCategorySummary>,
+): ProgramCategorySummary {
+  return categoryMap.get(category) ?? buildFallbackProgramCategorySummary(category);
+}
+
+function toAdminProgram(record: ProgramRecord, categoryMap: Map<string, ProgramCategorySummary>): Program {
   return {
     ...record,
     ...record.draftSnapshot,
+    categoryDetails: resolveProgramCategoryDetails(record.draftSnapshot.category, categoryMap),
     status: record.workflowState,
   };
 }
@@ -76,7 +86,7 @@ function toAdminProgram(record: ProgramRecord): Program {
 export function createEmptyProgramSnapshot(): ProgramSnapshot {
   return {
     slug: "",
-    category: "volunteer",
+    category: "",
     featured: false,
     coverImage: "",
     coverImageAsset: null,
@@ -111,6 +121,7 @@ function localizeProgramSnapshot(
   record: ProgramRecord,
   snapshot: ProgramSnapshot,
   locale: AppLocale,
+  categoryMap: Map<string, ProgramCategorySummary>,
 ): LocalizedProgram {
   const resolvedLocale = resolveProgramLocale(locale);
   const translation = snapshot.translations[resolvedLocale] ?? snapshot.translations[defaultLocale];
@@ -120,6 +131,7 @@ function localizeProgramSnapshot(
     id: record.id,
     slug: snapshot.slug,
     category: snapshot.category,
+    categoryDetails: resolveProgramCategoryDetails(snapshot.category, categoryMap),
     status: record.workflowState,
     workflowState: record.workflowState,
     featured: snapshot.featured,
@@ -144,8 +156,10 @@ function localizeProgramSnapshot(
 
 export async function listPublicPrograms(locale: AppLocale): Promise<LocalizedProgram[]> {
   try {
-    const repository = getProgramRepository();
-    const programs = await repository.list({ seedBootstrap: true });
+    const [programs, categoryMap] = await Promise.all([
+      getProgramRepository().list({ seedBootstrap: true }),
+      getProgramCategoryMap(),
+    ]);
 
     return sortProgramRecords(programs)
       .map((program) => ({
@@ -160,7 +174,7 @@ export async function listPublicPrograms(locale: AppLocale): Promise<LocalizedPr
           snapshot: ProgramSnapshot;
         } => program.record.workflowState === "published" && program.snapshot !== null,
       )
-      .map(({ record, snapshot }) => localizeProgramSnapshot(record, snapshot, locale));
+      .map(({ record, snapshot }) => localizeProgramSnapshot(record, snapshot, locale, categoryMap));
   } catch (error) {
     return handleRecoverablePublicProgramReadError("listPublicPrograms", error, []);
   }
@@ -180,31 +194,34 @@ export async function getPublicProgramBySlug(
   locale: AppLocale,
 ): Promise<LocalizedProgram | null> {
   try {
-    const repository = getProgramRepository();
-    const program = await repository.findPublishedBySlug(slug);
+    const [program, categoryMap] = await Promise.all([
+      getProgramRepository().findPublishedBySlug(slug),
+      getProgramCategoryMap(),
+    ]);
 
     if (!program || program.workflowState !== "published" || !program.publishedSnapshot) {
       return null;
     }
 
-    return localizeProgramSnapshot(program, program.publishedSnapshot, locale);
+    return localizeProgramSnapshot(program, program.publishedSnapshot, locale, categoryMap);
   } catch (error) {
     return handleRecoverablePublicProgramReadError("getPublicProgramBySlug", error, null);
   }
 }
 
 export async function listAdminPrograms(): Promise<Program[]> {
-  const repository = getProgramRepository();
+  const [programs, categoryMap] = await Promise.all([
+    getProgramRepository().list({ seedBootstrap: false }),
+    getProgramCategoryMap(),
+  ]);
 
-  return sortPrograms((await repository.list({ seedBootstrap: false })).map((program) => toAdminProgram(program)));
+  return sortPrograms(programs.map((program) => toAdminProgram(program, categoryMap)));
 }
 
 export async function getAdminProgramById(id: string): Promise<Program | null> {
-  const repository = getProgramRepository();
+  const [program, categoryMap] = await Promise.all([getProgramRepository().findById(id), getProgramCategoryMap()]);
 
-  const program = await repository.findById(id);
-
-  return program ? toAdminProgram(program) : null;
+  return program ? toAdminProgram(program, categoryMap) : null;
 }
 
 export async function getAdminProgramCoverImageById(
@@ -218,41 +235,42 @@ export async function getAdminProgramCoverImageById(
 
 export async function createAdminProgram(input: CreateProgramRecordInput): Promise<Program> {
   const repository = getProgramRepository();
+  const categoryMap = await getProgramCategoryMap();
 
-  return toAdminProgram(await repository.create(input));
+  return toAdminProgram(await repository.create(input), categoryMap);
 }
 
 export async function saveAdminProgramDraft(input: UpdateProgramDraftInput): Promise<Program | null> {
   const repository = getProgramRepository();
-  const record = await repository.saveDraft(input);
+  const [record, categoryMap] = await Promise.all([repository.saveDraft(input), getProgramCategoryMap()]);
 
-  return record ? toAdminProgram(record) : null;
+  return record ? toAdminProgram(record, categoryMap) : null;
 }
 
 export async function publishAdminProgram(input: PublishProgramInput): Promise<Program | null> {
   const repository = getProgramRepository();
-  const record = await repository.publish(input);
+  const [record, categoryMap] = await Promise.all([repository.publish(input), getProgramCategoryMap()]);
 
-  return record ? toAdminProgram(record) : null;
+  return record ? toAdminProgram(record, categoryMap) : null;
 }
 
 export async function archiveAdminProgram(input: ProgramWorkflowMutationInput): Promise<Program | null> {
   const repository = getProgramRepository();
-  const record = await repository.archive(input);
+  const [record, categoryMap] = await Promise.all([repository.archive(input), getProgramCategoryMap()]);
 
-  return record ? toAdminProgram(record) : null;
+  return record ? toAdminProgram(record, categoryMap) : null;
 }
 
 export async function deleteAdminProgram(input: DeleteProgramInput): Promise<Program | null> {
   const repository = getProgramRepository();
-  const record = await repository.delete(input);
+  const [record, categoryMap] = await Promise.all([repository.delete(input), getProgramCategoryMap()]);
 
-  return record ? toAdminProgram(record) : null;
+  return record ? toAdminProgram(record, categoryMap) : null;
 }
 
 export async function reactivateAdminProgram(input: ProgramWorkflowMutationInput): Promise<Program | null> {
   const repository = getProgramRepository();
-  const record = await repository.reactivate(input);
+  const [record, categoryMap] = await Promise.all([repository.reactivate(input), getProgramCategoryMap()]);
 
-  return record ? toAdminProgram(record) : null;
+  return record ? toAdminProgram(record, categoryMap) : null;
 }

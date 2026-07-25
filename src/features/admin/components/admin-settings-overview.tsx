@@ -1,0 +1,45 @@
+import { getTranslations } from "next-intl/server";
+
+import { Link } from "@/i18n/navigation";
+import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
+
+export async function AdminSettingsOverview() {
+  const t = await getTranslations("AdminSettingsOverview");
+  const modules = [
+    {
+      key: "categories",
+      href: "/admin/settings/categories",
+      action: t("modules.categories.action"),
+    },
+    {
+      key: "faqs",
+      href: "/admin/settings/faqs",
+      action: t("modules.faqs.action"),
+    },
+  ] as const;
+
+  return (
+    <AdminWorkspaceSection eyebrow={t("eyebrow")} title={t("title")} description={t("description")}>
+      <div className="space-y-6">
+        <p className="max-w-3xl text-sm leading-7 text-slate-700">{t("note")}</p>
+        <div className="grid gap-4 xl:grid-cols-2">
+          {modules.map((module) => (
+            <article key={module.key} className="admin-inner-panel rounded-[28px] p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                {t(`modules.${module.key}.eyebrow`)}
+              </p>
+              <h3 className="mt-3 text-xl font-semibold text-slate-950">{t(`modules.${module.key}.title`)}</h3>
+              <p className="mt-3 text-sm leading-7 text-slate-600">{t(`modules.${module.key}.description`)}</p>
+              <Link
+                href={module.href}
+                className="admin-primary-action mt-5 inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
+              >
+                {module.action}
+              </Link>
+            </article>
+          ))}
+        </div>
+      </div>
+    </AdminWorkspaceSection>
+  );
+}

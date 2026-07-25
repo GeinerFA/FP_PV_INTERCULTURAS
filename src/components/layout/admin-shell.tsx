@@ -1,7 +1,10 @@
+import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { siteConfig } from "@/config/site";
 import { AdminBackButton } from "@/components/layout/admin-back-button";
+import { AdminSidebarAccountControl } from "@/components/layout/admin-sidebar-account-control";
+import { AdminSidebarNav } from "@/components/layout/admin-sidebar-nav";
 import { Link } from "@/i18n/navigation";
 import { buildAdminGoogleAuthUrl, type AdminSession } from "@/lib/admin-session";
 
@@ -16,18 +19,33 @@ export async function AdminShell({ children, session }: AdminShellProps) {
   const adminHomePath = `/${locale}/admin`;
   const loginHref = buildAdminGoogleAuthUrl(adminHomePath);
   const logoutHref = `/api/admin/auth/logout?next=${encodeURIComponent(homePath)}`;
+  const accountLabels = {
+    accountMenuLabel: t("accountMenuLabel"),
+    accountMenuTitle: t("accountMenuTitle"),
+    accountMenuDescription: t("accountMenuDescription"),
+    accountLoginAction: t("continueWithGoogle"),
+    accountLogoutAction: t("logout"),
+    sessionActive: t("sessionActive"),
+  } as const;
+  const navigationLabels = {
+    dashboard: t("navigation.dashboard"),
+    programs: t("navigation.programs"),
+    applications: t("navigation.applications"),
+    activity: t("navigation.activity"),
+    settings: t("navigation.settings"),
+  } as const;
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.34),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(245,158,11,0.12),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_38%,#eff6f1_100%)] text-slate-900">
-      <div className="mx-auto grid min-h-screen max-w-[88rem] gap-4 px-4 py-4 lg:grid-cols-[288px_minmax(0,1fr)] lg:px-6 lg:py-6">
-        <aside className="surface-dark-soft-strong flex h-full flex-col rounded-[32px] px-6 py-7 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)]">
-          <div className="flex flex-col gap-6">
+      <div className="mx-auto grid min-h-screen w-full max-w-[116rem] gap-4 px-4 py-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-6 lg:px-6 lg:py-6 xl:gap-8 xl:px-8 2xl:px-10">
+        <aside className="admin-sidebar surface-dark-soft-strong flex min-h-0 flex-col gap-5 rounded-[34px] px-5 py-5 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:self-start lg:px-6 lg:py-6">
+          <div className="relative z-20 flex items-center justify-between gap-3">
             <Link
               href="/"
               locale={locale}
               aria-label={t("homeLabel")}
               title={t("homeLabel")}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-emerald-900/10 bg-white/72 text-slate-700 transition hover:border-emerald-600/30 hover:bg-emerald-50 hover:text-emerald-800"
+              className="admin-sidebar-home-link inline-flex h-11 w-11 items-center justify-center rounded-full"
             >
               <svg
                 aria-hidden="true"
@@ -46,73 +64,45 @@ export async function AdminShell({ children, session }: AdminShellProps) {
               <span className="sr-only">{t("homeLabel")}</span>
             </Link>
 
-            <div>
-              <div className="mb-4 h-px w-20 bg-gradient-to-r from-emerald-700/70 to-transparent" />
-              <Link href="/admin" className="inline-flex text-xl font-semibold tracking-tight text-slate-950">
-                {siteConfig.adminName}
-              </Link>
-              <p className="mt-3 text-sm leading-6 text-slate-600">{t("notice")}</p>
-            </div>
-
-            <div className="rounded-3xl border border-emerald-900/8 bg-white/66 p-4 text-sm text-slate-600 shadow-[0_18px_42px_-34px_rgba(15,23,42,0.22)]">
-              {session ? (
-                <div className="space-y-3">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800/80">
-                        {t("sessionActive")}
-                      </p>
-                      <p className="mt-2 break-all text-sm text-slate-900">{session.email}</p>
-                    </div>
-                  <form action={logoutHref} method="post">
-                    <button
-                      type="submit"
-                      className="admin-danger-action inline-flex w-full items-center justify-center rounded-2xl px-4 py-2.5 font-semibold transition"
-                    >
-                      {t("logout")}
-                    </button>
-                  </form>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <p className="text-sm leading-6 text-slate-600">
-                    {t("loginNotice")}
-                  </p>
-                  <a
-                    href={loginHref}
-                    className="admin-primary-action inline-flex w-full items-center justify-center rounded-2xl px-4 py-2.5 font-semibold transition"
-                  >
-                    {t("continueWithGoogle")}
-                  </a>
-                </div>
-              )}
-            </div>
+            <AdminSidebarAccountControl
+              loginHref={loginHref}
+              logoutHref={logoutHref}
+              labels={accountLabels}
+              session={session}
+            />
           </div>
 
-          <nav className="mt-10 flex flex-col gap-2 text-sm">
-            {session
-              ? siteConfig.adminNavigation.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="rounded-2xl border border-transparent px-4 py-3 text-slate-700 transition hover:border-emerald-900/10 hover:bg-white/56 hover:text-slate-950"
-                  >
-                    {t(`navigation.${item.labelKey}`)}
-                  </Link>
-                ))
-              : null}
-            {!session ? (
-              <Link
-                href="/admin/login"
-                className="admin-secondary-action mt-2 rounded-2xl px-4 py-3 font-semibold transition"
-              >
-                {t("login")}
-              </Link>
-            ) : null}
-          </nav>
+          <div className="admin-sidebar-scroll flex min-h-0 flex-1 flex-col gap-8 lg:overflow-y-auto lg:pr-1">
+            <div className="flex flex-col gap-5">
+              <div className="admin-sidebar-brand-panel rounded-[30px] p-5">
+                <Link href="/admin" className="flex flex-col gap-4 text-slate-950 transition hover:opacity-95">
+                  <div className="flex items-center gap-3">
+                    <div className="admin-sidebar-logo-wrap flex h-14 w-14 items-center justify-center rounded-2xl p-2">
+                      <Image
+                        src="/branding/logo-sin-fondo.png"
+                        alt={siteConfig.name}
+                        width={256}
+                        height={256}
+                        className="h-10 w-10 object-contain"
+                        priority
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xl font-semibold tracking-tight text-slate-950">{siteConfig.name}</p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex flex-1 flex-col gap-6">
+              {session ? <AdminSidebarNav labels={navigationLabels} /> : null}
+            </div>
+          </div>
         </aside>
 
         <main className="min-w-0 py-2 lg:py-4">
-          <div className="mx-auto flex max-w-6xl flex-col gap-4">
+          <div className="flex max-w-none flex-col gap-4 xl:pr-2 2xl:pr-4">
             <AdminBackButton locale={locale} label={t("backLabel")} />
             <div className="flex flex-col gap-6">{children}</div>
           </div>

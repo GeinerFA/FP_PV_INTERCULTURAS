@@ -1,6 +1,7 @@
 import { getMessages } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
+import { getProgramCategoryBadgeClassName, getProgramCategoryName } from "@/features/programs/lib/program-category-presentation";
 import { Link as LocaleLink } from "@/i18n/navigation";
 import { listFeaturedPublicPrograms } from "@/services/programs/program-service";
 
@@ -93,12 +94,6 @@ type HomeMessages = {
   };
 };
 
-const categoryTheme = {
-  volunteer: "bg-emerald-200 text-emerald-900",
-  internships: "bg-sky-200 text-sky-900",
-  "spanish-classes": "bg-amber-200 text-amber-900",
-} as const;
-
 type PublicHomePageProps = {
   locale: AppLocale;
   forceEmptyFeatured?: boolean;
@@ -115,7 +110,6 @@ export async function PublicHomePage({
 
   const home = messages.Home as HomeMessages;
   const programsUi = messages.ProgramsUi as {
-    categories: Record<string, string>;
     labels: {
       location: string;
       duration: string;
@@ -301,9 +295,9 @@ export async function PublicHomePage({
                 <div className="px-3 py-5">
                   <div className="flex flex-wrap gap-3">
                     <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${categoryTheme[program.category]}`}
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${getProgramCategoryBadgeClassName(program.categoryDetails)}`}
                     >
-                      {programsUi.categories[program.category]}
+                      {getProgramCategoryName(program.categoryDetails, program.category)}
                     </span>
                     <span className="inline-flex rounded-full bg-emerald-200 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-900">
                       {home.featured.featuredLabel}

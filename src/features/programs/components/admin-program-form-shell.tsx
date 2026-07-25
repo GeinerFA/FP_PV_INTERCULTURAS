@@ -13,8 +13,10 @@ import {
   saveProgramDraftAction,
 } from "@/app/[locale]/admin/programs/actions";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
+import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
 import { Link } from "@/i18n/navigation";
+import { listAdminProgramCategories } from "@/services/categories/category-service";
 import type { Program, ProgramSnapshot } from "@/types/program";
 import { isProgramPublishRequiredField } from "@/validators/program";
 
@@ -216,6 +218,28 @@ export async function AdminProgramFormShell({
     getLocale(),
   ]);
   const activeLocale = locale as AppLocale;
+  let categories: Awaited<ReturnType<typeof listAdminProgramCategories>>;
+
+  try {
+    categories = await listAdminProgramCategories();
+  } catch (error) {
+    if (!isKnownAdminMongoUnavailableError(error)) {
+      throw error;
+    }
+
+    return (
+      <AdminWorkspaceSection
+        eyebrow={t("unavailable.eyebrow")}
+        title={t("unavailable.title")}
+        description={t("unavailable.description")}
+        tone="warning"
+      >
+        <p className="max-w-3xl text-sm leading-7 text-slate-700">{t("unavailable.note")}</p>
+      </AdminWorkspaceSection>
+    );
+  }
+
+  const defaultCategoryCode = program?.category ?? categories[0]?.code ?? "";
   const saveAction = saveProgramDraftAction.bind(null, activeLocale, program?.id ?? null);
   const publishAction = publishProgramAction.bind(null, activeLocale, program?.id ?? null);
   const archiveAction = program ? archiveProgramAction.bind(null, activeLocale, program.id) : null;
@@ -224,6 +248,7 @@ export async function AdminProgramFormShell({
   const formId = `admin-program-form-${program?.id ?? mode}`;
   const pendingDraft = hasPendingDraft(program);
   const publishedProgramInEdit = isEdit && Boolean(program?.publishedSnapshot);
+  const hasManagedCategories = categories.length > 0;
   const coverImageSectionTitle = t.has("sections.coverImage") ? t("sections.coverImage") : t("fields.coverImage");
   const coverImageSectionDescription = t.has("descriptions.coverImage")
     ? t("descriptions.coverImage")
@@ -398,6 +423,12 @@ export async function AdminProgramFormShell({
               description={t("descriptions.operationalDetails")}
             >
               <div className="space-y-5">
+                {!hasManagedCategories ? (
+                  <div className="rounded-[24px] border border-amber-300/50 bg-amber-50 px-5 py-4 text-sm leading-7 text-amber-900">
+                    {t("categoryEmptyState")}
+                  </div>
+                ) : null}
+
                 {[
                   {
                     key: "location",
@@ -440,12 +471,15 @@ export async function AdminProgramFormShell({
                   </span>
                   <select
                     name="category"
-                    defaultValue={program?.category ?? "volunteer"}
+                    defaultValue={defaultCategoryCode}
+                    disabled={!hasManagedCategories}
                     className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
                   >
-                    <option value="volunteer">{t("categories.volunteer")}</option>
-                    <option value="internships">{t("categories.internships")}</option>
-                    <option value="spanish-classes">{t("categories.spanish-classes")}</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.code}>
+                        {category.name}
+                      </option>
+                    ))}
                   </select>
                 </label>
 

@@ -1,7 +1,7 @@
 import { model, models, Schema, type InferSchemaType, type Model } from "mongoose";
 
 import { locales } from "@/config/i18n";
-import { programCategories, programStatuses } from "@/types/program";
+import { programStatuses } from "@/types/program";
 
 const localizedTextSchemaDefinition = Object.fromEntries(
   locales.map((locale) => [
@@ -110,8 +110,9 @@ const programSnapshotSchema = new Schema(
     },
     category: {
       type: String,
-      enum: programCategories,
       required: true,
+      trim: true,
+      lowercase: true,
     },
     featured: {
       type: Boolean,

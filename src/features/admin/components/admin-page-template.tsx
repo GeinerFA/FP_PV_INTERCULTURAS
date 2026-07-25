@@ -28,7 +28,7 @@ export async function AdminPageTemplate({
     <section
         className={`relative overflow-hidden rounded-[32px] border border-white/70 ${
           isWorkspace
-            ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(248,244,232,0.84)_100%)] px-6 py-6 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.18)] md:px-8 md:py-8"
+            ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(248,244,232,0.84)_100%)] px-6 py-6 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.18)] md:px-8 md:py-8 xl:px-10 xl:py-9"
             : "surface-dark-soft p-8"
         }`}
     >
@@ -39,8 +39,8 @@ export async function AdminPageTemplate({
         />
       ) : null}
 
-      <div className="relative flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-        <div className="max-w-3xl">
+      <div className="relative flex min-w-0 flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+        <div className="min-w-0 max-w-4xl xl:max-w-5xl">
           <div className="mb-4 h-px w-20 bg-gradient-to-r from-emerald-700/70 to-transparent" />
           <h1 className="text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
             {t(`${pageKey}.title`)}
@@ -50,7 +50,7 @@ export async function AdminPageTemplate({
           </p>
         </div>
         {headerAction ? (
-          <div className="md:shrink-0 md:self-center">{headerAction}</div>
+          <div className="lg:shrink-0 lg:self-center">{headerAction}</div>
         ) : null}
       </div>
 
@@ -68,7 +68,7 @@ export async function AdminPageTemplate({
       ) : null}
 
       {children ? (
-        <div className={`relative mt-10 ${useInnerWorkspace ? "admin-inner-workspace" : ""}`.trim()}>
+        <div className={`relative mt-10 min-w-0 ${useInnerWorkspace ? "admin-inner-workspace" : ""}`.trim()}>
           {children}
         </div>
       ) : null}

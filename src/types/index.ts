@@ -17,4 +17,6 @@ export type PublicRouteItem = {
 };
 
 export * from "./application";
+export * from "./category";
+export * from "./faq";
 export * from "./program";

@@ -1,5 +1,20 @@
 import { AdminPageTemplate } from "@/features/admin/components/admin-page-template";
+import { AdminSettingsOverview } from "@/features/admin/components/admin-settings-overview";
+import type { AppLocale } from "@/config/i18n";
+import { requireAdminSession } from "@/lib/admin-session";
 
-export default function AdminSettingsPage() {
-  return <AdminPageTemplate pageKey="settings" />;
+type AdminSettingsPageProps = {
+  params: Promise<{ locale: AppLocale }>;
+};
+
+export default async function AdminSettingsPage({ params }: AdminSettingsPageProps) {
+  const { locale } = await params;
+
+  await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings` });
+
+  return (
+    <AdminPageTemplate pageKey="settings" variant="workspace" useInnerWorkspace>
+      <AdminSettingsOverview />
+    </AdminPageTemplate>
+  );
 }

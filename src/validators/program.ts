@@ -1,6 +1,5 @@
 import { locales, type AppLocale } from "@/config/i18n";
 import {
-  programCategories,
   programStatuses,
   type ProgramImageAsset,
   type ProgramImageAssetSummary,
@@ -9,11 +8,11 @@ import {
   type ProgramSnapshot,
   type ProgramSourceEntry,
   type LocalizedText,
-  type ProgramCategory,
   type ProgramSeoEntry,
   type ProgramStatus,
   type ProgramTranslation,
 } from "@/types/program";
+import type { ProgramCategory } from "@/types/category";
 
 type PlainObject = Record<string, unknown>;
 
@@ -222,6 +221,10 @@ function assertNullableIsoDate(value: unknown, path: string): string | null {
   return assertIsoDate(value, path);
 }
 
+function assertProgramCategory(value: unknown, path: string): ProgramCategory {
+  return assertSlug(value, path);
+}
+
 function assertProgramImageAssetSummary(value: unknown, path: string): ProgramImageAssetSummary {
   const object = assertPlainObject(value, path);
 
@@ -277,7 +280,7 @@ export function parseProgramSnapshot(value: unknown, path = "programSnapshot"): 
 
   return {
     slug: assertSlug(object.slug, `${path}.slug`, true),
-    category: assertEnum(object.category, programCategories, `${path}.category`) as ProgramCategory,
+    category: assertProgramCategory(object.category, `${path}.category`),
     featured: assertBoolean(object.featured, `${path}.featured`),
     coverImage: assertString(object.coverImage, `${path}.coverImage`, true),
     coverImageAsset:

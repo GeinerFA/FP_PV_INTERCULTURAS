@@ -16,14 +16,16 @@
     "contactAction": "Ir a la sección de contacto",
     "accountMenuLabel": "Abrir acceso administrativo",
     "accountMenuTitle": "Área administrativa",
-    "accountMenuDescription": "Accedé con la cuenta administrativa autorizada para entrar al panel protegido sin salir inmediatamente del sitio público.",
+    "accountMenuDescription": "Acceso exclusivo para el administrador de la pagina.",
     "accountLoginAction": "Continuar con Google",
     "accountSignedInHint": "Ya hay una sesión administrativa activa.",
     "accountAdminAction": "Panel administrativo",
     "accountLogoutAction": "Cerrar sesión"
   },
   "AdminShell": {
-    "notice": "Espacio administrativo protegido para revisar programas y solicitudes reales con una sola sesión de Google autorizada.",
+    "accountMenuLabel": "Abrir control de la cuenta administrativa",
+    "accountMenuTitle": "Cuenta administrativa",
+    "accountMenuDescription": "Gestioná la sesión autorizada del panel desde este control lateral.",
     "homeLabel": "Volver al inicio público",
     "backLabel": "Volver a la página anterior",
     "login": "Iniciar sesión",
@@ -114,13 +116,110 @@
     },
     "settings": {
       "title": "Configuración del sitio",
-      "description": "Área para branding, datos de contacto, enlaces sociales, gráfico de impacto y correos de notificación del sitio.",
+      "description": "Punto de entrada para módulos de mantenimiento del sitio dentro del panel administrativo protegido.",
       "sections": [
-        "Relacionada con site_settings del modelo de datos.",
-        "Será útil para evitar hardcodes dispersos.",
-        "La arquitectura ya separa esta responsabilidad en una ruta dedicada."
+        "Agrupa mantenimientos operativos sin mezclar todos los formularios directamente en la pantalla principal.",
+        "Mantiene rutas dedicadas para cada módulo de configuración que necesite CRUD propio.",
+        "Ahora incluye categorías y preguntas frecuentes como fuentes vivas de verdad para el sitio y el panel administrativo."
       ]
     }
+  },
+  "AdminSettingsOverview": {
+    "eyebrow": "Módulos disponibles",
+    "title": "Elegí qué parte de la configuración querés mantener",
+    "description": "Entrá al módulo correspondiente para mantener categorías o preguntas frecuentes sin cargar todos los formularios directamente en esta pantalla principal.",
+    "backAction": "Volver a configuración",
+    "note": "Cada módulo conserva el mismo flujo protegido del panel administrativo y publica sus cambios sobre la fuente real que usan las rutas públicas o editoriales.",
+    "modules": {
+      "categories": {
+        "eyebrow": "Catálogo base",
+        "title": "Categorías de programas",
+        "description": "Creá, editá o eliminá categorías gestionadas. Estas categorías ahora alimentan directamente el editor de programas, el catálogo público y los resúmenes administrativos.",
+        "action": "Mantenimiento de categorías"
+      },
+      "faqs": {
+        "eyebrow": "Contenido público",
+        "title": "Preguntas frecuentes",
+        "description": "Creá, editá, borrá o reordená preguntas frecuentes publicadas en /faqs con actualización inmediata.",
+        "action": "Mantenimiento de preguntas frecuentes"
+      }
+    }
+  },
+  "AdminCategorySettings": {
+    "unavailable": {
+      "eyebrow": "Categorías no disponibles",
+      "title": "No se pudo cargar el mantenimiento de categorías",
+      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
+      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza las categorías reales por datos simulados."
+    },
+    "stats": {
+      "total": {
+        "label": "Categorías activas",
+        "description": "Fuente viva de verdad para la selección de categorías en programas."
+      },
+      "inUse": {
+        "label": "En uso",
+        "description": "Cantidad de categorías que hoy están referenciadas por al menos un programa."
+      }
+    },
+    "live": {
+      "label": "Impacto inmediato",
+      "description": "Los cambios se reflejan en la configuración, en el editor administrativo de programas y en la presentación pública ligada a cada categoría."
+    },
+    "create": {
+      "title": "Crear categoría",
+      "description": "Definí una nueva categoría administrable para programas actuales o futuros.",
+      "disclosureHint": "El código interno se genera automáticamente desde el nombre y queda fijo después de crear la categoría para no romper programas ya vinculados.",
+      "disclosureClosedLabel": "Agregar categoría",
+      "disclosureOpenLabel": "Cerrar formulario de categoría"
+    },
+    "list": {
+      "title": "Categorías existentes",
+      "description": "Editá el nombre visible o el tema visual. La eliminación queda bloqueada si todavía existe algún programa que use la categoría."
+    },
+    "entry": {
+      "code": "Código {code}",
+      "programCount": "Programas vinculados: {count}"
+    },
+    "fields": {
+      "name": "Nombre visible",
+      "theme": "Tema visual"
+    },
+    "themes": {
+      "emerald": "Verde",
+      "sky": "Celeste",
+      "amber": "Ámbar",
+      "violet": "Violeta",
+      "rose": "Rosa",
+      "slate": "Pizarra"
+    },
+    "actions": {
+      "create": "Crear categoría",
+      "save": "Guardar cambios",
+      "delete": "Eliminar categoría"
+    },
+    "delete": {
+      "title": "Confirmar eliminación",
+      "description": "Eliminar esta categoría la quita de la configuración administrable.",
+      "warning": "Solo se puede eliminar si ningún programa la está usando actualmente.",
+      "blockedWarning": "Esta categoría sigue vinculada a uno o más programas. Primero reasigná esos programas antes de eliminarla.",
+      "confirm": "Sí, eliminar categoría",
+      "cancel": "Cancelar"
+    },
+    "feedback": {
+      "created": "La categoría se creó correctamente y ya forma parte de la fuente administrada del catálogo.",
+      "updated": "La categoría se actualizó correctamente.",
+      "deleted": "La categoría se eliminó correctamente.",
+      "invalid": "No se pudo interpretar el formulario. Revisá nombre y tema antes de reintentar.",
+      "save-failed": "No se pudo guardar la categoría en este momento. Intentá nuevamente en unos minutos.",
+      "delete-failed": "No se pudo eliminar la categoría en este momento. Intentá nuevamente desde esta vista.",
+      "delete-blocked": "No se puede eliminar la categoría porque todavía hay programas vinculados a ella.",
+      "duplicate-code": "Ya existe una categoría con un nombre que genera el mismo código interno. Elegí un nombre diferente."
+    },
+    "placeholders": {
+      "name": "Nombre visible de la categoría"
+    },
+    "empty": "Todavía no hay categorías administradas. Creá al menos una para habilitar la selección en programas."
   },
   "AdminDashboardOverview": {
     "unavailable": {
@@ -281,6 +380,12 @@
     }
   },
   "AdminProgramForm": {
+    "unavailable": {
+      "eyebrow": "Editor no disponible",
+      "title": "No se pudo cargar el editor de programas",
+      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
+      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Este editor no reemplaza los datos reales por valores simulados."
+    },
     "mode": {
       "create": "Creación persistida",
       "edit": "Edición persistida"
@@ -340,11 +445,7 @@
       "seoTitle": "SEO title",
       "seoDescription": "SEO description"
     },
-    "categories": {
-      "volunteer": "Voluntariado",
-      "internships": "Pasantía",
-      "spanish-classes": "Clases de español"
-    },
+    "categoryEmptyState": "No hay categorías disponibles en este momento. Primero creá una categoría desde Configuración para poder guardar o publicar programas nuevos.",
     "statuses": {
       "draft": "Borrador",
       "published": "Publicado",
@@ -1030,6 +1131,72 @@
         "faqs": "Ver preguntas frecuentes"
       }
     }
+  },
+  "AdminFaqSettings": {
+    "unavailable": {
+      "eyebrow": "Gestión no disponible",
+      "title": "No se pudo cargar la configuración de preguntas frecuentes",
+      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
+      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza las preguntas frecuentes persistidas por datos simulados."
+    },
+    "stats": {
+      "total": {
+        "label": "FAQs activas",
+        "description": "Fuente persistida compartida entre la página pública y el panel administrativo."
+      }
+    },
+    "live": {
+      "label": "Publicación inmediata",
+      "description": "Cada guardado impacta de inmediato la página pública de preguntas frecuentes. No hay borradores ni paso separado de publicación."
+    },
+    "create": {
+      "title": "Agregar nueva pregunta frecuente",
+      "description": "Creá una entrada persistida en el mismo espacio administrativo donde después también podés editar, borrar o reordenar el listado público.",
+      "disclosureClosedLabel": "Agregar nueva pregunta frecuente",
+      "disclosureOpenLabel": "Ocultar formulario de nueva FAQ",
+      "disclosureHint": "Abrí este panel cuando necesites crear una nueva entrada sin ocupar espacio constante en la vista de administración."
+    },
+    "list": {
+      "title": "Preguntas frecuentes publicadas",
+      "description": "Cada tarjeta representa el orden real y el contenido visible en /faqs. Reordená para controlar la lectura pública y guardá cambios sin salir de Configuración."
+    },
+    "fields": {
+      "question": "Pregunta",
+      "answer": "Respuesta"
+    },
+    "placeholders": {
+      "question": "Escribí la pregunta visible en la página pública",
+      "answer": "Escribí la respuesta visible en la página pública"
+    },
+    "actions": {
+      "create": "Guardar nueva FAQ",
+      "save": "Guardar cambios",
+      "moveUp": "Subir",
+      "moveDown": "Bajar",
+      "delete": "Eliminar"
+    },
+    "entry": {
+      "position": "Posición {order}",
+      "helper": "El orden se publica tal como aparece acá. Si movés una entrada, la página pública se revalida enseguida."
+    },
+    "delete": {
+      "title": "Confirmación de eliminación",
+      "description": "Eliminar saca esta pregunta del panel y de la página pública inmediatamente.",
+      "warning": "No existe un flujo de borrador o papelera para recuperarla después desde esta iteración.",
+      "confirm": "Sí, eliminar FAQ",
+      "cancel": "Cancelar"
+    },
+    "feedback": {
+      "created": "La nueva pregunta frecuente ya quedó guardada y publicada.",
+      "updated": "La pregunta frecuente se actualizó y la página pública ya se revalidó.",
+      "deleted": "La pregunta frecuente se eliminó y el orden público ya se ajustó.",
+      "reordered": "El orden de las preguntas frecuentes se actualizó correctamente.",
+      "invalid": "Completá tanto la pregunta como la respuesta antes de guardar.",
+      "save-failed": "No se pudo guardar la pregunta frecuente en este momento. Intentá nuevamente.",
+      "delete-failed": "No se pudo eliminar la pregunta frecuente en este momento. Intentá nuevamente.",
+      "reorder-failed": "No se pudo actualizar el orden de las preguntas frecuentes. Intentá nuevamente."
+    },
+    "empty": "Todavía no hay preguntas frecuentes persistidas. Cuando agregués la primera, aparecerá enseguida en la página pública."
   },
   "Faqs": {
     "metadata": {

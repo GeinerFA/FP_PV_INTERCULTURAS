@@ -3,6 +3,7 @@ import { getMessages } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
 import { Link as LocaleLink } from "@/i18n/navigation";
+import { listPublicFaqEntries } from "@/services/faqs/faq-service";
 
 type FaqMessages = {
   eyebrow: string;
@@ -41,11 +42,10 @@ export async function PublicFaqPage({
 }: PublicFaqPageProps) {
   const messages = await getMessages();
   const faqs = messages.Faqs as FaqMessages;
+  const persistedEntries = forceEmptyEntries ? [] : await listPublicFaqEntries(locale);
   const entries = forceEmptyEntries
     ? []
-    : Object.values(faqs.entries ?? {}).filter(
-        (entry) => entry.question.trim().length > 0 && entry.answer.trim().length > 0,
-      );
+    : persistedEntries.filter((entry) => entry.question.trim().length > 0 && entry.answer.trim().length > 0);
   const contactHref = `/${locale}#contact`;
 
   return (
@@ -70,7 +70,7 @@ export async function PublicFaqPage({
       ) : (
         <section className="space-y-8">
           {entries.map((entry) => (
-            <article key={entry.question} className="animate-fade-up py-1">
+            <article key={entry.id} className="animate-fade-up py-1">
               <h2 className="text-2xl font-semibold tracking-tight text-slate-950">
                 {entry.question}
               </h2>

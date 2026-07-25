@@ -1,10 +1,7 @@
 import type { AppLocale } from "@/config/i18n";
-
-export const programCategories = ["volunteer", "internships", "spanish-classes"] as const;
+import type { ProgramCategory, ProgramCategorySummary } from "@/types/category";
 
 export const programStatuses = ["draft", "published", "archived"] as const;
-
-export type ProgramCategory = (typeof programCategories)[number];
 
 export type ProgramStatus = (typeof programStatuses)[number];
 
@@ -76,6 +73,7 @@ export type ProgramRecord = {
 
 export type Program = ProgramRecord &
   ProgramSnapshot & {
+    categoryDetails: ProgramCategorySummary | null;
     status: ProgramStatus;
   };
 
@@ -110,6 +108,7 @@ export type LocalizedProgram = {
   id: string;
   slug: string;
   category: ProgramCategory;
+   categoryDetails: ProgramCategorySummary | null;
   status: ProgramStatus;
   workflowState: ProgramWorkflowState;
   featured: boolean;

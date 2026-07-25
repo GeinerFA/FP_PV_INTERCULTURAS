@@ -55,6 +55,131 @@ body {
   backdrop-filter: blur(20px);
 }
 
+.admin-sidebar {
+  border-color: rgb(255 255 255 / 0.68);
+  background:
+    radial-gradient(circle at top, rgb(236 253 245 / 0.82), transparent 34%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(240 249 244 / 0.94) 56%, rgb(248 244 232 / 0.92));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.92),
+    0 34px 96px -62px rgb(15 23 42 / 0.28);
+}
+
+.admin-sidebar-scroll {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(16 185 129 / 0.34) transparent;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar {
+  width: 0.7rem;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-thumb {
+  border: 0.18rem solid transparent;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgb(16 185 129 / 0.36), rgb(15 118 110 / 0.26));
+  background-clip: padding-box;
+}
+
+.admin-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgb(16 185 129 / 0.5), rgb(15 118 110 / 0.38));
+  background-clip: padding-box;
+}
+
+.admin-sidebar-home-link {
+  border: 1px solid rgb(15 118 110 / 0.1);
+  background: rgb(255 255 255 / 0.84);
+  color: rgb(51 65 85);
+  box-shadow: 0 14px 32px -24px rgb(15 23 42 / 0.22);
+}
+
+.admin-sidebar-home-link:hover {
+  border-color: rgb(5 150 105 / 0.24);
+  background: rgb(236 253 245 / 0.94);
+  color: rgb(6 95 70);
+}
+
+.admin-sidebar-session-pill {
+  border: 1px solid rgb(16 185 129 / 0.14);
+  background: rgb(236 253 245 / 0.82);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
+}
+
+.admin-sidebar-brand-panel {
+  border: 1px solid rgb(16 185 129 / 0.12);
+  background:
+    linear-gradient(145deg, rgb(255 255 255 / 0.98), rgb(236 253 245 / 0.9) 58%, rgb(248 244 232 / 0.88));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.94),
+    0 24px 60px -46px rgb(5 150 105 / 0.3);
+}
+
+.admin-sidebar-logo-wrap {
+  border: 1px solid rgb(16 185 129 / 0.16);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.96), rgb(220 252 231 / 0.9));
+  box-shadow: 0 18px 36px -28px rgb(5 150 105 / 0.26);
+}
+
+.admin-sidebar-session-card,
+.admin-sidebar-footer-panel {
+  border: 1px solid rgb(16 185 129 / 0.1);
+  background: rgb(255 255 255 / 0.72);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.84);
+  backdrop-filter: blur(18px);
+}
+
+.admin-sidebar-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-height: 4rem;
+  border: 1px solid transparent;
+  border-radius: 1.35rem;
+  padding: 0.95rem 1rem;
+  color: rgb(51 65 85);
+  background: rgb(255 255 255 / 0.36);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.42);
+}
+
+.admin-sidebar-nav-link:hover {
+  border-color: rgb(16 185 129 / 0.14);
+  background: rgb(255 255 255 / 0.74);
+  color: rgb(15 23 42);
+}
+
+.admin-sidebar-nav-link-active {
+  border-color: rgb(5 150 105 / 0.24);
+  background: linear-gradient(135deg, rgb(6 95 70), rgb(16 185 129));
+  color: rgb(248 250 252);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.14),
+    0 22px 44px -32px rgb(4 120 87 / 0.55);
+}
+
+.admin-sidebar-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 1rem;
+  background: rgb(16 185 129 / 0.08);
+}
+
+.admin-sidebar-nav-link:hover .admin-sidebar-nav-icon {
+  background: rgb(16 185 129 / 0.12);
+}
+
+.admin-sidebar-nav-icon-active {
+  background: rgb(236 253 245 / 0.18);
+}
+
 .surface-dark-panel {
   border: 1px solid rgb(217 232 222 / 0.92);
   background: linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(248 244 232 / 0.72));

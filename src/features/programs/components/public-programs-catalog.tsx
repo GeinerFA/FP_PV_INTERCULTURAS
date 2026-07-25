@@ -1,14 +1,9 @@
 import { getTranslations } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
+import { getProgramCategoryBadgeClassName, getProgramCategoryName } from "@/features/programs/lib/program-category-presentation";
 import { Link } from "@/i18n/navigation";
 import { listPublicPrograms } from "@/services/programs/program-service";
-
-const categoryTheme = {
-  volunteer: "bg-emerald-200 text-emerald-900",
-  internships: "bg-sky-200 text-sky-900",
-  "spanish-classes": "bg-amber-200 text-amber-900",
-} as const;
 
 type PublicProgramsCatalogProps = {
   locale: AppLocale;
@@ -46,9 +41,9 @@ export async function PublicProgramsCatalog({ locale }: PublicProgramsCatalogPro
           <div className="flex h-full flex-col px-6 py-6">
             <div className="flex flex-wrap items-center gap-3">
               <span
-                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${categoryTheme[program.category]}`}
+                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${getProgramCategoryBadgeClassName(program.categoryDetails)}`}
               >
-                {t(`categories.${program.category}`)}
+                {getProgramCategoryName(program.categoryDetails, program.category)}
               </span>
               {program.featured ? (
                 <span className="inline-flex rounded-full bg-emerald-200 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-900">

@@ -3,6 +3,7 @@ import { type HydratedDocument, Types } from "mongoose";
 import { defaultLocale, locales } from "@/config/i18n";
 import { connectToDatabase } from "@/lib/mongoose";
 import { ProgramModel, type ProgramDocument } from "@/models/program";
+import { getProgramCategoryRepository } from "@/services/categories/category-repository";
 import type {
   CreateProgramRecordInput,
   DeleteProgramInput,
@@ -425,6 +426,18 @@ function assertActor(value: string, path: string): string {
   return value.trim();
 }
 
+async function assertManagedProgramCategory(category: string, path: string): Promise<void> {
+  const managedCategory = await getProgramCategoryRepository().findByCode(category, { seedBootstrap: true });
+
+  if (!managedCategory) {
+    throw new Error(`${path} must reference an existing managed category.`);
+  }
+}
+
+async function assertManagedProgramSnapshot(snapshot: ProgramSnapshot, path: string): Promise<void> {
+  await assertManagedProgramCategory(snapshot.category, `${path}.category`);
+}
+
 async function getCurrentRecordOrNull(
   id: string,
   options?: { includeAssetData?: boolean },
@@ -540,6 +553,7 @@ const mongoProgramRepository: ProgramRepository = {
     await ensureProgramRepositoryMaintenance();
 
     const parsedDraftSnapshot = parseProgramSnapshot(draftSnapshot);
+    await assertManagedProgramSnapshot(parsedDraftSnapshot, "createProgramRecordInput.draftSnapshot");
     const document = (await ProgramModel.create({
       workflowState: "draft",
       draftSnapshot: parsedDraftSnapshot,
@@ -586,6 +600,7 @@ const mongoProgramRepository: ProgramRepository = {
       preserveExistingCoverImageAsset(currentRecord.draftSnapshot, parseProgramSnapshot(draftSnapshot)),
     );
 
+    await assertManagedProgramSnapshot(parsedDraftSnapshot, "updateProgramDraftInput.draftSnapshot");
     validatePublishedSlugImmutability(currentRecord, parsedDraftSnapshot, "draftSnapshot");
 
     const document = await ProgramModel.findByIdAndUpdate(
@@ -616,6 +631,7 @@ const mongoProgramRepository: ProgramRepository = {
       return null;
     }
 
+    await assertManagedProgramSnapshot(currentRecord.draftSnapshot, "draftSnapshot");
     validateProgramSnapshotForPublish(currentRecord.draftSnapshot, "draftSnapshot");
     validatePublishedSlugImmutability(currentRecord, currentRecord.draftSnapshot, "draftSnapshot");
 

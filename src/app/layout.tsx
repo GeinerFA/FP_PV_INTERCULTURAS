@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   },
   description:
     "Plataforma fullstack para presentar programas, captar voluntariado internacional y gestionar la operación administrativa.",
+  icons: {
+    icon: "/branding/logo-sin-fondo.png",
+    shortcut: "/branding/logo-sin-fondo.png",
+    apple: "/branding/logo-sin-fondo.png",
+  },
 };
 
 export default function RootLayout({

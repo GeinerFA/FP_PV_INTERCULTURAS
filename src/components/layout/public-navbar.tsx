@@ -49,7 +49,7 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
         <div className="flex min-w-0 shrink-0 items-center gap-3 md:gap-4">
           <NextLink
             href={`/${locale}`}
-            className="group inline-flex min-w-0 items-center rounded-2xl py-1 text-slate-950 transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-200/80 focus:ring-offset-2 focus:ring-offset-transparent"
+            className="group inline-flex min-w-0 translate-x-1 items-center rounded-2xl py-1 text-slate-950 transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-200/80 focus:ring-offset-2 focus:ring-offset-transparent"
           >
             <Image
               src="/branding/nuevo-logo.png"
