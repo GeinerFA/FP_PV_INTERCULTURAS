@@ -1,12 +1,26 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
-import { applicationStatuses, type Application } from "@/types/application";
+import {
+  AdminApplicationStatusForm,
+  type AdminApplicationStatusFormCopy,
+} from "@/features/applications/components/admin-application-status-form";
+import type { Application } from "@/types/application";
 
 type AdminApplicationDetailProps = {
   application: Application;
   updateAction: (formData: FormData) => Promise<void>;
-  feedback?: "updated" | "invalid" | "no-change" | "failed";
+  feedback?:
+    | "updated"
+    | "updated-email-sent"
+    | "updated-email-skipped"
+    | "updated-email-not-configured"
+    | "updated-email-failed"
+    | "invalid"
+    | "notification-invalid"
+    | "notification-required"
+    | "no-change"
+    | "failed";
 };
 
 const statusTheme = {
@@ -83,6 +97,42 @@ export async function AdminApplicationDetail({
     getLocale(),
     getTranslations("ApplicationFlow.admin.detail"),
   ]);
+  const statusFormCopy: AdminApplicationStatusFormCopy = {
+    selectLabel: t("statusCard.selectLabel"),
+    submitLabel: t("statusCard.submitLabel"),
+    submittingLabel: t("statusCard.submittingLabel"),
+    notificationDecisionRequired: t("statusCard.notificationDecisionRequired"),
+    statuses: {
+      pending: t("statuses.pending"),
+      in_process: t("statuses.in_process"),
+      resolved: t("statuses.resolved"),
+      cancelled: t("statuses.cancelled"),
+    },
+    modal: {
+      badge: t("notificationModal.badge"),
+      title: t("notificationModal.title"),
+      description: t("notificationModal.description"),
+      subjectLabel: t("notificationModal.subjectLabel"),
+      messageLabel: t("notificationModal.messageLabel"),
+      cancelLabel: t("notificationModal.cancelLabel"),
+      sendAndSaveLabel: t("notificationModal.sendAndSaveLabel"),
+      skipAndSaveLabel: t("notificationModal.skipAndSaveLabel"),
+    },
+    templates: {
+      in_process: {
+        subject: t("notificationTemplates.in_process.subject"),
+        message: t("notificationTemplates.in_process.message", { name: application.fullName }),
+      },
+      resolved: {
+        subject: t("notificationTemplates.resolved.subject"),
+        message: t("notificationTemplates.resolved.message", { name: application.fullName }),
+      },
+      cancelled: {
+        subject: t("notificationTemplates.cancelled.subject"),
+        message: t("notificationTemplates.cancelled.message", { name: application.fullName }),
+      },
+    },
+  };
   const history = [...application.statusHistory].reverse();
   const fields = [
     { key: "email", value: application.email },
@@ -96,9 +146,9 @@ export async function AdminApplicationDetail({
     <div className="space-y-8">
       {feedback ? (
         <div
-          className={`rounded-[28px] border px-4 py-3 text-sm shadow-[0_18px_40px_-32px_rgba(15,23,42,0.18)] backdrop-blur ${feedback === "updated" ? "admin-success-banner" : "admin-warning-banner"}`}
+          className={`rounded-[28px] border px-4 py-3 text-sm shadow-[0_18px_40px_-32px_rgba(15,23,42,0.18)] backdrop-blur ${feedback === "updated" || feedback === "updated-email-sent" || feedback === "updated-email-skipped" ? "admin-success-banner" : "admin-warning-banner"}`}
         >
-          {feedback === "updated" ? t("feedback.updated") : t(`feedback.${feedback}`)}
+          {t(`feedback.${feedback}`)}
         </div>
       ) : null}
 
@@ -159,32 +209,11 @@ export async function AdminApplicationDetail({
 
         <div className="space-y-6">
           <AdminWorkspaceSection title={t("statusCard.title")} description={t("statusCard.description")}>
-            <form action={updateAction} className="space-y-4">
-              <div>
-                  <label htmlFor="status" className="block text-sm font-semibold text-slate-950">
-                    {t("statusCard.selectLabel")}
-                  </label>
-                <select
-                  id="status"
-                  name="status"
-                  defaultValue={application.status}
-                  className="admin-inner-input mt-2 min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                >
-                  {applicationStatuses.map((status) => (
-                    <option key={status} value={status}>
-                      {t(`statuses.${status}`)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-              >
-                {t("statusCard.submitLabel")}
-              </button>
-            </form>
+            <AdminApplicationStatusForm
+              currentStatus={application.status}
+              updateAction={updateAction}
+              copy={statusFormCopy}
+            />
           </AdminWorkspaceSection>
 
           <AdminWorkspaceSection title={t("history.title")} description={t("history.description")} tone="subtle">

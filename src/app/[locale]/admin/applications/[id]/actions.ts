@@ -5,12 +5,15 @@ import { notFound, redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
 import { requireAdminSession } from "@/lib/admin-session";
+import { sendApplicationStatusNotification } from "@/services/notifications/application-status-notification-service";
 import {
   getApplicationById,
   updateApplicationStatus,
 } from "@/services/applications/application-service";
 import type { Application } from "@/types/application";
 import { parseApplicationStatus } from "@/validators/application";
+
+type NotificationIntent = "none" | "send" | "skip";
 
 function buildDetailPath(locale: AppLocale, id: string): string {
   return `/${locale}/admin/applications/${id}`;
@@ -20,12 +23,22 @@ function redirectWithStatus(locale: AppLocale, id: string, key: string): never {
   redirect(`${buildDetailPath(locale, id)}?status=${key}`);
 }
 
+function readString(formData: FormData, key: string): string {
+  const value = formData.get(key);
+
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function parseNotificationIntent(value: FormDataEntryValue | null): NotificationIntent {
+  return value === "send" || value === "skip" ? value : "none";
+}
+
 export async function updateApplicationStatusAction(
   locale: AppLocale,
   id: string,
   formData: FormData,
 ): Promise<void> {
-  await requireAdminSession({ locale, nextPath: buildDetailPath(locale, id) });
+  const session = await requireAdminSession({ locale, nextPath: buildDetailPath(locale, id) });
 
   const currentApplication = await getApplicationById(id);
 
@@ -46,10 +59,28 @@ export async function updateApplicationStatusAction(
     redirectWithStatus(locale, id, "no-change");
   }
 
+  const notificationIntent = parseNotificationIntent(formData.get("notificationIntent"));
+
+  if (currentApplication.status === "pending" && nextStatus !== "pending" && notificationIntent === "none") {
+    redirectWithStatus(locale, id, "notification-required");
+  }
+
+  const notificationSubject = readString(formData, "notificationSubject");
+  const notificationMessage = readString(formData, "notificationMessage");
+
+  if (notificationIntent === "send" && (!notificationSubject || !notificationMessage)) {
+    redirectWithStatus(locale, id, "notification-invalid");
+  }
+
   let updatedApplication: Application | null;
 
   try {
-    updatedApplication = await updateApplicationStatus(id, nextStatus);
+    updatedApplication = await updateApplicationStatus(
+      id,
+      nextStatus,
+      { email: session.email, role: "admin" },
+      "Status updated from admin panel.",
+    );
   } catch {
     redirectWithStatus(locale, id, "failed");
   }
@@ -60,5 +91,37 @@ export async function updateApplicationStatusAction(
 
   revalidatePath(`/${locale}/admin/applications`);
   revalidatePath(buildDetailPath(locale, id));
+
+  if (notificationIntent === "skip") {
+    redirectWithStatus(locale, id, "updated-email-skipped");
+  }
+
+  if (notificationIntent === "send") {
+    let notificationResult;
+
+    try {
+      notificationResult = await sendApplicationStatusNotification({
+        applicationId: updatedApplication.id,
+        applicantEmail: updatedApplication.email,
+        applicantName: updatedApplication.fullName,
+        nextStatus,
+        subject: notificationSubject,
+        message: notificationMessage,
+      });
+    } catch {
+      redirectWithStatus(locale, id, "updated-email-failed");
+    }
+
+    if (notificationResult.status === "sent") {
+      redirectWithStatus(locale, id, "updated-email-sent");
+    }
+
+    if (notificationResult.status === "not_configured") {
+      redirectWithStatus(locale, id, "updated-email-not-configured");
+    }
+
+    redirectWithStatus(locale, id, "updated-email-failed");
+  }
+
   redirectWithStatus(locale, id, "updated");
 }

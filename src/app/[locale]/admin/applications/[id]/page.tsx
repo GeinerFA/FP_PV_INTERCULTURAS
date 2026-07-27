@@ -29,7 +29,13 @@ export default async function AdminApplicationDetailPage({
 
   const feedback =
     status === "updated" ||
+    status === "updated-email-sent" ||
+    status === "updated-email-skipped" ||
+    status === "updated-email-not-configured" ||
+    status === "updated-email-failed" ||
     status === "invalid" ||
+    status === "notification-invalid" ||
+    status === "notification-required" ||
     status === "no-change" ||
     status === "failed"
       ? status

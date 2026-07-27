@@ -45,18 +45,18 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
 
   return (
     <nav className="w-full" aria-label="Public navigation">
-      <div className="flex flex-wrap items-center justify-between gap-3 xl:flex-nowrap xl:gap-5">
+      <div className="flex flex-wrap items-center justify-between gap-4 xl:flex-nowrap xl:gap-6">
         <div className="flex min-w-0 shrink-0 items-center gap-3 md:gap-4">
           <NextLink
             href={`/${locale}`}
-            className="group inline-flex min-w-0 translate-x-1 items-center rounded-2xl py-1 text-slate-950 transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-200/80 focus:ring-offset-2 focus:ring-offset-transparent"
+            className="group inline-flex min-w-0 items-center rounded-2xl py-1 xl:pr-2 text-slate-950 transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-200/80 focus:ring-offset-2 focus:ring-offset-transparent"
           >
             <Image
               src="/branding/nuevo-logo.png"
               alt={siteConfig.name}
               width={2420}
               height={778}
-              className="h-11 w-auto object-contain md:h-14"
+              className="h-10 w-auto object-contain md:h-12"
               priority
             />
           </NextLink>
