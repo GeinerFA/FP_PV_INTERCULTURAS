@@ -7,14 +7,17 @@ import { notFound, redirect } from "next/navigation";
 
 import { locales, type AppLocale } from "@/config/i18n";
 import { requireAdminSession } from "@/lib/admin-session";
+import { recordAdminActivitySafely } from "@/services/admin/activity-service";
 import {
   archiveAdminProgram,
   createAdminProgram,
   deleteAdminProgram,
+  getAdminProgramById,
   publishAdminProgram,
   reactivateAdminProgram,
   saveAdminProgramDraft,
 } from "@/services/programs/program-service";
+import type { AdminProgramActivityChange } from "@/types/admin-activity";
 import type { LocalizedText, Program, ProgramImageAssetUpload, ProgramSnapshot } from "@/types/program";
 import { parseProgramSnapshot } from "@/validators/program";
 
@@ -58,6 +61,92 @@ function rethrowFrameworkNavigation(error: unknown): void {
   if (isRedirectError(error) || isHTTPAccessFallbackError(error)) {
     throw error;
   }
+}
+
+function resolveProgramActivityLabel(program: Pick<Program, "id" | "slug" | "translations">): string {
+  const firstAvailableTitle = Object.values(program.translations)
+    .map((translation) => translation.title.trim())
+    .find((title) => title.length > 0);
+
+  return (
+    firstAvailableTitle ||
+    program.slug.trim() ||
+    program.id
+  );
+}
+
+function resolveProgramSnapshotTitle(snapshot: Pick<ProgramSnapshot, "slug" | "translations">): string | null {
+  const firstAvailableTitle = Object.values(snapshot.translations)
+    .map((translation) => translation.title.trim())
+    .find((title) => title.length > 0);
+
+  return firstAvailableTitle || snapshot.slug.trim() || null;
+}
+
+function normalizeProgramActivityValue(value: string | boolean | null | undefined): string | null {
+  if (typeof value === "boolean") {
+    return value ? "true" : "false";
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim();
+
+    return normalized.length > 0 ? normalized : null;
+  }
+
+  return null;
+}
+
+function buildProgramActivityChanges(
+  previousSnapshot: ProgramSnapshot,
+  nextSnapshot: ProgramSnapshot,
+): AdminProgramActivityChange[] {
+  const trackedFields: Array<{
+    field: AdminProgramActivityChange["field"];
+    previous: string | boolean | null;
+    next: string | boolean | null;
+  }> = [
+    { field: "featured", previous: previousSnapshot.featured, next: nextSnapshot.featured },
+    { field: "title", previous: resolveProgramSnapshotTitle(previousSnapshot), next: resolveProgramSnapshotTitle(nextSnapshot) },
+    { field: "category", previous: previousSnapshot.category, next: nextSnapshot.category },
+    { field: "slug", previous: previousSnapshot.slug, next: nextSnapshot.slug },
+  ];
+
+  return trackedFields.flatMap(({ field, previous, next }) => {
+    const from = normalizeProgramActivityValue(previous);
+    const to = normalizeProgramActivityValue(next);
+
+    if (from === to) {
+      return [];
+    }
+
+    return [{ field, from, to } satisfies AdminProgramActivityChange];
+  });
+}
+
+async function recordProgramUpdatedActivity(params: {
+  actor: { displayName?: string | null; email: string };
+  changes: AdminProgramActivityChange[];
+  program: Program;
+}): Promise<void> {
+  const metadata = {
+    slug: params.program.publishedSnapshot?.slug ?? params.program.slug,
+    ...(params.changes.length > 0 ? { programChanges: params.changes } : {}),
+  };
+
+  await recordAdminActivitySafely({
+    action: "program.updated",
+    entityType: "program",
+    entityId: params.program.id,
+    entityLabel: resolveProgramActivityLabel(params.program),
+    actor: {
+      displayName: params.actor.displayName ?? undefined,
+      email: params.actor.email,
+      role: "admin",
+    },
+    happenedAt: params.program.updatedAt,
+    metadata,
+  });
 }
 
 function readString(formData: FormData, key: string): string {
@@ -208,10 +297,33 @@ export async function saveProgramDraftAction(
         updatedBy: actorEmail,
       });
 
+      await recordAdminActivitySafely({
+        action: "program.created",
+        entityType: "program",
+        entityId: createdProgram.id,
+        entityLabel: resolveProgramActivityLabel(createdProgram),
+        actor: {
+          displayName: session.displayName ?? undefined,
+          email: session.email,
+          role: "admin",
+        },
+        happenedAt: createdProgram.updatedAt,
+        metadata: {
+          slug: createdProgram.slug,
+        },
+      });
+
       revalidateProgramPaths(locale, createdProgram);
       redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "draft-saved"));
     }
 
+    const currentProgram = await getAdminProgramById(id);
+
+    if (!currentProgram) {
+      notFound();
+    }
+
+    const programChanges = buildProgramActivityChanges(currentProgram.draftSnapshot, draftSnapshot);
     const updatedProgram = await saveAdminProgramDraft({
       id,
       draftSnapshot,
@@ -221,6 +333,12 @@ export async function saveProgramDraftAction(
     if (!updatedProgram) {
       notFound();
     }
+
+    await recordProgramUpdatedActivity({
+      actor: session,
+      changes: programChanges,
+      program: updatedProgram,
+    });
 
     revalidateProgramPaths(locale, updatedProgram);
     redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "draft-saved"));
@@ -258,6 +376,14 @@ export async function publishProgramAction(
   const actorEmail = session.email;
 
   try {
+    const isNewProgram = !id;
+    const currentProgram = id ? await getAdminProgramById(id) : null;
+
+    if (id && !currentProgram) {
+      notFound();
+    }
+
+    const programChanges = currentProgram ? buildProgramActivityChanges(currentProgram.draftSnapshot, draftSnapshot) : [];
     const persistedProgram = id
       ? await saveAdminProgramDraft({
           id,
@@ -274,6 +400,32 @@ export async function publishProgramAction(
       notFound();
     }
 
+    if (isNewProgram) {
+      await recordAdminActivitySafely({
+        action: "program.created",
+        entityType: "program",
+        entityId: persistedProgram.id,
+        entityLabel: resolveProgramActivityLabel(persistedProgram),
+        actor: {
+          displayName: session.displayName ?? undefined,
+          email: session.email,
+          role: "admin",
+        },
+        happenedAt: persistedProgram.updatedAt,
+        metadata: {
+          slug: persistedProgram.slug,
+        },
+      });
+    }
+
+    if (!isNewProgram) {
+      await recordProgramUpdatedActivity({
+        actor: session,
+        changes: programChanges,
+        program: persistedProgram,
+      });
+    }
+
     const publishedProgram = await publishAdminProgram({
       id: persistedProgram.id,
       updatedBy: actorEmail,
@@ -282,6 +434,22 @@ export async function publishProgramAction(
     if (!publishedProgram) {
       notFound();
     }
+
+    await recordAdminActivitySafely({
+      action: "program.published",
+      entityType: "program",
+      entityId: publishedProgram.id,
+      entityLabel: resolveProgramActivityLabel(publishedProgram),
+      actor: {
+        displayName: session.displayName ?? undefined,
+        email: session.email,
+        role: "admin",
+      },
+      happenedAt: publishedProgram.updatedAt,
+      metadata: {
+        slug: publishedProgram.publishedSnapshot?.slug ?? publishedProgram.slug,
+      },
+    });
 
     revalidateProgramPaths(locale, publishedProgram);
     redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "published"));
@@ -313,6 +481,22 @@ export async function archiveProgramAction(locale: AppLocale, id: string, formDa
     notFound();
   }
 
+  await recordAdminActivitySafely({
+    action: "program.archived",
+    entityType: "program",
+    entityId: archivedProgram.id,
+    entityLabel: resolveProgramActivityLabel(archivedProgram),
+    actor: {
+      displayName: session.displayName ?? undefined,
+      email: session.email,
+      role: "admin",
+    },
+    happenedAt: archivedProgram.updatedAt,
+    metadata: {
+      slug: archivedProgram.publishedSnapshot?.slug ?? archivedProgram.slug,
+    },
+  });
+
   revalidateProgramPaths(locale, archivedProgram);
   redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "archived"));
 }
@@ -336,6 +520,22 @@ export async function deleteProgramAction(locale: AppLocale, id: string, formDat
       notFound();
     }
 
+    await recordAdminActivitySafely({
+      action: "program.deleted",
+      entityType: "program",
+      entityId: deletedProgram.id,
+      entityLabel: resolveProgramActivityLabel(deletedProgram),
+      actor: {
+        displayName: session.displayName ?? undefined,
+        email: session.email,
+        role: "admin",
+      },
+      happenedAt: deletedProgram.updatedAt,
+      metadata: {
+        slug: deletedProgram.publishedSnapshot?.slug ?? deletedProgram.slug,
+      },
+    });
+
     revalidateProgramPaths(locale, deletedProgram);
     redirect(buildProgramsOverviewPath(locale));
   } catch (error) {
@@ -356,6 +556,22 @@ export async function reactivateProgramAction(locale: AppLocale, id: string): Pr
   if (!reactivatedProgram) {
     notFound();
   }
+
+  await recordAdminActivitySafely({
+    action: "program.reactivated",
+    entityType: "program",
+    entityId: reactivatedProgram.id,
+    entityLabel: resolveProgramActivityLabel(reactivatedProgram),
+    actor: {
+      displayName: session.displayName ?? undefined,
+      email: session.email,
+      role: "admin",
+    },
+    happenedAt: reactivatedProgram.updatedAt,
+    metadata: {
+      slug: reactivatedProgram.slug,
+    },
+  });
 
   revalidateProgramPaths(locale, reactivatedProgram);
   redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "reactivated"));

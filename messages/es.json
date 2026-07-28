@@ -107,11 +107,11 @@
     },
     "activity": {
       "title": "Bitácora de actividad",
-      "description": "Sección para registrar acciones administrativas relevantes y sostener una bitácora operativa básica.",
+      "description": "Vista operativa con movimientos administrativos reales para seguir cambios recientes sobre solicitudes y programas.",
       "sections": [
-        "Responde al requisito funcional RF-10.",
-        "Más adelante podrá apoyarse en activity_logs.",
-        "Ayuda a dar trazabilidad al panel interno."
+        "Ordena los eventos más recientes primero para facilitar el seguimiento diario.",
+        "Registra acciones reales desde los flujos administrativos instrumentados.",
+        "Prioriza trazabilidad operativa básica sin expandirse todavía a analítica o reportes."
       ]
     },
     "settings": {
@@ -377,6 +377,117 @@
       "draft": "Borrador",
       "published": "Publicado",
       "archived": "Archivado"
+    },
+    "pagination": {
+      "previousLabel": "Página anterior",
+      "nextLabel": "Página siguiente",
+      "pageSummary": "Página {page} de {totalPages}",
+      "rangeSummary": "Mostrando {from} a {to} de {total} programas en esta vista."
+    }
+  },
+  "AdminActivityOverview": {
+    "unavailable": {
+      "eyebrow": "Bitácora no disponible",
+      "title": "No se pudo cargar la bitácora administrativa",
+      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
+      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza la bitácora real por datos simulados."
+    },
+    "stats": {
+      "total": {
+        "label": "Eventos visibles",
+        "description": "Cantidad de movimientos recientes cargados desde la bitácora persistida."
+      },
+      "applications": {
+        "label": "Cambios en solicitudes",
+        "description": "Actualizaciones de estado registradas desde el detalle administrativo de postulaciones."
+      },
+      "programs": {
+        "label": "Movimientos en programas",
+        "description": "Altas y cambios de flujo editorial registrados desde el módulo de programas."
+      }
+    },
+    "entityTypes": {
+      "application": "Solicitud",
+      "program": "Programa"
+    },
+    "actions": {
+      "applicationStatusUpdated": "Estado actualizado",
+      "programCreated": "Creación",
+      "programUpdated": "Edición",
+      "programPublished": "Publicación",
+      "programArchived": "Archivo",
+      "programDeleted": "Eliminación",
+      "programReactivated": "Reactivación"
+    },
+    "changeFields": {
+      "featured": "Destacado",
+      "title": "Título",
+      "category": "Categoría",
+      "slug": "Slug"
+    },
+    "statuses": {
+      "pending": "Pendiente",
+      "in_process": "En proceso",
+      "resolved": "Finalizada",
+      "cancelled": "Cancelada"
+    },
+    "feed": {
+      "eyebrow": "Seguimiento reciente",
+      "title": "Movimientos administrativos",
+      "description": "Cada evento resume qué pasó, sobre qué registro ocurrió y quién ejecutó la acción cuando ese dato estuvo disponible en el flujo protegido.",
+      "latestLabel": "Último registro",
+      "empty": "Todavía no hay movimientos registrados en la bitácora. Cuando el panel ejecute cambios instrumentados, esta vista mostrará el historial real más reciente.",
+      "openRecord": "Abrir registro",
+      "systemActor": "Sistema",
+      "noValue": "sin valor",
+      "changeSummary": "{field}: {from} → {to}",
+      "boolean": {
+        "true": "Sí",
+        "false": "No"
+      },
+      "unknownPreviousStatus": "estado previo no disponible",
+      "unknownCurrentStatus": "estado actual no disponible",
+      "summary": {
+        "applicationStatusUpdated": "Estado actualizado en solicitud {target}.",
+        "programCreated": "Programa creado: {target}.",
+        "programUpdated": "Cambio realizado a programa {target}.",
+        "programPublished": "Programa publicado: {target}.",
+        "programArchived": "Programa archivado: {target}.",
+        "programDeleted": "Programa eliminado: {target}.",
+        "programReactivated": "Programa reactivado: {target}."
+      }
+    },
+    "history": {
+      "title": "Historial de {target}",
+      "description": "Mostrando {count, number} registros reales del historial administrativo, del más reciente al más antiguo.",
+      "backToFeed": "Volver a actividad",
+      "metadata": {
+        "title": "Metadatos del cambio",
+        "actorLabel": "Responsable",
+        "dateTimeLabel": "Fecha y hora"
+      },
+      "detail": {
+        "applicationStatusUpdated": "Se cambió el estado de la solicitud {target} de {from} a {to}.",
+        "programCreated": "Se creó el programa {target}.",
+        "programUpdated": "Se actualizó el programa {target}.",
+        "programPublished": "Se publicó el programa {target}.",
+        "programArchived": "Se archivó el programa {target}.",
+        "programDeleted": "Se eliminó el programa {target}.",
+        "programReactivated": "Se reactivó el programa {target}.",
+        "programFeaturedEnabled": "Se marcó el programa {target} como destacado.",
+        "programFeaturedDisabled": "Se desactivó el programa {target} de destacado.",
+        "programChangeFields": {
+          "title": "Se cambió el título del programa {target} de {from} a {to}.",
+          "category": "Se cambió la categoría del programa {target} de {from} a {to}.",
+          "slug": "Se cambió el slug del programa {target} de {from} a {to}."
+        }
+      }
+    },
+    "pagination": {
+      "previousLabel": "Página anterior",
+      "nextLabel": "Página siguiente",
+      "pageSummary": "Página {page} de {totalPages}",
+      "rangeSummary": "Mostrando {from} a {to} de {total} eventos."
     }
   },
   "AdminProgramForm": {
@@ -873,6 +984,12 @@
           "heading": "Solicitudes registradas",
           "description": "Revisá la bandeja actual y abrí cada detalle para seguir el flujo administrativo básico del módulo.",
           "summaryCardDescription": "Coincidencias visibles con los filtros actuales.",
+          "pagination": {
+            "previousLabel": "Página anterior",
+            "nextLabel": "Página siguiente",
+            "pageSummary": "Página {page} de {totalPages}",
+            "rangeSummary": "Mostrando {from} a {to} de {total} solicitudes filtradas."
+          },
           "openDetail": "Abrir detalle",
           "emptyFiltered": "No encontramos solicitudes que coincidan con los filtros activos. Ajustá la búsqueda o limpiá los filtros para volver a la bandeja completa.",
           "applicationTypes": {

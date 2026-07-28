@@ -2,7 +2,6 @@ import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { siteConfig } from "@/config/site";
-import { AdminBackButton } from "@/components/layout/admin-back-button";
 import { AdminSidebarAccountControl } from "@/components/layout/admin-sidebar-account-control";
 import { AdminSidebarNav } from "@/components/layout/admin-sidebar-nav";
 import { Link } from "@/i18n/navigation";
@@ -103,7 +102,6 @@ export async function AdminShell({ children, session }: AdminShellProps) {
 
         <main className="min-w-0 py-2 lg:py-4">
           <div className="flex max-w-none flex-col gap-4 xl:pr-2 2xl:pr-4">
-            <AdminBackButton locale={locale} label={t("backLabel")} />
             <div className="flex flex-col gap-6">{children}</div>
           </div>
         </main>

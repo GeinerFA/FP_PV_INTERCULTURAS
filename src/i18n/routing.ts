@@ -25,6 +25,7 @@ export const routing = defineRouting({
     "/admin/applications": "/admin/applications",
     "/admin/applications/[id]": "/admin/applications/[id]",
     "/admin/activity": "/admin/activity",
+    "/admin/activity/[entityType]/[entityId]": "/admin/activity/[entityType]/[entityId]",
     "/admin/settings": "/admin/settings",
     "/admin/settings/categories": "/admin/settings/categories",
     "/admin/settings/faqs": "/admin/settings/faqs",

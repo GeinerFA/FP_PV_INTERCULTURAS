@@ -80,3 +80,62 @@ node --experimental-strip-types --input-type=module -e '<helper truth-table>'
 ### Verdict
 PASS WITH WARNINGS
 The follow-up safely extends truthful Mongo-unavailable handling to the protected admin programs and applications overview pages, preserves unexpected-error surfacing, and passes lint, typecheck, build, and localization validation; remaining risk is lack of automated authenticated runtime coverage and duplicated classifier logic in the dashboard.
+
+---
+
+## Focused verify refresh — 2026-07-27 richer activity logging slice
+
+### Scope
+
+- `src/app/[locale]/admin/programs/actions.ts`
+- `src/types/admin-activity.ts`
+- `src/validators/admin-activity.ts`
+- `src/models/admin-activity.ts`
+- `src/features/admin/components/admin-activity-overview.tsx`
+- `src/features/admin/lib/admin-actor-label.ts`
+- `src/features/applications/components/admin-application-detail.tsx`
+- `messages/es.json`
+
+### Focused Build & Checks
+
+**Build**: ✅ Passed
+```text
+pnpm lint
+- passed
+
+pnpm exec tsc --noEmit
+- passed
+
+pnpm build
+- passed (Next.js 16.2.4 production build completed successfully, including /[locale]/admin/activity and /[locale]/admin/programs routes)
+```
+
+**Runtime tests**: ⚠️ No dedicated automated runtime test runner is configured in this repo
+```text
+openspec/config.yaml still declares no unit, integration, or e2e runner.
+This focused verify pass therefore used fresh source inspection plus lint/typecheck/build evidence only.
+```
+
+### Focused Slice Findings
+
+- ✅ `program.updated` was wired into the admin activity contracts, persistence model, and Activity UI, including featured/title/category/slug change summaries.
+- ✅ Featured toggles are part of the tracked `programChanges` payload and render in Activity with localized boolean labels.
+- ✅ Actor display now falls back to a friendly name derived from email when `displayName` is absent, and the same helper is reused in application detail history.
+- ✅ Activity persistence remains best-effort because all writes flow through `recordAdminActivitySafely(...)`, which swallows persistence failures after logging to stderr.
+- ❌ Existing-program edit events are emitted only when one of the tracked high-signal fields changes. Edits limited to other fields (for example descriptions, availability, cover image, requirements, or SEO) will save/publish successfully but produce no `program.updated` event.
+
+### Focused Issues
+
+**CRITICAL**:
+- `src/app/[locale]/admin/programs/actions.ts:127-152` returns early when `changes.length === 0`, and both existing-program save/publish paths compute `programChanges` only from `featured`, `title`, `category`, and `slug` (`actions.ts:100-125`, `actions.ts:328-343`, `actions.ts:388-429`). That means an existing program edited only in untracked fields does NOT emit the required persisted `program.updated` event.
+
+**WARNING**:
+- There is still no automated runtime scenario proof for save/publish activity emission; this pass is build-proven and source-verified, not end-to-end test-proven.
+
+**SUGGESTION**:
+- Keep `program.updated` emission independent from the tracked-details subset: persist the event for any successful existing-program save/publish edit, and attach `programChanges` only when one of the high-signal fields changed.
+
+### Focused Verdict
+
+FAIL
+The richer activity logging slice is close, but it misses the core requirement that existing program edits always emit a persisted `program.updated` event; right now that happens only when one of the tracked high-signal fields changes.

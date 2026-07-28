@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
 import { requireAdminSession } from "@/lib/admin-session";
+import { recordAdminActivitySafely } from "@/services/admin/activity-service";
 import { sendApplicationStatusNotification } from "@/services/notifications/application-status-notification-service";
 import {
   getApplicationById,
@@ -91,6 +92,25 @@ export async function updateApplicationStatusAction(
 
   revalidatePath(`/${locale}/admin/applications`);
   revalidatePath(buildDetailPath(locale, id));
+
+  const latestStatusEntry = updatedApplication.statusHistory.at(-1);
+
+  await recordAdminActivitySafely({
+    action: "application.status_updated",
+    entityType: "application",
+    entityId: updatedApplication.id,
+    entityLabel: updatedApplication.fullName || updatedApplication.email,
+    actor: {
+      displayName: session.displayName ?? undefined,
+      email: session.email,
+      role: "admin",
+    },
+    happenedAt: latestStatusEntry?.changedAt,
+    metadata: {
+      fromStatus: currentApplication.status,
+      toStatus: nextStatus,
+    },
+  });
 
   if (notificationIntent === "skip") {
     redirectWithStatus(locale, id, "updated-email-skipped");

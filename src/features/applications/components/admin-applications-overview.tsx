@@ -1,7 +1,9 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { AdminPagination } from "@/features/admin/components/admin-pagination";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
+import { ADMIN_LIST_PAGE_SIZE, buildPaginationState, paginateItems } from "@/features/admin/lib/pagination";
 import {
   buildAdminApplicationListQuery,
   countActiveAdminApplicationListFilters,
@@ -127,9 +129,10 @@ function ExportActionCard({
 
 type AdminApplicationsOverviewProps = {
   filters: AdminApplicationListFilters;
+  page: number;
 };
 
-export async function AdminApplicationsOverview({ filters }: AdminApplicationsOverviewProps) {
+export async function AdminApplicationsOverview({ filters, page }: AdminApplicationsOverviewProps) {
   const [locale, t] = await Promise.all([getLocale(), getTranslations("ApplicationFlow.admin.list")]);
 
   let applications: Awaited<ReturnType<typeof listApplications>>;
@@ -153,7 +156,13 @@ export async function AdminApplicationsOverview({ filters }: AdminApplicationsOv
     );
   }
 
-  const visibleApplications = filterAdminApplications(applications, filters);
+  const filteredApplications = filterAdminApplications(applications, filters);
+  const pagination = buildPaginationState({
+    currentPage: page,
+    totalItems: filteredApplications.length,
+    pageSize: ADMIN_LIST_PAGE_SIZE,
+  });
+  const visibleApplications = paginateItems(filteredApplications, pagination);
   const hasActiveFilters = hasActiveAdminApplicationListFilters(filters);
   const activeFiltersCount = countActiveAdminApplicationListFilters(filters);
   const filterQuery = buildAdminApplicationListQuery(filters);
@@ -180,7 +189,7 @@ export async function AdminApplicationsOverview({ filters }: AdminApplicationsOv
 
   const counts = applicationStatuses.reduce<Record<ApplicationStatus, number>>(
     (summary, status) => {
-      summary[status] = visibleApplications.filter((application) => application.status === status).length;
+      summary[status] = filteredApplications.filter((application) => application.status === status).length;
       return summary;
     },
     {
@@ -239,7 +248,7 @@ export async function AdminApplicationsOverview({ filters }: AdminApplicationsOv
             activeBadge: t("filters.activeBadge"),
             activeSummary: t("filters.activeSummary", { count: activeFiltersCount }),
             resultsSummary: t("filters.resultsSummary", {
-              count: visibleApplications.length,
+              count: filteredApplications.length,
               total: applications.length,
             }),
             updatingResultsLabel: t("filters.updatingResultsLabel"),
@@ -305,7 +314,10 @@ export async function AdminApplicationsOverview({ filters }: AdminApplicationsOv
                           href={{
                             pathname: "/admin/applications/[id]",
                             params: { id: application.id },
-                            query: filterQuery,
+                            query:
+                              pagination.currentPage > 1
+                                ? { ...filterQuery, page: String(pagination.currentPage) }
+                                : filterQuery,
                           }}
                           className="admin-outline-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition"
                         >
@@ -318,6 +330,25 @@ export async function AdminApplicationsOverview({ filters }: AdminApplicationsOv
               </table>
             ) : null}
           </div>
+          <AdminPagination
+            pathname="/admin/applications"
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            query={filterQuery}
+            copy={{
+              previousLabel: t("pagination.previousLabel"),
+              nextLabel: t("pagination.nextLabel"),
+              pageSummary: t("pagination.pageSummary", {
+                page: pagination.currentPage,
+                totalPages: pagination.totalPages,
+              }),
+              rangeSummary: t("pagination.rangeSummary", {
+                from: pagination.totalItems === 0 ? 0 : pagination.startIndex + 1,
+                to: pagination.endIndex,
+                total: pagination.totalItems,
+              }),
+            }}
+          />
         </AdminApplicationsFilterShell>
 
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-emerald-900/8 px-6 py-5">
@@ -338,7 +369,7 @@ export async function AdminApplicationsOverview({ filters }: AdminApplicationsOv
 
           <p className="text-sm leading-6 text-slate-600">
             {t("filters.resultsSummary", {
-              count: visibleApplications.length,
+              count: filteredApplications.length,
               total: applications.length,
             })}
           </p>

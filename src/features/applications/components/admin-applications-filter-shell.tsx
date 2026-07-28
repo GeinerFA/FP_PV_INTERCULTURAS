@@ -2,7 +2,6 @@
 
 import type { FormEvent, ReactNode } from "react";
 import { useTransition } from "react";
-import { useSearchParams } from "next/navigation";
 
 import { useRouter } from "@/i18n/navigation";
 import { applicationStatuses, applicationTypeCodes, type ApplicationStatus } from "@/types/application";
@@ -69,9 +68,7 @@ export function AdminApplicationsFilterShell({
   children,
 }: AdminApplicationsFilterShellProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const isFilteredView = searchParams.toString().length > 0;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -212,7 +209,7 @@ export function AdminApplicationsFilterShell({
                       <span>{isPending ? copy.applyingLabel : copy.applyLabel}</span>
                     </button>
 
-                    {isFilteredView ? (
+                    {hasActiveFilters ? (
                       <button
                         type="button"
                         onClick={handleReset}

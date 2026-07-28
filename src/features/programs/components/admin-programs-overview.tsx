@@ -2,8 +2,10 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { archiveProgramAction, reactivateProgramAction } from "@/app/[locale]/admin/programs/actions";
 import type { AppLocale } from "@/config/i18n";
+import { AdminPagination } from "@/features/admin/components/admin-pagination";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
+import { ADMIN_LIST_PAGE_SIZE, buildPaginationState, paginateItems } from "@/features/admin/lib/pagination";
 import { getProgramCategoryName } from "@/features/programs/lib/program-category-presentation";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
 import { Link } from "@/i18n/navigation";
@@ -15,6 +17,13 @@ const statusTheme = {
   archived: "bg-slate-100 text-slate-700 ring-slate-200",
 } as const;
 
+const programRowActionBaseClassName =
+  "inline-flex min-w-[10.5rem] items-center justify-center rounded-full px-4 py-2.5 text-[0.8125rem] font-semibold transition";
+
+const programRowActionLinkClassName = `admin-outline-action ${programRowActionBaseClassName}`;
+const programRowActionInfoClassName = `admin-info-action ${programRowActionBaseClassName}`;
+const programRowActionFormClassName = "max-w-xs min-w-[10.5rem]";
+
 type AdminProgramsOverviewProps = {
   feedback?:
     | "archived"
@@ -24,9 +33,10 @@ type AdminProgramsOverviewProps = {
     | "published"
     | "reactivated";
   view?: "archived";
+  page: number;
 };
 
-export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOverviewProps) {
+export async function AdminProgramsOverview({ feedback, view, page }: AdminProgramsOverviewProps) {
   const [t, locale] = await Promise.all([getTranslations("AdminProgramsOverview"), getLocale()]);
 
   let programs: Awaited<ReturnType<typeof listAdminPrograms>>;
@@ -52,14 +62,20 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
 
   const activeLocale = locale as AppLocale;
   const isArchivedView = view === "archived";
-  const visiblePrograms = programs.filter((program) =>
+  const filteredPrograms = programs.filter((program) =>
     isArchivedView ? program.status === "archived" : program.status === "published" || program.status === "draft",
   );
+  const pagination = buildPaginationState({
+    currentPage: page,
+    totalItems: filteredPrograms.length,
+    pageSize: ADMIN_LIST_PAGE_SIZE,
+  });
+  const visiblePrograms = paginateItems(filteredPrograms, pagination);
   const publishedCount = programs.filter((program) => program.status === "published").length;
   const draftCount = programs.filter((program) => program.status === "draft").length;
   const archivedCount = programs.filter((program) => program.status === "archived").length;
   const categoryCounts = Array.from(
-    visiblePrograms.reduce(
+    filteredPrograms.reduce(
       (accumulator, program) => {
         const existingCategory = accumulator.get(program.category);
 
@@ -171,14 +187,14 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
                               pathname: "/admin/programs/[id]/edit",
                               params: { id: program.id },
                             }}
-                            className="admin-outline-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition"
+                            className={programRowActionLinkClassName}
                           >
                             {t("table.openEditor")}
                           </Link>
                           <form action={reactivateProgramAction.bind(null, activeLocale, program.id)}>
                             <button
                               type="submit"
-                              className="admin-info-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition"
+                              className={programRowActionInfoClassName}
                             >
                               {t("table.reactivate")}
                             </button>
@@ -191,6 +207,25 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
               </table>
             ) : null}
           </div>
+          <AdminPagination
+            pathname="/admin/programs"
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            query={isArchivedView ? { view: "archived" } : undefined}
+            copy={{
+              previousLabel: t("pagination.previousLabel"),
+              nextLabel: t("pagination.nextLabel"),
+              pageSummary: t("pagination.pageSummary", {
+                page: pagination.currentPage,
+                totalPages: pagination.totalPages,
+              }),
+              rangeSummary: t("pagination.rangeSummary", {
+                from: pagination.totalItems === 0 ? 0 : pagination.startIndex + 1,
+                to: pagination.endIndex,
+                total: pagination.totalItems,
+              }),
+            }}
+          />
         </AdminWorkspaceSection>
       </div>
     );
@@ -364,7 +399,7 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
                           pathname: "/admin/programs/[id]/edit",
                           params: { id: program.id },
                         }}
-                        className="admin-outline-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition"
+                        className={programRowActionLinkClassName}
                       >
                         {t("table.openEditor")}
                       </Link>
@@ -378,7 +413,7 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
                           </button>
                         </form>
                       ) : (
-                        <form className="w-full max-w-xs min-w-0">
+                        <form className={programRowActionFormClassName}>
                           <DestructiveActionConfirmation
                             title={t("table.archiveConfirmation.title")}
                             description={t("table.archiveConfirmation.description")}
@@ -390,7 +425,7 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
                             formAction={archiveProgramAction.bind(null, activeLocale, program.id)}
                             tone="warning"
                             actionLayout="stacked"
-                            className="w-full"
+                            className="min-w-[10.5rem]"
                           />
                         </form>
                       )}
@@ -400,8 +435,27 @@ export async function AdminProgramsOverview({ feedback, view }: AdminProgramsOve
               ))}
             </tbody>
           </table>
-          ) : null}
+           ) : null}
         </div>
+        <AdminPagination
+          pathname="/admin/programs"
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          query={isArchivedView ? { view: "archived" } : undefined}
+          copy={{
+            previousLabel: t("pagination.previousLabel"),
+            nextLabel: t("pagination.nextLabel"),
+            pageSummary: t("pagination.pageSummary", {
+              page: pagination.currentPage,
+              totalPages: pagination.totalPages,
+            }),
+            rangeSummary: t("pagination.rangeSummary", {
+              from: pagination.totalItems === 0 ? 0 : pagination.startIndex + 1,
+              to: pagination.endIndex,
+              total: pagination.totalItems,
+            }),
+          }}
+        />
       </AdminWorkspaceSection>
     </div>
   );
