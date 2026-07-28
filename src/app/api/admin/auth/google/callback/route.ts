@@ -9,11 +9,11 @@ import {
   getAdminAppOrigin,
   getAdminGoogleOauthOrigin,
   hasVerifiedAdminEmail,
-  isAllowedAdminEmail,
   readAdminOauthStateToken,
   resolveLocaleFromLocalizedPath,
   setAdminSessionCookie,
 } from "@/lib/admin-session";
+import { resolveAuthorizedAdminUserByEmail } from "@/services/admin-users/admin-user-service";
 
 type GoogleTokenResponse = {
   access_token?: string;
@@ -27,7 +27,7 @@ type GoogleUserInfo = {
   picture?: string;
 };
 
-function resolveAcceptedAdminEmail(userInfo: GoogleUserInfo | null): string | null {
+async function resolveAcceptedAdminIdentity(userInfo: GoogleUserInfo | null) {
   if (!userInfo) {
     return null;
   }
@@ -36,11 +36,10 @@ function resolveAcceptedAdminEmail(userInfo: GoogleUserInfo | null): string | nu
     return null;
   }
 
-  if (!isAllowedAdminEmail(userInfo.email)) {
-    return null;
-  }
-
-  return userInfo.email;
+  return resolveAuthorizedAdminUserByEmail({
+    email: userInfo.email,
+    fullName: userInfo.name,
+  });
 }
 
 function getGoogleCredentials() {
@@ -196,15 +195,15 @@ export async function GET(request: NextRequest) {
 
     const userInfo = readGoogleIdTokenPayload(idToken ?? undefined) ?? (await fetchGoogleUserInfo(accessToken));
 
-    const acceptedAdminEmail = resolveAcceptedAdminEmail(userInfo);
+    const acceptedAdminIdentity = await resolveAcceptedAdminIdentity(userInfo);
 
-    if (!acceptedAdminEmail) {
+    if (!acceptedAdminIdentity) {
       return buildLoginRedirect(request, nextPath, "access_denied");
     }
 
     const sessionToken = await createAdminSessionToken({
-      displayName: userInfo?.name,
-      email: acceptedAdminEmail,
+      displayName: acceptedAdminIdentity.fullName || userInfo?.name,
+      email: acceptedAdminIdentity.email,
       imageUrl: userInfo?.picture,
     });
     const response = NextResponse.redirect(new URL(nextPath, getAdminGoogleOauthOrigin(request)));

@@ -37,7 +37,7 @@ export default async function AdminSettingsCategoriesPage({ params, searchParams
   const feedback = parseAdminCategorySettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/categories` });
+  await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/categories`, permission: "settings.view" });
 
   return (
     <AdminPageTemplate

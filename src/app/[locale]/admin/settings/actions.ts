@@ -77,7 +77,7 @@ function revalidateCategoryPaths(locale: AppLocale): void {
 
 export async function createFaqAction(locale: AppLocale, formData: FormData): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
   const question = readString(formData, "question");
   const answer = readString(formData, "answer");
 
@@ -99,7 +99,7 @@ export async function createFaqAction(locale: AppLocale, formData: FormData): Pr
 
 export async function updateFaqAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
   const question = readString(formData, "question");
   const answer = readString(formData, "answer");
 
@@ -125,7 +125,7 @@ export async function updateFaqAction(locale: AppLocale, id: string, formData: F
 
 export async function deleteFaqAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
-  await requireAdminSession({ locale, nextPath });
+  await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
 
   const deletedFaq = await deleteAdminFaq({ id });
 
@@ -139,7 +139,7 @@ export async function deleteFaqAction(locale: AppLocale, id: string): Promise<vo
 
 export async function moveFaqAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
 
   try {
     const direction = parseFaqMoveDirection(readString(formData, "direction"));
@@ -159,7 +159,7 @@ export async function moveFaqAction(locale: AppLocale, id: string, formData: For
 
 export async function createProgramCategoryAction(locale: AppLocale, formData: FormData): Promise<void> {
   const nextPath = buildCategorySettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
   const name = readString(formData, "name");
   const theme = readString(formData, "theme");
 
@@ -186,7 +186,7 @@ export async function createProgramCategoryAction(locale: AppLocale, formData: F
 
 export async function updateProgramCategoryAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildCategorySettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
   const name = readString(formData, "name");
   const theme = readString(formData, "theme");
 
@@ -212,7 +212,7 @@ export async function updateProgramCategoryAction(locale: AppLocale, id: string,
 
 export async function deleteProgramCategoryAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildCategorySettingsPath(locale);
-  await requireAdminSession({ locale, nextPath });
+  await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
 
   try {
     const deletedCategory = await deleteAdminProgramCategory({ id });

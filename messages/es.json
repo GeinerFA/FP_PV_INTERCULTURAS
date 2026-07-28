@@ -16,7 +16,7 @@
     "contactAction": "Ir a la sección de contacto",
     "accountMenuLabel": "Abrir acceso administrativo",
     "accountMenuTitle": "Área administrativa",
-    "accountMenuDescription": "Acceso exclusivo para el administrador de la pagina.",
+    "accountMenuDescription": "Acceso exclusivo para personas administradoras autorizadas.",
     "accountLoginAction": "Continuar con Google",
     "accountSignedInHint": "Ya hay una sesión administrativa activa.",
     "accountAdminAction": "Panel administrativo",
@@ -31,7 +31,7 @@
     "login": "Iniciar sesión",
     "sessionActive": "Sesión iniciada",
     "logout": "Cerrar sesión",
-    "loginNotice": "Iniciá sesión con la cuenta administrativa autorizada para usar las rutas protegidas.",
+    "loginNotice": "Iniciá sesión con una cuenta administrativa autorizada para usar las rutas protegidas.",
     "continueWithGoogle": "Continuar con Google",
     "navigation": {
       "dashboard": "Panel",
@@ -43,13 +43,13 @@
   },
   "AdminPages": {
     "login": {
-      "title": "Acceso administrativo",
-      "description": "Pantalla reservada para el acceso administrativo con Google y retorno seguro a la ruta protegida solicitada.",
-      "sections": [
-        "Mantiene separada la entrada al panel desde el sitio público.",
-        "Acepta solo el correo administrativo configurado y verificado por Google.",
-        "Devuelve a la ruta protegida pedida después de validar la sesión."
-      ]
+        "title": "Acceso administrativo",
+        "description": "Pantalla reservada para el acceso administrativo con Google, autorización persistida en Mongo y retorno seguro a la ruta protegida solicitada.",
+        "sections": [
+          "Mantiene separada la entrada al panel desde el sitio público.",
+          "Acepta solo cuentas verificadas por Google que además estén activas en la base administrativa.",
+          "Devuelve a la ruta protegida pedida después de validar la sesión."
+        ]
     },
     "dashboard": {
       "title": "Panel administrativo",
@@ -120,14 +120,23 @@
       "sections": [
         "Agrupa mantenimientos operativos sin mezclar todos los formularios directamente en la pantalla principal.",
         "Mantiene rutas dedicadas para cada módulo de configuración que necesite CRUD propio.",
-        "Ahora incluye categorías y preguntas frecuentes como fuentes vivas de verdad para el sitio y el panel administrativo."
+        "Ahora incluye categorías, preguntas frecuentes y control de usuarios como fuentes vivas de verdad para el sitio y el panel administrativo."
+      ]
+    },
+    "settingsUsers": {
+      "title": "Usuarios administrativos",
+      "description": "Gestión persistida de acceso al espacio administrativo con roles, activación y permisos por módulo.",
+      "sections": [
+        "Google sigue autenticando la identidad, pero el acceso real depende del registro activo en Mongo.",
+        "Cada persona administradora puede tener permisos distintos por módulo y nivel de acción.",
+        "La seguridad protege que nunca desaparezca el último superadmin activo del panel."
       ]
     }
   },
   "AdminSettingsOverview": {
     "eyebrow": "Módulos disponibles",
     "title": "Elegí qué parte de la configuración querés mantener",
-    "description": "Entrá al módulo correspondiente para mantener categorías o preguntas frecuentes sin cargar todos los formularios directamente en esta pantalla principal.",
+    "description": "Entrá al módulo correspondiente para mantener categorías, preguntas frecuentes o acceso administrativo sin cargar todos los formularios directamente en esta pantalla principal.",
     "backAction": "Volver a configuración",
     "note": "Cada módulo conserva el mismo flujo protegido del panel administrativo y publica sus cambios sobre la fuente real que usan las rutas públicas o editoriales.",
     "modules": {
@@ -142,8 +151,120 @@
         "title": "Preguntas frecuentes",
         "description": "Creá, editá, borrá o reordená preguntas frecuentes publicadas en /faqs con actualización inmediata.",
         "action": "Mantenimiento de preguntas frecuentes"
+      },
+      "users": {
+        "eyebrow": "Acceso administrativo",
+        "title": "Usuarios",
+        "description": "Administrá quién puede entrar al panel, qué rol tiene y qué permisos conserva en cada módulo protegido.",
+        "action": "Mantenimiento de usuarios"
       }
     }
+  },
+  "AdminUserSettings": {
+    "unavailable": {
+      "eyebrow": "Usuarios no disponibles",
+      "title": "No se pudo cargar la gestión de usuarios administrativos",
+      "description": "La autenticación se completó, pero la colección administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
+      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza los usuarios reales por datos simulados."
+    },
+    "stats": {
+      "total": {
+        "label": "Usuarios registrados",
+        "description": "Total de personas registradas en la fuente persistida de acceso administrativo."
+      },
+      "active": {
+        "label": "Usuarios activos",
+        "description": "Personas que hoy sí pueden ingresar al espacio administrativo si su correo de Google está verificado."
+      },
+      "superadmins": {
+        "label": "Superadmins activos",
+        "description": "Cantidad actual de superadmins activos protegidos por la regla de seguridad del último acceso crítico."
+      }
+    },
+    "create": {
+      "title": "Agregar usuario administrativo",
+      "description": "Registrá una nueva persona administradora con su rol, estado y matriz de permisos por módulo."
+    },
+    "list": {
+      "title": "Usuarios existentes",
+      "description": "Revisá el acceso actual, actualizá datos permitidos y activá o desactivá cuentas sin borrar el historial persistido."
+    },
+    "fields": {
+      "email": "Correo electrónico",
+      "fullName": "Nombre completo",
+      "nationalId": "Identificación nacional",
+      "role": "Rol",
+      "keepActive": "Mantener acceso activo"
+    },
+    "roles": {
+      "admin": "Admin",
+      "superadmin": "Superadmin"
+    },
+    "statuses": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "matrix": {
+      "title": "Matriz de permisos",
+      "description": "Marcá qué puede ver, gestionar o desactivar esta persona en cada módulo administrativo.",
+      "module": "Módulo",
+      "superadminNote": "Si el rol queda como superadmin, el sistema conserva acceso total aunque la matriz no esté completa en el formulario.",
+      "actions": {
+        "view": "Ver",
+        "manage": "Gestionar",
+        "delete": "Desactivar"
+      }
+    },
+    "modules": {
+      "dashboard": {
+        "title": "Panel"
+      },
+      "programs": {
+        "title": "Programas"
+      },
+      "applications": {
+        "title": "Solicitudes"
+      },
+      "activity": {
+        "title": "Actividad"
+      },
+      "settings": {
+        "title": "Configuración"
+      },
+      "users": {
+        "title": "Usuarios"
+      }
+    },
+    "actions": {
+      "create": "Crear usuario",
+      "save": "Guardar cambios",
+      "activate": "Activar acceso",
+      "deactivate": "Desactivar acceso"
+    },
+    "entry": {
+      "nationalId": "Identificación",
+      "missingNationalId": "pendiente",
+      "permissions": "Permisos visibles",
+      "noPermissions": "sin permisos de acceso",
+      "updatedAt": "Actualizado {updatedAt}"
+    },
+    "feedback": {
+      "created": "El usuario administrativo se creó correctamente.",
+      "updated": "Los permisos y datos del usuario se actualizaron correctamente.",
+      "activated": "El acceso administrativo quedó activado nuevamente.",
+      "deactivated": "El acceso administrativo quedó desactivado sin borrar el registro persistido.",
+      "invalid": "No se pudo interpretar el formulario. Revisá correo, nombre completo y permisos antes de reintentar.",
+      "save-failed": "No se pudo guardar este usuario administrativo en este momento. Intentá nuevamente en unos minutos.",
+      "toggle-failed": "No se pudo cambiar el estado activo de este usuario en este momento.",
+      "duplicate-email": "Ya existe otro usuario administrativo con ese correo.",
+      "last-superadmin-protected": "No se puede dejar al panel sin su último superadmin activo. Primero activá o promové a otra persona con ese rol."
+    },
+    "placeholders": {
+      "email": "admin@correo.com",
+      "fullName": "Nombre completo del usuario",
+      "nationalId": "Documento o cédula"
+    },
+    "empty": "Todavía no hay usuarios administrativos cargados en Mongo. El superadmin inicial puede generarse automáticamente desde ADMIN_ALLOWED_EMAIL cuando inicia sesión por Google."
   },
   "AdminCategorySettings": {
     "unavailable": {
@@ -658,14 +779,14 @@
   },
   "AdminLogin": {
     "title": "Acceso administrativo",
-    "description": "Ingresá con la cuenta de Google autorizada para abrir el espacio administrativo.",
+    "description": "Ingresá con una cuenta de Google autorizada para abrir el espacio administrativo.",
     "protectedNotice": "El acceso protege todo /{locale}/admin y te devuelve a la ruta solicitada después de validar la sesión.",
     "nextLabel": "Destino después de iniciar sesión: {nextPath}",
     "continueWithGoogle": "Continuar con Google",
     "rulesTitle": "Reglas del acceso",
     "rules": {
-      "0": "Solo entra la cuenta configurada como administradora.",
-      "1": "Google debe devolver el correo como verificado.",
+      "0": "Google debe devolver el correo como verificado.",
+      "1": "El correo debe existir activo en la base administrativa o coincidir con el superadmin inicial de ADMIN_ALLOWED_EMAIL.",
       "2": "Las rutas públicas siguen visibles sin autenticación."
     },
     "errors": {

@@ -1,19 +1,32 @@
 import { isIP } from "node:net";
 
 import { cookies } from "next/headers";
+import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
 import type { NextRequest, NextResponse } from "next/server";
 
 import { defaultLocale, locales, type AppLocale } from "@/config/i18n";
+import { resolveAuthorizedAdminUserByEmail } from "@/services/admin-users/admin-user-service";
+import type { AdminPermissionKey, AdminRole, AdminUserRecord } from "@/types/admin-user";
+import { hasPermission, normalizeAdminEmail } from "@/validators/admin-user";
 
 export type AdminSession = {
+  adminUserId: string;
+  displayName: string | null;
+  email: string;
+  expiresAt: number;
+  fullName: string;
+  imageUrl: string | null;
+  nationalId: string | null;
+  permissions: AdminUserRecord["permissions"];
+  role: AdminRole;
+};
+
+type AdminSessionTokenPayload = {
   displayName: string | null;
   email: string;
   expiresAt: number;
   imageUrl: string | null;
-};
-
-type AdminSessionTokenPayload = AdminSession & {
   issuedAt: number;
 };
 
@@ -141,10 +154,6 @@ function buildCookieOptions(maxAge: number) {
     sameSite: "lax" as const,
     secure: process.env.NODE_ENV === "production",
   };
-}
-
-export function normalizeAdminEmail(email: string | null | undefined): string {
-  return (email ?? "").trim().toLowerCase();
 }
 
 export function getAllowedAdminEmail(): string {
@@ -304,10 +313,54 @@ export async function createAdminSessionToken(session: {
   } satisfies AdminSessionTokenPayload);
 }
 
-export async function readAdminSessionToken(token: string | undefined): Promise<AdminSession | null> {
+type AdminSessionIdentity = {
+  displayName: string | null;
+  email: string;
+  expiresAt: number;
+  imageUrl: string | null;
+};
+
+function buildAuthorizedAdminSession(identity: AdminSessionIdentity, adminUser: AdminUserRecord): AdminSession {
+  return {
+    adminUserId: adminUser.id,
+    displayName: adminUser.fullName || identity.displayName,
+    email: adminUser.email,
+    expiresAt: identity.expiresAt,
+    fullName: adminUser.fullName,
+    imageUrl: identity.imageUrl,
+    nationalId: adminUser.nationalId,
+    permissions: adminUser.permissions,
+    role: adminUser.role,
+  };
+}
+
+async function resolveAuthorizedAdminSession(identity: AdminSessionIdentity): Promise<AdminSession | null> {
+  const adminUser = await resolveAuthorizedAdminUserByEmail({
+    email: identity.email,
+    fullName: identity.displayName,
+  });
+
+  if (!adminUser) {
+    return null;
+  }
+
+  return buildAuthorizedAdminSession(identity, adminUser);
+}
+
+export async function getAuthorizedAdminSessionFromToken(token: string | undefined): Promise<AdminSession | null> {
+  const identity = await readAdminSessionToken(token);
+
+  if (!identity) {
+    return null;
+  }
+
+  return resolveAuthorizedAdminSession(identity);
+}
+
+export async function readAdminSessionToken(token: string | undefined): Promise<AdminSessionIdentity | null> {
   const payload = await readSignedToken<AdminSessionTokenPayload>(token);
 
-  if (!payload || !isAllowedAdminEmail(payload.email)) {
+  if (!payload) {
     return null;
   }
 
@@ -322,12 +375,13 @@ export async function readAdminSessionToken(token: string | undefined): Promise<
 export async function getAdminSession(): Promise<AdminSession | null> {
   const cookieStore = await cookies();
 
-  return readAdminSessionToken(cookieStore.get(adminSessionCookieName)?.value);
+  return getAuthorizedAdminSessionFromToken(cookieStore.get(adminSessionCookieName)?.value);
 }
 
 export async function requireAdminSession(options: {
   locale: AppLocale;
   nextPath?: string;
+  permission?: AdminPermissionKey | AdminPermissionKey[];
 }): Promise<AdminSession> {
   const session = await getAdminSession();
 
@@ -335,7 +389,62 @@ export async function requireAdminSession(options: {
     redirect(buildAdminLoginPath(options.locale, options.nextPath ?? getAdminHomePath(options.locale)));
   }
 
+  const requiredPermissions = Array.isArray(options.permission)
+    ? options.permission
+    : options.permission
+      ? [options.permission]
+      : [];
+
+  if (requiredPermissions.length > 0 && !requiredPermissions.some((permission) => hasAdminPermission(session, permission))) {
+    notFound();
+  }
+
   return session;
+}
+
+export function hasAdminPermission(
+  session: Pick<AdminSession, "permissions" | "role">,
+  permission: AdminPermissionKey,
+): boolean {
+  return session.role === "superadmin" || hasPermission(session.permissions, permission);
+}
+
+export function hasAnyAdminPermission(
+  session: Pick<AdminSession, "permissions" | "role">,
+  permissions: readonly AdminPermissionKey[],
+): boolean {
+  return permissions.some((permission) => hasAdminPermission(session, permission));
+}
+
+export function canAccessSettingsWorkspace(session: Pick<AdminSession, "permissions" | "role">): boolean {
+  return hasAnyAdminPermission(session, ["settings.view", "users.view"]);
+}
+
+export function canAccessAdminNavigationItem(
+  session: Pick<AdminSession, "permissions" | "role">,
+  href: string,
+): boolean {
+  if (href === "/admin") {
+    return hasAdminPermission(session, "dashboard.view");
+  }
+
+  if (href === "/admin/programs") {
+    return hasAdminPermission(session, "programs.view");
+  }
+
+  if (href === "/admin/applications") {
+    return hasAdminPermission(session, "applications.view");
+  }
+
+  if (href === "/admin/activity") {
+    return hasAdminPermission(session, "activity.view");
+  }
+
+  if (href === "/admin/settings") {
+    return canAccessSettingsWorkspace(session);
+  }
+
+  return false;
 }
 
 export async function createAdminOauthStateToken(nextPath: string): Promise<string> {

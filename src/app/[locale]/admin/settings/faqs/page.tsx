@@ -36,7 +36,7 @@ export default async function AdminSettingsFaqPage({ params, searchParams }: Adm
   const feedback = parseAdminSettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/faqs` });
+  await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/faqs`, permission: "settings.view" });
 
   return (
     <AdminPageTemplate

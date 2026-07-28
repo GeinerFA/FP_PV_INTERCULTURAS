@@ -268,7 +268,7 @@ export async function saveProgramDraftAction(
   formData: FormData,
 ): Promise<void> {
   const nextPath = id ? buildProgramEditPath(locale, id) : buildProgramCreatePath(locale);
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "programs.manage" });
   const coverImageFile = readCoverImageFile(formData);
   const coverImageError = validateCoverImageFile(coverImageFile);
 
@@ -354,7 +354,7 @@ export async function publishProgramAction(
   formData: FormData,
 ): Promise<void> {
   const nextPath = id ? buildProgramEditPath(locale, id) : buildProgramCreatePath(locale);
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "programs.manage" });
   const coverImageFile = readCoverImageFile(formData);
   const coverImageError = validateCoverImageFile(coverImageFile);
 
@@ -470,7 +470,7 @@ export async function archiveProgramAction(locale: AppLocale, id: string, formDa
     redirect(buildStatusUrl(nextPath, "destructive-confirmation-required"));
   }
 
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "programs.delete" });
 
   const archivedProgram = await archiveAdminProgram({
     id,
@@ -508,7 +508,7 @@ export async function deleteProgramAction(locale: AppLocale, id: string, formDat
     redirect(buildStatusUrl(nextPath, "destructive-confirmation-required"));
   }
 
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "programs.delete" });
 
   try {
     const deletedProgram = await deleteAdminProgram({
@@ -546,7 +546,7 @@ export async function deleteProgramAction(locale: AppLocale, id: string, formDat
 
 export async function reactivateProgramAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildProgramEditPath(locale, id);
-  const session = await requireAdminSession({ locale, nextPath });
+  const session = await requireAdminSession({ locale, nextPath, permission: "programs.manage" });
 
   const reactivatedProgram = await reactivateAdminProgram({
     id,

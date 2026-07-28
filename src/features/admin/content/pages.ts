@@ -8,6 +8,7 @@ export const adminPageKeys = [
   "applicationDetail",
   "activity",
   "settings",
+  "settingsUsers",
 ] as const;
 
 export type AdminPageKey = (typeof adminPageKeys)[number];

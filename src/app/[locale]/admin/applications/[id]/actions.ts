@@ -39,7 +39,7 @@ export async function updateApplicationStatusAction(
   id: string,
   formData: FormData,
 ): Promise<void> {
-  const session = await requireAdminSession({ locale, nextPath: buildDetailPath(locale, id) });
+  const session = await requireAdminSession({ locale, nextPath: buildDetailPath(locale, id), permission: "applications.manage" });
 
   const currentApplication = await getApplicationById(id);
 

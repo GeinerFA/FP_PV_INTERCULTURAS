@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { buildAdminLoginPath, readAdminSessionToken, resolveLocaleFromAdminPath } from "@/lib/admin-session";
+import { buildAdminLoginPath, getAuthorizedAdminSessionFromToken, resolveLocaleFromAdminPath } from "@/lib/admin-session";
 import { getApplicationCurriculumById } from "@/services/applications/application-service";
 
 type CurriculumRouteContext = {
@@ -23,12 +23,16 @@ function buildContentDispositionFileName(fileName: string): string {
 export async function GET(request: NextRequest, { params }: CurriculumRouteContext) {
   const { id } = await params;
   const locale = resolveLocaleFromAdminPath(request.nextUrl.pathname) ?? "es";
-  const session = await readAdminSessionToken(request.cookies.get("fp_pv_admin_session")?.value);
+  const session = await getAuthorizedAdminSessionFromToken(request.cookies.get("fp_pv_admin_session")?.value);
 
   if (!session) {
     return NextResponse.redirect(
       new URL(buildAdminLoginPath(locale, request.nextUrl.pathname), request.url),
     );
+  }
+
+  if (!session.permissions.applications.view && session.role !== "superadmin") {
+    return buildNotFoundResponse();
   }
 
   const curriculum = await getApplicationCurriculumById(id);

@@ -5,7 +5,7 @@ import { siteConfig } from "@/config/site";
 import { AdminSidebarAccountControl } from "@/components/layout/admin-sidebar-account-control";
 import { AdminSidebarNav } from "@/components/layout/admin-sidebar-nav";
 import { Link } from "@/i18n/navigation";
-import { buildAdminGoogleAuthUrl, type AdminSession } from "@/lib/admin-session";
+import { buildAdminGoogleAuthUrl, canAccessAdminNavigationItem, type AdminSession } from "@/lib/admin-session";
 
 type AdminShellProps = {
   children: React.ReactNode;
@@ -33,6 +33,9 @@ export async function AdminShell({ children, session }: AdminShellProps) {
     activity: t("navigation.activity"),
     settings: t("navigation.settings"),
   } as const;
+  const visibleNavigationItems = session
+    ? siteConfig.adminNavigation.filter((item) => canAccessAdminNavigationItem(session, item.href))
+    : [];
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.34),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(245,158,11,0.12),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_38%,#eff6f1_100%)] text-slate-900">
@@ -95,7 +98,7 @@ export async function AdminShell({ children, session }: AdminShellProps) {
             </div>
 
             <div className="flex flex-1 flex-col gap-6">
-              {session ? <AdminSidebarNav labels={navigationLabels} /> : null}
+              {session ? <AdminSidebarNav items={visibleNavigationItems} labels={navigationLabels} /> : null}
             </div>
           </div>
         </aside>

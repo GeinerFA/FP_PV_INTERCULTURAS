@@ -43,6 +43,7 @@ export default async function AdminApplicationsPage({ params, searchParams }: Ad
   await requireAdminSession({
     locale,
     nextPath: `/${locale}/admin/applications${buildSearchParamString(rawSearchParams)}`,
+    permission: "applications.view",
   });
 
   return (

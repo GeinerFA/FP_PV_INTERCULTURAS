@@ -2,21 +2,41 @@ import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
+import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 
-export async function AdminSettingsOverview() {
+type AdminSettingsOverviewProps = {
+  session: AdminSession;
+};
+
+export async function AdminSettingsOverview({ session }: AdminSettingsOverviewProps) {
   const t = await getTranslations("AdminSettingsOverview");
   const modules = [
-    {
-      key: "categories",
-      href: "/admin/settings/categories",
-      action: t("modules.categories.action"),
-    },
-    {
-      key: "faqs",
-      href: "/admin/settings/faqs",
-      action: t("modules.faqs.action"),
-    },
-  ] as const;
+    hasAdminPermission(session, "settings.view")
+      ? {
+          key: "categories",
+          href: "/admin/settings/categories",
+          action: t("modules.categories.action"),
+        }
+      : null,
+    hasAdminPermission(session, "settings.view")
+      ? {
+          key: "faqs",
+          href: "/admin/settings/faqs",
+          action: t("modules.faqs.action"),
+        }
+      : null,
+    hasAdminPermission(session, "users.view")
+      ? {
+          key: "users",
+          href: "/admin/settings/users",
+          action: t("modules.users.action"),
+        }
+      : null,
+  ].filter(Boolean) as Array<{
+    key: "categories" | "faqs" | "users";
+    href: "/admin/settings/categories" | "/admin/settings/faqs" | "/admin/settings/users";
+    action: string;
+  }>;
 
   return (
     <AdminWorkspaceSection eyebrow={t("eyebrow")} title={t("title")} description={t("description")}>

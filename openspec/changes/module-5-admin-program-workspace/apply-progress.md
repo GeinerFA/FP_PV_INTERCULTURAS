@@ -92,6 +92,12 @@ Standard
 - Kept the existing behavior split intact: public program reads still degrade to empty/null through `src/services/programs/program-service.ts`, while admin/backend paths still surface the original connection/config error because they do not catch it.
 - Planned verification for this follow-up is a focused runtime probe against `/es` with an unreachable local Mongo endpoint plus the existing lint/typecheck checks.
 
+### Remediation note — 2026-07-28 admin-users legacy validator compatibility
+
+- Fixed `src/services/admin-users/admin-user-repository.ts` bootstrap and normal write paths so admin-user inserts remain compatible with the existing Atlas `admin_users` validator that still requires legacy `name` and `passwordHash` fields.
+- Added the same compatibility fields to `src/models/admin-user.ts`, which keeps Mongoose from stripping them before Mongo validation and allows Google-managed users to persist a safe placeholder password hash without changing the app-facing auth contract.
+- Replaced the deprecated `new: true` bootstrap option with `returnDocument: "after"`, removing the Mongoose `findOneAndUpdate()` warning while preserving the upsert behavior.
+
 ### Manual verification notes
 
 - ✅ Anonymous `/es/admin`, `/es/admin/programs/new`, `/es/admin/applications`, `/es/admin/applications/fake-id`, and `/es/admin/applications/fake-id/curriculum` requests all redirected into the localized login flow with the expected `next` value preserved.

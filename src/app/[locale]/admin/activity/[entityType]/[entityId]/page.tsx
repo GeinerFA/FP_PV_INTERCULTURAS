@@ -16,7 +16,11 @@ export default async function AdminActivityHistoryPage({ params, searchParams }:
   const normalizedPage = normalizePageParam(page);
   const pageSuffix = normalizedPage > 1 ? `?page=${normalizedPage}` : "";
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/activity/${entityType}/${entityId}${pageSuffix}` });
+  await requireAdminSession({
+    locale,
+    nextPath: `/${locale}/admin/activity/${entityType}/${entityId}${pageSuffix}`,
+    permission: "activity.view",
+  });
 
   return (
     <AdminPageTemplate pageKey="activity" variant="workspace" useInnerWorkspace>

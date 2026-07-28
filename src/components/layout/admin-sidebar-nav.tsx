@@ -7,6 +7,7 @@ import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 
 type AdminSidebarNavProps = {
+  items: readonly (typeof siteConfig.adminNavigation)[number][];
   labels: Record<(typeof siteConfig.adminNavigation)[number]["labelKey"], string>;
 };
 
@@ -83,13 +84,13 @@ function NavigationIcon({ itemHref, active }: { itemHref: string; active: boolea
   );
 }
 
-export function AdminSidebarNav({ labels }: AdminSidebarNavProps) {
+export function AdminSidebarNav({ items, labels }: AdminSidebarNavProps) {
   const pathname = usePathname();
   const normalizedPathname = getNormalizedPathname(pathname);
 
   return (
     <nav className="flex flex-col gap-2 text-sm" aria-label="Admin navigation">
-      {siteConfig.adminNavigation.map((item) => {
+      {items.map((item) => {
         const isActive = isItemActive(normalizedPathname, item.href);
 
         return (

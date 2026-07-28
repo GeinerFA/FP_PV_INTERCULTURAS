@@ -7,7 +7,7 @@ import {
   type AdminApplicationExportCopy,
 } from "@/features/applications/admin-application-export";
 import { normalizeAdminApplicationListFilters } from "@/features/applications/admin-application-list-filters";
-import { buildAdminLoginPath, readAdminSessionToken, resolveLocaleFromAdminPath } from "@/lib/admin-session";
+import { buildAdminLoginPath, getAuthorizedAdminSessionFromToken, resolveLocaleFromAdminPath } from "@/lib/admin-session";
 import { listApplications } from "@/services/applications/application-service";
 import type { AppLocale } from "@/config/i18n";
 
@@ -80,12 +80,16 @@ function buildExportCopy(
 
 export async function GET(request: NextRequest) {
   const locale = (resolveLocaleFromAdminPath(request.nextUrl.pathname) ?? "es") as AppLocale;
-  const session = await readAdminSessionToken(request.cookies.get("fp_pv_admin_session")?.value);
+  const session = await getAuthorizedAdminSessionFromToken(request.cookies.get("fp_pv_admin_session")?.value);
 
   if (!session) {
     return NextResponse.redirect(
       new URL(buildAdminLoginPath(locale, `${request.nextUrl.pathname}${request.nextUrl.search}`), request.url),
     );
+  }
+
+  if (!session.permissions.applications.view && session.role !== "superadmin") {
+    return new NextResponse("Not Found", { status: 404, headers: { "cache-control": "no-store" } });
   }
 
   const filters = normalizeAdminApplicationListFilters(Object.fromEntries(request.nextUrl.searchParams.entries()));

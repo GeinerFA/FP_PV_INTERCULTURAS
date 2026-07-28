@@ -1,14 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import {
-  adminSessionCookieName,
   buildAdminLoginPath,
   createAdminOauthStateToken,
   getAdminAppOrigin,
   getAdminAppRequestUrl,
   getAdminGoogleOauthOrigin,
+  getAuthorizedAdminSessionFromToken,
   getAdminRequestOrigin,
-  readAdminSessionToken,
   resolveLocaleFromLocalizedPath,
   sanitizeLocalizedNextPath,
   setAdminOauthStateCookie,
@@ -45,9 +44,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(getAdminAppRequestUrl(request));
     }
 
-    const existingSession = await readAdminSessionToken(
-      request.cookies.get(adminSessionCookieName)?.value,
-    );
+    const existingSession = await getAuthorizedAdminSessionFromToken(request.cookies.get("fp_pv_admin_session")?.value);
 
     if (existingSession) {
       return NextResponse.redirect(new URL(nextPath, request.url));
