@@ -30,11 +30,11 @@ function parseAdminUserSettingsFeedback(status?: string): Parameters<typeof Admi
 
 type AdminSettingsUsersPageProps = {
   params: Promise<{ locale: AppLocale }>;
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ focus?: string; status?: string; user?: string }>;
 };
 
 export default async function AdminSettingsUsersPage({ params, searchParams }: AdminSettingsUsersPageProps) {
-  const [{ locale }, { status }] = await Promise.all([params, searchParams]);
+  const [{ locale }, { focus, status, user }] = await Promise.all([params, searchParams]);
   const feedback = parseAdminUserSettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
   const session = await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/users`, permission: "users.view" });
@@ -54,7 +54,7 @@ export default async function AdminSettingsUsersPage({ params, searchParams }: A
         </Link>
       }
     >
-      <AdminUserSettings feedback={feedback} session={session} />
+      <AdminUserSettings feedback={feedback} session={session} selectedUserId={user} shouldOpenCreateDisclosure={focus === "create"} />
     </AdminPageTemplate>
   );
 }

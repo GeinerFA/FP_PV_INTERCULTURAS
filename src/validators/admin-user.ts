@@ -30,6 +30,30 @@ function normalizeString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function normalizeRecordId(value: unknown): string {
+  const normalizedString = normalizeString(value);
+
+  if (normalizedString) {
+    return normalizedString;
+  }
+
+  if (!value || typeof value !== "object") {
+    return "";
+  }
+
+  if ("toHexString" in value && typeof value.toHexString === "function") {
+    return normalizeString(value.toHexString());
+  }
+
+  if ("toString" in value && typeof value.toString === "function") {
+    const normalizedObjectString = normalizeString(value.toString());
+
+    return normalizedObjectString === "[object Object]" ? "" : normalizedObjectString;
+  }
+
+  return "";
+}
+
 function normalizeOptionalString(value: unknown): string | null {
   const normalized = normalizeString(value);
 
@@ -112,11 +136,12 @@ export function parseAdminUserRecord(
 ): AdminUserRecord {
   const rawRecord = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
   const role = parseRole(rawRecord.role);
+  const id = normalizeRecordId(rawRecord.id) || normalizeRecordId(rawRecord._id);
   const createdAt = normalizeDateLike(rawRecord.createdAt, options?.fallbackCreatedAt ?? new Date(0).toISOString());
   const updatedAt = normalizeDateLike(rawRecord.updatedAt, options?.fallbackUpdatedAt ?? createdAt);
 
   return {
-    id: normalizeString(rawRecord.id ?? rawRecord._id),
+    id,
     email: normalizeAdminEmail(normalizeString(rawRecord.email)),
     fullName:
       normalizeString(rawRecord.fullName) ||

@@ -183,7 +183,10 @@
     },
     "create": {
       "title": "Agregar usuario administrativo",
-      "description": "Registrá una nueva persona administradora con su rol, estado y matriz de permisos por módulo."
+      "description": "Registrá una nueva persona administradora con su rol, estado y matriz de permisos por módulo.",
+      "disclosureHint": "Abrí este formulario solo cuando realmente necesites dar de alta a otra persona. El alta comparte la misma matriz de permisos que después podés ajustar desde la lista existente.",
+      "disclosureClosedLabel": "Agregar usuario",
+      "disclosureOpenLabel": "Cerrar formulario de nuevo usuario"
     },
     "list": {
       "title": "Usuarios existentes",
@@ -246,6 +249,8 @@
       "missingNationalId": "pendiente",
       "permissions": "Permisos visibles",
       "noPermissions": "sin permisos de acceso",
+      "disclosureClosedLabel": "Ver y editar detalles",
+      "disclosureOpenLabel": "Ocultar detalles",
       "updatedAt": "Actualizado {updatedAt}"
     },
     "feedback": {
@@ -558,7 +563,8 @@
       "description": "Cada evento resume qué pasó, sobre qué registro ocurrió y quién ejecutó la acción cuando ese dato estuvo disponible en el flujo protegido.",
       "latestLabel": "Último registro",
       "empty": "Todavía no hay movimientos registrados en la bitácora. Cuando el panel ejecute cambios instrumentados, esta vista mostrará el historial real más reciente.",
-      "openRecord": "Abrir registro",
+      "openRecord": "Ver historial completo",
+      "expandDetails": "Ver más detalles",
       "systemActor": "Sistema",
       "noValue": "sin valor",
       "changeSummary": "{field}: {from} → {to}",

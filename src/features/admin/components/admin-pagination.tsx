@@ -62,13 +62,8 @@ export function AdminPagination({ pathname, currentPage, totalPages, query, copy
   const pageItems = buildPaginationItems(currentPage, totalPages);
 
   return (
-    <div className="flex flex-col gap-3 border-t border-emerald-900/8 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-slate-800">{copy.pageSummary}</p>
-        <p className="text-sm leading-6 text-slate-600">{copy.rangeSummary}</p>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="flex justify-center border-t border-emerald-900/8 px-6 py-5">
+      <div className="flex flex-wrap items-center justify-center gap-2">
         {currentPage > 1 ? (
           <Link
             href={buildHref(pathname, previousQuery)}

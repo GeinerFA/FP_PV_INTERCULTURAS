@@ -20,8 +20,16 @@ function buildUsersSettingsPath(locale: AppLocale): string {
   return `/${locale}/admin/settings/users`;
 }
 
-function buildStatusUrl(path: string, status: string): string {
-  return `${path}?status=${encodeURIComponent(status)}`;
+function buildStatusUrl(path: string, status: string, params?: Record<string, string | undefined>): string {
+  const searchParams = new URLSearchParams({ status });
+
+  for (const [key, value] of Object.entries(params ?? {})) {
+    if (value) {
+      searchParams.set(key, value);
+    }
+  }
+
+  return `${path}?${searchParams.toString()}`;
 }
 
 function readString(formData: FormData, key: string): string {
@@ -70,10 +78,10 @@ export async function createAdminUserAction(locale: AppLocale, formData: FormDat
     redirect(buildStatusUrl(nextPath, "created"));
   } catch (error) {
     if (error instanceof AdminUserDuplicateEmailError) {
-      redirect(buildStatusUrl(nextPath, "duplicate-email"));
+      redirect(buildStatusUrl(nextPath, "duplicate-email", { focus: "create" }));
     }
 
-    redirect(buildStatusUrl(nextPath, error instanceof Error ? "invalid" : "save-failed"));
+    redirect(buildStatusUrl(nextPath, error instanceof Error ? "invalid" : "save-failed", { focus: "create" }));
   }
 }
 
@@ -95,21 +103,21 @@ export async function updateAdminUserAction(locale: AppLocale, id: string, formD
     });
 
     if (!updatedUser) {
-      redirect(buildStatusUrl(nextPath, "save-failed"));
+      redirect(buildStatusUrl(nextPath, "save-failed", { user: id }));
     }
 
     revalidateUserSettingsPaths(locale);
-    redirect(buildStatusUrl(nextPath, "updated"));
+    redirect(buildStatusUrl(nextPath, "updated", { user: id }));
   } catch (error) {
     if (error instanceof AdminUserDuplicateEmailError) {
-      redirect(buildStatusUrl(nextPath, "duplicate-email"));
+      redirect(buildStatusUrl(nextPath, "duplicate-email", { user: id }));
     }
 
     if (error instanceof LastActiveSuperadminError) {
-      redirect(buildStatusUrl(nextPath, "last-superadmin-protected"));
+      redirect(buildStatusUrl(nextPath, "last-superadmin-protected", { user: id }));
     }
 
-    redirect(buildStatusUrl(nextPath, error instanceof Error ? "invalid" : "save-failed"));
+    redirect(buildStatusUrl(nextPath, error instanceof Error ? "invalid" : "save-failed", { user: id }));
   }
 }
 
@@ -121,16 +129,16 @@ export async function toggleAdminUserActiveAction(locale: AppLocale, id: string,
     const updatedUser = await updateAdminUserActiveState(id, active);
 
     if (!updatedUser) {
-      redirect(buildStatusUrl(nextPath, "toggle-failed"));
+      redirect(buildStatusUrl(nextPath, "toggle-failed", { user: id }));
     }
 
     revalidateUserSettingsPaths(locale);
-    redirect(buildStatusUrl(nextPath, active ? "activated" : "deactivated"));
+    redirect(buildStatusUrl(nextPath, active ? "activated" : "deactivated", { user: id }));
   } catch (error) {
     if (error instanceof LastActiveSuperadminError) {
-      redirect(buildStatusUrl(nextPath, "last-superadmin-protected"));
+      redirect(buildStatusUrl(nextPath, "last-superadmin-protected", { user: id }));
     }
 
-    redirect(buildStatusUrl(nextPath, "toggle-failed"));
+    redirect(buildStatusUrl(nextPath, "toggle-failed", { user: id }));
   }
 }

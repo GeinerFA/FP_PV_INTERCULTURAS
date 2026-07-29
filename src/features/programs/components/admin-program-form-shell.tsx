@@ -65,18 +65,6 @@ function hasPendingDraft(program: Program | null | undefined): boolean {
   );
 }
 
-function formatFileSize(sizeBytes: number | undefined): string | null {
-  if (typeof sizeBytes !== "number" || Number.isNaN(sizeBytes)) {
-    return null;
-  }
-
-  if (sizeBytes < 1024) {
-    return `${sizeBytes} B`;
-  }
-
-  return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 function RequiredFieldBadge({ label }: { label: string }) {
   return (
     <span className="inline-flex items-center rounded-full border border-rose-300/50 bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-rose-700">
@@ -515,39 +503,18 @@ export async function AdminProgramFormShell({
                 <p className="text-sm leading-7 text-slate-600">{t("coverImageUpload.description")}</p>
                 <p className="text-xs leading-6 text-slate-500">{t("coverImageUpload.publishBoundary")}</p>
 
-                {program?.coverImage ? (
+                {program?.publishedSnapshot?.coverImage ? (
                   <div className="space-y-5 pt-1">
                     <div className="admin-inner-panel-subtle rounded-2xl p-4">
                       <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        {t("coverImageUpload.currentDraft")}
+                        {t("coverImageUpload.currentPublished")}
                       </p>
                       <img
-                        src={program.coverImage}
-                        alt={t("coverImageUpload.currentDraftAlt")}
+                        src={program.publishedSnapshot.coverImage}
+                        alt={t("coverImageUpload.currentPublishedAlt")}
                         className="mt-3 h-48 w-full rounded-2xl object-cover"
                       />
-                      {program.draftSnapshot.coverImageAsset ? (
-                        <p className="mt-4 text-xs text-slate-500">
-                          {program.draftSnapshot.coverImageAsset.fileName}
-                          {formatFileSize(program.draftSnapshot.coverImageAsset.sizeBytes)
-                            ? ` · ${formatFileSize(program.draftSnapshot.coverImageAsset.sizeBytes)}`
-                            : ""}
-                        </p>
-                      ) : null}
                     </div>
-
-                    {program.publishedSnapshot?.coverImage ? (
-                      <div className="admin-inner-panel-subtle rounded-2xl p-4">
-                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                          {t("coverImageUpload.currentPublished")}
-                        </p>
-                        <img
-                          src={program.publishedSnapshot.coverImage}
-                          alt={t("coverImageUpload.currentPublishedAlt")}
-                          className="mt-3 h-48 w-full rounded-2xl object-cover"
-                        />
-                      </div>
-                    ) : null}
                   </div>
                 ) : null}
               </div>
