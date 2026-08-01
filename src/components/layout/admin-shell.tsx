@@ -38,8 +38,11 @@ export async function AdminShell({ children, session }: AdminShellProps) {
     : [];
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.34),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(245,158,11,0.12),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_38%,#eff6f1_100%)] text-slate-900">
-      <div className="mx-auto grid min-h-screen w-full max-w-[116rem] gap-4 px-4 py-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-6 lg:px-6 lg:py-6 xl:gap-8 xl:px-8 2xl:px-10">
+    <div className="admin-shell-preview min-h-screen text-slate-900">
+      <div aria-hidden="true" className="admin-shell-preview-background" />
+      <div aria-hidden="true" className="admin-shell-preview-overlay" />
+
+      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[116rem] gap-4 px-4 py-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-6 lg:px-6 lg:py-6 xl:gap-8 xl:px-8 2xl:px-10">
         <aside className="admin-sidebar surface-dark-soft-strong flex min-h-0 flex-col gap-5 rounded-[34px] px-5 py-5 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:self-start lg:px-6 lg:py-6">
           <div className="relative z-20 flex items-center justify-between gap-3">
             <Link

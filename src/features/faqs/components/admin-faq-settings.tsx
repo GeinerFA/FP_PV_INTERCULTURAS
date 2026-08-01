@@ -9,9 +9,35 @@ import { listAdminFaqEntries } from "@/services/faqs/faq-service";
 
 type AdminFaqSettingsProps = {
   feedback?: "created" | "updated" | "deleted" | "reordered" | "invalid" | "save-failed" | "delete-failed" | "reorder-failed";
+  selectedFaqId?: string;
+  shouldOpenCreateDisclosure?: boolean;
 };
 
-export async function AdminFaqSettings({ feedback }: AdminFaqSettingsProps) {
+function ChevronDownIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" className={className} fill="currentColor">
+      <path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.134l3.71-3.904a.75.75 0 1 1 1.08 1.04l-4.25 4.472a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" />
+    </svg>
+  );
+}
+
+function ArrowUpIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" className={className} fill="currentColor">
+      <path d="M10.53 4.22a.75.75 0 0 0-1.06 0L5.22 8.47a.75.75 0 1 0 1.06 1.06L9.25 6.56V15a.75.75 0 0 0 1.5 0V6.56l2.97 2.97a.75.75 0 1 0 1.06-1.06l-4.25-4.25Z" />
+    </svg>
+  );
+}
+
+function ArrowDownIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" className={className} fill="currentColor">
+      <path d="M10.53 15.78a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 0 1 1.06-1.06l2.97 2.97V5a.75.75 0 0 1 1.5 0v8.44l2.97-2.97a.75.75 0 0 1 1.06 1.06l-4.25 4.25Z" />
+    </svg>
+  );
+}
+
+export async function AdminFaqSettings({ feedback, selectedFaqId, shouldOpenCreateDisclosure = false }: AdminFaqSettingsProps) {
   const [t, locale] = await Promise.all([getTranslations("AdminFaqSettings"), getLocale()]);
 
   let faqs: Awaited<ReturnType<typeof listAdminFaqEntries>>;
@@ -41,10 +67,9 @@ export async function AdminFaqSettings({ feedback }: AdminFaqSettingsProps) {
     feedback === "invalid" || feedback === "save-failed" || feedback === "delete-failed" || feedback === "reorder-failed"
       ? "admin-warning-banner"
       : "admin-success-banner";
-  const shouldOpenCreateDisclosure = feedback === "invalid" || feedback === "save-failed";
 
   return (
-    <div className="space-y-8">
+    <div id="admin-faq-settings-top" className="space-y-8">
       {feedback ? (
         <div
           className={`${feedbackTone} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}
@@ -119,23 +144,32 @@ export async function AdminFaqSettings({ feedback }: AdminFaqSettingsProps) {
             const formId = `admin-faq-entry-${faq.id}`;
 
             return (
-              <article key={faq.id} className="admin-inner-panel rounded-[28px] p-5 md:p-6">
-                <div className="flex flex-col gap-4 border-b border-emerald-900/8 pb-4 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      {t("entry.position", { order: faq.order })}
-                    </p>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">{t("entry.helper")}</p>
+              <details key={faq.id} className="group admin-inner-panel rounded-[28px]" open={selectedFaqId === faq.id}>
+                <summary className="flex cursor-pointer list-none flex-col gap-4 p-5 text-left transition hover:bg-white/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white md:p-6 lg:flex-row lg:items-start lg:justify-between [&::-webkit-details-marker]:hidden">
+                  <div className="space-y-2">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("entry.position", { order: faq.order })}</p>
+                    <h3 className="text-lg font-semibold text-slate-950 md:text-xl">{faq.question}</h3>
+                    <p className="text-sm leading-7 text-slate-600">{t("entry.helper")}</p>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex items-center justify-between gap-3 lg:flex-col lg:items-end">
+                    <span aria-hidden="true" className="hidden h-4 lg:block" />
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-emerald-900/12 bg-white text-slate-500 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.32)] transition duration-300 ease-out group-open:rotate-180 group-open:border-emerald-200 group-open:bg-emerald-50 group-open:text-emerald-800 motion-reduce:transition-none">
+                      <ChevronDownIcon className="h-4 w-4" />
+                    </span>
+                  </div>
+                </summary>
+
+                <div className="border-t border-emerald-900/8 px-5 pb-5 pt-5 md:px-6 md:pb-6">
+                  <div className="mb-4 flex flex-wrap justify-end gap-2">
                     <form action={moveFaqAction.bind(null, activeLocale, faq.id)}>
                       <input type="hidden" name="direction" value="up" />
                       <button
                         type="submit"
                         disabled={index === 0}
-                        className="admin-outline-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
+                        aria-label={t("actions.moveUp")}
+                        className="admin-outline-action inline-flex h-10 w-10 items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        {t("actions.moveUp")}
+                        <ArrowUpIcon className="h-4 w-4" />
                       </button>
                     </form>
                     <form action={moveFaqAction.bind(null, activeLocale, faq.id)}>
@@ -143,56 +177,57 @@ export async function AdminFaqSettings({ feedback }: AdminFaqSettingsProps) {
                       <button
                         type="submit"
                         disabled={index === faqs.length - 1}
-                        className="admin-outline-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50"
+                        aria-label={t("actions.moveDown")}
+                        className="admin-outline-action inline-flex h-10 w-10 items-center justify-center rounded-full transition disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        {t("actions.moveDown")}
+                        <ArrowDownIcon className="h-4 w-4" />
                       </button>
                     </form>
                   </div>
-                </div>
 
-                <form id={formId} action={updateFaqAction.bind(null, activeLocale, faq.id)} className="mt-5 space-y-4">
-                  <label className="block space-y-2.5">
-                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.question")}</span>
-                    <input
-                      name="question"
-                      defaultValue={faq.question}
-                      className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                    />
-                  </label>
-                  <label className="block space-y-2.5">
-                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.answer")}</span>
-                    <textarea
-                      name="answer"
-                      defaultValue={faq.answer}
-                      rows={5}
-                      className="admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                    />
-                  </label>
-                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                    <button
-                      type="submit"
-                      className="admin-secondary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-                    >
-                      {t("actions.save")}
-                    </button>
-                    <DestructiveActionConfirmation
-                      title={t("delete.title")}
-                      description={t("delete.description")}
-                      warning={t("delete.warning")}
-                      triggerLabel={t("actions.delete")}
-                      confirmLabel={t("delete.confirm")}
-                      cancelLabel={t("delete.cancel")}
-                      confirmValue="delete"
-                      formAction={deleteFaqAction.bind(null, activeLocale, faq.id)}
-                      formId={formId}
-                      tone="danger"
-                      actionLayout="stacked"
-                      className="w-full md:max-w-xs"
-                    />
-                  </div>
-                </form>
-              </article>
+                  <form id={formId} action={updateFaqAction.bind(null, activeLocale, faq.id)} className="space-y-4">
+                    <label className="block space-y-2.5">
+                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.question")}</span>
+                      <input
+                        name="question"
+                        defaultValue={faq.question}
+                        className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                      />
+                    </label>
+                    <label className="block space-y-2.5">
+                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.answer")}</span>
+                      <textarea
+                        name="answer"
+                        defaultValue={faq.answer}
+                        rows={5}
+                        className="admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                      />
+                    </label>
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <button
+                        type="submit"
+                        className="admin-secondary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
+                      >
+                        {t("actions.save")}
+                      </button>
+                      <DestructiveActionConfirmation
+                        title={t("delete.title")}
+                        description={t("delete.description")}
+                        warning={t("delete.warning")}
+                        triggerLabel={t("actions.delete")}
+                        confirmLabel={t("delete.confirm")}
+                        cancelLabel={t("delete.cancel")}
+                        confirmValue="delete"
+                        formAction={deleteFaqAction.bind(null, activeLocale, faq.id)}
+                        formId={formId}
+                        tone="danger"
+                        actionLayout="stacked"
+                        className="w-full md:max-w-xs"
+                      />
+                    </div>
+                  </form>
+                </div>
+              </details>
             );
           })}
         </div>

@@ -6,6 +6,7 @@ type AdminPageTemplateProps = {
   pageKey: AdminPageKey;
   variant?: "workspace" | "placeholder";
   useInnerWorkspace?: boolean;
+  className?: string;
   headerAction?: React.ReactNode;
   sections?: string[];
   children?: React.ReactNode;
@@ -15,6 +16,7 @@ export async function AdminPageTemplate({
   pageKey,
   variant = "placeholder",
   useInnerWorkspace = false,
+  className,
   headerAction,
   sections,
   children,
@@ -26,11 +28,11 @@ export async function AdminPageTemplate({
 
   return (
     <section
-        className={`relative overflow-hidden rounded-[32px] border border-white/70 ${
-          isWorkspace
-            ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(248,244,232,0.84)_100%)] px-6 py-6 shadow-[0_34px_88px_-48px_rgba(15,23,42,0.18)] md:px-8 md:py-8 xl:px-10 xl:py-9"
-            : "surface-dark-soft p-8"
-        }`}
+      className={`relative overflow-hidden rounded-[32px] border border-white/70 ${
+        isWorkspace
+          ? "admin-workspace-page px-6 py-6 md:px-8 md:py-8 xl:px-10 xl:py-9"
+          : "surface-dark-soft p-8"
+      } ${className ?? ""}`.trim()}
     >
       {isWorkspace ? (
         <div

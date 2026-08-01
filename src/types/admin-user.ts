@@ -27,7 +27,6 @@ export type CreateAdminUserInput = {
   fullName: string;
   nationalId?: string | null;
   active?: boolean;
-  role: AdminRole;
   permissions: AdminPermissionMatrix;
 };
 
@@ -37,7 +36,6 @@ export type UpdateAdminUserInput = {
   fullName: string;
   nationalId?: string | null;
   active: boolean;
-  role: AdminRole;
   permissions: AdminPermissionMatrix;
 };
 

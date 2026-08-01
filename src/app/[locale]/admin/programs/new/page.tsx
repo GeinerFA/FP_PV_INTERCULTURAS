@@ -14,7 +14,7 @@ export default async function AdminProgramsNewPage({ params, searchParams }: Adm
   await requireAdminSession({ locale, nextPath: `/${locale}/admin/programs/new`, permission: "programs.manage" });
 
   return (
-    <AdminPageTemplate pageKey="programsNew" variant="workspace" useInnerWorkspace>
+    <AdminPageTemplate pageKey="programsNew" variant="workspace" useInnerWorkspace className="admin-program-preview-page">
       <AdminProgramFormShell mode="create" feedback={status as Parameters<typeof AdminProgramFormShell>[0]["feedback"]} />
     </AdminPageTemplate>
   );

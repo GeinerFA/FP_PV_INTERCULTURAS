@@ -29,11 +29,11 @@ function parseAdminCategorySettingsFeedback(status?: string): Parameters<typeof 
 
 type AdminSettingsCategoriesPageProps = {
   params: Promise<{ locale: AppLocale }>;
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ category?: string; focus?: string; status?: string }>;
 };
 
 export default async function AdminSettingsCategoriesPage({ params, searchParams }: AdminSettingsCategoriesPageProps) {
-  const [{ locale }, { status }] = await Promise.all([params, searchParams]);
+  const [{ locale }, { category, focus, status }] = await Promise.all([params, searchParams]);
   const feedback = parseAdminCategorySettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
 
@@ -54,7 +54,7 @@ export default async function AdminSettingsCategoriesPage({ params, searchParams
         </Link>
       }
     >
-      <AdminCategorySettings feedback={feedback} />
+      <AdminCategorySettings feedback={feedback} selectedCategoryId={category} shouldOpenCreateDisclosure={focus === "create"} />
     </AdminPageTemplate>
   );
 }

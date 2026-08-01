@@ -22,9 +22,23 @@ type AdminCategorySettingsProps = {
     | "delete-failed"
     | "delete-blocked"
     | "duplicate-code";
+  selectedCategoryId?: string;
+  shouldOpenCreateDisclosure?: boolean;
 };
 
-export async function AdminCategorySettings({ feedback }: AdminCategorySettingsProps) {
+function ChevronDownIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" className={className} fill="currentColor">
+      <path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.134l3.71-3.904a.75.75 0 1 1 1.08 1.04l-4.25 4.472a.75.75 0 0 1-1.08 0L5.21 8.27a.75.75 0 0 1 .02-1.06Z" />
+    </svg>
+  );
+}
+
+export async function AdminCategorySettings({
+  feedback,
+  selectedCategoryId,
+  shouldOpenCreateDisclosure = false,
+}: AdminCategorySettingsProps) {
   const [t, locale] = await Promise.all([getTranslations("AdminCategorySettings"), getLocale()]);
 
   let categories: Awaited<ReturnType<typeof listAdminProgramCategories>>;
@@ -58,11 +72,10 @@ export async function AdminCategorySettings({ feedback }: AdminCategorySettingsP
     feedback === "duplicate-code"
       ? "admin-warning-banner"
       : "admin-success-banner";
-  const shouldOpenCreateDisclosure = feedback === "invalid" || feedback === "save-failed" || feedback === "duplicate-code";
   const categoriesInUseCount = categories.filter((category) => category.programCount > 0).length;
 
   return (
-    <div className="space-y-8">
+    <div id="admin-category-settings-top" className="space-y-8">
       {feedback ? (
         <div
           className={`${feedbackTone} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}
@@ -147,68 +160,78 @@ export async function AdminCategorySettings({ feedback }: AdminCategorySettingsP
             const formId = `admin-category-entry-${category.id}`;
 
             return (
-              <article key={category.id} className="admin-inner-panel rounded-[28px] p-5 md:p-6">
-                <div className="flex flex-col gap-4 border-b border-emerald-900/8 pb-4 md:flex-row md:items-start md:justify-between">
-                  <div>
+              <details key={category.id} className="group admin-inner-panel rounded-[28px]" open={selectedCategoryId === category.id}>
+                <summary className="flex cursor-pointer list-none flex-col gap-4 p-5 text-left transition hover:bg-white/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white md:p-6 lg:flex-row lg:items-start lg:justify-between [&::-webkit-details-marker]:hidden">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-xl font-semibold text-slate-950">{category.name}</h3>
+                      <span className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
+                        {t(`themes.${category.theme}`)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-600">{t("entry.code", { code: category.code })}</p>
+                    <p className="text-sm text-slate-600">{t("entry.programCount", { count: category.programCount })}</p>
+                  </div>
+                  <div className="flex items-center justify-between gap-3 lg:flex-col lg:items-end">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                      {t("entry.code", { code: category.code })}
+                      <span className="group-open:hidden">{t("entry.disclosureClosedLabel")}</span>
+                      <span className="hidden group-open:inline">{t("entry.disclosureOpenLabel")}</span>
                     </p>
-                    <p className="mt-2 text-sm leading-7 text-slate-600">
-                      {t("entry.programCount", { count: category.programCount })}
-                    </p>
+                    <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-emerald-900/12 bg-white text-slate-500 shadow-[0_12px_30px_-24px_rgba(15,23,42,0.32)] transition duration-300 ease-out group-open:rotate-180 group-open:border-emerald-200 group-open:bg-emerald-50 group-open:text-emerald-800 motion-reduce:transition-none">
+                      <ChevronDownIcon className="h-4 w-4" />
+                    </span>
                   </div>
-                  <span className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
-                    {t(`themes.${category.theme}`)}
-                  </span>
-                </div>
+                </summary>
 
-                <form id={formId} action={updateProgramCategoryAction.bind(null, activeLocale, category.id)} className="mt-5 space-y-4">
-                  <label className="block space-y-2.5">
-                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.name")}</span>
-                    <input
-                      name="name"
-                      defaultValue={category.name}
-                      className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                    />
-                  </label>
-                  <label className="block space-y-2.5">
-                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.theme")}</span>
-                    <select
-                      name="theme"
-                      defaultValue={category.theme}
-                      className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                    >
-                      {programCategoryThemes.map((theme) => (
-                        <option key={theme} value={theme}>
-                          {t(`themes.${theme}`)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                    <button
-                      type="submit"
-                      className="admin-secondary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-                    >
-                      {t("actions.save")}
-                    </button>
-                    <DestructiveActionConfirmation
-                      title={t("delete.title")}
-                      description={t("delete.description")}
-                      warning={category.programCount > 0 ? t("delete.blockedWarning") : t("delete.warning")}
-                      triggerLabel={t("actions.delete")}
-                      confirmLabel={t("delete.confirm")}
-                      cancelLabel={t("delete.cancel")}
-                      confirmValue="delete"
-                      formAction={deleteProgramCategoryAction.bind(null, activeLocale, category.id)}
-                      formId={formId}
-                      tone="danger"
-                      actionLayout="stacked"
-                      className="w-full md:max-w-xs"
-                    />
-                  </div>
-                </form>
-              </article>
+                <div className="border-t border-emerald-900/8 px-5 pb-5 pt-5 md:px-6 md:pb-6">
+                  <form id={formId} action={updateProgramCategoryAction.bind(null, activeLocale, category.id)} className="space-y-4">
+                    <label className="block space-y-2.5">
+                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.name")}</span>
+                      <input
+                        name="name"
+                        defaultValue={category.name}
+                        className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                      />
+                    </label>
+                    <label className="block space-y-2.5">
+                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.theme")}</span>
+                      <select
+                        name="theme"
+                        defaultValue={category.theme}
+                        className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                      >
+                        {programCategoryThemes.map((theme) => (
+                          <option key={theme} value={theme}>
+                            {t(`themes.${theme}`)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <button
+                        type="submit"
+                        className="admin-secondary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
+                      >
+                        {t("actions.save")}
+                      </button>
+                      <DestructiveActionConfirmation
+                        title={t("delete.title")}
+                        description={t("delete.description")}
+                        warning={category.programCount > 0 ? t("delete.blockedWarning") : t("delete.warning")}
+                        triggerLabel={t("actions.delete")}
+                        confirmLabel={t("delete.confirm")}
+                        cancelLabel={t("delete.cancel")}
+                        confirmValue="delete"
+                        formAction={deleteProgramCategoryAction.bind(null, activeLocale, category.id)}
+                        formId={formId}
+                        tone="danger"
+                        actionLayout="stacked"
+                        className="w-full md:max-w-xs"
+                      />
+                    </div>
+                  </form>
+                </div>
+              </details>
             );
           })}
         </div>

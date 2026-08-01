@@ -1,5 +1,5 @@
-import type { AdminPermissionMatrix, AdminRole, AdminUserRecord, CreateAdminUserInput, UpdateAdminUserInput } from "@/types/admin-user";
-import { createFullAdminPermissions, hasPermission, normalizeAdminEmail, normalizeAdminPermissions } from "@/validators/admin-user";
+import type { AdminRole, AdminUserRecord, CreateAdminUserInput, UpdateAdminUserInput } from "@/types/admin-user";
+import { deriveAdminRoleFromPermissions, hasPermission, normalizeAdminEmail, normalizeAdminPermissions } from "@/validators/admin-user";
 
 import { getAdminUserRepository } from "./admin-user-repository";
 
@@ -47,6 +47,27 @@ function buildBootstrapFullName(email: string, providedFullName?: string | null)
   return localPart || email;
 }
 
+type NormalizedCreateAdminUserInput = CreateAdminUserInput & {
+  active: boolean;
+  role: AdminRole;
+};
+
+type NormalizedUpdateAdminUserInput = UpdateAdminUserInput & {
+  role: AdminRole;
+};
+
+function buildNormalizedMutableFields(input: Pick<CreateAdminUserInput | UpdateAdminUserInput, "email" | "fullName" | "nationalId" | "permissions">) {
+  const permissions = normalizeAdminPermissions(input.permissions);
+
+  return {
+    email: normalizeAdminEmail(assertRequiredText(input.email, "email")),
+    fullName: assertRequiredText(input.fullName, "fullName"),
+    nationalId: input.nationalId?.trim() || null,
+    permissions,
+    role: deriveAdminRoleFromPermissions(permissions),
+  };
+}
+
 async function assertUniqueEmail(email: string, currentId?: string): Promise<void> {
   const existing = await getAdminUserRepository().findByEmail(email);
 
@@ -73,13 +94,18 @@ async function assertSuperadminSafety(currentUser: AdminUserRecord, nextUser: { 
   }
 }
 
-function normalizeMutableInput<T extends CreateAdminUserInput | UpdateAdminUserInput>(input: T): T {
+function normalizeCreateAdminUserInput(input: CreateAdminUserInput): NormalizedCreateAdminUserInput {
   return {
     ...input,
-    email: normalizeAdminEmail(assertRequiredText(input.email, "email")),
-    fullName: assertRequiredText(input.fullName, "fullName"),
-    nationalId: input.nationalId?.trim() || null,
-    permissions: normalizeAdminPermissions(input.permissions, input.role),
+    active: input.active ?? true,
+    ...buildNormalizedMutableFields(input),
+  };
+}
+
+function normalizeUpdateAdminUserInput(input: UpdateAdminUserInput): NormalizedUpdateAdminUserInput {
+  return {
+    ...input,
+    ...buildNormalizedMutableFields(input),
   };
 }
 
@@ -150,7 +176,7 @@ export function adminHasPermission(adminUser: Pick<AdminUserRecord, "permissions
 }
 
 export async function createAdminUser(input: CreateAdminUserInput): Promise<AdminUserRecord> {
-  const normalizedInput = normalizeMutableInput({ ...input, active: input.active ?? true });
+  const normalizedInput = normalizeCreateAdminUserInput(input);
 
   await assertUniqueEmail(normalizedInput.email);
 
@@ -172,7 +198,7 @@ export async function updateAdminUser(input: UpdateAdminUserInput): Promise<Admi
     return null;
   }
 
-  const normalizedInput = normalizeMutableInput(input);
+  const normalizedInput = normalizeUpdateAdminUserInput(input);
 
   await assertUniqueEmail(normalizedInput.email, currentUser.id);
   await assertSuperadminSafety(currentUser, normalizedInput);
@@ -201,8 +227,4 @@ export async function updateAdminUserActiveState(id: string, active: boolean): P
     ...currentUser,
     active,
   });
-}
-
-export function createAdminPermissionsForRole(role: AdminRole, permissions: AdminPermissionMatrix): AdminPermissionMatrix {
-  return role === "superadmin" ? createFullAdminPermissions() : permissions;
 }

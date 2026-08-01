@@ -45,8 +45,18 @@ function buildPublicHomePath(locale: AppLocale): string {
   return `/${locale}`;
 }
 
-function buildStatusUrl(path: string, status: string): string {
-  return `${path}?status=${encodeURIComponent(status)}`;
+function buildStatusUrl(path: string, status: string, params?: Record<string, string | undefined>, hash?: string): string {
+  const searchParams = new URLSearchParams({ status });
+
+  for (const [key, value] of Object.entries(params ?? {})) {
+    if (value) {
+      searchParams.set(key, value);
+    }
+  }
+
+  const normalizedHash = hash ? `#${hash}` : "";
+
+  return `${path}?${searchParams.toString()}${normalizedHash}`;
 }
 
 function rethrowFrameworkNavigation(error: unknown): void {
@@ -80,6 +90,9 @@ export async function createFaqAction(locale: AppLocale, formData: FormData): Pr
   const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
   const question = readString(formData, "question");
   const answer = readString(formData, "answer");
+  let status = "created";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-faq-settings-top";
 
   try {
     await createAdminFaq({
@@ -90,11 +103,15 @@ export async function createFaqAction(locale: AppLocale, formData: FormData): Pr
     });
 
     revalidateFaqPaths(locale);
-    redirect(buildStatusUrl(nextPath, "created"));
   } catch (error) {
     rethrowFrameworkNavigation(error);
-    redirect(buildStatusUrl(nextPath, question.length === 0 || answer.length === 0 ? "invalid" : "save-failed"));
+
+    status = question.length === 0 || answer.length === 0 ? "invalid" : "save-failed";
+    params = { focus: "create" };
+    hash = undefined;
   }
+
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }
 
 export async function updateFaqAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
@@ -102,6 +119,9 @@ export async function updateFaqAction(locale: AppLocale, id: string, formData: F
   const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
   const question = readString(formData, "question");
   const answer = readString(formData, "answer");
+  let status = "updated";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-faq-settings-top";
 
   try {
     const updatedFaq = await updateAdminFaq({
@@ -112,49 +132,70 @@ export async function updateFaqAction(locale: AppLocale, id: string, formData: F
     });
 
     if (!updatedFaq) {
-      redirect(buildStatusUrl(nextPath, "save-failed"));
+      status = "save-failed";
+      params = { faq: id };
+      hash = undefined;
+    } else {
+      revalidateFaqPaths(locale);
     }
-
-    revalidateFaqPaths(locale);
-    redirect(buildStatusUrl(nextPath, "updated"));
   } catch (error) {
     rethrowFrameworkNavigation(error);
-    redirect(buildStatusUrl(nextPath, question.length === 0 || answer.length === 0 ? "invalid" : "save-failed"));
+
+    status = question.length === 0 || answer.length === 0 ? "invalid" : "save-failed";
+    params = { faq: id };
+    hash = undefined;
   }
+
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }
 
 export async function deleteFaqAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
   await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
+  let status = "deleted";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-faq-settings-top";
 
   const deletedFaq = await deleteAdminFaq({ id });
 
   if (!deletedFaq) {
-    redirect(buildStatusUrl(nextPath, "delete-failed"));
+    status = "delete-failed";
+    params = { faq: id };
+    hash = undefined;
+  } else {
+    revalidateFaqPaths(locale);
   }
 
-  revalidateFaqPaths(locale);
-  redirect(buildStatusUrl(nextPath, "deleted"));
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }
 
 export async function moveFaqAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
   const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
+  let status = "reordered";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-faq-settings-top";
 
   try {
     const direction = parseFaqMoveDirection(readString(formData, "direction"));
     const movedFaqs = await moveAdminFaq({ id, direction, updatedBy: session.email });
 
     if (!movedFaqs) {
-      redirect(buildStatusUrl(nextPath, "reorder-failed"));
+      status = "reorder-failed";
+      params = { faq: id };
+      hash = undefined;
+    } else {
+      revalidateFaqPaths(locale);
     }
-
-    revalidateFaqPaths(locale);
-    redirect(buildStatusUrl(nextPath, "reordered"));
   } catch (error) {
     rethrowFrameworkNavigation(error);
-    redirect(buildStatusUrl(nextPath, "reorder-failed"));
+
+    status = "reorder-failed";
+    params = { faq: id };
+    hash = undefined;
   }
+
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }
 
 export async function createProgramCategoryAction(locale: AppLocale, formData: FormData): Promise<void> {
@@ -162,6 +203,9 @@ export async function createProgramCategoryAction(locale: AppLocale, formData: F
   const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
   const name = readString(formData, "name");
   const theme = readString(formData, "theme");
+  let status = "created";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-category-settings-top";
 
   try {
     await createAdminProgramCategory({
@@ -172,16 +216,21 @@ export async function createProgramCategoryAction(locale: AppLocale, formData: F
     });
 
     revalidateCategoryPaths(locale);
-    redirect(buildStatusUrl(nextPath, "created"));
   } catch (error) {
     rethrowFrameworkNavigation(error);
 
     if (error instanceof ProgramCategoryDuplicateFieldError) {
-      redirect(buildStatusUrl(nextPath, "duplicate-code"));
+      status = "duplicate-code";
+      params = { focus: "create" };
+      hash = undefined;
+    } else {
+      status = name.length === 0 ? "invalid" : "save-failed";
+      params = { focus: "create" };
+      hash = undefined;
     }
-
-    redirect(buildStatusUrl(nextPath, name.length === 0 ? "invalid" : "save-failed"));
   }
+
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }
 
 export async function updateProgramCategoryAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
@@ -189,6 +238,9 @@ export async function updateProgramCategoryAction(locale: AppLocale, id: string,
   const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
   const name = readString(formData, "name");
   const theme = readString(formData, "theme");
+  let status = "updated";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-category-settings-top";
 
   try {
     const updatedCategory = await updateAdminProgramCategory({
@@ -199,37 +251,52 @@ export async function updateProgramCategoryAction(locale: AppLocale, id: string,
     });
 
     if (!updatedCategory) {
-      redirect(buildStatusUrl(nextPath, "save-failed"));
+      status = "save-failed";
+      params = { category: id };
+      hash = undefined;
+    } else {
+      revalidateCategoryPaths(locale);
     }
-
-    revalidateCategoryPaths(locale);
-    redirect(buildStatusUrl(nextPath, "updated"));
   } catch (error) {
     rethrowFrameworkNavigation(error);
-    redirect(buildStatusUrl(nextPath, name.length === 0 ? "invalid" : "save-failed"));
+
+    status = name.length === 0 ? "invalid" : "save-failed";
+    params = { category: id };
+    hash = undefined;
   }
+
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }
 
 export async function deleteProgramCategoryAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildCategorySettingsPath(locale);
   await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
+  let status = "deleted";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-category-settings-top";
 
   try {
     const deletedCategory = await deleteAdminProgramCategory({ id });
 
     if (!deletedCategory) {
-      redirect(buildStatusUrl(nextPath, "delete-failed"));
+      status = "delete-failed";
+      params = { category: id };
+      hash = undefined;
+    } else {
+      revalidateCategoryPaths(locale);
     }
-
-    revalidateCategoryPaths(locale);
-    redirect(buildStatusUrl(nextPath, "deleted"));
   } catch (error) {
     rethrowFrameworkNavigation(error);
 
     if (error instanceof ProgramCategoryInUseError) {
-      redirect(buildStatusUrl(nextPath, "delete-blocked"));
+      status = "delete-blocked";
+    } else {
+      status = "delete-failed";
     }
 
-    redirect(buildStatusUrl(nextPath, "delete-failed"));
+    params = { category: id };
+    hash = undefined;
   }
+
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }

@@ -1,12 +1,8 @@
-import {
-  adminPermissionModules,
-  adminRoles,
-  type AdminPermissionAction,
-  type AdminPermissionKey,
-  type AdminPermissionMatrix,
-  type AdminRole,
-  type AdminUserRecord,
-} from "@/types/admin-user";
+import { adminPermissionActions, adminPermissionModules, type AdminPermissionAction, type AdminPermissionKey, type AdminPermissionMatrix, type AdminRole, type AdminUserRecord } from "@/types/admin-user";
+
+function getAdminPermissionActionIndex(action: AdminPermissionAction): number {
+  return adminPermissionActions.indexOf(action);
+}
 
 function normalizeBoolean(value: unknown): boolean {
   if (typeof value === "boolean") {
@@ -76,10 +72,6 @@ function normalizeDateLike(value: unknown, fallback: string): string {
   return fallback;
 }
 
-function parseRole(value: unknown): AdminRole {
-  return adminRoles.includes(value as AdminRole) ? (value as AdminRole) : "admin";
-}
-
 function normalizeModulePermissions(value: unknown) {
   const rawPermissions = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
   const view = normalizeBoolean(rawPermissions.view);
@@ -109,16 +101,46 @@ export function createFullAdminPermissions(): AdminPermissionMatrix {
   ) as AdminPermissionMatrix;
 }
 
-export function normalizeAdminPermissions(value: unknown, role: AdminRole): AdminPermissionMatrix {
-  if (role === "superadmin") {
-    return createFullAdminPermissions();
-  }
-
+export function normalizeAdminPermissions(value: unknown): AdminPermissionMatrix {
   const rawPermissions = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
 
   return Object.fromEntries(
     adminPermissionModules.map((module) => [module, normalizeModulePermissions(rawPermissions[module])]),
   ) as AdminPermissionMatrix;
+}
+
+export function updateAdminPermissionSelection(
+  permissions: AdminPermissionMatrix,
+  module: keyof AdminPermissionMatrix,
+  action: AdminPermissionAction,
+  checked: boolean,
+): AdminPermissionMatrix {
+  const targetActionIndex = getAdminPermissionActionIndex(action);
+
+  return {
+    ...permissions,
+    [module]: Object.fromEntries(
+      adminPermissionActions.map((candidateAction, candidateIndex) => {
+        const currentValue = permissions[module][candidateAction];
+
+        if (checked) {
+          return [candidateAction, candidateIndex <= targetActionIndex ? true : currentValue];
+        }
+
+        return [candidateAction, candidateIndex < targetActionIndex ? currentValue : false];
+      }),
+    ) as AdminPermissionMatrix[keyof AdminPermissionMatrix],
+  };
+}
+
+export function areAllAdminPermissionsGranted(permissions: AdminPermissionMatrix): boolean {
+  return adminPermissionModules.every((module) =>
+    adminPermissionActions.every((action) => permissions[module][action]),
+  );
+}
+
+export function deriveAdminRoleFromPermissions(permissions: AdminPermissionMatrix): AdminRole {
+  return areAllAdminPermissionsGranted(permissions) ? "superadmin" : "admin";
 }
 
 export function hasPermission(permissions: AdminPermissionMatrix, permission: AdminPermissionKey): boolean {
@@ -135,10 +157,11 @@ export function parseAdminUserRecord(
   },
 ): AdminUserRecord {
   const rawRecord = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
-  const role = parseRole(rawRecord.role);
   const id = normalizeRecordId(rawRecord.id) || normalizeRecordId(rawRecord._id);
   const createdAt = normalizeDateLike(rawRecord.createdAt, options?.fallbackCreatedAt ?? new Date(0).toISOString());
   const updatedAt = normalizeDateLike(rawRecord.updatedAt, options?.fallbackUpdatedAt ?? createdAt);
+  const permissions = normalizeAdminPermissions(rawRecord.permissions);
+  const role = deriveAdminRoleFromPermissions(permissions);
 
   return {
     id,
@@ -155,7 +178,7 @@ export function parseAdminUserRecord(
       normalizeOptionalString(rawRecord.cedula),
     active: rawRecord.active === undefined ? true : normalizeBoolean(rawRecord.active),
     role,
-    permissions: normalizeAdminPermissions(rawRecord.permissions, role),
+    permissions,
     createdAt,
     updatedAt,
   };

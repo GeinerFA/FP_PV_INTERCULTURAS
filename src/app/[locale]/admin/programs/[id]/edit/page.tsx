@@ -26,7 +26,7 @@ export default async function AdminProgramEditPage({
   }
 
   return (
-    <AdminPageTemplate pageKey="programsEdit" variant="workspace" useInnerWorkspace>
+    <AdminPageTemplate pageKey="programsEdit" variant="workspace" useInnerWorkspace className="admin-program-preview-page">
       <AdminProgramFormShell
         mode="edit"
         program={program}

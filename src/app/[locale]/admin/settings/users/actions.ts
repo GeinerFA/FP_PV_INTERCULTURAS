@@ -7,20 +7,19 @@ import type { AppLocale } from "@/config/i18n";
 import { requireAdminSession } from "@/lib/admin-session";
 import {
   AdminUserDuplicateEmailError,
-  createAdminPermissionsForRole,
   createAdminUser,
   LastActiveSuperadminError,
   updateAdminUser,
   updateAdminUserActiveState,
 } from "@/services/admin-users/admin-user-service";
-import { adminPermissionActions, adminPermissionModules, adminRoles, type AdminPermissionMatrix, type AdminRole } from "@/types/admin-user";
-import { createEmptyAdminPermissions, normalizeAdminEmail } from "@/validators/admin-user";
+import { adminPermissionActions, adminPermissionModules, type AdminPermissionMatrix } from "@/types/admin-user";
+import { createEmptyAdminPermissions, createFullAdminPermissions, normalizeAdminEmail } from "@/validators/admin-user";
 
 function buildUsersSettingsPath(locale: AppLocale): string {
   return `/${locale}/admin/settings/users`;
 }
 
-function buildStatusUrl(path: string, status: string, params?: Record<string, string | undefined>): string {
+function buildStatusUrl(path: string, status: string, params?: Record<string, string | undefined>, hash?: string): string {
   const searchParams = new URLSearchParams({ status });
 
   for (const [key, value] of Object.entries(params ?? {})) {
@@ -29,17 +28,15 @@ function buildStatusUrl(path: string, status: string, params?: Record<string, st
     }
   }
 
-  return `${path}?${searchParams.toString()}`;
+  const normalizedHash = hash ? `#${hash}` : "";
+
+  return `${path}?${searchParams.toString()}${normalizedHash}`;
 }
 
 function readString(formData: FormData, key: string): string {
   const value = formData.get(key);
 
   return typeof value === "string" ? value.trim() : "";
-}
-
-function parseRole(value: string): AdminRole {
-  return adminRoles.includes(value as AdminRole) ? (value as AdminRole) : "admin";
 }
 
 function parsePermissions(formData: FormData): AdminPermissionMatrix {
@@ -54,6 +51,10 @@ function parsePermissions(formData: FormData): AdminPermissionMatrix {
   return permissions;
 }
 
+function shouldGrantAllPermissions(formData: FormData): boolean {
+  return formData.get("grantAllPermissions") === "on";
+}
+
 function revalidateUserSettingsPaths(locale: AppLocale): void {
   revalidatePath(`/${locale}/admin/settings`);
   revalidatePath(buildUsersSettingsPath(locale));
@@ -62,7 +63,10 @@ function revalidateUserSettingsPaths(locale: AppLocale): void {
 export async function createAdminUserAction(locale: AppLocale, formData: FormData): Promise<void> {
   const nextPath = buildUsersSettingsPath(locale);
   await requireAdminSession({ locale, nextPath, permission: "users.manage" });
-  const role = parseRole(readString(formData, "role"));
+  const permissions = shouldGrantAllPermissions(formData) ? createFullAdminPermissions() : parsePermissions(formData);
+  let status = "created";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-user-settings-top";
 
   try {
     await createAdminUser({
@@ -70,26 +74,32 @@ export async function createAdminUserAction(locale: AppLocale, formData: FormDat
       fullName: readString(formData, "fullName"),
       nationalId: readString(formData, "nationalId") || null,
       active: formData.get("active") === "on",
-      role,
-      permissions: createAdminPermissionsForRole(role, parsePermissions(formData)),
+      permissions,
     });
 
     revalidateUserSettingsPaths(locale);
-    redirect(buildStatusUrl(nextPath, "created"));
   } catch (error) {
     if (error instanceof AdminUserDuplicateEmailError) {
-      redirect(buildStatusUrl(nextPath, "duplicate-email", { focus: "create" }));
+      status = "duplicate-email";
+      params = { focus: "create" };
+      hash = undefined;
+    } else {
+      status = error instanceof Error ? "invalid" : "save-failed";
+      params = { focus: "create" };
+      hash = undefined;
     }
-
-    redirect(buildStatusUrl(nextPath, error instanceof Error ? "invalid" : "save-failed", { focus: "create" }));
   }
+
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }
 
 export async function updateAdminUserAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildUsersSettingsPath(locale);
   await requireAdminSession({ locale, nextPath, permission: "users.manage" });
-  const role = parseRole(readString(formData, "role"));
   const active = formData.get("active") === "on";
+  let status = "updated";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-user-settings-top";
 
   try {
     const updatedUser = await updateAdminUser({
@@ -98,47 +108,62 @@ export async function updateAdminUserAction(locale: AppLocale, id: string, formD
       fullName: readString(formData, "fullName"),
       nationalId: readString(formData, "nationalId") || null,
       active,
-      role,
-      permissions: createAdminPermissionsForRole(role, parsePermissions(formData)),
+      permissions: parsePermissions(formData),
     });
 
     if (!updatedUser) {
-      redirect(buildStatusUrl(nextPath, "save-failed", { user: id }));
+      status = "save-failed";
+      params = { user: id };
+      hash = undefined;
+    } else {
+      revalidateUserSettingsPaths(locale);
     }
-
-    revalidateUserSettingsPaths(locale);
-    redirect(buildStatusUrl(nextPath, "updated", { user: id }));
   } catch (error) {
     if (error instanceof AdminUserDuplicateEmailError) {
-      redirect(buildStatusUrl(nextPath, "duplicate-email", { user: id }));
+      status = "duplicate-email";
+      params = { user: id };
+      hash = undefined;
+    } else if (error instanceof LastActiveSuperadminError) {
+      status = "last-superadmin-protected";
+      params = { user: id };
+      hash = undefined;
+    } else {
+      status = error instanceof Error ? "invalid" : "save-failed";
+      params = { user: id };
+      hash = undefined;
     }
-
-    if (error instanceof LastActiveSuperadminError) {
-      redirect(buildStatusUrl(nextPath, "last-superadmin-protected", { user: id }));
-    }
-
-    redirect(buildStatusUrl(nextPath, error instanceof Error ? "invalid" : "save-failed", { user: id }));
   }
+
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }
 
 export async function toggleAdminUserActiveAction(locale: AppLocale, id: string, active: boolean): Promise<void> {
   const nextPath = buildUsersSettingsPath(locale);
   await requireAdminSession({ locale, nextPath, permission: active ? "users.manage" : "users.delete" });
+  let status = active ? "activated" : "deactivated";
+  let params: Record<string, string | undefined> | undefined;
+  let hash: string | undefined = "admin-user-settings-top";
 
   try {
     const updatedUser = await updateAdminUserActiveState(id, active);
 
     if (!updatedUser) {
-      redirect(buildStatusUrl(nextPath, "toggle-failed", { user: id }));
+      status = "toggle-failed";
+      params = { user: id };
+      hash = undefined;
+    } else {
+      revalidateUserSettingsPaths(locale);
     }
-
-    revalidateUserSettingsPaths(locale);
-    redirect(buildStatusUrl(nextPath, active ? "activated" : "deactivated", { user: id }));
   } catch (error) {
     if (error instanceof LastActiveSuperadminError) {
-      redirect(buildStatusUrl(nextPath, "last-superadmin-protected", { user: id }));
+      status = "last-superadmin-protected";
+    } else {
+      status = "toggle-failed";
     }
 
-    redirect(buildStatusUrl(nextPath, "toggle-failed", { user: id }));
+    params = { user: id };
+    hash = undefined;
   }
+
+  redirect(buildStatusUrl(nextPath, status, params, hash));
 }

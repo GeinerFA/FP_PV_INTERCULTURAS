@@ -10,7 +10,6 @@ type PublicPageTemplateProps = {
     | "programDetail"
     | "apply"
     | "applySuccess"
-    | "impact"
     | "contact"
     | "privacy";
   children?: React.ReactNode;

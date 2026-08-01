@@ -2,12 +2,13 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { createAdminUserAction, toggleAdminUserActiveAction, updateAdminUserAction } from "@/app/[locale]/admin/settings/users/actions";
 import type { AppLocale } from "@/config/i18n";
+import { EditAdminUserPermissionMatrix } from "@/features/admin/components/edit-admin-user-permission-matrix";
+import { CreateAdminUserForm } from "@/features/admin/components/create-admin-user-form";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
 import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 import { listAdminUsers } from "@/services/admin-users/admin-user-service";
-import { adminPermissionActions, adminPermissionModules, type AdminUserRecord } from "@/types/admin-user";
-import { createEmptyAdminPermissions } from "@/validators/admin-user";
+import { adminPermissionModules, type AdminUserRecord } from "@/types/admin-user";
 
 type AdminUserSettingsProps = {
   feedback?:
@@ -49,52 +50,6 @@ function formatPermissionSummary(user: AdminUserRecord, t: Awaited<ReturnType<ty
     .filter((module) => user.permissions[module].view)
     .map((module) => t(`modules.${module}.title`))
     .join(" · ");
-}
-
-function PermissionMatrixFields({
-  disabled = false,
-  permissions,
-  t,
-}: {
-  disabled?: boolean;
-  permissions: AdminUserRecord["permissions"];
-  t: Awaited<ReturnType<typeof getTranslations>>;
-}) {
-  return (
-    <div className="overflow-x-auto rounded-[24px] border border-emerald-900/8 bg-white/80">
-      <table className="min-w-full border-collapse text-sm">
-        <thead>
-          <tr className="border-b border-emerald-900/8 text-left text-xs uppercase tracking-[0.18em] text-slate-500">
-            <th className="px-4 py-3 font-semibold">{t("matrix.module")}</th>
-            {adminPermissionActions.map((action) => (
-              <th key={action} className="px-4 py-3 font-semibold">
-                {t(`matrix.actions.${action}`)}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {adminPermissionModules.map((module) => (
-            <tr key={module} className="border-b border-emerald-900/8 last:border-b-0">
-              <td className="px-4 py-3 font-medium text-slate-900">{t(`modules.${module}.title`)}</td>
-              {adminPermissionActions.map((action) => {
-                const fieldName = `permissions.${module}.${action}`;
-
-                return (
-                  <td key={`${module}-${action}`} className="px-4 py-3">
-                    <label className="inline-flex items-center gap-2 text-slate-700">
-                      <input type="checkbox" name={fieldName} defaultChecked={permissions[module][action]} disabled={disabled} className="h-4 w-4 rounded border-slate-300 text-emerald-600 disabled:opacity-60" />
-                      <span className="sr-only">{`${t(`modules.${module}.title`)} ${t(`matrix.actions.${action}`)}`}</span>
-                    </label>
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
 }
 
 function UserEntry({
@@ -164,13 +119,13 @@ function UserEntry({
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.nationalId")}</span>
               <input name="nationalId" defaultValue={user.nationalId ?? ""} disabled={!canManage} className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition disabled:opacity-60" />
             </label>
-            <label className="block space-y-2.5">
+            <div className="block space-y-2.5">
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.role")}</span>
-              <select name="role" defaultValue={user.role} disabled={!canManage} className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition disabled:opacity-60">
-                <option value="admin">{t("roles.admin")}</option>
-                <option value="superadmin">{t("roles.superadmin")}</option>
-              </select>
-            </label>
+              <div className="admin-inner-input flex min-h-12 items-center rounded-2xl px-4 py-3 text-sm text-slate-700">
+                {t(`roles.${user.role}`)}
+              </div>
+              <p className="text-sm leading-7 text-slate-600">{t("fields.roleDerived")}</p>
+            </div>
           </div>
 
           <input type="hidden" name="active" value={user.active ? "on" : "off"} />
@@ -181,8 +136,30 @@ function UserEntry({
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("matrix.title")}</p>
               <p className="mt-2 text-sm leading-7 text-slate-600">{t("matrix.description")}</p>
             </div>
-            <PermissionMatrixFields permissions={user.permissions} t={t} disabled={!canManage} />
+            <EditAdminUserPermissionMatrix
+              permissions={user.permissions}
+              disabled={!canManage}
+              grantAllLabel={t("create.grantAllLabel")}
+              grantAllHint={t("create.grantAllHint")}
+              moduleLabel={t("matrix.module")}
+              description={t("matrix.description")}
+              actionLabels={{
+                view: t("matrix.actions.view"),
+                manage: t("matrix.actions.manage"),
+                delete: t("matrix.actions.delete"),
+              }}
+              moduleTitles={{
+                dashboard: t("modules.dashboard.title"),
+                programs: t("modules.programs.title"),
+                applications: t("modules.applications.title"),
+                activity: t("modules.activity.title"),
+                settings: t("modules.settings.title"),
+                users: t("modules.users.title"),
+              }}
+            />
             <p className="text-sm leading-7 text-slate-600">{t("matrix.superadminNote")}</p>
+            <p className="text-sm leading-7 text-slate-600">{t("matrix.deleteMeaning")}</p>
+            <p className="text-sm leading-7 text-slate-600">{t("matrix.usersDeleteMeaning")}</p>
           </div>
 
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -242,7 +219,7 @@ export async function AdminUserSettings({ feedback, selectedUserId, session, sho
   const activeSuperadmins = adminUsers.filter((user) => user.active && user.role === "superadmin").length;
 
   return (
-    <div className="space-y-8">
+    <div id="admin-user-settings-top" className="space-y-8">
       {feedback ? <div className={`${feedbackTone} rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)]`}>{t(`feedback.${feedback}`)}</div> : null}
 
       <div className="grid gap-4 xl:grid-cols-3">
@@ -295,49 +272,49 @@ export async function AdminUserSettings({ feedback, selectedUserId, session, sho
           <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-300 ease-out group-open:grid-rows-[1fr] group-open:opacity-100 motion-reduce:transition-none">
             <div className="overflow-hidden">
               <AdminWorkspaceSection className="mt-4" title={t("create.title")} description={t("create.description")}>
-                <form action={createAction} className="space-y-5">
-                  <p className="text-sm leading-7 text-slate-600">{t("create.disclosureHint")}</p>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <label className="block space-y-2.5">
-                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.email")}</span>
-                      <input name="email" className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition" placeholder={t("placeholders.email")} />
-                    </label>
-                    <label className="block space-y-2.5">
-                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.fullName")}</span>
-                      <input name="fullName" className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition" placeholder={t("placeholders.fullName")} />
-                    </label>
-                    <label className="block space-y-2.5">
-                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.nationalId")}</span>
-                      <input name="nationalId" className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition" placeholder={t("placeholders.nationalId")} />
-                    </label>
-                    <label className="block space-y-2.5">
-                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.role")}</span>
-                      <select name="role" defaultValue="admin" className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition">
-                        <option value="admin">{t("roles.admin")}</option>
-                        <option value="superadmin">{t("roles.superadmin")}</option>
-                      </select>
-                    </label>
-                  </div>
-
-                  <label className="inline-flex items-center gap-3 text-sm text-slate-700">
-                    <input type="checkbox" name="active" defaultChecked className="h-4 w-4 rounded border-slate-300 text-emerald-600" />
-                    <span>{t("fields.keepActive")}</span>
-                  </label>
-
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("matrix.title")}</p>
-                      <p className="mt-2 text-sm leading-7 text-slate-600">{t("matrix.description")}</p>
-                    </div>
-                    <PermissionMatrixFields permissions={createEmptyAdminPermissions()} t={t} />
-                    <p className="text-sm leading-7 text-slate-600">{t("matrix.superadminNote")}</p>
-                  </div>
-
-                  <button type="submit" className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition">
-                    {t("actions.create")}
-                  </button>
-                </form>
+                <CreateAdminUserForm
+                  action={createAction}
+                  copy={{
+                    disclosureHint: t("create.disclosureHint"),
+                    grantAllLabel: t("create.grantAllLabel"),
+                    grantAllHint: t("create.grantAllHint"),
+                    fields: {
+                      email: t("fields.email"),
+                      fullName: t("fields.fullName"),
+                      nationalId: t("fields.nationalId"),
+                      keepActive: t("fields.keepActive"),
+                    },
+                    matrix: {
+                      title: t("matrix.title"),
+                      description: t("matrix.description"),
+                      module: t("matrix.module"),
+                      superadminNote: t("matrix.superadminNote"),
+                      deleteMeaning: t("matrix.deleteMeaning"),
+                      usersDeleteMeaning: t("matrix.usersDeleteMeaning"),
+                      actions: {
+                        view: t("matrix.actions.view"),
+                        manage: t("matrix.actions.manage"),
+                        delete: t("matrix.actions.delete"),
+                      },
+                    },
+                    modules: {
+                      dashboard: { title: t("modules.dashboard.title") },
+                      programs: { title: t("modules.programs.title") },
+                      applications: { title: t("modules.applications.title") },
+                      activity: { title: t("modules.activity.title") },
+                      settings: { title: t("modules.settings.title") },
+                      users: { title: t("modules.users.title") },
+                    },
+                    placeholders: {
+                      email: t("placeholders.email"),
+                      fullName: t("placeholders.fullName"),
+                      nationalId: t("placeholders.nationalId"),
+                    },
+                    actions: {
+                      create: t("actions.create"),
+                    },
+                  }}
+                />
               </AdminWorkspaceSection>
             </div>
           </div>

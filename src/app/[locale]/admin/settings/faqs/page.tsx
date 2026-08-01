@@ -28,11 +28,11 @@ function parseAdminSettingsFeedback(status?: string): Parameters<typeof AdminFaq
 
 type AdminSettingsFaqPageProps = {
   params: Promise<{ locale: AppLocale }>;
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ faq?: string; focus?: string; status?: string }>;
 };
 
 export default async function AdminSettingsFaqPage({ params, searchParams }: AdminSettingsFaqPageProps) {
-  const [{ locale }, { status }] = await Promise.all([params, searchParams]);
+  const [{ locale }, { faq, focus, status }] = await Promise.all([params, searchParams]);
   const feedback = parseAdminSettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
 
@@ -53,7 +53,7 @@ export default async function AdminSettingsFaqPage({ params, searchParams }: Adm
         </Link>
       }
     >
-      <AdminFaqSettings feedback={feedback} />
+      <AdminFaqSettings feedback={feedback} selectedFaqId={faq} shouldOpenCreateDisclosure={focus === "create"} />
     </AdminPageTemplate>
   );
 }

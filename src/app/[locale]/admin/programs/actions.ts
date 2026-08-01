@@ -31,7 +31,7 @@ const supportedCoverImageContentTypes = new Set([
 
 const supportedCoverImageExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"];
 
-const maxCoverImageFileSizeBytes = 2 * 1024 * 1024;
+const maxCoverImageFileSizeBytes = 8 * 1024 * 1024;
 
 function buildProgramsOverviewPath(locale: AppLocale): string {
   return `/${locale}/admin/programs`;

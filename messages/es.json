@@ -4,7 +4,6 @@
     "about": "Sobre nosotros",
     "programs": "Programas",
     "apply": "Aplicar",
-    "impact": "Impacto",
     "contact": "Contacto",
     "privacy": "Privacidad",
     "admin": "Admin",
@@ -183,8 +182,10 @@
     },
     "create": {
       "title": "Agregar usuario administrativo",
-      "description": "Registrá una nueva persona administradora con su rol, estado y matriz de permisos por módulo.",
+      "description": "Registrá una nueva persona administradora con su estado y matriz de permisos por módulo.",
       "disclosureHint": "Abrí este formulario solo cuando realmente necesites dar de alta a otra persona. El alta comparte la misma matriz de permisos que después podés ajustar desde la lista existente.",
+      "grantAllLabel": "Otorgar todo",
+      "grantAllHint": "Si lo marcás al crear, la matriz queda completa y el sistema guarda automáticamente a la persona como superadmin.",
       "disclosureClosedLabel": "Agregar usuario",
       "disclosureOpenLabel": "Cerrar formulario de nuevo usuario"
     },
@@ -197,6 +198,7 @@
       "fullName": "Nombre completo",
       "nationalId": "Identificación nacional",
       "role": "Rol",
+      "roleDerived": "Este rol se calcula automáticamente según la matriz: acceso total equivale a superadmin; si falta cualquier permiso, queda como admin.",
       "keepActive": "Mantener acceso activo"
     },
     "roles": {
@@ -209,9 +211,11 @@
     },
     "matrix": {
       "title": "Matriz de permisos",
-      "description": "Marcá qué puede ver, gestionar o desactivar esta persona en cada módulo administrativo.",
+      "description": "Marcá qué puede ver, gestionar o ejecutar como acción crítica esta persona en cada módulo administrativo.",
       "module": "Módulo",
-      "superadminNote": "Si el rol queda como superadmin, el sistema conserva acceso total aunque la matriz no esté completa en el formulario.",
+      "superadminNote": "El rol ya no se elige a mano: si toda la matriz queda marcada, el sistema guarda a la persona como superadmin; si falta cualquier permiso, queda como admin.",
+      "deleteMeaning": "La columna Desactivar agrupa acciones sensibles o irreversibles según el módulo, como desactivar acceso, retirar registros o ejecutar cambios críticos.",
+      "usersDeleteMeaning": "En Usuarios, Desactivar significa poder quitar el acceso administrativo de otra persona sin borrar su registro persistido.",
       "actions": {
         "view": "Ver",
         "manage": "Gestionar",
@@ -305,7 +309,9 @@
     },
     "entry": {
       "code": "Código {code}",
-      "programCount": "Programas vinculados: {count}"
+      "programCount": "Programas vinculados: {count}",
+      "disclosureClosedLabel": "Ver y editar detalles",
+      "disclosureOpenLabel": "Ocultar detalles"
     },
     "fields": {
       "name": "Nombre visible",
@@ -734,7 +740,7 @@
       "destructive-confirmation-required": "Antes de archivar o eliminar, confirmá la advertencia visible del panel para evitar cambios destructivos accidentales.",
       "invalid": "No se pudo interpretar el formulario. Revisá categoría, slug y campos estructurados antes de reintentar.",
       "invalid-image-type": "La imagen de portada debe ser JPG, PNG, WEBP, GIF o AVIF.",
-      "image-too-large": "La imagen de portada debe pesar 2 MB o menos.",
+      "image-too-large": "La imagen de portada debe pesar 8 MB o menos.",
       "save-failed": "No se pudo guardar el borrador. Verificá la conexión y el contenido obligatorio del formulario.",
       "publish-failed": "No se pudo publicar. Revisá campos públicos obligatorios y recordá que el slug no puede cambiar después de la primera publicación.",
       "delete-failed": "No se pudo eliminar el programa en este momento. Intentá nuevamente desde el editor."
@@ -746,12 +752,18 @@
       "2": "Después de la primera publicación, el slug queda fijo para proteger las rutas públicas existentes."
     },
     "coverImageUpload": {
-      "description": "Subí una imagen local de portada en formato JPG, PNG, WEBP, GIF o AVIF de hasta 2 MB. No hace falta pegar una URL.",
+      "description": "Subí una imagen local de portada en formato JPG, PNG, WEBP, GIF o AVIF de hasta 8 MB. No hace falta pegar una URL.",
       "publishBoundary": "La acción principal publica la nueva imagen enseguida cuando la validación pasa. Si necesitás preparar una imagen sin mover todavía la versión pública, usá guardar borrador.",
+      "selectedPreview": "Vista previa antes de publicar",
+      "selectedPreviewAlt": "Vista previa local de la nueva imagen de portada",
+      "selectedFile": "Archivo seleccionado",
       "currentDraft": "Imagen actual del borrador",
       "currentDraftAlt": "Vista previa de la imagen de portada del borrador",
       "currentPublished": "Imagen pública actual",
-      "currentPublishedAlt": "Vista previa de la imagen de portada publicada"
+      "currentPublishedAlt": "Vista previa de la imagen de portada publicada",
+      "openPublishedLarge": "Hacé clic en la imagen para verla más grande sin salir de esta página.",
+      "previewDialogTitle": "Vista ampliada de la imagen pública actual",
+      "closePreview": "Cerrar vista ampliada"
     },
     "seoAuditDescription": "Los títulos/descripciones SEO, createdBy, updatedBy y timestamps ya forman parte de la entidad persistida y acompañan el ciclo de borrador, publicación y archivo.",
     "audit": {
@@ -903,72 +915,6 @@
       "highlightOne": "La confirmación solo aparece después de un envío aceptado.",
       "highlightTwo": "Podés volver a explorar programas o regresar al inicio del sitio.",
       "highlightThree": "El flujo queda preparado para sumar correo y seguimiento en módulos futuros."
-    },
-    "impact": {
-      "eyebrow": "Historias y resultados",
-      "title": "Impacto construido desde experiencias reales",
-      "description": "Esta página reúne voces, escenas y aprendizajes que ayudan a entender cómo se viven los programas y qué valor deja el acompañamiento local en cada proceso.",
-      "story": {
-        "eyebrow": "Qué queremos mostrar",
-        "title": "Impacto humano antes que discurso promocional",
-        "description": "En vez de convertir esta sección en una campaña, el objetivo es ofrecer una mirada concreta sobre lo que ocurre en la experiencia: relaciones, aprendizajes compartidos y presencia cotidiana en la comunidad."
-      },
-      "testimonials": {
-        "eyebrow": "Testimonios",
-        "title": "Voces que explican mejor la experiencia",
-        "description": "Los testimonios ayudan a entender el impacto desde la perspectiva de quienes participaron, acompañaron o recibieron el intercambio.",
-        "entries": {
-          "participant": {
-            "quote": "Llegué con ganas de aprender español y terminé entendiendo mucho mejor cómo relacionarme con la comunidad desde el respeto y la escucha.",
-            "name": "Participante internacional",
-            "role": "Programa de inmersión y voluntariado"
-          },
-          "host": {
-            "quote": "El acompañamiento del equipo hizo que la experiencia fuera clara para todos. Siempre hubo alguien disponible para orientar y cuidar el proceso.",
-            "name": "Familia anfitriona",
-            "role": "Red local de apoyo"
-          },
-          "ally": {
-            "quote": "Trabajar con personas visitantes funciona mejor cuando hay preparación previa y seguimiento real. Esa articulación es lo que más valoramos.",
-            "name": "Organización aliada",
-            "role": "Trabajo comunitario local"
-          }
-        }
-      },
-      "gallery": {
-        "eyebrow": "Escenas del proceso",
-        "title": "Momentos que cuentan la historia",
-        "description": "Mientras se curan imágenes definitivas, este MVP mantiene bloques visuales estáticos para representar actividades, convivencia y aprendizaje sin agregar interacciones nuevas.",
-        "items": {
-          "community": {
-            "title": "Trabajo compartido con aliados locales",
-            "caption": "Espacios de colaboración donde la experiencia se conecta con necesidades reales y con una coordinación cercana en territorio.",
-            "alt": "Representación visual de trabajo comunitario acompañado por el equipo local",
-            "accent": "emerald"
-          },
-          "culture": {
-            "title": "Convivencia cultural y vida cotidiana",
-            "caption": "El intercambio también ocurre en conversaciones, rutinas y aprendizajes pequeños que ayudan a comprender mejor el contexto local.",
-            "alt": "Representación visual de convivencia intercultural en un entorno cotidiano",
-            "accent": "amber"
-          },
-          "learning": {
-            "title": "Aprendizaje con acompañamiento continuo",
-            "caption": "Cada programa busca sostener una experiencia formativa con preparación previa, orientación durante la estancia y seguimiento posterior.",
-            "alt": "Representación visual de una experiencia de aprendizaje con acompañamiento",
-            "accent": "sky"
-          }
-        }
-      },
-      "principles": {
-        "eyebrow": "Principios de esta página",
-        "title": "Lo que cuidamos al mostrar impacto",
-        "items": {
-          "static": "El contenido permanece estático e informativo en esta etapa, sin formularios, captación extra ni comportamiento analítico nuevo.",
-          "credible": "Se priorizan testimonios y escenas comprensibles por encima de promesas vacías o métricas poco contextualizadas.",
-          "localized": "La narrativa sigue la estructura localizada actual del sitio para que futuras traducciones puedan ampliarse sin cambiar la arquitectura."
-        }
-      }
     },
     "contact": {
       "eyebrow": "Relación inicial",

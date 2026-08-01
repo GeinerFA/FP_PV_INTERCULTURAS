@@ -9,7 +9,6 @@ export const siteConfig = {
     { href: "/programs", labelKey: "programs" },
     { href: "/faqs", labelKey: "faqs" },
     { href: "/apply", labelKey: "apply" },
-    { href: "/impact", labelKey: "impact" },
     { href: "/privacy", labelKey: "privacy" },
   ],
   adminNavigation: [

@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import { connectToDatabase } from "@/lib/mongoose";
 import { AdminUserModel } from "@/models/admin-user";
 import type { AdminUserBootstrapInput, AdminUserRecord, CreateAdminUserInput, UpdateAdminUserInput } from "@/types/admin-user";
-import { createFullAdminPermissions, normalizeAdminEmail, normalizeAdminPermissions, parseAdminUserRecord } from "@/validators/admin-user";
+import { createFullAdminPermissions, deriveAdminRoleFromPermissions, normalizeAdminEmail, normalizeAdminPermissions, parseAdminUserRecord } from "@/validators/admin-user";
 
 type AdminUserRepository = {
   list(): Promise<AdminUserRecord[]>;
@@ -17,6 +17,24 @@ type AdminUserRepository = {
 
 const googleManagedPasswordHashPlaceholder = "__google_oauth_managed__";
 
+function normalizeLegacyRequiredString(value: unknown): string | null {
+  return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
+}
+
+function normalizeLegacyDate(value: unknown): Date | null {
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    return value;
+  }
+
+  if (typeof value !== "string" || value.trim().length === 0) {
+    return null;
+  }
+
+  const normalizedDate = new Date(value);
+
+  return Number.isNaN(normalizedDate.getTime()) ? null : normalizedDate;
+}
+
 function buildLegacyCompatibilityFields(input: Pick<CreateAdminUserInput | UpdateAdminUserInput, "fullName">) {
   return {
     name: input.fullName.trim(),
@@ -24,14 +42,16 @@ function buildLegacyCompatibilityFields(input: Pick<CreateAdminUserInput | Updat
 }
 
 function toPersistencePayload(input: CreateAdminUserInput | UpdateAdminUserInput) {
+  const permissions = normalizeAdminPermissions(input.permissions);
+
   return {
     email: normalizeAdminEmail(input.email),
     fullName: input.fullName.trim(),
     ...buildLegacyCompatibilityFields(input),
     nationalId: input.nationalId?.trim() || null,
     active: input.active,
-    role: input.role,
-    permissions: normalizeAdminPermissions(input.permissions, input.role),
+    role: deriveAdminRoleFromPermissions(permissions),
+    permissions,
   };
 }
 
@@ -92,7 +112,32 @@ const mongoAdminUserRepository: AdminUserRepository = {
 
     await connectToDatabase();
 
-    const document = await AdminUserModel.findByIdAndUpdate(input.id, { $set: toPersistencePayload(input) }, { returnDocument: "after" })
+    const existingDocument = await AdminUserModel.findById(input.id).select({ passwordHash: 1, createdAt: 1 }).lean().exec();
+
+    if (!existingDocument) {
+      return null;
+    }
+
+    const updatedAt = new Date();
+    const createdAt = normalizeLegacyDate(existingDocument.createdAt);
+    const requiresLegacyCreatedAtBackfill = createdAt === null;
+
+    const document = await AdminUserModel.findByIdAndUpdate(
+      input.id,
+      {
+        $set: {
+          ...toPersistencePayload(input),
+          passwordHash: normalizeLegacyRequiredString(existingDocument.passwordHash) ?? googleManagedPasswordHashPlaceholder,
+          updatedAt,
+          ...(requiresLegacyCreatedAtBackfill ? { createdAt: updatedAt } : {}),
+        },
+      },
+      {
+        overwriteImmutable: requiresLegacyCreatedAtBackfill,
+        returnDocument: "after",
+        timestamps: !requiresLegacyCreatedAtBackfill,
+      },
+    )
       .lean()
       .exec();
 

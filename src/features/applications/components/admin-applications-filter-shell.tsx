@@ -92,7 +92,7 @@ export function AdminApplicationsFilterShell({
   return (
     <div className="px-6 pb-6">
       <details className="group" open={hasActiveFilters || isPending}>
-        <summary className="inline-flex max-w-full cursor-pointer list-none items-center gap-2 rounded-full border border-emerald-900/12 bg-white px-4 py-2.5 text-left shadow-[0_12px_30px_-24px_rgba(15,23,42,0.32)] transition hover:border-emerald-300 hover:bg-emerald-50/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white [&::-webkit-details-marker]:hidden">
+        <summary className="admin-disclosure-pill inline-flex max-w-full cursor-pointer list-none items-center gap-2 rounded-full px-4 py-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white [&::-webkit-details-marker]:hidden">
           <span className="text-sm font-semibold text-slate-950">
             <span className="group-open:hidden">{copy.disclosureClosedLabel}</span>
             <span className="hidden group-open:inline">{copy.disclosureOpenLabel}</span>
@@ -111,7 +111,7 @@ export function AdminApplicationsFilterShell({
 
         <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-300 ease-out group-open:grid-rows-[1fr] group-open:opacity-100 motion-reduce:transition-none">
           <div className="overflow-hidden">
-            <div className="mt-4 rounded-[28px] border border-emerald-900/10 bg-white/88 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.24)]">
+            <div className="admin-inner-panel mt-4 rounded-[28px]">
               <div className="border-b border-emerald-900/8 px-5 py-4">
                 <div className="max-w-3xl space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
@@ -249,7 +249,7 @@ export function AdminApplicationsFilterShell({
         />
         <div
           aria-hidden="true"
-          className={`pointer-events-none absolute inset-0 z-10 rounded-[28px] bg-white/45 backdrop-blur-[1px] transition duration-300 motion-reduce:transition-none ${
+          className={`admin-filter-panel-overlay pointer-events-none absolute inset-0 z-10 rounded-[28px] transition duration-300 motion-reduce:transition-none ${
             isPending ? "opacity-100" : "opacity-0"
           }`}
         />

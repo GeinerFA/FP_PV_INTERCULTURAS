@@ -55,14 +55,49 @@ body {
   backdrop-filter: blur(20px);
 }
 
-.admin-sidebar {
-  border-color: rgb(255 255 255 / 0.68);
+.admin-shell-preview {
+  position: relative;
+  overflow: hidden;
+  background: rgb(2 6 23);
+}
+
+.admin-shell-preview-background {
+  position: absolute;
+  inset: 0;
+  background: url('/branding/Volcan-Arenal.png') center / cover no-repeat;
+  transform: scale(1.02);
+  filter: saturate(1.08) contrast(1.04) brightness(0.9);
+}
+
+.admin-shell-preview-overlay {
+  position: absolute;
+  inset: 0;
   background:
-    radial-gradient(circle at top, rgb(236 253 245 / 0.82), transparent 34%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(240 249 244 / 0.94) 56%, rgb(248 244 232 / 0.92));
+    radial-gradient(circle at top, rgb(209 250 229 / 0.24), transparent 32%),
+    radial-gradient(circle at 18% 22%, rgb(16 185 129 / 0.12), transparent 26%),
+    linear-gradient(180deg, rgb(2 6 23 / 0.28), rgb(15 23 42 / 0.66) 30%, rgb(2 6 23 / 0.82));
+}
+
+.admin-workspace-page {
+  border-color: rgb(255 255 255 / 0.18);
+  background:
+    radial-gradient(circle at 12% 0%, rgb(209 250 229 / 0.22), transparent 30%),
+    radial-gradient(circle at top, rgb(255 255 255 / 0.14), transparent 48%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.48), rgb(248 250 252 / 0.34) 42%, rgb(248 244 232 / 0.24));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.92),
-    0 34px 96px -62px rgb(15 23 42 / 0.28);
+    inset 0 1px 0 rgb(255 255 255 / 0.48),
+    0 36px 94px -56px rgb(2 6 23 / 0.56);
+  backdrop-filter: blur(22px);
+}
+
+.admin-sidebar {
+  border-color: rgb(255 255 255 / 0.52);
+  background:
+    radial-gradient(circle at top, rgb(236 253 245 / 0.4), transparent 34%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(240 249 244 / 0.72) 56%, rgb(248 244 232 / 0.66));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.7),
+    0 34px 96px -62px rgb(15 23 42 / 0.38);
 }
 
 .admin-sidebar-scroll {
@@ -93,43 +128,45 @@ body {
 }
 
 .admin-sidebar-home-link {
-  border: 1px solid rgb(15 118 110 / 0.1);
-  background: rgb(255 255 255 / 0.84);
+  border: 1px solid rgb(15 118 110 / 0.12);
+  background: rgb(255 255 255 / 0.56);
   color: rgb(51 65 85);
-  box-shadow: 0 14px 32px -24px rgb(15 23 42 / 0.22);
+  box-shadow: 0 14px 32px -24px rgb(15 23 42 / 0.24);
+  backdrop-filter: blur(14px);
 }
 
 .admin-sidebar-home-link:hover {
   border-color: rgb(5 150 105 / 0.24);
-  background: rgb(236 253 245 / 0.94);
+  background: rgb(236 253 245 / 0.76);
   color: rgb(6 95 70);
 }
 
 .admin-sidebar-session-pill {
   border: 1px solid rgb(16 185 129 / 0.14);
-  background: rgb(236 253 245 / 0.82);
+  background: rgb(236 253 245 / 0.62);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.6);
 }
 
 .admin-sidebar-brand-panel {
-  border: 1px solid rgb(16 185 129 / 0.12);
+  border: 1px solid rgb(16 185 129 / 0.1);
   background:
-    linear-gradient(145deg, rgb(255 255 255 / 0.98), rgb(236 253 245 / 0.9) 58%, rgb(248 244 232 / 0.88));
+    linear-gradient(145deg, rgb(255 255 255 / 0.78), rgb(236 253 245 / 0.68) 58%, rgb(248 244 232 / 0.62));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.94),
-    0 24px 60px -46px rgb(5 150 105 / 0.3);
+    inset 0 1px 0 rgb(255 255 255 / 0.74),
+    0 24px 60px -46px rgb(5 150 105 / 0.24);
+  backdrop-filter: blur(16px);
 }
 
 .admin-sidebar-logo-wrap {
   border: 1px solid rgb(16 185 129 / 0.16);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.96), rgb(220 252 231 / 0.9));
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(220 252 231 / 0.68));
   box-shadow: 0 18px 36px -28px rgb(5 150 105 / 0.26);
 }
 
 .admin-sidebar-session-card,
 .admin-sidebar-footer-panel {
   border: 1px solid rgb(16 185 129 / 0.1);
-  background: rgb(255 255 255 / 0.72);
+  background: rgb(255 255 255 / 0.52);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.84);
   backdrop-filter: blur(18px);
 }
@@ -139,17 +176,20 @@ body {
   align-items: center;
   gap: 0.9rem;
   min-height: 4rem;
-  border: 1px solid transparent;
+  border: 1px solid rgb(255 255 255 / 0.08);
   border-radius: 1.35rem;
   padding: 0.95rem 1rem;
   color: rgb(51 65 85);
-  background: rgb(255 255 255 / 0.36);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.42);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0.18));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.34),
+    0 14px 30px -28px rgb(15 23 42 / 0.28);
+  backdrop-filter: blur(14px);
 }
 
 .admin-sidebar-nav-link:hover {
   border-color: rgb(16 185 129 / 0.14);
-  background: rgb(255 255 255 / 0.74);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.5), rgb(236 253 245 / 0.36));
   color: rgb(15 23 42);
 }
 
@@ -169,11 +209,11 @@ body {
   width: 2.6rem;
   height: 2.6rem;
   border-radius: 1rem;
-  background: rgb(16 185 129 / 0.08);
+  background: rgb(16 185 129 / 0.12);
 }
 
 .admin-sidebar-nav-link:hover .admin-sidebar-nav-icon {
-  background: rgb(16 185 129 / 0.12);
+  background: rgb(16 185 129 / 0.18);
 }
 
 .admin-sidebar-nav-icon-active {
@@ -181,13 +221,20 @@ body {
 }
 
 .surface-dark-panel {
-  border: 1px solid rgb(217 232 222 / 0.92);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(248 244 232 / 0.72));
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.46), rgb(248 244 232 / 0.24));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.46),
+    0 20px 48px -36px rgb(15 23 42 / 0.32);
+  backdrop-filter: blur(20px);
 }
 
 .surface-dark-panel-muted {
-  border: 1px solid rgb(217 232 222 / 0.72);
-  background: rgb(255 255 255 / 0.56);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.32), rgb(248 250 252 / 0.18));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.38);
+  backdrop-filter: blur(18px);
 }
 
 .admin-inner-workspace {
@@ -197,14 +244,18 @@ body {
 }
 
 .admin-inner-section {
-  border: 1px solid rgb(217 232 222 / 0.95);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(248 244 232 / 0.84));
-  box-shadow: 0 28px 70px -54px rgb(15 23 42 / 0.18);
-  backdrop-filter: blur(18px);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background:
+    radial-gradient(circle at top, rgb(209 250 229 / 0.12), transparent 38%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.46), rgb(248 244 232 / 0.24));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.46),
+    0 28px 78px -54px rgb(2 6 23 / 0.42);
+  backdrop-filter: blur(22px);
 }
 
 .admin-inner-section-subtle {
-  background: linear-gradient(180deg, rgb(246 251 247 / 0.94), rgb(255 255 255 / 0.82));
+  background: linear-gradient(180deg, rgb(246 251 247 / 0.38), rgb(255 255 255 / 0.2));
 }
 
 .admin-inner-section-warning {
@@ -214,100 +265,134 @@ body {
 }
 
 .admin-inner-panel {
-  border: 1px solid rgb(217 232 222 / 0.95);
-  background: rgb(255 255 255 / 0.78);
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.3), rgb(248 250 252 / 0.16));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.44),
+    0 18px 42px -32px rgb(2 6 23 / 0.2);
+  backdrop-filter: blur(18px);
 }
 
 .admin-inner-panel-subtle {
-  border: 1px solid rgb(217 232 222 / 0.78);
-  background: rgb(246 251 247 / 0.74);
+  border: 1px solid rgb(255 255 255 / 0.14);
+  background: linear-gradient(180deg, rgb(246 251 247 / 0.2), rgb(255 255 255 / 0.12));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.36);
+  backdrop-filter: blur(16px);
 }
 
 .admin-inner-table-shell {
-  border: 1px solid rgb(217 232 222 / 0.95);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.92), rgb(248 244 232 / 0.72));
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.72);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.42), rgb(248 244 232 / 0.18));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.46),
+    0 24px 58px -46px rgb(2 6 23 / 0.3);
+  backdrop-filter: blur(18px);
 }
 
 .admin-inner-input {
-  border: 1px solid rgb(203 213 225 / 0.85);
-  background: rgb(255 255 255 / 0.94);
+  border: 1px solid rgb(255 255 255 / 0.24);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(248 250 252 / 0.66));
   color: rgb(15 23 42);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.56),
+    0 10px 26px -24px rgb(15 23 42 / 0.34);
+  backdrop-filter: blur(14px);
 }
 
 .admin-inner-input::placeholder {
-  color: rgb(100 116 139 / 0.95);
+  color: rgb(100 116 139 / 0.9);
 }
 
 .admin-inner-input:focus {
-  border-color: rgb(47 133 90 / 0.68);
-  box-shadow: 0 0 0 3px rgb(47 133 90 / 0.14);
+  border-color: rgb(52 211 153 / 0.46);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.62),
+    0 0 0 3px rgb(52 211 153 / 0.14),
+    0 16px 40px -30px rgb(15 23 42 / 0.4);
 }
 
 .admin-primary-action {
-  border: 1px solid rgb(47 133 90 / 0.18);
-  background: rgb(47 133 90);
+  border: 1px solid rgb(16 185 129 / 0.18);
+  background: linear-gradient(135deg, rgb(6 95 70), rgb(16 185 129));
   color: rgb(248 250 252);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    0 18px 36px -24px rgb(4 120 87 / 0.42);
+  backdrop-filter: blur(12px);
 }
 
 .admin-primary-action:hover {
-  background: rgb(39 112 76);
+  background: linear-gradient(135deg, rgb(4 120 87), rgb(16 185 129));
 }
 
 .admin-secondary-action {
-  border: 1px solid rgb(47 133 90 / 0.22);
-  background: rgb(255 255 255 / 0.72);
+  border: 1px solid rgb(255 255 255 / 0.24);
+  background: linear-gradient(180deg, rgb(236 253 245 / 0.54), rgb(255 255 255 / 0.32));
   color: rgb(22 101 52);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.54),
+    0 16px 34px -28px rgb(15 23 42 / 0.24);
+  backdrop-filter: blur(16px);
 }
 
 .admin-secondary-action:hover {
-  border-color: rgb(47 133 90 / 0.38);
-  background: rgb(236 253 245 / 0.9);
+  border-color: rgb(16 185 129 / 0.26);
+  background: linear-gradient(180deg, rgb(236 253 245 / 0.7), rgb(220 252 231 / 0.42));
 }
 
 .admin-outline-action {
-  border: 1px solid rgb(203 213 225 / 0.95);
-  background: rgb(255 255 255 / 0.78);
+  border: 1px solid rgb(255 255 255 / 0.24);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.52), rgb(248 250 252 / 0.3));
   color: rgb(30 41 59);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.54),
+    0 16px 34px -28px rgb(15 23 42 / 0.22);
+  backdrop-filter: blur(16px);
 }
 
 .admin-outline-action:hover {
-  border-color: rgb(148 163 184 / 0.95);
-  background: rgb(248 250 252 / 0.92);
+  border-color: rgb(148 163 184 / 0.34);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.68), rgb(248 250 252 / 0.4));
 }
 
 .admin-info-action {
-  border: 1px solid rgb(14 165 233 / 0.22);
-  background: rgb(240 249 255 / 0.9);
+  border: 1px solid rgb(14 165 233 / 0.2);
+  background: linear-gradient(180deg, rgb(240 249 255 / 0.68), rgb(224 242 254 / 0.44));
   color: rgb(3 105 161);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+  backdrop-filter: blur(14px);
 }
 
 .admin-info-action:hover {
-  background: rgb(224 242 254 / 0.96);
+  background: linear-gradient(180deg, rgb(224 242 254 / 0.8), rgb(191 219 254 / 0.52));
 }
 
 .admin-warning-action {
-  border: 1px solid rgb(251 191 36 / 0.34);
-  background: rgb(255 251 235 / 0.96);
+  border: 1px solid rgb(251 191 36 / 0.28);
+  background: linear-gradient(180deg, rgb(255 251 235 / 0.74), rgb(254 243 199 / 0.46));
   color: rgb(180 83 9);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+  backdrop-filter: blur(14px);
 }
 
 .admin-warning-action:hover {
-  background: rgb(254 243 199 / 0.98);
+  background: linear-gradient(180deg, rgb(254 243 199 / 0.86), rgb(253 230 138 / 0.56));
 }
 
 .admin-danger-action {
-  border: 1px solid rgb(244 63 94 / 0.22);
-  background: rgb(255 241 242 / 0.92);
+  border: 1px solid rgb(244 63 94 / 0.2);
+  background: linear-gradient(180deg, rgb(255 241 242 / 0.7), rgb(255 228 230 / 0.44));
   color: rgb(190 24 93);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+  backdrop-filter: blur(14px);
 }
 
 .admin-danger-action:hover {
-  background: rgb(255 228 230 / 0.98);
+  background: linear-gradient(180deg, rgb(255 228 230 / 0.82), rgb(254 205 211 / 0.56));
 }
 
 .admin-table-head {
-  background: rgb(246 248 245 / 0.96);
+  background: linear-gradient(180deg, rgb(246 251 247 / 0.74), rgb(248 250 252 / 0.5));
   color: rgb(71 85 105);
 }
 
@@ -324,10 +409,33 @@ body {
 }
 
 .admin-action-rail-panel {
-  border: 1px solid rgb(217 232 222 / 0.95);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.94), rgb(248 244 232 / 0.84));
-  box-shadow: 0 28px 70px -54px rgb(15 23 42 / 0.18);
-  backdrop-filter: blur(18px);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background:
+    radial-gradient(circle at top, rgb(209 250 229 / 0.16), transparent 42%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.44), rgb(248 244 232 / 0.2));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.44),
+    0 28px 76px -54px rgb(2 6 23 / 0.42);
+  backdrop-filter: blur(22px);
+}
+
+.admin-disclosure-pill {
+  border: 1px solid rgb(255 255 255 / 0.24);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.56), rgb(248 250 252 / 0.34));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.56),
+    0 16px 34px -28px rgb(15 23 42 / 0.22);
+  backdrop-filter: blur(16px);
+}
+
+.admin-disclosure-pill:hover {
+  border-color: rgb(16 185 129 / 0.24);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.68), rgb(236 253 245 / 0.4));
+}
+
+.admin-filter-panel-overlay {
+  background: rgb(255 255 255 / 0.24);
+  backdrop-filter: blur(6px);
 }
 
 .admin-action-rail-panel-compact {
@@ -335,10 +443,137 @@ body {
 }
 
 .admin-program-action-rail-panel {
-  border-color: rgb(255 255 255 / 0.56);
-  background: rgb(255 255 255 / 0.42);
-  box-shadow: 0 24px 58px -52px rgb(15 23 42 / 0.14);
+  border-color: rgb(255 255 255 / 0.22);
+  background: linear-gradient(180deg, rgb(15 23 42 / 0.72), rgb(15 23 42 / 0.58));
+  box-shadow: 0 28px 80px -56px rgb(2 6 23 / 0.72);
+  backdrop-filter: blur(20px);
+}
+
+.admin-program-preview-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 2.5rem;
+  background: rgb(2 6 23);
+  box-shadow: 0 42px 120px -60px rgb(15 23 42 / 0.65);
+}
+
+.admin-program-preview-page {
+  border-color: rgb(255 255 255 / 0.16);
+  background:
+    radial-gradient(circle at top, rgb(16 185 129 / 0.18), transparent 34%),
+    linear-gradient(180deg, rgb(2 6 23 / 0.36), rgb(2 6 23 / 0.82) 28%, rgb(2 6 23 / 0.94)),
+    url('/branding/Volcan-Arenal.png') center / cover no-repeat;
+  box-shadow: 0 42px 120px -60px rgb(15 23 42 / 0.65);
+}
+
+.admin-program-preview-page > div:first-of-type {
+  background: radial-gradient(circle at top, rgb(209 250 229 / 0.18), transparent 62%);
+}
+
+.admin-program-preview-page h1 {
+  color: rgb(248 250 252);
+}
+
+.admin-program-preview-page h1 + p {
+  color: rgb(226 232 240);
+}
+
+.admin-program-preview-page .admin-inner-workspace {
+  position: relative;
+}
+
+.admin-program-preview-background {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transform: scale(1.03);
+}
+
+.admin-program-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top, rgb(16 185 129 / 0.16), transparent 34%),
+    linear-gradient(180deg, rgb(2 6 23 / 0.36), rgb(2 6 23 / 0.82) 28%, rgb(2 6 23 / 0.94));
+}
+
+.admin-program-preview-content {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 88rem);
+  margin-inline: auto;
+  padding: 1.25rem;
+}
+
+.admin-program-preview-banner {
+  backdrop-filter: blur(16px);
+}
+
+.admin-program-preview-hero {
+  padding: 1rem 0 0.25rem;
+}
+
+.admin-program-preview-hero-note,
+.admin-program-preview-legend {
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: linear-gradient(180deg, rgb(15 23 42 / 0.66), rgb(15 23 42 / 0.52));
   backdrop-filter: blur(18px);
+}
+
+.admin-program-preview-section {
+  border-color: rgb(255 255 255 / 0.14);
+  background: linear-gradient(180deg, rgb(15 23 42 / 0.76), rgb(15 23 42 / 0.62));
+  box-shadow: 0 28px 90px -60px rgb(2 6 23 / 0.72);
+  backdrop-filter: blur(20px);
+}
+
+.admin-program-preview-section > div:first-child {
+  border-color: rgb(255 255 255 / 0.08);
+}
+
+.admin-program-preview-section h2 {
+  color: rgb(248 250 252);
+}
+
+.admin-program-preview-section p {
+  color: inherit;
+}
+
+.admin-program-preview-section > div:first-child p,
+.admin-program-preview-section > div:first-child h2 + p {
+  color: rgb(203 213 225);
+}
+
+.admin-program-preview-section .admin-inner-panel {
+  border-color: rgb(255 255 255 / 0.08);
+  background: rgb(255 255 255 / 0.88);
+}
+
+.admin-program-preview-section .admin-inner-panel-subtle {
+  border-color: rgb(255 255 255 / 0.08);
+  background: rgb(248 250 252 / 0.82);
+}
+
+.admin-program-preview-section .admin-inner-input {
+  border-color: rgb(148 163 184 / 0.42);
+  background: rgb(255 255 255 / 0.96);
+}
+
+.admin-program-preview-section .admin-inner-input:focus {
+  border-color: rgb(52 211 153 / 0.78);
+  box-shadow: 0 0 0 3px rgb(16 185 129 / 0.18);
+}
+
+.admin-program-preview-section .admin-primary-action,
+.admin-program-preview-section .admin-secondary-action,
+.admin-program-preview-section .admin-outline-action,
+.admin-program-preview-section .admin-info-action,
+.admin-program-preview-section .admin-warning-action,
+.admin-program-preview-section .admin-danger-action {
+  backdrop-filter: blur(8px);
 }
 
 .admin-destructive-confirmation {
@@ -394,6 +629,10 @@ body {
 }
 
 @media screen and (min-width: 1024px) {
+  .admin-program-preview-content {
+    padding: 1.75rem;
+  }
+
   .admin-program-editor-shell {
     --admin-program-rail-width: 12rem;
     --admin-program-rail-gap: 5rem;
@@ -436,6 +675,16 @@ body {
   .admin-program-action-rail-sticky {
     right: 1rem;
     bottom: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .admin-program-preview-shell {
+    border-radius: 2rem;
+  }
+
+  .admin-program-preview-content {
+    padding: 1rem;
   }
 }
 

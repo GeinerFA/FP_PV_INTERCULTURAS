@@ -1,5 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-
 import type { ComponentProps } from "react";
 
 import { getLocale, getTranslations } from "next-intl/server";
@@ -15,6 +13,8 @@ import {
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
+import { ProgramCoverImageFileInputPreview } from "@/features/programs/components/program-cover-image-file-input-preview";
+import { ProgramCoverImageLightbox } from "@/features/programs/components/program-cover-image-lightbox";
 import { Link } from "@/i18n/navigation";
 import { listAdminProgramCategories } from "@/services/categories/category-service";
 import type { Program, ProgramSnapshot } from "@/types/program";
@@ -252,78 +252,108 @@ export async function AdminProgramFormShell({
     feedback === "destructive-confirmation-required"
       ? "admin-warning-banner"
       : "admin-success-banner";
+  const fieldLabelClassName = "flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500";
+  const fieldInputClassName = "admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition";
+  const textareaClassName = "admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition";
+  const contentCardClassName = "admin-inner-panel rounded-[28px] p-6 md:p-7";
+  const previewSectionClassName = "admin-program-preview-section";
+  const previewSectionContentClassName = "space-y-6 md:space-y-7";
 
   return (
-    <div className="space-y-10 lg:space-y-12">
-      {feedback ? (
-        <div
-          className={`rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)] ${feedbackTone}`}
-        >
-          {t(`feedback.${feedback}`)}
-        </div>
-      ) : null}
+    <div className="admin-program-preview-shell">
+      <div
+        aria-hidden="true"
+        className="admin-program-preview-background"
+        style={{ backgroundImage: "url('/branding/Volcan-Arenal.png')" }}
+      />
+      <div aria-hidden="true" className="admin-program-preview-overlay" />
 
-      <div className="rounded-[32px] border border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,244,232,0.84))] p-7 text-sm leading-7 text-slate-700 shadow-[0_24px_60px_-48px_rgba(15,23,42,0.16)] backdrop-blur md:p-8">
-        <p className="font-semibold uppercase tracking-[0.18em] text-emerald-800/90">
-          {isEdit ? t("mode.edit") : t("mode.create")}
-        </p>
-        <h2 className="mt-4 text-2xl font-semibold text-slate-950">{t("notice.title")}</h2>
-        <p className="mt-4 max-w-3xl">{isEdit ? t("intro.edit") : t("intro.create")}</p>
-        <p className="mt-5 rounded-2xl border border-emerald-900/8 bg-white/66 px-5 py-4 text-sm text-slate-700">
-          {t("notice.body")}
-        </p>
-        <div className="mt-5 flex flex-col gap-3 rounded-2xl border border-emerald-900/8 bg-emerald-50/55 px-5 py-4 text-sm text-slate-700">
-          <div className="flex flex-wrap items-center gap-3">
-            <RequiredFieldBadge label={requiredBadgeLabel} />
-            <p className="text-sm font-medium text-slate-900">{t("required.legend")}</p>
+      <div className="admin-program-preview-content space-y-8 lg:space-y-10">
+        {feedback ? (
+          <div
+            className={`admin-program-preview-banner rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)] ${feedbackTone}`}
+          >
+            {t(`feedback.${feedback}`)}
           </div>
-          <p className="max-w-3xl text-xs leading-6 text-slate-500">{t("required.help")}</p>
-        </div>
-      </div>
+        ) : null}
 
-      {publishedProgramInEdit ? (
-        <AdminWorkspaceSection
-          title={t("publishedEditWarning.title")}
-          description={t("publishedEditWarning.description")}
-          tone="warning"
-        >
-          <div className="space-y-4 text-sm leading-7 text-amber-900">
-            <p>{t("publishedEditWarning.saveBoundary")}</p>
-            <p className="rounded-2xl border border-amber-300/50 bg-amber-50 px-5 py-4 font-medium text-amber-800">
-              {t("publishedEditWarning.liveBoundary")}
+        <div className="admin-program-preview-hero grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.8fr)] xl:items-end">
+          <div className="space-y-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-200/90">
+              {isEdit ? t("mode.edit") : t("mode.create")}
+            </p>
+            <div className="space-y-4">
+              <h2 className="max-w-3xl text-3xl font-semibold tracking-tight text-white md:text-4xl">
+                {t("notice.title")}
+              </h2>
+              <p className="max-w-3xl text-sm leading-7 text-slate-200 md:text-base">
+                {isEdit ? t("intro.edit") : t("intro.create")}
+              </p>
+            </div>
+            <p className="admin-program-preview-hero-note max-w-3xl rounded-[24px] px-5 py-4 text-sm leading-7 text-slate-100">
+              {t("notice.body")}
             </p>
           </div>
-        </AdminWorkspaceSection>
-      ) : null}
 
-      <AdminWorkspaceSection title={t("sections.workflow")} description={t("workflow.description")}>
-        <div className="space-y-4 text-sm text-slate-700">
-          <div className="grid gap-3 md:grid-cols-2">
-            <div className="admin-inner-panel-subtle rounded-2xl px-5 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("rail.statusLabel")}</p>
-              <p className="mt-2 text-sm font-semibold text-slate-950">{t(`statuses.${program?.status ?? "draft"}`)}</p>
+          <div className="admin-program-preview-legend space-y-3 rounded-[28px] px-5 py-5 text-sm text-slate-100">
+            <div className="flex flex-wrap items-center gap-3">
+              <RequiredFieldBadge label={requiredBadgeLabel} />
+              <p className="text-sm font-medium text-white">{t("required.legend")}</p>
+            </div>
+            <p className="text-xs leading-6 text-slate-300">{t("required.help")}</p>
+          </div>
+        </div>
+
+        {publishedProgramInEdit ? (
+          <AdminWorkspaceSection
+            title={t("publishedEditWarning.title")}
+            description={t("publishedEditWarning.description")}
+            tone="warning"
+            className={previewSectionClassName}
+            contentClassName={previewSectionContentClassName}
+          >
+            <div className="space-y-4 text-sm leading-7 text-amber-900">
+              <p>{t("publishedEditWarning.saveBoundary")}</p>
+              <p className="rounded-2xl border border-amber-300/50 bg-amber-50 px-5 py-4 font-medium text-amber-800">
+                {t("publishedEditWarning.liveBoundary")}
+              </p>
+            </div>
+          </AdminWorkspaceSection>
+        ) : null}
+
+        <AdminWorkspaceSection
+          title={t("sections.workflow")}
+          description={t("workflow.description")}
+          className={previewSectionClassName}
+          contentClassName={previewSectionContentClassName}
+        >
+          <div className="space-y-4 text-sm text-slate-700">
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="admin-inner-panel-subtle rounded-2xl px-5 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("rail.statusLabel")}</p>
+                <p className="mt-2 text-sm font-semibold text-slate-950">{t(`statuses.${program?.status ?? "draft"}`)}</p>
+              </div>
+
+              {isEdit ? (
+                <div className="admin-inner-panel-subtle rounded-2xl px-5 py-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    {t("rail.pendingDraftLabel")}
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-slate-950">{pendingDraft ? t("yes") : t("no")}</p>
+                </div>
+              ) : null}
             </div>
 
-            {isEdit ? (
-              <div className="admin-inner-panel-subtle rounded-2xl px-5 py-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                  {t("rail.pendingDraftLabel")}
-                </p>
-                <p className="mt-2 text-sm font-semibold text-slate-950">{pendingDraft ? t("yes") : t("no")}</p>
-              </div>
-            ) : null}
+            <p className="admin-inner-panel-subtle rounded-2xl px-5 py-4 text-sm leading-7 text-slate-600">{t("rail.noteBody")}</p>
           </div>
-
-          <p className="admin-inner-panel-subtle rounded-2xl px-5 py-4 text-sm leading-7 text-slate-600">{t("rail.noteBody")}</p>
-        </div>
-      </AdminWorkspaceSection>
+        </AdminWorkspaceSection>
 
       <div className="admin-program-editor-shell">
         <aside className="admin-program-action-rail">
           <div className="admin-program-action-rail-sticky">
             <section className="admin-program-action-rail-panel admin-action-rail-panel admin-action-rail-panel-compact rounded-[28px] p-4 md:p-5">
               <div className="space-y-3.5">
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800/85">{t("rail.eyebrow")}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100/85">{t("rail.eyebrow")}</p>
                 <ProgramEditorActions
                   t={t}
                   formId={formId}
@@ -345,184 +375,201 @@ export async function AdminProgramFormShell({
 
           <div className="admin-program-editor-layout">
             <div className="space-y-8 lg:space-y-10">
-            <AdminWorkspaceSection
-              title={t("sections.localizedPresentation")}
-              description={t("descriptions.localizedPresentation")}
-            >
-              <div className="space-y-6">
-                {locales.map((locale) => (
-                  <div key={locale} className="admin-inner-panel rounded-[28px] p-6 md:p-7">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800/80">
-                      {t("translationLocale", { locale: locale.toUpperCase() })}
-                    </p>
-                    <div className="mt-5 space-y-5 text-sm text-slate-700">
-                      <label className="block space-y-2.5">
+              <AdminWorkspaceSection
+                title={t("sections.localizedPresentation")}
+                description={t("descriptions.localizedPresentation")}
+                className={previewSectionClassName}
+                contentClassName={previewSectionContentClassName}
+              >
+                <div className="space-y-6">
+                  {locales.map((locale) => (
+                    <div key={locale} className={contentCardClassName}>
+                      <div className="border-b border-emerald-900/8 pb-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800/80">
+                          {t("translationLocale", { locale: locale.toUpperCase() })}
+                        </p>
+                      </div>
+                      <div className="mt-5 space-y-5 text-sm text-slate-700">
+                        <label className="block space-y-2.5">
+                          <LabelWithMarker
+                            label={t("fields.title")}
+                            markerLabel={requiredBadgeLabel}
+                            required={isProgramPublishRequiredField("translations.title")}
+                            className="flex flex-wrap items-center gap-2 font-semibold text-slate-950"
+                          />
+                          <input
+                            name={`translations.${locale}.title`}
+                            defaultValue={program?.translations[locale].title ?? ""}
+                            placeholder={getFieldValue(program, t("placeholders.programTitle"))}
+                            className={fieldInputClassName}
+                          />
+                        </label>
+                        <label className="block space-y-2.5">
+                          <LabelWithMarker
+                            label={t("fields.shortDescription")}
+                            markerLabel={requiredBadgeLabel}
+                            required={isProgramPublishRequiredField("translations.shortDescription")}
+                            className="flex flex-wrap items-center gap-2 font-semibold text-slate-950"
+                          />
+                          <textarea
+                            name={`translations.${locale}.shortDescription`}
+                            defaultValue={program?.translations[locale].shortDescription ?? ""}
+                            placeholder={getFieldValue(program, t("placeholders.shortDescription"))}
+                            rows={3}
+                            className={textareaClassName}
+                          />
+                        </label>
+                        <label className="block space-y-2.5">
+                          <LabelWithMarker
+                            label={t("fields.fullDescription")}
+                            markerLabel={requiredBadgeLabel}
+                            required={isProgramPublishRequiredField("translations.fullDescription")}
+                            className="flex flex-wrap items-center gap-2 font-semibold text-slate-950"
+                          />
+                          <textarea
+                            name={`translations.${locale}.fullDescription`}
+                            defaultValue={program?.translations[locale].fullDescription ?? ""}
+                            placeholder={getFieldValue(program, t("placeholders.fullDescription"))}
+                            rows={7}
+                            className={textareaClassName}
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </AdminWorkspaceSection>
+
+              <AdminWorkspaceSection
+                title={t("sections.operationalDetails")}
+                description={t("descriptions.operationalDetails")}
+                className={previewSectionClassName}
+                contentClassName={previewSectionContentClassName}
+              >
+                <div className="space-y-5">
+                  {!hasManagedCategories ? (
+                    <div className="rounded-[24px] border border-amber-300/50 bg-amber-50 px-5 py-4 text-sm leading-7 text-amber-900">
+                      {t("categoryEmptyState")}
+                    </div>
+                  ) : null}
+
+                  <div className="grid gap-5 lg:grid-cols-2">
+                    {[
+                      {
+                        key: "location",
+                        label: t("fields.location"),
+                        value: program ? program.location[activeLocale] : "",
+                        placeholder: t("placeholders.localizedLocation"),
+                      },
+                      {
+                        key: "duration",
+                        label: t("fields.duration"),
+                        value: program ? program.duration[activeLocale] : "",
+                        placeholder: t("placeholders.localizedDuration"),
+                      },
+                      {
+                        key: "availability",
+                        label: t("fields.availability"),
+                        value: program ? program.availability[activeLocale] : "",
+                        placeholder: t("placeholders.localizedAvailability"),
+                      },
+                    ].map((field) => (
+                      <label key={field.key} className="admin-inner-panel flex flex-col gap-3 rounded-[24px] p-5 text-sm text-slate-700">
                         <LabelWithMarker
-                          label={t("fields.title")}
+                          label={field.label}
                           markerLabel={requiredBadgeLabel}
-                          required={isProgramPublishRequiredField("translations.title")}
-                          className="flex flex-wrap items-center gap-2 font-semibold text-slate-950"
+                          required={isProgramPublishRequiredField(field.key as "location" | "duration" | "availability")}
+                          className={fieldLabelClassName}
                         />
                         <input
-                          name={`translations.${locale}.title`}
-                          defaultValue={program?.translations[locale].title ?? ""}
-                          placeholder={getFieldValue(program, t("placeholders.programTitle"))}
-                          className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                          name={`${field.key}.${activeLocale}`}
+                          defaultValue={field.value}
+                          placeholder={field.placeholder}
+                          className={fieldInputClassName}
                         />
                       </label>
-                      <label className="block space-y-2.5">
-                        <LabelWithMarker
-                          label={t("fields.shortDescription")}
-                          markerLabel={requiredBadgeLabel}
-                          required={isProgramPublishRequiredField("translations.shortDescription")}
-                          className="flex flex-wrap items-center gap-2 font-semibold text-slate-950"
-                        />
-                        <textarea
-                          name={`translations.${locale}.shortDescription`}
-                          defaultValue={program?.translations[locale].shortDescription ?? ""}
-                          placeholder={getFieldValue(program, t("placeholders.shortDescription"))}
-                          rows={3}
-                          className="admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                        />
-                      </label>
-                      <label className="block space-y-2.5">
-                        <LabelWithMarker
-                          label={t("fields.fullDescription")}
-                          markerLabel={requiredBadgeLabel}
-                          required={isProgramPublishRequiredField("translations.fullDescription")}
-                          className="flex flex-wrap items-center gap-2 font-semibold text-slate-950"
-                        />
-                        <textarea
-                          name={`translations.${locale}.fullDescription`}
-                          defaultValue={program?.translations[locale].fullDescription ?? ""}
-                          placeholder={getFieldValue(program, t("placeholders.fullDescription"))}
-                          rows={7}
-                          className="admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                        />
-                      </label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </AdminWorkspaceSection>
-
-            <AdminWorkspaceSection
-              title={t("sections.operationalDetails")}
-              description={t("descriptions.operationalDetails")}
-            >
-              <div className="space-y-5">
-                {!hasManagedCategories ? (
-                  <div className="rounded-[24px] border border-amber-300/50 bg-amber-50 px-5 py-4 text-sm leading-7 text-amber-900">
-                    {t("categoryEmptyState")}
-                  </div>
-                ) : null}
-
-                {[
-                  {
-                    key: "location",
-                    label: t("fields.location"),
-                    value: program ? program.location[activeLocale] : "",
-                    placeholder: t("placeholders.localizedLocation"),
-                  },
-                  {
-                    key: "duration",
-                    label: t("fields.duration"),
-                    value: program ? program.duration[activeLocale] : "",
-                    placeholder: t("placeholders.localizedDuration"),
-                  },
-                  {
-                    key: "availability",
-                    label: t("fields.availability"),
-                    value: program ? program.availability[activeLocale] : "",
-                    placeholder: t("placeholders.localizedAvailability"),
-                  },
-                ].map((field) => (
-                  <label key={field.key} className="admin-inner-panel flex flex-col gap-3 rounded-[24px] p-5 text-sm text-slate-700">
-                    <LabelWithMarker
-                      label={field.label}
-                      markerLabel={requiredBadgeLabel}
-                      required={isProgramPublishRequiredField(field.key as "location" | "duration" | "availability")}
-                      className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
-                    />
-                    <input
-                      name={`${field.key}.${activeLocale}`}
-                      defaultValue={field.value}
-                      placeholder={field.placeholder}
-                      className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                    />
-                  </label>
-                ))}
-
-                <label className="admin-inner-panel flex flex-col gap-3 rounded-[24px] p-5 text-sm text-slate-700">
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    {t("fields.category")}
-                  </span>
-                  <select
-                    name="category"
-                    defaultValue={defaultCategoryCode}
-                    disabled={!hasManagedCategories}
-                    className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                  >
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.code}>
-                        {category.name}
-                      </option>
                     ))}
-                  </select>
-                </label>
 
-                <label className="admin-inner-panel flex items-center gap-4 rounded-[24px] p-5 text-sm text-slate-700">
-                  <input
-                    type="checkbox"
-                    name="featured"
-                    defaultChecked={program?.featured ?? false}
-                    className="h-4 w-4 rounded border-slate-300 bg-white text-emerald-700"
+                    <label className="admin-inner-panel flex flex-col gap-3 rounded-[24px] p-5 text-sm text-slate-700">
+                      <span className={fieldLabelClassName}>{t("fields.category")}</span>
+                      <select
+                        name="category"
+                        defaultValue={defaultCategoryCode}
+                        disabled={!hasManagedCategories}
+                        className={fieldInputClassName}
+                      >
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.code}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+
+                  <label className="admin-inner-panel flex items-start gap-4 rounded-[24px] p-5 text-sm text-slate-700">
+                    <input
+                      type="checkbox"
+                      name="featured"
+                      defaultChecked={program?.featured ?? false}
+                      className="mt-1 h-4 w-4 rounded border-slate-300 bg-white text-emerald-700"
+                    />
+                    <div className="space-y-1">
+                      <p className="font-semibold text-slate-950">{t("fields.featured")}</p>
+                      <p className="text-sm leading-7 text-slate-600">{t("fields.featuredToggle")}</p>
+                    </div>
+                  </label>
+                </div>
+              </AdminWorkspaceSection>
+
+              <AdminWorkspaceSection
+                title={coverImageSectionTitle}
+                description={coverImageSectionDescription}
+                className={previewSectionClassName}
+                contentClassName={previewSectionContentClassName}
+              >
+                <div className="admin-inner-panel space-y-5 rounded-[28px] p-6 text-sm text-slate-700 md:p-7">
+                  <LabelWithMarker
+                    label={t("fields.coverImage")}
+                    markerLabel={requiredBadgeLabel}
+                    required={isProgramPublishRequiredField("coverImage")}
+                    className={fieldLabelClassName}
                   />
-                  <span>{t("fields.featuredToggle")}</span>
-                </label>
-              </div>
-            </AdminWorkspaceSection>
-
-            <AdminWorkspaceSection title={coverImageSectionTitle} description={coverImageSectionDescription}>
-              <div className="admin-inner-panel space-y-4 rounded-[28px] p-6 text-sm text-slate-700 md:p-7">
-                <LabelWithMarker
-                  label={t("fields.coverImage")}
-                  markerLabel={requiredBadgeLabel}
-                  required={isProgramPublishRequiredField("coverImage")}
-                  className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
-                />
-                <label className="block">
-                  <span className="sr-only">{t("fields.coverImage")}</span>
-                  <input
-                    type="file"
+                  <ProgramCoverImageFileInputPreview
                     name="coverImageFile"
                     accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
-                    className="admin-inner-input block w-full rounded-2xl border-dashed px-4 py-3 text-sm file:mr-4 file:rounded-full file:border-0 file:bg-emerald-700 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-emerald-800"
+                    coverImageLabel={t("fields.coverImage")}
+                    description={t("coverImageUpload.description")}
+                    publishBoundary={t("coverImageUpload.publishBoundary")}
+                    previewTitle={t("coverImageUpload.selectedPreview")}
+                    previewAlt={t("coverImageUpload.selectedPreviewAlt")}
+                    selectedFileLabel={t("coverImageUpload.selectedFile")}
                   />
-                </label>
-                <p className="text-sm leading-7 text-slate-600">{t("coverImageUpload.description")}</p>
-                <p className="text-xs leading-6 text-slate-500">{t("coverImageUpload.publishBoundary")}</p>
 
-                {program?.publishedSnapshot?.coverImage ? (
-                  <div className="space-y-5 pt-1">
-                    <div className="admin-inner-panel-subtle rounded-2xl p-4">
-                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        {t("coverImageUpload.currentPublished")}
-                      </p>
-                      <img
-                        src={program.publishedSnapshot.coverImage}
-                        alt={t("coverImageUpload.currentPublishedAlt")}
-                        className="mt-3 h-48 w-full rounded-2xl object-cover"
-                      />
+                  {program?.publishedSnapshot?.coverImage ? (
+                    <div className="space-y-5 pt-1">
+                      <div className="admin-inner-panel-subtle rounded-2xl p-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                          {t("coverImageUpload.currentPublished")}
+                        </p>
+                        <ProgramCoverImageLightbox
+                          imageSrc={program.publishedSnapshot.coverImage}
+                          imageAlt={t("coverImageUpload.currentPublishedAlt")}
+                          previewHintLabel={t("coverImageUpload.openPublishedLarge")}
+                          dialogTitle={t("coverImageUpload.previewDialogTitle")}
+                          closeLabel={t("coverImageUpload.closePreview")}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ) : null}
-              </div>
-            </AdminWorkspaceSection>
+                  ) : null}
+                </div>
+              </AdminWorkspaceSection>
 
             <AdminWorkspaceSection
               title={t("sections.requirements")}
               description={t("descriptions.requirements")}
+              className={previewSectionClassName}
+              contentClassName={previewSectionContentClassName}
             >
               <label className="admin-inner-panel block rounded-[28px] p-5 text-sm text-slate-700 md:p-6">
                 <LabelWithMarker
@@ -536,12 +583,17 @@ export async function AdminProgramFormShell({
                   defaultValue={getLines(program?.translations[activeLocale].requirements)}
                   placeholder={t("placeholders.requirementsLines")}
                   rows={8}
-                  className="admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                  className={textareaClassName}
                 />
               </label>
             </AdminWorkspaceSection>
 
-            <AdminWorkspaceSection title={t("sections.included")} description={t("descriptions.included")}>
+            <AdminWorkspaceSection
+              title={t("sections.included")}
+              description={t("descriptions.included")}
+              className={previewSectionClassName}
+              contentClassName={previewSectionContentClassName}
+            >
               <label className="admin-inner-panel block rounded-[28px] p-5 text-sm text-slate-700 md:p-6">
                 <LabelWithMarker
                   label={t("sections.included")}
@@ -554,7 +606,7 @@ export async function AdminProgramFormShell({
                   defaultValue={getLines(program?.translations[activeLocale].included)}
                   placeholder={t("placeholders.includedLines")}
                   rows={8}
-                  className="admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                  className={textareaClassName}
                 />
               </label>
             </AdminWorkspaceSection>
@@ -563,6 +615,8 @@ export async function AdminProgramFormShell({
               title={t("sections.seoAuditPreview")}
               description={t("seoAuditDescription")}
               tone="subtle"
+              className={previewSectionClassName}
+              contentClassName={previewSectionContentClassName}
             >
               <div className="space-y-5">
                 <label className="block space-y-2.5 text-sm text-slate-700">
@@ -572,13 +626,13 @@ export async function AdminProgramFormShell({
                     required={isProgramPublishRequiredField("seo.title")}
                     className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
                   />
-                  <input
-                    name={`seo.${activeLocale}.title`}
-                    defaultValue={program?.seo[activeLocale].title ?? ""}
-                    placeholder={t("placeholders.seoTitle")}
-                    className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                  />
-                </label>
+                   <input
+                     name={`seo.${activeLocale}.title`}
+                     defaultValue={program?.seo[activeLocale].title ?? ""}
+                     placeholder={t("placeholders.seoTitle")}
+                     className={fieldInputClassName}
+                   />
+                 </label>
                 <label className="block space-y-2.5 text-sm text-slate-700">
                   <LabelWithMarker
                     label={t("fields.seoDescription")}
@@ -586,14 +640,14 @@ export async function AdminProgramFormShell({
                     required={isProgramPublishRequiredField("seo.description")}
                     className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
                   />
-                  <textarea
-                    name={`seo.${activeLocale}.description`}
-                    defaultValue={program?.seo[activeLocale].description ?? ""}
-                    placeholder={t("placeholders.seoDescription")}
-                    rows={4}
-                    className="admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                  />
-                </label>
+                   <textarea
+                     name={`seo.${activeLocale}.description`}
+                     defaultValue={program?.seo[activeLocale].description ?? ""}
+                     placeholder={t("placeholders.seoDescription")}
+                     rows={4}
+                     className={textareaClassName}
+                   />
+                 </label>
               </div>
             </AdminWorkspaceSection>
 
@@ -601,6 +655,8 @@ export async function AdminProgramFormShell({
               title={t("sections.editorialMeta")}
               description={t("descriptions.editorialMeta")}
               tone="subtle"
+              className={previewSectionClassName}
+              contentClassName={previewSectionContentClassName}
             >
               <div className="space-y-5 text-sm text-slate-700">
                 <div className="admin-inner-panel-subtle rounded-2xl p-5">
@@ -617,13 +673,13 @@ export async function AdminProgramFormShell({
                     required={isProgramPublishRequiredField("slug")}
                     className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
                   />
-                  <input
-                    name="slug"
-                    defaultValue={program?.slug ?? ""}
-                    placeholder={t("placeholders.futureSlug")}
-                    className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                  />
-                </label>
+                   <input
+                     name="slug"
+                     defaultValue={program?.slug ?? ""}
+                     placeholder={t("placeholders.futureSlug")}
+                     className={fieldInputClassName}
+                   />
+                 </label>
 
                 <div className="admin-inner-panel-subtle rounded-2xl p-5">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
@@ -632,43 +688,65 @@ export async function AdminProgramFormShell({
                   <p className="mt-2 text-sm text-slate-900">{t(`statuses.${program?.status ?? "draft"}`)}</p>
                 </div>
 
-                <div className="admin-inner-panel-subtle rounded-2xl px-5 py-5 text-xs uppercase tracking-[0.18em] text-slate-500">
+                <div className="admin-inner-panel-subtle grid gap-3 rounded-2xl px-5 py-5 text-xs uppercase tracking-[0.18em] text-slate-500 sm:grid-cols-2">
                   <p>
                     {t("audit.createdBy")}: {program?.createdBy ?? t("placeholders.pendingWorkflow")}
                   </p>
-                  <p className="mt-2">
+                  <p>
                     {t("audit.updatedBy")}: {program?.updatedBy ?? t("placeholders.pendingWorkflow")}
                   </p>
-                  <p className="mt-2">
+                  <p>
                     {t("audit.createdAt")}: {program?.createdAt ?? t("placeholders.autoGenerated")}
                   </p>
-                  <p className="mt-2">
+                  <p>
                     {t("audit.updatedAt")}: {program?.updatedAt ?? t("placeholders.autoGenerated")}
                   </p>
-                  <p className="mt-2">
+                  <p>
                     {t("audit.firstPublishedAt")}: {program?.firstPublishedAt ?? t("placeholders.notPublishedYet")}
                   </p>
-                  <p className="mt-2">
+                  <p>
                     {t("audit.pendingDraft")}: {pendingDraft ? t("yes") : t("no")}
                   </p>
                 </div>
               </div>
             </AdminWorkspaceSection>
 
-             <AdminWorkspaceSection title={t("sections.boundaries")} tone="subtle">
-               <ul className="space-y-4 text-sm leading-7 text-slate-600">
-                 {[t("boundaries.0"), t("boundaries.1"), t("boundaries.2")].map((item) => (
-                  <li key={item} className="admin-inner-panel-subtle rounded-2xl px-5 py-4">
-                    {item}
-                  </li>
-                ))}
-              </ul>
-             </AdminWorkspaceSection>
+              <AdminWorkspaceSection
+                title={t("sections.boundaries")}
+                tone="subtle"
+                className={previewSectionClassName}
+                contentClassName={previewSectionContentClassName}
+              >
+                <ul className="space-y-4 text-sm leading-7 text-slate-600">
+                  {[t("boundaries.0"), t("boundaries.1"), t("boundaries.2")].map((item) => (
+                    <li key={item} className="admin-inner-panel-subtle rounded-2xl px-5 py-4">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </AdminWorkspaceSection>
 
-             </div>
+              <section className="admin-program-action-rail-panel admin-program-bottom-actions rounded-[28px] p-4 md:p-5 lg:hidden">
+                <div className="space-y-3.5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100/85">{t("rail.eyebrow")}</p>
+                  <ProgramEditorActions
+                    t={t}
+                    formId={formId}
+                    isEdit={isEdit}
+                    saveAction={saveAction}
+                    reactivateAction={reactivateAction}
+                    archiveAction={archiveAction}
+                    deleteAction={deleteAction}
+                    programStatus={program?.status}
+                  />
+                </div>
+              </section>
+
+            </div>
           </div>
         </form>
       </div>
+        </div>
     </div>
   );
 }
