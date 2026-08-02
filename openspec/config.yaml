@@ -3,7 +3,7 @@ schema: spec-driven
 context: |
   Tech stack: Next.js 16 App Router, React 19, TypeScript 5, pnpm, Tailwind CSS 4, next-intl.
   Architecture: src/ app router with [locale] segment, public/admin route groups, feature/service split, in-memory repository pattern.
-  Testing: No test runner or coverage tool configured; lint and typecheck are available.
+  Testing: Node's built-in test runner is available for focused TypeScript tests via `node --experimental-strip-types --test`; lint and typecheck remain available for broader static checks.
   Style: Strict TypeScript, @/* path alias, ESLint core-web-vitals/typescript, server-first components with minimal client boundaries.
 
 strict_tdd: false
@@ -11,13 +11,13 @@ strict_tdd: false
 testing:
   detected: 2026-06-15
   test_runner:
-    available: false
-    command: ""
-    framework: ""
+    available: true
+    command: node --experimental-strip-types --test
+    framework: node:test
   test_layers:
     unit:
-      available: false
-      tool: ""
+      available: true
+      tool: node:test
     integration:
       available: false
       tool: ""

@@ -25,7 +25,6 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
     programs: t("Navigation.programs"),
     faqs: t("Navigation.faqs"),
     apply: t("Navigation.apply"),
-    privacy: t("Navigation.privacy"),
     contact: t("Navigation.contact"),
     admin: t("Navigation.admin"),
   } as const;

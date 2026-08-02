@@ -119,7 +119,6 @@ export async function AdminApplicationDetail({
     { key: "phone", value: application.phone },
     { key: "nationality", value: application.nationality },
     { key: "birthDate", value: application.birthDate ? formatDateOnly(application.birthDate, locale) : "—" },
-    { key: "availability", value: formatOptionalText(application.availability) },
   ] as const;
 
   return (

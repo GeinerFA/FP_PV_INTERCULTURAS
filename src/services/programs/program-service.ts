@@ -182,11 +182,13 @@ export async function listPublicPrograms(locale: AppLocale): Promise<LocalizedPr
 
 export async function listFeaturedPublicPrograms(
   locale: AppLocale,
-  limit = 3,
+  limit?: number,
 ): Promise<LocalizedProgram[]> {
   const programs = await listPublicPrograms(locale);
 
-  return programs.filter((program) => program.featured).slice(0, limit);
+  const featuredPrograms = programs.filter((program) => program.featured);
+
+  return typeof limit === "number" ? featuredPrograms.slice(0, limit) : featuredPrograms;
 }
 
 export async function getPublicProgramBySlug(

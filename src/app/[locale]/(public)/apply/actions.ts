@@ -1,6 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
@@ -25,6 +26,8 @@ import {
   publicApplicationSuccessCookieName,
   publicApplicationSuccessCookieValue,
 } from "@/features/applications/public-application-flow";
+import { buildApplicationSubmissionErrorState } from "@/features/applications/public-application-submission-state";
+import { verifyRecaptchaToken } from "@/lib/recaptcha";
 import { createApplication } from "@/services/applications/application-service";
 
 const supportedCurriculumContentTypes = new Set([
@@ -36,6 +39,8 @@ const supportedCurriculumContentTypes = new Set([
 const supportedCurriculumExtensions = [".pdf", ".doc", ".docx"];
 
 const maxCurriculumFileSizeBytes = 5 * 1024 * 1024;
+
+const recaptchaTokenFieldName = "recaptchaToken";
 
 function readFieldValue(formData: FormData, field: ApplicationFormFieldName): string {
   const value = formData.get(field);
@@ -60,6 +65,12 @@ function readApplicationFormValues(formData: FormData): ApplicationFormValues {
       phoneDialCode,
     },
   );
+}
+
+function readRecaptchaToken(formData: FormData): string {
+  const value = formData.get(recaptchaTokenFieldName);
+
+  return typeof value === "string" ? value.trim() : "";
 }
 
 function isValidEmail(value: string): boolean {
@@ -136,17 +147,20 @@ async function buildCurriculumPayload(file: File) {
   };
 }
 
-function buildErrorState(
-  values: ApplicationFormValues,
-  fieldErrors: Partial<Record<ApplicationFormErrorFieldName, ApplicationFormValidationCode>>,
-  formError?: ApplicationSubmissionActionState["formError"],
-): ApplicationSubmissionActionState {
-  return {
-    status: "error",
-    values,
-    fieldErrors,
-    formError,
-  };
+function getRequestIp(headerStore: Headers): string | null {
+  const forwardedFor = headerStore.get("x-forwarded-for");
+
+  if (forwardedFor) {
+    const [firstIp] = forwardedFor.split(",");
+
+    if (firstIp && firstIp.trim().length > 0) {
+      return firstIp.trim();
+    }
+  }
+
+  const realIp = headerStore.get("x-real-ip");
+
+  return realIp && realIp.trim().length > 0 ? realIp.trim() : null;
 }
 
 export async function submitApplicationAction(
@@ -155,6 +169,7 @@ export async function submitApplicationAction(
   formData: FormData,
 ): Promise<ApplicationSubmissionActionState> {
   const values = readApplicationFormValues(formData);
+  const recaptchaToken = readRecaptchaToken(formData);
   const fieldErrors = validateApplicationForm(values);
   const curriculumFile = readCurriculumFile(formData);
   const curriculumError = validateCurriculumFile(curriculumFile);
@@ -164,7 +179,23 @@ export async function submitApplicationAction(
   }
 
   if (Object.keys(fieldErrors).length > 0) {
-    return buildErrorState(values, fieldErrors);
+    return buildApplicationSubmissionErrorState(values, fieldErrors);
+  }
+
+  const requestHeaders = await headers();
+  const recaptchaVerification = await verifyRecaptchaToken({
+    token: recaptchaToken,
+    remoteIp: getRequestIp(requestHeaders),
+  });
+
+  if (!recaptchaVerification.success) {
+    console.warn("[apply] reCAPTCHA verification failed", {
+      email: values.email,
+      errorCodes: recaptchaVerification.errorCodes,
+      hostname: recaptchaVerification.hostname,
+    });
+
+    return buildApplicationSubmissionErrorState(values, {}, "captchaFailed");
   }
 
   try {
@@ -184,7 +215,7 @@ export async function submitApplicationAction(
       applicationType: "volunteering",
     });
 
-    return buildErrorState(values, {}, "submissionFailed");
+    return buildApplicationSubmissionErrorState(values, {}, "submissionFailed");
   }
 
   const cookieStore = await cookies();

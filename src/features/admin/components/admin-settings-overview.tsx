@@ -20,6 +20,13 @@ export async function AdminSettingsOverview({ session }: AdminSettingsOverviewPr
       : null,
     hasAdminPermission(session, "settings.view")
       ? {
+          key: "homeVideos",
+          href: "/admin/settings/home-videos",
+          action: t("modules.homeVideos.action"),
+        }
+      : null,
+    hasAdminPermission(session, "settings.view")
+      ? {
           key: "faqs",
           href: "/admin/settings/faqs",
           action: t("modules.faqs.action"),
@@ -33,8 +40,12 @@ export async function AdminSettingsOverview({ session }: AdminSettingsOverviewPr
         }
       : null,
   ].filter(Boolean) as Array<{
-    key: "categories" | "faqs" | "users";
-    href: "/admin/settings/categories" | "/admin/settings/faqs" | "/admin/settings/users";
+    key: "categories" | "faqs" | "homeVideos" | "users";
+    href:
+      | "/admin/settings/categories"
+      | "/admin/settings/faqs"
+      | "/admin/settings/home-videos"
+      | "/admin/settings/users";
     action: string;
   }>;
 

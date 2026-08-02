@@ -7,6 +7,7 @@ import {
   type PublicApplicationFormCopy,
 } from "@/features/applications/components/public-application-form";
 import { PublicPageTemplate } from "@/features/public/components/public-page-template";
+import { getPublicRecaptchaSiteKey } from "@/lib/recaptcha";
 import { buildMetadata } from "@/lib/metadata";
 
 import { submitApplicationAction } from "./actions";
@@ -24,11 +25,16 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ApplyPage({ params }: ApplyPageProps) {
   const { locale } = await params;
   const t = await getTranslations("ApplicationFlow.form");
+  const recaptchaSiteKey = getPublicRecaptchaSiteKey();
   const formCopy: PublicApplicationFormCopy = {
     introTitle: t("introTitle"),
     introDescription: t("introDescription"),
     requiredLegend: t("requiredLegend"),
     privacyNotice: t("privacyNotice"),
+    captchaLabel: t("captchaLabel"),
+    captchaHelp: t("captchaHelp"),
+    captchaExpired: t("captchaExpired"),
+    captchaError: t("captchaError"),
     submitLabel: t("submitLabel"),
     submittingLabel: t("submittingLabel"),
     phoneDialCodeLabel: t("phoneDialCodeLabel"),
@@ -40,7 +46,12 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
 
   return (
     <PublicPageTemplate pageKey="apply">
-      <PublicApplicationForm action={submitApplicationAction.bind(null, locale)} copy={formCopy} />
+      <PublicApplicationForm
+        action={submitApplicationAction.bind(null, locale)}
+        copy={formCopy}
+        recaptchaLanguage={locale}
+        recaptchaSiteKey={recaptchaSiteKey}
+      />
     </PublicPageTemplate>
   );
 }

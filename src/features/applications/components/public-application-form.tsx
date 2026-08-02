@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { forwardRef, useActionState, useEffect, useImperativeHandle, useRef, useState, type ReactNode, type Ref } from "react";
 import { useFormStatus } from "react-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import {
   applicationAttachmentFieldNames,
@@ -11,6 +12,7 @@ import {
   type ApplicationFormFieldName,
   type ApplicationSubmissionActionState,
 } from "@/features/applications/public-application-form-contract";
+import { shouldResetCaptchaForFormError } from "@/features/applications/public-application-submission-state";
 import { publicCountryOptions, type CountryOption } from "@/features/applications/country-options";
 import {
   publicPhoneCountryOptions,
@@ -32,6 +34,10 @@ type PublicApplicationFormCopy = {
   introDescription: string;
   requiredLegend: string;
   privacyNotice: string;
+  captchaLabel: string;
+  captchaHelp: string;
+  captchaExpired: string;
+  captchaError: string;
   submitLabel: string;
   submittingLabel: string;
   phoneDialCodeLabel: string;
@@ -49,6 +55,7 @@ type PublicApplicationFormCopy = {
     fileTooLarge: string;
   };
   errors: {
+    captchaFailed: string;
     submissionFailed: string;
   };
 };
@@ -59,7 +66,55 @@ type PublicApplicationFormProps = {
     payload: FormData,
   ) => Promise<ApplicationSubmissionActionState>;
   copy: PublicApplicationFormCopy;
+  recaptchaLanguage: string;
+  recaptchaSiteKey: string;
+  captchaComponent?: CaptchaComponent;
+  stateOverride?: ApplicationSubmissionActionState;
 };
+
+type CaptchaUiState = "idle" | "verified" | "expired" | "error";
+
+type CaptchaHandle = {
+  reset: () => void;
+};
+
+type CaptchaComponentProps = {
+  language: string;
+  siteKey: string;
+  onChange: (value: string | null) => void;
+  onExpired: () => void;
+  onErrored: () => void;
+};
+
+type CaptchaComponent = (
+  props: CaptchaComponentProps & {
+    ref?: Ref<CaptchaHandle>;
+  },
+) => ReactNode;
+
+const GoogleRecaptcha = forwardRef<CaptchaHandle, CaptchaComponentProps>(function GoogleRecaptcha(
+  { language, siteKey, onChange, onExpired, onErrored },
+  ref,
+) {
+  const googleRecaptchaRef = useRef<ReCAPTCHA | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    reset() {
+      googleRecaptchaRef.current?.reset();
+    },
+  }), []);
+
+  return (
+    <ReCAPTCHA
+      ref={googleRecaptchaRef}
+      hl={language}
+      onChange={onChange}
+      onErrored={onErrored}
+      onExpired={onExpired}
+      sitekey={siteKey}
+    />
+  );
+});
 
 function SubmitButton({ idleLabel, pendingLabel }: { idleLabel: string; pendingLabel: string }) {
   const { pending } = useFormStatus();
@@ -223,8 +278,63 @@ function getValidationMessage(
   return copy.validation[code];
 }
 
-export function PublicApplicationForm({ action, copy }: PublicApplicationFormProps) {
-  const [state, formAction] = useActionState(action, initialApplicationSubmissionState);
+export function PublicApplicationForm({
+  action,
+  copy,
+  recaptchaLanguage,
+  recaptchaSiteKey,
+  captchaComponent: CaptchaComponent = GoogleRecaptcha,
+  stateOverride,
+}: PublicApplicationFormProps) {
+  const [actionState, formAction] = useActionState(action, initialApplicationSubmissionState);
+  const state = stateOverride ?? actionState;
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaUiState, setCaptchaUiState] = useState<CaptchaUiState>("idle");
+  const captchaRef = useRef<CaptchaHandle | null>(null);
+
+  useEffect(() => {
+    if (!state.resetCaptcha || !shouldResetCaptchaForFormError(state.formError)) {
+      return;
+    }
+
+    captchaRef.current?.reset();
+
+    const resetTimer = window.setTimeout(() => {
+      setCaptchaToken(null);
+      setCaptchaUiState("idle");
+    }, 0);
+
+    return () => {
+      window.clearTimeout(resetTimer);
+    };
+  }, [state.formError, state.resetCaptcha]);
+
+  function handleCaptchaChange(value: string | null) {
+    setCaptchaToken(value);
+    setCaptchaUiState(value ? "verified" : "idle");
+  }
+
+  function handleCaptchaExpired() {
+    setCaptchaToken(null);
+    setCaptchaUiState("expired");
+  }
+
+  function handleCaptchaErrored() {
+    setCaptchaToken(null);
+    setCaptchaUiState("error");
+  }
+
+  function getCaptchaMessage() {
+    if (captchaUiState === "expired") {
+      return copy.captchaExpired;
+    }
+
+    if (captchaUiState === "error") {
+      return copy.captchaError;
+    }
+
+    return copy.captchaHelp;
+  }
 
   return (
     <div className="surface-soft rounded-3xl p-6 md:p-8">
@@ -347,7 +457,23 @@ export function PublicApplicationForm({ action, copy }: PublicApplicationFormPro
 
         <div className="flex flex-col gap-4 border-t border-slate-200 pt-6">
           <p className="text-sm leading-6 text-slate-600">{copy.privacyNotice}</p>
-          <SubmitButton idleLabel={copy.submitLabel} pendingLabel={copy.submittingLabel} />
+          <div className="space-y-3">
+            <div>
+              <p className="mb-2 text-sm font-semibold text-slate-900">{copy.captchaLabel}</p>
+              <CaptchaComponent
+                ref={captchaRef}
+                language={recaptchaLanguage}
+                onChange={handleCaptchaChange}
+                onErrored={handleCaptchaErrored}
+                onExpired={handleCaptchaExpired}
+                siteKey={recaptchaSiteKey}
+              />
+              <input type="hidden" name="recaptchaToken" value={captchaToken ?? ""} />
+              <p className="mt-3 text-sm leading-6 text-slate-600">{getCaptchaMessage()}</p>
+            </div>
+
+            {captchaToken ? <SubmitButton idleLabel={copy.submitLabel} pendingLabel={copy.submittingLabel} /> : null}
+          </div>
         </div>
       </form>
     </div>

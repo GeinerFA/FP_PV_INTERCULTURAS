@@ -1,10 +1,11 @@
 import { getMessages } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
-import { getProgramCategoryBadgeClassName, getProgramCategoryName } from "@/features/programs/lib/program-category-presentation";
 import { Link as LocaleLink } from "@/i18n/navigation";
+import { listPublicHomeHeroVideos } from "@/services/home-hero-videos/home-hero-video-service";
 import { listFeaturedPublicPrograms } from "@/services/programs/program-service";
 
+import { PublicFeaturedProgramsCarousel } from "./public-featured-programs-carousel";
 import { PublicHomeVideoCarousel } from "./public-home-video-carousel";
 
 type HomeMessages = {
@@ -66,6 +67,8 @@ type HomeMessages = {
     featuredLabel: string;
     browsePrograms: string;
     viewProgram: string;
+    previousPrograms: string;
+    nextPrograms: string;
     emptyTitle: string;
     emptyDescription: string;
   };
@@ -90,6 +93,7 @@ type HomeMessages = {
       programs: string;
       apply: string;
       faqs: string;
+      instagramLabel: string;
     };
   };
 };
@@ -103,9 +107,12 @@ export async function PublicHomePage({
   locale,
   forceEmptyFeatured = false,
 }: PublicHomePageProps) {
-  const [messages, featuredPrograms] = await Promise.all([
+  const instagramHref =
+    "https://www.instagram.com/voluntariado_pvi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==";
+  const [messages, featuredPrograms, heroVideos] = await Promise.all([
     getMessages(),
     forceEmptyFeatured ? Promise.resolve([]) : listFeaturedPublicPrograms(locale),
+    listPublicHomeHeroVideos(),
   ]);
 
   const home = messages.Home as HomeMessages;
@@ -121,14 +128,18 @@ export async function PublicHomePage({
   const offeringCards = Object.entries(home.offerings.cards);
   const infoCards = Object.entries(home.info.cards);
   const contactCards = Object.entries(home.contact.cards);
+  const featuredHeadingId = "featured-programs-heading";
 
   return (
     <div className="flex flex-col gap-16 lg:gap-20">
       <PublicHomeVideoCarousel
-        slides={[
-          { src: "/videos/animal.mp4", alt: "Video principal de la experiencia intercultural" },
-          { src: "/videos/nature.mp4", alt: "Video del entorno natural de Pérez Zeledón" },
-        ]}
+        slides={heroVideos.map((video) => ({
+          id: video.id,
+          src: video.sourceUrl,
+          fileName: video.fileName,
+          mediaType: video.mediaType,
+          displayDurationSeconds: video.displayDurationSeconds,
+        }))}
       />
 
       <section className="animate-fade-up -mt-2 md:-mt-6 lg:-mt-10" style={{ animationDelay: "40ms" }}>
@@ -259,7 +270,7 @@ export async function PublicHomePage({
         </p>
         <div className="mt-3 grid gap-6 border-b border-slate-200/80 pb-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="max-w-3xl">
-            <h2 className="text-3xl font-semibold tracking-tight text-slate-950">
+            <h2 id={featuredHeadingId} className="text-3xl font-semibold tracking-tight text-slate-950">
               {home.featured.title}
             </h2>
             <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">
@@ -282,83 +293,20 @@ export async function PublicHomePage({
             </p>
           </article>
         ) : (
-          <div className="mt-8 grid gap-8 lg:grid-cols-3">
-            {featuredPrograms.map((program) => (
-              <article
-                key={program.id}
-                className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/90 p-3 shadow-[0_24px_60px_-45px_rgba(15,23,42,0.55)]"
-              >
-                <div
-                  className="h-44 rounded-[1.75rem] bg-cover bg-center"
-                  style={{ backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.14), rgba(15, 23, 42, 0.24)), url(${program.coverImage})` }}
-                />
-                <div className="px-3 py-5">
-                  <div className="flex flex-wrap gap-3">
-                    <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${getProgramCategoryBadgeClassName(program.categoryDetails)}`}
-                    >
-                      {getProgramCategoryName(program.categoryDetails, program.category)}
-                    </span>
-                    <span className="inline-flex rounded-full bg-emerald-200 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-900">
-                      {home.featured.featuredLabel}
-                    </span>
-                  </div>
-                  <h3 className="mt-5 text-2xl font-semibold tracking-tight text-slate-950">
-                    {program.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{program.shortDescription}</p>
-
-                  <dl className="mt-6 grid gap-4 border-t border-slate-200/80 pt-5 text-sm sm:grid-cols-3 lg:grid-cols-1">
-                    <div>
-                      <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        {programsUi.labels.location}
-                      </dt>
-                      <dd className="mt-2 text-slate-600">{program.location}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        {programsUi.labels.duration}
-                      </dt>
-                      <dd className="mt-2 text-slate-600">{program.duration}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                        {programsUi.labels.availability}
-                      </dt>
-                      <dd className="mt-2 text-slate-600">{program.availability}</dd>
-                    </div>
-                  </dl>
-
-                  <LocaleLink
-                    href={{ pathname: "/programs/[slug]", params: { slug: program.slug } }}
-                    className="mt-6 inline-flex rounded-full border border-emerald-300 bg-emerald-100/80 px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100"
-                  >
-                    {home.featured.viewProgram}
-                  </LocaleLink>
-                </div>
-              </article>
-            ))}
-          </div>
+          <PublicFeaturedProgramsCarousel
+            featuredPrograms={featuredPrograms}
+            featuredHeadingId={featuredHeadingId}
+            labels={{
+              featured: home.featured.featuredLabel,
+              viewProgram: home.featured.viewProgram,
+              previousPrograms: home.featured.previousPrograms,
+              nextPrograms: home.featured.nextPrograms,
+              location: programsUi.labels.location,
+              duration: programsUi.labels.duration,
+              availability: programsUi.labels.availability,
+            }}
+          />
         )}
-      </section>
-
-      <section className="animate-fade-up rounded-[2rem] bg-[linear-gradient(135deg,rgba(248,251,248,0.56)_0%,rgba(223,243,231,0.4)_52%,rgba(246,223,173,0.3)_100%)] px-6 py-8 text-slate-900 md:px-8 md:py-10" style={{ animationDelay: "320ms" }}>
-        <h2 className="text-3xl font-semibold tracking-tight text-slate-950">{home.cta.title}</h2>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{home.cta.description}</p>
-        <div className="mt-8 flex flex-wrap gap-4">
-          <LocaleLink
-            href="/apply"
-            className="inline-flex rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700"
-          >
-            {home.cta.primaryAction}
-          </LocaleLink>
-          <LocaleLink
-            href="/programs"
-            className="inline-flex rounded-full border border-amber-300 bg-amber-100/80 px-6 py-3 text-sm font-semibold text-amber-950 transition hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-200"
-          >
-            {home.cta.secondaryAction}
-          </LocaleLink>
-        </div>
       </section>
 
       <section id="contact" className="animate-fade-up scroll-mt-24 border-t border-slate-200/80 pt-2 md:pt-4" style={{ animationDelay: "360ms" }}>
@@ -385,25 +333,49 @@ export async function PublicHomePage({
           ))}
         </div>
 
-        <div className="mt-8 flex flex-wrap gap-4">
-          <LocaleLink
-            href="/programs"
-            className="inline-flex rounded-full border border-emerald-300 bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100"
+        <div className="mt-8">
+          <div className="flex flex-wrap gap-4">
+            <LocaleLink
+              href="/programs"
+              className="inline-flex rounded-full border border-emerald-300 bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100"
+            >
+              {home.contact.actions.programs}
+            </LocaleLink>
+            <LocaleLink
+              href="/apply"
+              className="inline-flex rounded-full bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700"
+            >
+              {home.contact.actions.apply}
+            </LocaleLink>
+            <LocaleLink
+              href="/faqs"
+              className="inline-flex rounded-full border border-amber-300 bg-amber-100/80 px-5 py-3 text-sm font-semibold text-amber-950 transition hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-200"
+            >
+              {home.contact.actions.faqs}
+            </LocaleLink>
+          </div>
+          <a
+            href={instagramHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={home.contact.actions.instagramLabel}
+            className="mt-4 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300 bg-white text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100"
           >
-            {home.contact.actions.programs}
-          </LocaleLink>
-          <LocaleLink
-            href="/apply"
-            className="inline-flex rounded-full bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700"
-          >
-            {home.contact.actions.apply}
-          </LocaleLink>
-          <LocaleLink
-            href="/faqs"
-            className="inline-flex rounded-full border border-amber-300 bg-amber-100/80 px-5 py-3 text-sm font-semibold text-amber-950 transition hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-200"
-          >
-            {home.contact.actions.faqs}
-          </LocaleLink>
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" stroke="none" />
+            </svg>
+          </a>
         </div>
       </section>
     </div>

@@ -3,8 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type CarouselSlide = {
+  id: string;
   src: string;
-  alt: string;
+  fileName: string;
+  mediaType: "image" | "video";
+  displayDurationSeconds: number | null;
 };
 
 type PublicHomeVideoCarouselProps = {
@@ -34,6 +37,7 @@ export function PublicHomeVideoCarousel({
   const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
 
   const hasMultipleSlides = slides.length > 1;
+  const activeSlide = slides[activeIndex] ?? null;
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -68,52 +72,60 @@ export function PublicHomeVideoCarousel({
   }, [activeIndex, prefersReducedMotion]);
 
   useEffect(() => {
-    if (prefersReducedMotion || !hasMultipleSlides) {
+    if (prefersReducedMotion || !hasMultipleSlides || !activeSlide) {
       return;
     }
 
-    const intervalId = window.setInterval(() => {
+    const timeoutId = window.setTimeout(() => {
       setActiveIndex((currentIndex) => (currentIndex + 1) % slides.length);
-    }, AUTOPLAY_INTERVAL_MS);
+    }, activeSlide.mediaType === "image" ? (activeSlide.displayDurationSeconds ?? 7) * 1000 : AUTOPLAY_INTERVAL_MS);
 
     return () => {
-      window.clearInterval(intervalId);
+      window.clearTimeout(timeoutId);
     };
-  }, [hasMultipleSlides, prefersReducedMotion, slides.length]);
+  }, [activeSlide, hasMultipleSlides, prefersReducedMotion, slides.length]);
 
   const statusLabel = useMemo(
     () => `${activeIndex + 1} / ${slides.length}`,
     [activeIndex, slides.length],
   );
 
+  if (slides.length === 0) {
+    return null;
+  }
+
   return (
     <section className="animate-fade-up relative left-1/2 isolate w-screen -translate-x-1/2 overflow-hidden bg-slate-950 text-white shadow-[0_30px_80px_-40px_rgba(15,23,42,0.9)]">
       <div className="absolute inset-0">
         {slides.map((slide, index) => (
           <div
-            key={slide.src}
+            key={slide.id}
             className={`absolute inset-0 transition-opacity duration-700 ${index === activeIndex ? "opacity-100" : "opacity-0"}`}
           >
-            <video
-              ref={(node) => {
-                videoRefs.current[index] = node;
-              }}
-              aria-hidden="true"
-              className="h-full w-full object-cover"
-              loop
-              muted
-              playsInline
-              autoPlay={!prefersReducedMotion && index === activeIndex}
-              preload={index === activeIndex ? "auto" : "none"}
-              onCanPlay={() => {
-                if (index === activeIndex && !prefersReducedMotion) {
-                  playVideo(videoRefs.current[index]);
-                }
-              }}
-            >
-              <source src={slide.src} type="video/mp4" />
-              {slide.alt}
-            </video>
+            {slide.mediaType === "image" ? (
+              <img src={slide.src} alt={slide.fileName} className="h-full w-full object-cover" />
+            ) : (
+              <video
+                ref={(node) => {
+                  videoRefs.current[index] = node;
+                }}
+                aria-hidden="true"
+                className="h-full w-full object-cover"
+                loop
+                muted
+                playsInline
+                autoPlay={!prefersReducedMotion && index === activeIndex}
+                preload={index === activeIndex ? "auto" : "none"}
+                onCanPlay={() => {
+                  if (index === activeIndex && !prefersReducedMotion) {
+                    playVideo(videoRefs.current[index]);
+                  }
+                }}
+              >
+                <source src={slide.src} type="video/mp4" />
+                {slide.fileName}
+              </video>
+            )}
           </div>
         ))}
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(2,6,23,0.82)_0%,rgba(15,23,42,0.45)_45%,rgba(6,78,59,0.52)_100%)]" />
@@ -125,9 +137,9 @@ export function PublicHomeVideoCarousel({
           <div className="flex items-center gap-3 rounded-full bg-slate-950/30 px-4 py-3 backdrop-blur-sm">
             {slides.map((slide, index) => (
               <button
-                key={slide.src}
+                key={slide.id}
                 type="button"
-                aria-label={`Mostrar video ${index + 1}`}
+                aria-label={`Mostrar slide ${index + 1}`}
                 aria-pressed={index === activeIndex}
                 onClick={() => setActiveIndex(index)}
                 className={`h-2.5 rounded-full transition-all ${index === activeIndex ? "w-10 bg-emerald-300" : "w-2.5 bg-white/45 hover:bg-white/70"}`}

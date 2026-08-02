@@ -10,8 +10,7 @@ export type PublicRouteItem = {
     | "/faqs"
     | "/programs"
     | "/apply"
-    | "/contact"
-    | "/privacy";
+    | "/contact";
   labelKey: string;
 };
 

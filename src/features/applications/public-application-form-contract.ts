@@ -39,13 +39,14 @@ export type ApplicationFormValidationCode =
   | "invalidFileType"
   | "fileTooLarge";
 
-export type ApplicationSubmissionErrorCode = "submissionFailed";
+export type ApplicationSubmissionErrorCode = "submissionFailed" | "captchaFailed";
 
 export type ApplicationSubmissionActionState = {
   status: "idle" | "error";
   values: ApplicationFormValues;
   fieldErrors: Partial<Record<ApplicationFormErrorFieldName, ApplicationFormValidationCode>>;
   formError?: ApplicationSubmissionErrorCode;
+  resetCaptcha: boolean;
 };
 
 export const emptyApplicationFormValues: ApplicationFormValues = {
@@ -63,4 +64,5 @@ export const initialApplicationSubmissionState: ApplicationSubmissionActionState
   status: "idle",
   values: emptyApplicationFormValues,
   fieldErrors: {},
+  resetCaptcha: false,
 };

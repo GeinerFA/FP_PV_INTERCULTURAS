@@ -15,7 +15,6 @@ export const routing = defineRouting({
     "/apply": "/apply",
     "/apply/success": "/apply/success",
     "/contact": "/contact",
-    "/privacy": "/privacy",
     "/admin": "/admin",
     "/admin/login": "/admin/login",
     "/admin/programs": "/admin/programs",
@@ -28,6 +27,7 @@ export const routing = defineRouting({
     "/admin/settings": "/admin/settings",
     "/admin/settings/categories": "/admin/settings/categories",
     "/admin/settings/faqs": "/admin/settings/faqs",
+    "/admin/settings/home-videos": "/admin/settings/home-videos",
     "/admin/settings/users": "/admin/settings/users",
   },
 });

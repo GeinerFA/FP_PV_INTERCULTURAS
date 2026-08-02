@@ -5,7 +5,6 @@
     "programs": "Programas",
     "apply": "Aplicar",
     "contact": "Contacto",
-    "privacy": "Privacidad",
     "admin": "Admin",
     "faqs": "Preguntas frecuentes"
   },
@@ -61,7 +60,7 @@
     },
     "programs": {
       "title": "Gestión de programas",
-      "description": "Vista operativa del catálogo persistido con estado, disponibilidad, destacado y acceso directo al editor con borrador, publicación y archivo.",
+      "description": "Gestiona los progamas de la pagina, agrega, edita o archiva los programas que se ofrecen.",
       "sections": [
         "Usa la fuente persistida compartida entre rutas administrativas y públicas.",
         "Mantiene visible cuándo un programa está publicado, en borrador o archivado.",
@@ -119,7 +118,16 @@
       "sections": [
         "Agrupa mantenimientos operativos sin mezclar todos los formularios directamente en la pantalla principal.",
         "Mantiene rutas dedicadas para cada módulo de configuración que necesite CRUD propio.",
-        "Ahora incluye categorías, preguntas frecuentes y control de usuarios como fuentes vivas de verdad para el sitio y el panel administrativo."
+        "Ahora incluye categorías, videos de home, preguntas frecuentes y control de usuarios como fuentes vivas de verdad para el sitio y el panel administrativo."
+      ]
+    },
+    "settingsHomeVideos": {
+      "title": "Videos de la home",
+      "description": "Gestión persistida del carrusel principal de videos de la portada usando Cloudinary para los archivos y MongoDB para el orden visible.",
+      "sections": [
+        "Permite subir videos MP4 grandes desde el dispositivo sin depender del límite chico de server actions.",
+        "Guarda el orden y la metadata mínima en MongoDB, mientras Cloudinary hospeda el archivo real de reproducción.",
+        "Mantiene una base segura para no dejar la home en blanco durante la transición desde los videos estáticos heredados."
       ]
     },
     "settingsUsers": {
@@ -134,8 +142,8 @@
   },
   "AdminSettingsOverview": {
     "eyebrow": "Módulos disponibles",
-    "title": "Elegí qué parte de la configuración querés mantener",
-    "description": "Entrá al módulo correspondiente para mantener categorías, preguntas frecuentes o acceso administrativo sin cargar todos los formularios directamente en esta pantalla principal.",
+    "title": "Configuraciones de la pagina",
+    "description": "Este modulo permite editar algunas partes de la pagina.",
     "backAction": "Volver a configuración",
     "note": "Cada módulo conserva el mismo flujo protegido del panel administrativo y publica sus cambios sobre la fuente real que usan las rutas públicas o editoriales.",
     "modules": {
@@ -144,6 +152,12 @@
         "title": "Categorías de programas",
         "description": "Creá, editá o eliminá categorías gestionadas. Estas categorías ahora alimentan directamente el editor de programas, el catálogo público y los resúmenes administrativos.",
         "action": "Mantenimiento de categorías"
+      },
+      "homeVideos": {
+        "eyebrow": "Portada pública",
+        "title": "Media del home",
+        "description": "Subí videos o imagenes, mantené el orden visible de la pagina principal y eliminá recursos que ya no deban aparecer en la portada.",
+        "action": "Mantenimiento del home"
       },
       "faqs": {
         "eyebrow": "Contenido público",
@@ -428,16 +442,15 @@
     "stats": {
       "catalogSize": {
         "label": "Tamaño del catálogo",
-        "description": "Fuente única de verdad para rutas administrativas y públicas."
+        "description": "Cantidad de programas existentes en la pagina."
       },
       "publishedNow": {
         "label": "Publicados ahora",
-        "description": "Solo los elementos publicados aparecen en el catálogo público localizado."
+        "description": "Elementos publicados que aparecen en el catálogo público."
       },
         "draftBacklog": {
           "label": "Borradores activos",
-          "description": "Programas que siguen visibles para revisión interna pero todavía no salen al sitio público."
-        },
+          "description": "Programas que siguen en revisión para cargar al sitio publico."        },
         "archivedNow": {
           "label": "Archivados",
           "description": "Programas retirados del sitio público pero todavía visibles para control administrativo."
@@ -923,39 +936,6 @@
       "highlightOne": "Puede evolucionar hacia formulario de contacto y datos institucionales.",
       "highlightTwo": "Mantiene la captación abierta sin exigir cuentas de usuario.",
       "highlightThree": "Ayuda a resolver dudas antes de iniciar una solicitud."
-    },
-    "privacy": {
-      "eyebrow": "Información básica",
-      "title": "Privacidad y uso general de datos",
-      "description": "Esta página explica de forma simple qué información puede compartirse en el sitio, para qué se usa y cómo se trata dentro del alcance actual del MVP.",
-      "intro": {
-        "eyebrow": "Antes de compartir información",
-        "title": "Una guía breve, no una política legal extensa",
-        "description": "Queremos que las personas visitantes entiendan lo esencial sin leer lenguaje jurídico complejo. Por eso este contenido resume el uso general de datos del sitio y del formulario público disponible hoy."
-      },
-      "sections": {
-        "collect": {
-          "title": "Qué datos pueden compartirse",
-          "description": "Si una persona completa el formulario público, puede compartir datos básicos como nombre, correo, teléfono, nacionalidad, fecha de nacimiento, mensaje y curriculum opcional."
-        },
-        "use": {
-          "title": "Para qué se usan",
-          "description": "La información se utiliza para revisar el interés en los programas, dar seguimiento inicial y mantener comunicación básica sobre el proceso cuando corresponda."
-        },
-        "care": {
-          "title": "Cómo se maneja hoy",
-          "description": "Dentro de este MVP, el tratamiento se mantiene enfocado en la operación básica del sitio y del flujo de aplicación. Esta página no implica automatizaciones legales, consentimiento avanzado ni procesos de compliance adicionales."
-        }
-      },
-      "commitments": {
-        "eyebrow": "Compromisos básicos",
-        "title": "Lo que esta página sí deja claro",
-        "items": {
-          "clarity": "Explicamos el uso general de datos en un lenguaje accesible para que cualquier visitante pueda entender el alcance actual del sitio.",
-          "limits": "No prometemos funciones que todavía no existen, como registro formal de consentimientos, paneles de preferencias o flujos legales automatizados.",
-          "contact": "Si una persona necesita más contexto sobre su información, puede usar los canales de contacto públicos para hacer preguntas antes de compartir datos."
-        }
-      }
     }
   },
   "ProgramsUi": {
@@ -984,6 +964,10 @@
       "introDescription": "Este primer formulario nos permite conocer tus datos básicos y el contexto inicial de tu interés antes de coordinar el seguimiento.",
       "requiredLegend": "Todos los campos son obligatorios, excepto el mensaje y el curriculum.",
       "privacyNotice": "Al enviar esta solicitud compartís información básica para que el equipo de Pura Vida Interculturas pueda revisar tu interés y darte seguimiento dentro de este flujo inicial del MVP.",
+      "captchaLabel": "Verificación de seguridad",
+      "captchaHelp": "Completá la casilla de verificación para habilitar el envío de la solicitud.",
+      "captchaExpired": "La verificación expiró. Completala de nuevo para volver a habilitar el envío.",
+      "captchaError": "No pudimos cargar la verificación de seguridad. Revisá tu conexión y volvé a intentarlo.",
       "submitLabel": "Enviar solicitud",
       "submittingLabel": "Enviando solicitud...",
       "phoneDialCodeLabel": "Prefijo telefónico",
@@ -1000,6 +984,7 @@
         "fileTooLarge": "El archivo debe pesar 5 MB o menos."
       },
       "errors": {
+        "captchaFailed": "No pudimos validar la verificación de seguridad. Completala de nuevo e intentá otra vez.",
         "submissionFailed": "No pudimos registrar tu solicitud en este momento. Intentá nuevamente en unos minutos."
       },
       "fields": {
@@ -1320,6 +1305,8 @@
       "featuredLabel": "Destacado",
       "browsePrograms": "Ver todos los programas",
       "viewProgram": "Conocer programa",
+      "previousPrograms": "Mostrar programas destacados anteriores",
+      "nextPrograms": "Mostrar más programas destacados",
       "emptyTitle": "Todavía no hay programas destacados visibles.",
       "emptyDescription": "La página principal sigue lista para orientarte. Mientras se actualizan los destacados, podés revisar el catálogo completo y elegir el camino que mejor se ajuste a tus objetivos."
     },
@@ -1350,7 +1337,8 @@
       "actions": {
         "programs": "Revisar programas",
         "apply": "Aplicar ahora",
-        "faqs": "Ver preguntas frecuentes"
+        "faqs": "Ver preguntas frecuentes",
+        "instagramLabel": "Abrir Instagram de Pura Vida Interculturas"
       }
     }
   },
@@ -1419,6 +1407,100 @@
       "reorder-failed": "No se pudo actualizar el orden de las preguntas frecuentes. Intentá nuevamente."
     },
     "empty": "Todavía no hay preguntas frecuentes persistidas. Cuando agregués la primera, aparecerá enseguida en la página pública."
+  },
+  "AdminHomeHeroVideoSettings": {
+    "unavailable": {
+      "eyebrow": "Videos no disponibles",
+      "title": "No se pudo cargar el mantenimiento de videos de la home",
+      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
+      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza los videos reales por datos simulados dentro del panel."
+    },
+    "stats": {
+      "total": {
+        "label": "Videos configurados",
+        "description": "Total actual de recursos ordenados para el hero principal de la portada."
+      },
+      "images": {
+        "label": "Imágenes configuradas",
+        "description": "Cantidad de imágenes que hoy rotan como slides estáticos dentro del hero público."
+      },
+      "cloudinary": {
+        "label": "Hospedados en Cloudinary",
+        "description": "Cantidad de videos ya migrados al flujo nuevo de subida desde el dispositivo."
+      }
+    },
+    "live": {
+      "label": "Impacto inmediato",
+      "description": "El orden y las eliminaciones impactan la home pública en cuanto se revalida esta ruta. No existe un paso separado de publicación.",
+      "note": "Las subidas nuevas quedan disponibles en esta misma configuración apenas termina el guardado del recurso."
+    },
+    "upload": {
+      "title": "Subir un nuevo video",
+      "description": "Agregá un recurso nuevo al carrusel principal desde tu dispositivo con almacenamiento real en Cloudinary.",
+      "descriptionBody": "Este flujo sube directamente a Cloudinary y después guarda solo la metadata necesaria en MongoDB para el orden público.",
+      "chooseFile": "Archivo de video o imagen",
+      "helper": "Límite operativo inicial: hasta 150 MB para videos y 25 MB para imágenes para mantener una calidad útil sin reintroducir el cuello de botella anterior.",
+      "acceptedFormats": "Formatos aceptados en esta iteración: JPG, PNG, WEBP, AVIF y MP4.",
+      "previewTitle": "Vista previa local",
+      "selectedFile": "Archivo elegido",
+      "fileSize": "Tamaño",
+      "action": "Cargar",
+      "uploading": "Subiendo…",
+      "failed": "No se pudo completar la subida del video en este momento. Reintentá en unos minutos.",
+      "emptySelection": "Elegí un archivo antes de subirlo.",
+      "invalidMimeType": "Por ahora este mantenimiento acepta imágenes compatibles y archivos MP4.",
+      "fileTooLarge": "El archivo supera el límite permitido para este flujo. Reducí el peso o reemplazalo por una versión optimizada.",
+      "imageDuration": "Duración de la imagen (segundos)",
+      "imageDurationHelper": "Ingresá un número entero mayor o igual a 1 para definir cuánto tiempo se muestra esta imagen."
+    },
+    "list": {
+      "title": "Videos configurados",
+      "description": "Cada tarjeta representa el orden real del hero público. Cambiá la posición con un número entero y guardá para reorganizar el carrusel."
+    },
+    "fields": {
+      "order": "Posición pública",
+      "displayDuration": "Duración visible (segundos)"
+    },
+    "actions": {
+      "saveOrder": "Guardar posición",
+      "delete": "Eliminar video"
+    },
+    "storageProviders": {
+      "local": "archivo local heredado",
+      "cloudinary": "Cloudinary"
+    },
+    "entry": {
+      "position": "Posición {order}",
+      "mediaType": "Tipo: {type}",
+      "storageProvider": "Origen: {provider}",
+      "fileSize": "Tamaño: {size}",
+      "displayDuration": "Duración visible: {seconds} segundos"
+    },
+    "mediaTypes": {
+      "image": "Imagen",
+      "video": "Video"
+    },
+    "delete": {
+      "title": "Confirmar eliminación",
+      "description": "Eliminar quita este video del panel y del carrusel de la home pública.",
+      "cloudinaryWarning": "En videos subidos con el flujo nuevo, también se intenta borrar el asset real en Cloudinary para no dejar basura remota.",
+      "localWarning": "Los videos heredados locales solo se eliminan de la metadata persistida. El archivo estático del proyecto no se borra desde esta interfaz.",
+      "confirm": "Sí, eliminar video",
+      "cancel": "Cancelar"
+    },
+    "permissions": {
+      "manageRequired": "Tu sesión puede ver este módulo, pero no tiene permisos para subir, reordenar o eliminar videos."
+    },
+    "feedback": {
+      "created": "El video se subió correctamente y ya forma parte del hero público.",
+      "reordered": "El orden de los videos se actualizó correctamente.",
+      "deleted": "El video se eliminó correctamente del hero público.",
+      "invalid": "Ingresá una posición válida mayor o igual a 1 antes de guardar.",
+      "save-failed": "No se pudo guardar el video en este momento. Reintentá nuevamente.",
+      "delete-failed": "No se pudo eliminar el video en este momento. Reintentá nuevamente.",
+      "reorder-failed": "No se pudo actualizar el orden de los videos. Reintentá nuevamente."
+    },
+    "empty": "Todavía no hay videos persistidos en este módulo. Cuando subas el primero, aparecerá enseguida en la portada pública."
   },
   "Faqs": {
     "metadata": {

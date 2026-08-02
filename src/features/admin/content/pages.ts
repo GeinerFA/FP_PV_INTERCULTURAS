@@ -8,6 +8,7 @@ export const adminPageKeys = [
   "applicationDetail",
   "activity",
   "settings",
+  "settingsHomeVideos",
   "settingsUsers",
 ] as const;
 
