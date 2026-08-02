@@ -57,47 +57,56 @@ body {
 
 .admin-shell-preview {
   position: relative;
-  overflow: hidden;
+  isolation: isolate;
+  overflow-x: clip;
   background: rgb(2 6 23);
+  --admin-glass-border: rgb(255 255 255 / 0.26);
+  --admin-glass-border-strong: rgb(255 255 255 / 0.36);
+  --admin-glass-highlight: rgb(255 255 255 / 0.46);
+  --admin-glass-shadow: 0 28px 80px -52px rgb(2 6 23 / 0.5);
+  --admin-glass-surface: linear-gradient(180deg, rgb(255 255 255 / 0.32), rgb(248 244 232 / 0.14));
+  --admin-glass-surface-muted: linear-gradient(180deg, rgb(255 255 255 / 0.24), rgb(248 250 252 / 0.1));
+  --admin-glass-surface-subtle: linear-gradient(180deg, rgb(246 251 247 / 0.18), rgb(255 255 255 / 0.06));
 }
 
 .admin-shell-preview-background {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  background: url('/branding/Volcan-Arenal.png') center / cover no-repeat;
-  transform: scale(1.02);
-  filter: saturate(1.08) contrast(1.04) brightness(0.9);
+  background: url('/branding/Volcan-Arenal.webp') center 38% / cover no-repeat;
+  transform: scale(1.01);
+  filter: saturate(1.16) contrast(1.14) brightness(0.98);
 }
 
 .admin-shell-preview-overlay {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at top, rgb(209 250 229 / 0.24), transparent 32%),
-    radial-gradient(circle at 18% 22%, rgb(16 185 129 / 0.12), transparent 26%),
-    linear-gradient(180deg, rgb(2 6 23 / 0.28), rgb(15 23 42 / 0.66) 30%, rgb(2 6 23 / 0.82));
+    radial-gradient(circle at top, rgb(209 250 229 / 0.1), transparent 30%),
+    radial-gradient(circle at 18% 22%, rgb(16 185 129 / 0.06), transparent 24%),
+    linear-gradient(180deg, rgb(2 6 23 / 0.12), rgb(15 23 42 / 0.38) 30%, rgb(2 6 23 / 0.6));
 }
 
 .admin-workspace-page {
-  border-color: rgb(255 255 255 / 0.18);
+  border-color: var(--admin-glass-border-strong);
   background:
-    radial-gradient(circle at 12% 0%, rgb(209 250 229 / 0.22), transparent 30%),
-    radial-gradient(circle at top, rgb(255 255 255 / 0.14), transparent 48%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.48), rgb(248 250 252 / 0.34) 42%, rgb(248 244 232 / 0.24));
+    radial-gradient(circle at 12% 0%, rgb(209 250 229 / 0.14), transparent 28%),
+    radial-gradient(circle at top, rgb(255 255 255 / 0.08), transparent 46%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.34), rgb(248 250 252 / 0.18) 42%, rgb(248 244 232 / 0.1));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.48),
-    0 36px 94px -56px rgb(2 6 23 / 0.56);
-  backdrop-filter: blur(22px);
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 36px 94px -56px rgb(2 6 23 / 0.62);
+  backdrop-filter: blur(12px);
 }
 
 .admin-sidebar {
-  border-color: rgb(255 255 255 / 0.52);
+  border-color: var(--admin-glass-border-strong);
   background:
-    radial-gradient(circle at top, rgb(236 253 245 / 0.4), transparent 34%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(240 249 244 / 0.72) 56%, rgb(248 244 232 / 0.66));
+    radial-gradient(circle at top, rgb(209 250 229 / 0.18), transparent 34%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.38), rgb(248 250 252 / 0.2) 54%, rgb(248 244 232 / 0.14));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.7),
-    0 34px 96px -62px rgb(15 23 42 / 0.38);
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 34px 96px -62px rgb(2 6 23 / 0.46);
+  backdrop-filter: blur(16px);
 }
 
 .admin-sidebar-scroll {
@@ -176,30 +185,30 @@ body {
   align-items: center;
   gap: 0.9rem;
   min-height: 4rem;
-  border: 1px solid rgb(255 255 255 / 0.08);
+  border: 1px solid rgb(255 255 255 / 0.2);
   border-radius: 1.35rem;
   padding: 0.95rem 1rem;
   color: rgb(51 65 85);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0.18));
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.24), rgb(248 250 252 / 0.12));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.34),
-    0 14px 30px -28px rgb(15 23 42 / 0.28);
+    inset 0 1px 0 rgb(255 255 255 / 0.4),
+    0 14px 30px -28px rgb(2 6 23 / 0.24);
   backdrop-filter: blur(14px);
 }
 
 .admin-sidebar-nav-link:hover {
-  border-color: rgb(16 185 129 / 0.14);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.5), rgb(236 253 245 / 0.36));
+  border-color: rgb(110 231 183 / 0.28);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.34), rgb(236 253 245 / 0.2));
   color: rgb(15 23 42);
 }
 
 .admin-sidebar-nav-link-active {
-  border-color: rgb(5 150 105 / 0.24);
-  background: linear-gradient(135deg, rgb(6 95 70), rgb(16 185 129));
+  border-color: rgb(167 243 208 / 0.34);
+  background: linear-gradient(135deg, rgb(6 95 70 / 0.84), rgb(16 185 129 / 0.68));
   color: rgb(248 250 252);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.14),
-    0 22px 44px -32px rgb(4 120 87 / 0.55);
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 22px 44px -32px rgb(4 120 87 / 0.48);
 }
 
 .admin-sidebar-nav-icon {
@@ -209,32 +218,34 @@ body {
   width: 2.6rem;
   height: 2.6rem;
   border-radius: 1rem;
-  background: rgb(16 185 129 / 0.12);
+  background: rgb(16 185 129 / 0.1);
 }
 
 .admin-sidebar-nav-link:hover .admin-sidebar-nav-icon {
-  background: rgb(16 185 129 / 0.18);
+  background: rgb(16 185 129 / 0.16);
 }
 
 .admin-sidebar-nav-icon-active {
-  background: rgb(236 253 245 / 0.18);
+  background: rgb(236 253 245 / 0.2);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18);
 }
 
 .surface-dark-panel {
-  border: 1px solid rgb(255 255 255 / 0.18);
-  background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.46), rgb(248 244 232 / 0.24));
+  border: 1px solid var(--admin-glass-border);
+  background: var(--admin-glass-surface);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.46),
-    0 20px 48px -36px rgb(15 23 42 / 0.32);
-  backdrop-filter: blur(20px);
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 20px 48px -36px rgb(15 23 42 / 0.38);
+  backdrop-filter: blur(16px);
 }
 
 .surface-dark-panel-muted {
-  border: 1px solid rgb(255 255 255 / 0.16);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.32), rgb(248 250 252 / 0.18));
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.38);
-  backdrop-filter: blur(18px);
+  border: 1px solid rgb(255 255 255 / 0.22);
+  background: var(--admin-glass-surface-muted);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.46),
+    0 16px 42px -34px rgb(15 23 42 / 0.24);
+  backdrop-filter: blur(14px);
 }
 
 .admin-inner-workspace {
@@ -244,18 +255,20 @@ body {
 }
 
 .admin-inner-section {
-  border: 1px solid rgb(255 255 255 / 0.18);
+  border: 1px solid var(--admin-glass-border);
   background:
-    radial-gradient(circle at top, rgb(209 250 229 / 0.12), transparent 38%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.46), rgb(248 244 232 / 0.24));
+    radial-gradient(circle at top, rgb(209 250 229 / 0.12), transparent 36%),
+    var(--admin-glass-surface);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.46),
-    0 28px 78px -54px rgb(2 6 23 / 0.42);
-  backdrop-filter: blur(22px);
+    inset 0 1px 0 var(--admin-glass-highlight),
+    var(--admin-glass-shadow);
+  backdrop-filter: blur(16px);
 }
 
 .admin-inner-section-subtle {
-  background: linear-gradient(180deg, rgb(246 251 247 / 0.38), rgb(255 255 255 / 0.2));
+  background:
+    radial-gradient(circle at top, rgb(209 250 229 / 0.12), transparent 42%),
+    var(--admin-glass-surface-subtle);
 }
 
 .admin-inner-section-warning {
@@ -265,28 +278,30 @@ body {
 }
 
 .admin-inner-panel {
-  border: 1px solid rgb(255 255 255 / 0.16);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.3), rgb(248 250 252 / 0.16));
+  border: 1px solid rgb(255 255 255 / 0.24);
+  background: var(--admin-glass-surface-muted);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.44),
-    0 18px 42px -32px rgb(2 6 23 / 0.2);
-  backdrop-filter: blur(18px);
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
+    0 18px 42px -32px rgb(2 6 23 / 0.26);
+  backdrop-filter: blur(14px);
 }
 
 .admin-inner-panel-subtle {
-  border: 1px solid rgb(255 255 255 / 0.14);
-  background: linear-gradient(180deg, rgb(246 251 247 / 0.2), rgb(255 255 255 / 0.12));
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.36);
-  backdrop-filter: blur(16px);
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: var(--admin-glass-surface-subtle);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.42),
+    0 14px 32px -28px rgb(15 23 42 / 0.18);
+  backdrop-filter: blur(12px);
 }
 
 .admin-inner-table-shell {
-  border: 1px solid rgb(255 255 255 / 0.18);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.42), rgb(248 244 232 / 0.18));
+  border: 1px solid var(--admin-glass-border);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.38), rgb(248 244 232 / 0.14));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.46),
-    0 24px 58px -46px rgb(2 6 23 / 0.3);
-  backdrop-filter: blur(18px);
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 24px 58px -46px rgb(2 6 23 / 0.36);
+  backdrop-filter: blur(14px);
 }
 
 .admin-inner-input {
@@ -312,83 +327,89 @@ body {
 }
 
 .admin-primary-action {
-  border: 1px solid rgb(16 185 129 / 0.18);
-  background: linear-gradient(135deg, rgb(6 95 70), rgb(16 185 129));
+  border: 1px solid rgb(110 231 183 / 0.3);
+  background: linear-gradient(135deg, rgb(4 120 87 / 0.96), rgb(16 185 129 / 0.92));
   color: rgb(248 250 252);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.16),
-    0 18px 36px -24px rgb(4 120 87 / 0.42);
-  backdrop-filter: blur(12px);
+    inset 0 1px 0 rgb(255 255 255 / 0.2),
+    0 20px 42px -26px rgb(4 120 87 / 0.56);
+  backdrop-filter: blur(14px);
 }
 
 .admin-primary-action:hover {
-  background: linear-gradient(135deg, rgb(4 120 87), rgb(16 185 129));
+  background: linear-gradient(135deg, rgb(6 95 70 / 0.98), rgb(5 150 105 / 0.94));
 }
 
 .admin-secondary-action {
-  border: 1px solid rgb(255 255 255 / 0.24);
-  background: linear-gradient(180deg, rgb(236 253 245 / 0.54), rgb(255 255 255 / 0.32));
-  color: rgb(22 101 52);
+  border: 1px solid rgb(167 243 208 / 0.26);
+  background: linear-gradient(180deg, rgb(236 253 245 / 0.74), rgb(255 255 255 / 0.46));
+  color: rgb(6 95 70);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.54),
-    0 16px 34px -28px rgb(15 23 42 / 0.24);
+    inset 0 1px 0 rgb(255 255 255 / 0.62),
+    0 16px 34px -28px rgb(15 23 42 / 0.3);
   backdrop-filter: blur(16px);
 }
 
 .admin-secondary-action:hover {
-  border-color: rgb(16 185 129 / 0.26);
-  background: linear-gradient(180deg, rgb(236 253 245 / 0.7), rgb(220 252 231 / 0.42));
+  border-color: rgb(52 211 153 / 0.34);
+  background: linear-gradient(180deg, rgb(236 253 245 / 0.84), rgb(220 252 231 / 0.54));
 }
 
 .admin-outline-action {
-  border: 1px solid rgb(255 255 255 / 0.24);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.52), rgb(248 250 252 / 0.3));
-  color: rgb(30 41 59);
+  border: 1px solid rgb(255 255 255 / 0.3);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.66), rgb(248 250 252 / 0.38));
+  color: rgb(15 23 42);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.54),
-    0 16px 34px -28px rgb(15 23 42 / 0.22);
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 16px 34px -28px rgb(15 23 42 / 0.28);
   backdrop-filter: blur(16px);
 }
 
 .admin-outline-action:hover {
-  border-color: rgb(148 163 184 / 0.34);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.68), rgb(248 250 252 / 0.4));
+  border-color: rgb(148 163 184 / 0.42);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(248 250 252 / 0.48));
 }
 
 .admin-info-action {
-  border: 1px solid rgb(14 165 233 / 0.2);
-  background: linear-gradient(180deg, rgb(240 249 255 / 0.68), rgb(224 242 254 / 0.44));
-  color: rgb(3 105 161);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+  border: 1px solid rgb(56 189 248 / 0.26);
+  background: linear-gradient(180deg, rgb(240 249 255 / 0.78), rgb(224 242 254 / 0.54));
+  color: rgb(7 89 133);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.56),
+    0 16px 34px -28px rgb(14 116 144 / 0.24);
   backdrop-filter: blur(14px);
 }
 
 .admin-info-action:hover {
-  background: linear-gradient(180deg, rgb(224 242 254 / 0.8), rgb(191 219 254 / 0.52));
+  background: linear-gradient(180deg, rgb(224 242 254 / 0.88), rgb(191 219 254 / 0.62));
 }
 
 .admin-warning-action {
-  border: 1px solid rgb(251 191 36 / 0.28);
-  background: linear-gradient(180deg, rgb(255 251 235 / 0.74), rgb(254 243 199 / 0.46));
-  color: rgb(180 83 9);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+  border: 1px solid rgb(251 191 36 / 0.34);
+  background: linear-gradient(180deg, rgb(255 251 235 / 0.82), rgb(254 243 199 / 0.56));
+  color: rgb(146 64 14);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.58),
+    0 16px 34px -28px rgb(180 83 9 / 0.22);
   backdrop-filter: blur(14px);
 }
 
 .admin-warning-action:hover {
-  background: linear-gradient(180deg, rgb(254 243 199 / 0.86), rgb(253 230 138 / 0.56));
+  background: linear-gradient(180deg, rgb(254 243 199 / 0.92), rgb(253 230 138 / 0.66));
 }
 
 .admin-danger-action {
-  border: 1px solid rgb(244 63 94 / 0.2);
-  background: linear-gradient(180deg, rgb(255 241 242 / 0.7), rgb(255 228 230 / 0.44));
-  color: rgb(190 24 93);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+  border: 1px solid rgb(251 113 133 / 0.26);
+  background: linear-gradient(180deg, rgb(255 241 242 / 0.8), rgb(255 228 230 / 0.54));
+  color: rgb(157 23 77);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.58),
+    0 16px 34px -28px rgb(190 24 93 / 0.24);
   backdrop-filter: blur(14px);
 }
 
 .admin-danger-action:hover {
-  background: linear-gradient(180deg, rgb(255 228 230 / 0.82), rgb(254 205 211 / 0.56));
+  background: linear-gradient(180deg, rgb(255 228 230 / 0.9), rgb(254 205 211 / 0.66));
 }
 
 .admin-table-head {
@@ -409,28 +430,28 @@ body {
 }
 
 .admin-action-rail-panel {
-  border: 1px solid rgb(255 255 255 / 0.18);
+  border: 1px solid var(--admin-glass-border);
   background:
-    radial-gradient(circle at top, rgb(209 250 229 / 0.16), transparent 42%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.44), rgb(248 244 232 / 0.2));
+    radial-gradient(circle at top, rgb(209 250 229 / 0.12), transparent 40%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.36), rgb(248 244 232 / 0.14));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.44),
-    0 28px 76px -54px rgb(2 6 23 / 0.42);
-  backdrop-filter: blur(22px);
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 28px 76px -54px rgb(2 6 23 / 0.48);
+  backdrop-filter: blur(16px);
 }
 
 .admin-disclosure-pill {
-  border: 1px solid rgb(255 255 255 / 0.24);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.56), rgb(248 250 252 / 0.34));
+  border: 1px solid rgb(255 255 255 / 0.3);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.68), rgb(248 250 252 / 0.42));
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.56),
-    0 16px 34px -28px rgb(15 23 42 / 0.22);
+    inset 0 1px 0 rgb(255 255 255 / 0.62),
+    0 16px 34px -28px rgb(15 23 42 / 0.28);
   backdrop-filter: blur(16px);
 }
 
 .admin-disclosure-pill:hover {
-  border-color: rgb(16 185 129 / 0.24);
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.68), rgb(236 253 245 / 0.4));
+  border-color: rgb(52 211 153 / 0.3);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(236 253 245 / 0.5));
 }
 
 .admin-filter-panel-overlay {
@@ -443,36 +464,49 @@ body {
 }
 
 .admin-program-action-rail-panel {
-  border-color: rgb(255 255 255 / 0.22);
-  background: linear-gradient(180deg, rgb(15 23 42 / 0.72), rgb(15 23 42 / 0.58));
-  box-shadow: 0 28px 80px -56px rgb(2 6 23 / 0.72);
-  backdrop-filter: blur(20px);
+  border-color: var(--admin-glass-border-strong);
+  background:
+    radial-gradient(circle at top, rgb(209 250 229 / 0.16), transparent 42%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.46), rgb(248 244 232 / 0.2));
+  box-shadow:
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 30px 80px -56px rgb(2 6 23 / 0.42);
+  backdrop-filter: blur(18px);
 }
 
 .admin-program-preview-shell {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 0.14);
+  border: 1px solid var(--admin-glass-border-strong);
   border-radius: 2.5rem;
-  background: rgb(2 6 23);
-  box-shadow: 0 42px 120px -60px rgb(15 23 42 / 0.65);
+  background:
+    radial-gradient(circle at top, rgb(209 250 229 / 0.12), transparent 32%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.22), rgb(248 244 232 / 0.08));
+  box-shadow:
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 42px 120px -64px rgb(15 23 42 / 0.56);
+  backdrop-filter: blur(18px);
 }
 
 .admin-program-preview-page {
-  border-color: rgb(255 255 255 / 0.16);
+  border-color: var(--admin-glass-border-strong);
   background:
-    radial-gradient(circle at top, rgb(16 185 129 / 0.18), transparent 34%),
-    linear-gradient(180deg, rgb(2 6 23 / 0.36), rgb(2 6 23 / 0.82) 28%, rgb(2 6 23 / 0.94)),
+    radial-gradient(circle at top, rgb(209 250 229 / 0.16), transparent 34%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.28), rgb(248 250 252 / 0.12) 34%, rgb(248 244 232 / 0.08)),
     url('/branding/Volcan-Arenal.png') center / cover no-repeat;
-  box-shadow: 0 42px 120px -60px rgb(15 23 42 / 0.65);
+  box-shadow:
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 42px 120px -64px rgb(15 23 42 / 0.54);
+  backdrop-filter: blur(14px);
 }
 
 .admin-program-preview-page > div:first-of-type {
-  background: radial-gradient(circle at top, rgb(209 250 229 / 0.18), transparent 62%);
+  background: radial-gradient(circle at top, rgb(209 250 229 / 0.14), transparent 58%);
 }
 
 .admin-program-preview-page h1 {
   color: rgb(248 250 252);
+  text-shadow: 0 18px 44px rgb(15 23 42 / 0.35);
 }
 
 .admin-program-preview-page h1 + p {
@@ -496,8 +530,8 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at top, rgb(16 185 129 / 0.16), transparent 34%),
-    linear-gradient(180deg, rgb(2 6 23 / 0.36), rgb(2 6 23 / 0.82) 28%, rgb(2 6 23 / 0.94));
+    radial-gradient(circle at top, rgb(209 250 229 / 0.16), transparent 28%),
+    linear-gradient(180deg, rgb(15 23 42 / 0.08), rgb(15 23 42 / 0.22) 28%, rgb(15 23 42 / 0.34));
 }
 
 .admin-program-preview-content {
@@ -509,33 +543,43 @@ body {
 }
 
 .admin-program-preview-banner {
-  backdrop-filter: blur(16px);
+  background: rgb(255 255 255 / 0.9);
+  backdrop-filter: blur(18px);
 }
 
 .admin-program-preview-hero {
-  padding: 1rem 0 0.25rem;
+  padding: 0.5rem 0 0.25rem;
 }
 
 .admin-program-preview-hero-note,
 .admin-program-preview-legend {
-  border: 1px solid rgb(255 255 255 / 0.16);
-  background: linear-gradient(180deg, rgb(15 23 42 / 0.66), rgb(15 23 42 / 0.52));
+  border: 1px solid var(--admin-glass-border);
+  background:
+    radial-gradient(circle at top, rgb(209 250 229 / 0.12), transparent 42%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.52), rgb(248 250 252 / 0.22));
+  box-shadow:
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 24px 58px -42px rgb(15 23 42 / 0.3);
   backdrop-filter: blur(18px);
 }
 
 .admin-program-preview-section {
-  border-color: rgb(255 255 255 / 0.14);
-  background: linear-gradient(180deg, rgb(15 23 42 / 0.76), rgb(15 23 42 / 0.62));
-  box-shadow: 0 28px 90px -60px rgb(2 6 23 / 0.72);
-  backdrop-filter: blur(20px);
+  border-color: var(--admin-glass-border);
+  background:
+    radial-gradient(circle at top, rgb(209 250 229 / 0.12), transparent 38%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.42), rgb(248 250 252 / 0.18));
+  box-shadow:
+    inset 0 1px 0 var(--admin-glass-highlight),
+    0 30px 84px -58px rgb(2 6 23 / 0.42);
+  backdrop-filter: blur(18px);
 }
 
 .admin-program-preview-section > div:first-child {
-  border-color: rgb(255 255 255 / 0.08);
+  border-color: rgb(148 163 184 / 0.16);
 }
 
 .admin-program-preview-section h2 {
-  color: rgb(248 250 252);
+  color: rgb(15 23 42);
 }
 
 .admin-program-preview-section p {
@@ -544,27 +588,33 @@ body {
 
 .admin-program-preview-section > div:first-child p,
 .admin-program-preview-section > div:first-child h2 + p {
-  color: rgb(203 213 225);
+  color: rgb(71 85 105);
 }
 
 .admin-program-preview-section .admin-inner-panel {
-  border-color: rgb(255 255 255 / 0.08);
-  background: rgb(255 255 255 / 0.88);
+  border-color: rgb(255 255 255 / 0.22);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.72), rgb(248 250 252 / 0.48));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 18px 40px -30px rgb(15 23 42 / 0.22);
 }
 
 .admin-program-preview-section .admin-inner-panel-subtle {
-  border-color: rgb(255 255 255 / 0.08);
-  background: rgb(248 250 252 / 0.82);
+  border-color: rgb(255 255 255 / 0.18);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.5), rgb(248 250 252 / 0.28));
 }
 
 .admin-program-preview-section .admin-inner-input {
-  border-color: rgb(148 163 184 / 0.42);
-  background: rgb(255 255 255 / 0.96);
+  border-color: rgb(255 255 255 / 0.28);
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.82), rgb(248 250 252 / 0.62));
 }
 
 .admin-program-preview-section .admin-inner-input:focus {
-  border-color: rgb(52 211 153 / 0.78);
-  box-shadow: 0 0 0 3px rgb(16 185 129 / 0.18);
+  border-color: rgb(52 211 153 / 0.62);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.62),
+    0 0 0 3px rgb(16 185 129 / 0.14),
+    0 16px 36px -30px rgb(15 23 42 / 0.3);
 }
 
 .admin-program-preview-section .admin-primary-action,
@@ -634,47 +684,43 @@ body {
   }
 
   .admin-program-editor-shell {
-    --admin-program-rail-width: 12rem;
-    --admin-program-rail-gap: 5rem;
-    position: relative;
-    width: min(100%, 88rem);
-    margin-inline: auto;
-    padding-right: calc(var(--admin-program-rail-width) + var(--admin-program-rail-gap));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(15rem, 17rem);
+    align-items: start;
+    gap: 2rem;
   }
 
   .admin-program-action-rail {
     display: block;
     order: 0;
-    width: var(--admin-program-rail-width);
+    min-width: 0;
+    width: 100%;
+    grid-column: 2;
+    grid-row: 1;
   }
 
   .admin-program-form-flow {
-    max-width: min(100%, 72rem);
+    max-width: none;
+    min-width: 0;
+    grid-column: 1;
+    grid-row: 1;
   }
 
   .admin-program-action-rail-sticky {
-    position: fixed;
-    right: 1.25rem;
-    bottom: 1.5rem;
-    width: min(var(--admin-program-rail-width), calc(100vw - 2.5rem));
-    z-index: 30;
+    position: sticky;
+    top: 1.5rem;
+    width: 100%;
+    z-index: 10;
   }
 
   .admin-program-bottom-actions {
-    max-width: min(100%, 52rem);
+    max-width: none;
   }
 }
 
 @media screen and (min-width: 1024px) and (max-width: 1279px) {
-  .admin-program-editor-shell {
-    --admin-program-rail-width: 11.5rem;
-    --admin-program-rail-gap: 4rem;
-    padding-right: calc(var(--admin-program-rail-width) + var(--admin-program-rail-gap));
-  }
-
   .admin-program-action-rail-sticky {
-    right: 1rem;
-    bottom: 1.25rem;
+    top: 1.25rem;
   }
 }
 

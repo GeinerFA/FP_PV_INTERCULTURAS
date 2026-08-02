@@ -17,10 +17,8 @@ export type AdminApplicationExportCopy = {
   statusesSummaryLabel: string;
   exportUnavailableMessage: string;
   fields: {
-    id: string;
     status: string;
     applicationType: string;
-    applicationTypeCode: string;
     applicationTypeName: string;
     submittedAt: string;
     updatedAt: string;
@@ -30,19 +28,11 @@ export type AdminApplicationExportCopy = {
     email: string;
     phone: string;
     nationality: string;
-    residenceCountry: string;
-    residenceCity: string;
     birthDate: string;
     identityDocument: string;
-    availability: string;
     message: string;
-    curriculum: string;
     curriculumFileName: string;
-    curriculumContentType: string;
-    curriculumSize: string;
-    curriculumUploadedAt: string;
     statusHistory: string;
-    applicationTypeHistory: string;
   };
   filters: {
     query: string;
@@ -54,7 +44,6 @@ export type AdminApplicationExportCopy = {
   placeholders: {
     empty: string;
     none: string;
-    available: string;
   };
   statuses: Record<ApplicationStatus, string>;
   applicationTypes: Record<ApplicationTypeCode, string>;
@@ -125,14 +114,6 @@ function formatDateOnly(value: string | null, locale: string, fallback: string):
   return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(parsed);
 }
 
-function formatFileSize(sizeBytes: number): string {
-  if (sizeBytes < 1024 * 1024) {
-    return `${Math.max(1, Math.round(sizeBytes / 1024))} KB`;
-  }
-
-  return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 function formatChangedBy(actor: ApplicationChangeActor, fallback: string): string {
   if (!actor) {
     return fallback;
@@ -145,24 +126,6 @@ function formatChangedBy(actor: ApplicationChangeActor, fallback: string): strin
   return actor.role ?? actor.userId ?? fallback;
 }
 
-function formatCurriculumSummary(
-  application: Application,
-  copy: AdminApplicationExportCopy,
-  locale: string,
-): string {
-  if (!application.curriculum) {
-    return copy.placeholders.none;
-  }
-
-  return [
-    application.curriculum.fileName,
-    application.curriculum.contentType,
-    formatFileSize(application.curriculum.sizeBytes),
-    `${copy.fields.curriculumUploadedAt}: ${formatDateTime(application.curriculum.uploadedAt, locale)}`,
-    copy.placeholders.available,
-  ].join(" · ");
-}
-
 function formatStatusHistory(application: Application, copy: AdminApplicationExportCopy, locale: string): string {
   if (application.statusHistory.length === 0) {
     return copy.placeholders.none;
@@ -172,27 +135,6 @@ function formatStatusHistory(application: Application, copy: AdminApplicationExp
     .map((entry) => {
       const fromLabel = entry.from ? copy.statuses[entry.from] : copy.placeholders.none;
       const toLabel = copy.statuses[entry.to];
-      const reason = entry.reason ?? copy.placeholders.empty;
-
-      return [
-        `${fromLabel} → ${toLabel}`,
-        formatDateTime(entry.changedAt, locale),
-        formatChangedBy(entry.changedBy, copy.placeholders.empty),
-        reason,
-      ].join(" | ");
-    })
-    .join("\n");
-}
-
-function formatApplicationTypeHistory(application: Application, copy: AdminApplicationExportCopy, locale: string): string {
-  if (application.applicationTypeHistory.length === 0) {
-    return copy.placeholders.none;
-  }
-
-  return application.applicationTypeHistory
-    .map((entry) => {
-      const fromLabel = entry.from?.name ?? copy.placeholders.none;
-      const toLabel = entry.to.name;
       const reason = entry.reason ?? copy.placeholders.empty;
 
       return [
@@ -237,10 +179,8 @@ function buildExportRows(
   locale: string,
 ): ExportRow[] {
   return applications.map((application) => ({
-    [copy.fields.id]: application.id,
     [copy.fields.status]: copy.statuses[application.status],
     [copy.fields.applicationType]: copy.applicationTypes[application.applicationType.code],
-    [copy.fields.applicationTypeCode]: application.applicationType.code,
     [copy.fields.applicationTypeName]: application.applicationType.name,
     [copy.fields.submittedAt]: formatDateTime(application.createdAt, locale),
     [copy.fields.updatedAt]: formatDateTime(application.updatedAt, locale),
@@ -250,21 +190,11 @@ function buildExportRows(
     [copy.fields.email]: application.email,
     [copy.fields.phone]: application.phone,
     [copy.fields.nationality]: application.nationality,
-    [copy.fields.residenceCountry]: application.residenceCountry ?? copy.placeholders.empty,
-    [copy.fields.residenceCity]: application.residenceCity ?? copy.placeholders.empty,
     [copy.fields.birthDate]: formatDateOnly(application.birthDate, locale, copy.placeholders.empty),
     [copy.fields.identityDocument]: application.identityDocument ?? copy.placeholders.empty,
-    [copy.fields.availability]: application.availability ?? copy.placeholders.empty,
     [copy.fields.message]: application.message ?? copy.placeholders.empty,
-    [copy.fields.curriculum]: formatCurriculumSummary(application, copy, locale),
     [copy.fields.curriculumFileName]: application.curriculum?.fileName ?? copy.placeholders.empty,
-    [copy.fields.curriculumContentType]: application.curriculum?.contentType ?? copy.placeholders.empty,
-    [copy.fields.curriculumSize]: application.curriculum ? formatFileSize(application.curriculum.sizeBytes) : copy.placeholders.empty,
-    [copy.fields.curriculumUploadedAt]: application.curriculum
-      ? formatDateTime(application.curriculum.uploadedAt, locale)
-      : copy.placeholders.empty,
     [copy.fields.statusHistory]: formatStatusHistory(application, copy, locale),
-    [copy.fields.applicationTypeHistory]: formatApplicationTypeHistory(application, copy, locale),
   }));
 }
 
@@ -523,10 +453,8 @@ export async function buildAdminApplicationsPdf(context: PdfContext): Promise<Ui
     drawWrappedText(application.fullName, boldFont, 16, pdfColors.title, 20);
     cursorY -= 4;
 
-    drawField(context.copy.fields.id, application.id);
     drawField(context.copy.fields.status, context.copy.statuses[application.status]);
     drawField(context.copy.fields.applicationType, context.copy.applicationTypes[application.applicationType.code]);
-    drawField(context.copy.fields.applicationTypeCode, application.applicationType.code);
     drawField(context.copy.fields.applicationTypeName, application.applicationType.name);
     drawField(context.copy.fields.submittedAt, formatDateTime(application.createdAt, context.locale));
     drawField(context.copy.fields.updatedAt, formatDateTime(application.updatedAt, context.locale));
@@ -536,21 +464,13 @@ export async function buildAdminApplicationsPdf(context: PdfContext): Promise<Ui
     drawField(context.copy.fields.email, application.email || context.copy.placeholders.empty);
     drawField(context.copy.fields.phone, application.phone || context.copy.placeholders.empty);
     drawField(context.copy.fields.nationality, application.nationality || context.copy.placeholders.empty);
-    drawField(context.copy.fields.residenceCountry, application.residenceCountry ?? context.copy.placeholders.empty);
-    drawField(context.copy.fields.residenceCity, application.residenceCity ?? context.copy.placeholders.empty);
     drawField(
       context.copy.fields.birthDate,
       formatDateOnly(application.birthDate, context.locale, context.copy.placeholders.empty),
     );
     drawField(context.copy.fields.identityDocument, application.identityDocument ?? context.copy.placeholders.empty);
-    drawField(context.copy.fields.availability, application.availability ?? context.copy.placeholders.empty);
     drawField(context.copy.fields.message, application.message ?? context.copy.placeholders.empty);
-    drawField(context.copy.fields.curriculum, formatCurriculumSummary(application, context.copy, context.locale));
     drawField(context.copy.fields.statusHistory, formatStatusHistory(application, context.copy, context.locale));
-    drawField(
-      context.copy.fields.applicationTypeHistory,
-      formatApplicationTypeHistory(application, context.copy, context.locale),
-    );
 
     if (index < context.applications.length - 1) {
       drawDivider();

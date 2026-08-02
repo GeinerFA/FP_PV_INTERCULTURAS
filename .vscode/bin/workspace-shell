@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+script_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+workspace_dir="$(dirname -- "$(dirname -- "$script_dir")")"
+
+shell_path="${SHELL:-}"
+if [ -z "$shell_path" ] || [ ! -x "$shell_path" ]; then
+  shell_path="$(getent passwd "$(id -u)" | cut -d: -f7)"
+fi
+
+if [ -z "$shell_path" ] || [ ! -x "$shell_path" ]; then
+  shell_path="/bin/bash"
+fi
+
+export PATH="$workspace_dir/.vscode/bin:$PATH"
+
+if [ "$#" -eq 0 ]; then
+  exec "$shell_path" -i
+fi
+
+exec "$shell_path" "$@"

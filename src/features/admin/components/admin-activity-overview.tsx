@@ -128,7 +128,7 @@ export async function AdminActivityOverview({ page }: AdminActivityOverviewProps
           { key: "applications", value: applicationEvents },
           { key: "programs", value: programEvents },
         ].map((item) => (
-          <article key={item.key} className="surface-dark-soft rounded-3xl p-6">
+          <article key={item.key} className="admin-inner-panel rounded-3xl p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
               {t(`stats.${item.key}.label`)}
             </p>
@@ -144,7 +144,7 @@ export async function AdminActivityOverview({ page }: AdminActivityOverviewProps
         description={t("feed.description")}
         action={
           latestEvent ? (
-            <div className="rounded-2xl border border-emerald-900/10 bg-white/70 px-4 py-3 text-right shadow-[0_18px_40px_-32px_rgba(15,23,42,0.35)]">
+            <div className="admin-inner-panel-subtle rounded-2xl px-4 py-3 text-right">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("feed.latestLabel")}</p>
               <p className="mt-2 text-sm font-semibold text-slate-900">
                 {formatAdminActivityDateTime(latestEvent.happenedAt, locale)}
@@ -152,7 +152,6 @@ export async function AdminActivityOverview({ page }: AdminActivityOverviewProps
             </div>
           ) : null
         }
-        className="border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,244,232,0.84))] shadow-[0_32px_80px_-58px_rgba(15,23,42,0.14)]"
       >
         {entries.length === 0 ? (
           <div className="surface-dark-panel-muted rounded-2xl px-5 py-5 text-sm leading-7 text-slate-700">
@@ -168,7 +167,7 @@ export async function AdminActivityOverview({ page }: AdminActivityOverviewProps
               return (
                 <article
                   key={entry.id}
-                  className="group relative overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white/88 px-5 py-5 shadow-[0_22px_55px_-38px_rgba(15,23,42,0.38)] ring-1 ring-white/70 backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_28px_70px_-42px_rgba(15,23,42,0.42)]"
+                  className="admin-inner-panel group relative overflow-hidden rounded-[1.75rem] px-5 py-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_28px_70px_-42px_rgba(15,23,42,0.42)]"
                 >
                   <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${actionTheme.accent}`} />
                   <div className="grid gap-5 xl:grid-cols-[minmax(0,1.7fr)_minmax(17rem,0.9fr)]">
@@ -194,7 +193,7 @@ export async function AdminActivityOverview({ page }: AdminActivityOverviewProps
                       </div>
 
                       {detailLines.length > 0 ? (
-                        <div className={`rounded-2xl border px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] ${actionTheme.detail}`}>
+                          <div className={`rounded-2xl border px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.55)] ${actionTheme.detail}`}>
                           <div className="space-y-2">
                             {detailLines.map((line, index) => (
                               <p key={`${entry.id}-detail-${index}`} className="text-sm leading-7 text-slate-700">
@@ -206,7 +205,7 @@ export async function AdminActivityOverview({ page }: AdminActivityOverviewProps
                       ) : null}
                     </div>
 
-                    <div className="flex flex-col gap-4 rounded-[1.35rem] border border-slate-200/85 bg-slate-50/88 px-4 py-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.72)]">
+                    <div className="admin-inner-panel-subtle flex flex-col gap-4 rounded-[1.35rem] px-4 py-4">
                       <dl className="grid gap-4">
                         <div>
                           <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">

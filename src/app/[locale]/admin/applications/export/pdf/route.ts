@@ -27,10 +27,8 @@ function buildExportCopy(
     statusesSummaryLabel: tList("filters.exportStatusesSummaryLabel"),
     exportUnavailableMessage: tList("filters.exportUnavailableMessage"),
     fields: {
-      id: tList("filters.exportFields.id"),
       status: tList("filters.exportFields.status"),
       applicationType: tList("filters.exportFields.applicationType"),
-      applicationTypeCode: tList("filters.exportFields.applicationTypeCode"),
       applicationTypeName: tList("filters.exportFields.applicationTypeName"),
       submittedAt: tList("filters.exportFields.submittedAt"),
       updatedAt: tList("filters.exportFields.updatedAt"),
@@ -40,19 +38,11 @@ function buildExportCopy(
       email: tDetail("fields.email"),
       phone: tDetail("fields.phone"),
       nationality: tDetail("fields.nationality"),
-      residenceCountry: tList("filters.exportFields.residenceCountry"),
-      residenceCity: tList("filters.exportFields.residenceCity"),
       birthDate: tDetail("fields.birthDate"),
       identityDocument: tList("filters.exportFields.identityDocument"),
-      availability: tDetail("fields.availability"),
       message: tDetail("fields.message"),
-      curriculum: tDetail("fields.curriculum"),
       curriculumFileName: tList("filters.exportFields.curriculumFileName"),
-      curriculumContentType: tList("filters.exportFields.curriculumContentType"),
-      curriculumSize: tList("filters.exportFields.curriculumSize"),
-      curriculumUploadedAt: tList("filters.exportFields.curriculumUploadedAt"),
       statusHistory: tList("filters.exportFields.statusHistory"),
-      applicationTypeHistory: tList("filters.exportFields.applicationTypeHistory"),
     },
     filters: {
       query: tList("filters.searchLabel"),
@@ -64,7 +54,6 @@ function buildExportCopy(
     placeholders: {
       empty: "—",
       none: tList("filters.exportNoneLabel"),
-      available: tList("filters.exportAvailableLabel"),
     },
     statuses: {
       pending: tList("statuses.pending"),

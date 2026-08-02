@@ -1,0 +1,11 @@
+{
+  "terminal.integrated.defaultProfile.linux": "Workspace Shell",
+  "terminal.integrated.profiles.linux": {
+    "Workspace Shell": {
+      "path": "${workspaceFolder}/.vscode/bin/workspace-shell"
+    }
+  },
+  "terminal.integrated.env.linux": {
+    "PATH": "${workspaceFolder}/.vscode/bin:${env:PATH}"
+  }
+}

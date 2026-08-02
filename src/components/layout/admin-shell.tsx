@@ -38,11 +38,11 @@ export async function AdminShell({ children, session }: AdminShellProps) {
     : [];
 
   return (
-    <div className="admin-shell-preview min-h-screen text-slate-900">
+    <div className="admin-shell-preview min-h-screen text-slate-900 lg:h-screen lg:overflow-hidden">
       <div aria-hidden="true" className="admin-shell-preview-background" />
       <div aria-hidden="true" className="admin-shell-preview-overlay" />
 
-      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[116rem] gap-4 px-4 py-4 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-6 lg:px-6 lg:py-6 xl:gap-8 xl:px-8 2xl:px-10">
+      <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-[116rem] gap-4 px-4 py-4 lg:h-full lg:min-h-0 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-6 lg:px-6 lg:py-6 xl:gap-8 xl:px-8 2xl:px-10">
         <aside className="admin-sidebar surface-dark-soft-strong flex min-h-0 flex-col gap-5 rounded-[34px] px-5 py-5 lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:self-start lg:px-6 lg:py-6">
           <div className="relative z-20 flex items-center justify-between gap-3">
             <Link
@@ -106,8 +106,8 @@ export async function AdminShell({ children, session }: AdminShellProps) {
           </div>
         </aside>
 
-        <main className="min-w-0 py-2 lg:py-4">
-          <div className="flex max-w-none flex-col gap-4 xl:pr-2 2xl:pr-4">
+        <main className="min-w-0 py-2 lg:min-h-0 lg:overflow-y-auto lg:py-4">
+          <div className="flex max-w-none flex-col gap-4 lg:min-h-full xl:pr-2 2xl:pr-4">
             <div className="flex flex-col gap-6">{children}</div>
           </div>
         </main>

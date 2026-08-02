@@ -84,7 +84,6 @@ export async function AdminActivityHistoryView({ entityType, entityId, page }: A
           {t("history.backToFeed")}
         </Link>
       }
-      className="border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,244,232,0.84))] shadow-[0_32px_80px_-58px_rgba(15,23,42,0.14)]"
     >
       <ol className="space-y-4">
         {entries.map((entry) => {
@@ -93,7 +92,7 @@ export async function AdminActivityHistoryView({ entityType, entityId, page }: A
           return (
             <li
               key={entry.id}
-              className="surface-dark-panel-muted rounded-3xl border border-emerald-900/8 px-5 py-5 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.28)]"
+              className="admin-inner-panel rounded-3xl px-5 py-5"
             >
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
@@ -113,7 +112,7 @@ export async function AdminActivityHistoryView({ entityType, entityId, page }: A
                   ))}
                 </div>
 
-                <div className="rounded-2xl border border-emerald-900/10 bg-white/80 px-4 py-4 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.18)]">
+                <div className="admin-inner-panel-subtle rounded-2xl px-4 py-4">
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("history.metadata.title")}</p>
                   <dl className="mt-3 grid gap-4 md:grid-cols-2">
                     <div>

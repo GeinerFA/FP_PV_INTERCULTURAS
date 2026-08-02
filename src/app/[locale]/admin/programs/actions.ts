@@ -5,7 +5,7 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { isHTTPAccessFallbackError } from "next/dist/client/components/http-access-fallback/http-access-fallback";
 import { notFound, redirect } from "next/navigation";
 
-import { locales, type AppLocale } from "@/config/i18n";
+import { defaultLocale, locales, type AppLocale } from "@/config/i18n";
 import { requireAdminSession } from "@/lib/admin-session";
 import { recordAdminActivitySafely } from "@/services/admin/activity-service";
 import {
@@ -214,12 +214,85 @@ async function buildCoverImageAsset(file: File): Promise<ProgramImageAssetUpload
   };
 }
 
+function normalizeProgramSlug(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function resolveProgramTitleSeed(translations: ProgramSnapshot["translations"]): string {
+  const defaultTitle = translations[defaultLocale]?.title?.trim();
+
+  if (defaultTitle) {
+    return defaultTitle;
+  }
+
+  return (
+    Object.values(translations)
+      .map((translation) => translation.title.trim())
+      .find((title) => title.length > 0) ?? ""
+  );
+}
+
+function buildProgramSeoFromFormData(
+  formData: FormData,
+  translations: ProgramSnapshot["translations"],
+  currentSnapshot: ProgramSnapshot | null,
+): ProgramSnapshot["seo"] {
+  const defaultTitle = translations[defaultLocale]?.title?.trim() ?? "";
+  const defaultDescription = translations[defaultLocale]?.shortDescription?.trim() ?? "";
+
+  return Object.fromEntries(
+    locales.map((locale) => {
+      const translation = translations[locale];
+      const currentSeo = currentSnapshot?.seo[locale];
+      const explicitTitle = readString(formData, `seo.${locale}.title`);
+      const explicitDescription = readString(formData, `seo.${locale}.description`);
+
+      return [
+        locale,
+        {
+          title:
+            explicitTitle ||
+            currentSeo?.title.trim() ||
+            translation.title.trim() ||
+            defaultTitle,
+          description:
+            explicitDescription ||
+            currentSeo?.description.trim() ||
+            translation.shortDescription.trim() ||
+            defaultDescription,
+        },
+      ];
+    }),
+  ) as ProgramSnapshot["seo"];
+}
+
 function parseProgramSnapshotFromFormData(
   formData: FormData,
   coverImageAsset: ProgramImageAssetUpload | null,
+  currentSnapshot: ProgramSnapshot | null,
 ): ProgramSnapshot {
+  const translations = Object.fromEntries(
+    locales.map((locale) => [
+      locale,
+      {
+        title: readString(formData, `translations.${locale}.title`),
+        shortDescription: readString(formData, `translations.${locale}.shortDescription`),
+        fullDescription: readString(formData, `translations.${locale}.fullDescription`),
+        requirements: readLineArray(formData, `translations.${locale}.requirements`),
+        included: readLineArray(formData, `translations.${locale}.included`),
+      },
+    ]),
+  ) as ProgramSnapshot["translations"];
+  const explicitSlug = readString(formData, "slug");
+  const resolvedSlug = explicitSlug || currentSnapshot?.slug.trim() || normalizeProgramSlug(resolveProgramTitleSeed(translations));
+
   return parseProgramSnapshot({
-    slug: readString(formData, "slug"),
+    slug: resolvedSlug,
     category: readString(formData, "category"),
     featured: readBoolean(formData, "featured"),
     coverImage: readString(formData, "coverImage"),
@@ -227,27 +300,8 @@ function parseProgramSnapshotFromFormData(
     location: readLocalizedText(formData, "location"),
     duration: readLocalizedText(formData, "duration"),
     availability: readLocalizedText(formData, "availability"),
-    translations: Object.fromEntries(
-      locales.map((locale) => [
-        locale,
-        {
-          title: readString(formData, `translations.${locale}.title`),
-          shortDescription: readString(formData, `translations.${locale}.shortDescription`),
-          fullDescription: readString(formData, `translations.${locale}.fullDescription`),
-          requirements: readLineArray(formData, `translations.${locale}.requirements`),
-          included: readLineArray(formData, `translations.${locale}.included`),
-        },
-      ]),
-    ),
-    seo: Object.fromEntries(
-      locales.map((locale) => [
-        locale,
-        {
-          title: readString(formData, `seo.${locale}.title`),
-          description: readString(formData, `seo.${locale}.description`),
-        },
-      ]),
-    ),
+    translations,
+    seo: buildProgramSeoFromFormData(formData, translations, currentSnapshot),
   });
 }
 
@@ -269,6 +323,12 @@ export async function saveProgramDraftAction(
 ): Promise<void> {
   const nextPath = id ? buildProgramEditPath(locale, id) : buildProgramCreatePath(locale);
   const session = await requireAdminSession({ locale, nextPath, permission: "programs.manage" });
+  const currentProgram = id ? await getAdminProgramById(id) : null;
+
+  if (id && !currentProgram) {
+    notFound();
+  }
+
   const coverImageFile = readCoverImageFile(formData);
   const coverImageError = validateCoverImageFile(coverImageFile);
 
@@ -282,6 +342,7 @@ export async function saveProgramDraftAction(
     draftSnapshot = parseProgramSnapshotFromFormData(
       formData,
       coverImageFile ? await buildCoverImageAsset(coverImageFile) : null,
+      currentProgram?.draftSnapshot ?? null,
     );
   } catch {
     redirect(buildStatusUrl(nextPath, "invalid"));
@@ -317,13 +378,13 @@ export async function saveProgramDraftAction(
       redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "draft-saved"));
     }
 
-    const currentProgram = await getAdminProgramById(id);
+    const existingProgram = currentProgram;
 
-    if (!currentProgram) {
+    if (!existingProgram) {
       notFound();
     }
 
-    const programChanges = buildProgramActivityChanges(currentProgram.draftSnapshot, draftSnapshot);
+    const programChanges = buildProgramActivityChanges(existingProgram.draftSnapshot, draftSnapshot);
     const updatedProgram = await saveAdminProgramDraft({
       id,
       draftSnapshot,
@@ -355,6 +416,12 @@ export async function publishProgramAction(
 ): Promise<void> {
   const nextPath = id ? buildProgramEditPath(locale, id) : buildProgramCreatePath(locale);
   const session = await requireAdminSession({ locale, nextPath, permission: "programs.manage" });
+  const currentProgram = id ? await getAdminProgramById(id) : null;
+
+  if (id && !currentProgram) {
+    notFound();
+  }
+
   const coverImageFile = readCoverImageFile(formData);
   const coverImageError = validateCoverImageFile(coverImageFile);
 
@@ -368,6 +435,7 @@ export async function publishProgramAction(
     draftSnapshot = parseProgramSnapshotFromFormData(
       formData,
       coverImageFile ? await buildCoverImageAsset(coverImageFile) : null,
+      currentProgram?.draftSnapshot ?? null,
     );
   } catch {
     redirect(buildStatusUrl(nextPath, "invalid"));
@@ -377,12 +445,6 @@ export async function publishProgramAction(
 
   try {
     const isNewProgram = !id;
-    const currentProgram = id ? await getAdminProgramById(id) : null;
-
-    if (id && !currentProgram) {
-      notFound();
-    }
-
     const programChanges = currentProgram ? buildProgramActivityChanges(currentProgram.draftSnapshot, draftSnapshot) : [];
     const persistedProgram = id
       ? await saveAdminProgramDraft({

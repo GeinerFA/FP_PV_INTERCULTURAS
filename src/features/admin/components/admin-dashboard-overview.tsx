@@ -66,7 +66,7 @@ export async function AdminDashboardOverview() {
   return (
     <div className="space-y-8">
       <div className="grid gap-4 xl:grid-cols-2">
-        <section className="surface-dark-soft rounded-3xl p-6">
+        <section className="admin-inner-section rounded-3xl p-6">
           <div className="flex flex-col gap-4 border-b border-emerald-900/8 pb-6 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">
@@ -131,7 +131,7 @@ export async function AdminDashboardOverview() {
           </div>
         </section>
 
-        <section className="surface-dark-soft rounded-3xl p-6">
+        <section className="admin-inner-section rounded-3xl p-6">
           <div className="flex flex-col gap-4 border-b border-emerald-900/8 pb-6 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">

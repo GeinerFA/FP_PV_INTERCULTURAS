@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+prepend_path_dir() {
+  local dir="$1"
+
+  if [ ! -d "$dir" ]; then
+    return
+  fi
+
+  case ":$PATH:" in
+    *":$dir:"*) ;;
+    *) PATH="$dir:$PATH" ;;
+  esac
+}
+
+home_dir="${HOME:-$(getent passwd "$(id -u)" | cut -d: -f6)}"
+
+prepend_path_dir "$home_dir/.local/bin"
+prepend_path_dir "$home_dir/bin"
+prepend_path_dir "/home/linuxbrew/.linuxbrew/bin"
+prepend_path_dir "/usr/local/bin"
+prepend_path_dir "/usr/bin"
+prepend_path_dir "/bin"
+
+export PATH
+
+if command -v corepack >/dev/null 2>&1; then
+  exec corepack pnpm "$@"
+fi
+
+if [ -x "/home/linuxbrew/.linuxbrew/bin/corepack" ]; then
+  exec "/home/linuxbrew/.linuxbrew/bin/corepack" pnpm "$@"
+fi
+
+if [ -x "/usr/bin/corepack" ]; then
+  exec "/usr/bin/corepack" pnpm "$@"
+fi
+
+printf '%s\n' "Unable to locate corepack for workspace pnpm wrapper." >&2
+exit 127
