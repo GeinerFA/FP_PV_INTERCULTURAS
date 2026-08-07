@@ -239,7 +239,10 @@ export async function verifyCloudinaryHomeHeroVideoAsset(assetId: string): Promi
   let verifiedAsset: unknown = null;
 
   for (const resourceType of ["image", "video"] as const) {
-    const result = await client.api.resources_by_asset_ids([normalizedAssetId], { resource_type: resourceType });
+    const result = await client.api.resources_by_asset_ids([normalizedAssetId], {
+      resource_type: resourceType,
+      tags: true,
+    });
     const candidate = Array.isArray(result.resources) ? result.resources[0] : null;
 
     if (candidate) {

@@ -51,18 +51,18 @@ export async function AdminHomeHeroVideoSettings({
 
     return (
       <AdminWorkspaceSection
-        eyebrow={message("unavailable.eyebrow", "Videos no disponibles")}
-        title={message("unavailable.title", "No se pudo cargar el mantenimiento de videos de la home")}
+        eyebrow={message("unavailable.eyebrow", "Recursos no disponibles")}
+        title={message("unavailable.title", "No se pudo cargar la gestión de recursos del hero de la home")}
         description={message(
           "unavailable.description",
-          "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
+            "La sesión se inició correctamente, pero esta información no está disponible en este momento.",
         )}
         tone="warning"
       >
         <p className="max-w-3xl text-sm leading-7 text-slate-700">
           {message(
             "unavailable.note",
-            "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza los videos reales por datos simulados dentro del panel.",
+            "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración y la conexión de datos.",
           )}
         </p>
       </AdminWorkspaceSection>
@@ -90,7 +90,7 @@ export async function AdminHomeHeroVideoSettings({
 
       <div className="grid gap-4 xl:grid-cols-3">
         <article className="admin-inner-panel rounded-[28px] p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{message("stats.total.label", "Videos configurados")}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{message("stats.total.label", "Recursos configurados")}</p>
           <p className="mt-3 text-3xl font-semibold text-slate-950">{videos.length}</p>
           <p className="mt-2 text-sm text-slate-600">{message("stats.total.description", "Total actual de recursos ordenados para el hero principal de la portada.")}</p>
         </article>
@@ -102,25 +102,13 @@ export async function AdminHomeHeroVideoSettings({
         <article className="admin-inner-panel rounded-[28px] p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{message("stats.cloudinary.label", "Hospedados en Cloudinary")}</p>
           <p className="mt-3 text-3xl font-semibold text-slate-950">{cloudinaryCount}</p>
-          <p className="mt-2 text-sm text-slate-600">{message("stats.cloudinary.description", "Cantidad de videos ya migrados al flujo nuevo de subida desde el dispositivo.")}</p>
+          <p className="mt-2 text-sm text-slate-600">{message("stats.cloudinary.description", "Cantidad de recursos alojados en Cloudinary y disponibles para la portada pública.")}</p>
         </article>
       </div>
 
       <AdminWorkspaceSection
-        title={message("live.label", "Impacto inmediato")}
-        description={message(
-          "live.description",
-          "El orden y las eliminaciones impactan la home pública en cuanto se revalida esta ruta. No existe un paso separado de publicación.",
-        )}
-      >
-        <p className="max-w-3xl text-sm leading-7 text-slate-700">
-          {message("live.note", "Las subidas nuevas quedan disponibles en esta misma configuración apenas termina el guardado del recurso.")}
-        </p>
-      </AdminWorkspaceSection>
-
-      <AdminWorkspaceSection
-        title={message("upload.title", "Subir un nuevo video")}
-        description={message("upload.description", "Agregá un recurso nuevo al carrusel principal desde tu dispositivo con almacenamiento real en Cloudinary.")}
+        title={message("upload.title", "Subir un nuevo recurso")}
+        description={message("upload.description", "Agregá un nuevo recurso al carrusel principal desde tu dispositivo.")}
       >
         {canManage ? (
           <AdminHomeHeroVideoUploader
@@ -128,46 +116,46 @@ export async function AdminHomeHeroVideoSettings({
             signatureEndpoint="/api/admin/settings/home-videos/signature"
             successRedirectPath={successRedirectPath}
             strings={{
-              acceptedFormats: message("upload.acceptedFormats", "Formatos aceptados en esta iteración: JPG, PNG, WEBP, AVIF y MP4."),
+              acceptedFormats: message("upload.acceptedFormats", "Formatos aceptados: JPG, PNG, WEBP, AVIF y MP4."),
               chooseFile: message("upload.chooseFile", "Archivo de video o imagen"),
               description: message(
                 "upload.descriptionBody",
-                "Este flujo sube directamente a Cloudinary y después guarda solo la metadata necesaria en MongoDB para el orden público.",
+                "Al subirlo, quedará disponible para ordenarlo dentro del carrusel de la portada.",
               ),
               emptySelection: message("upload.emptySelection", "Elegí un archivo antes de subirlo."),
               fileTooLarge: message(
                 "upload.fileTooLarge",
-                "El archivo supera el límite permitido para este flujo. Reducí el peso o reemplazalo por una versión optimizada.",
+                "El archivo supera el límite permitido. Reducí el peso o reemplazalo por una versión optimizada.",
               ),
               helper: message(
                 "upload.helper",
-                "Límite operativo inicial: hasta 150 MB para videos y 25 MB para imágenes para mantener una calidad útil sin reintroducir el cuello de botella anterior.",
+                "Límite de carga: hasta 150 MB para videos y 25 MB para imágenes.",
               ),
-              invalidMimeType: message("upload.invalidMimeType", "Por ahora este mantenimiento acepta imágenes compatibles y archivos MP4."),
+              invalidMimeType: message("upload.invalidMimeType", "Este espacio acepta imágenes compatibles y archivos MP4."),
               imageDuration: message("upload.imageDuration", "Duración de la imagen (segundos)"),
               imageDurationHelper: message("upload.imageDurationHelper", "Ingresá un número entero mayor o igual a 1 para definir cuánto tiempo se muestra esta imagen."),
               previewTitle: message("upload.previewTitle", "Vista previa local"),
               progress: message("upload.fileSize", "Tamaño"),
               selectedFile: message("upload.selectedFile", "Archivo elegido"),
-              upload: message("upload.action", "Subir video"),
-              uploadFailed: message("upload.failed", "No se pudo completar la subida del video en este momento. Reintentá en unos minutos."),
-              uploading: message("upload.uploading", "Subiendo video…"),
+              upload: message("upload.action", "Subir recurso"),
+              uploadFailed: message("upload.failed", "No se pudo completar la subida del recurso en este momento. Reintentá en unos minutos."),
+              uploading: message("upload.uploading", "Subiendo recurso…"),
             }}
           />
         ) : (
           <p className="text-sm leading-7 text-slate-600">
-            {message("permissions.manageRequired", "Tu sesión puede ver este módulo, pero no tiene permisos para subir, reordenar o eliminar videos.")}
+            {message("permissions.manageRequired", "Tu sesión puede ver este módulo, pero no tiene permisos para subir, reordenar o eliminar recursos.")}
           </p>
         )}
       </AdminWorkspaceSection>
 
       <AdminWorkspaceSection
-        title={message("list.title", "Videos configurados")}
+        title={message("list.title", "Recursos configurados")}
         description={message("list.description", "Cada tarjeta representa el orden real del hero público. Cambiá la posición con un número entero y guardá para reorganizar el carrusel.")}
       >
         {videos.length === 0 ? (
           <p className="text-sm leading-7 text-slate-600">
-            {message("empty", "Todavía no hay videos persistidos en este módulo. Cuando subas el primero, aparecerá enseguida en la portada pública.")}
+            {message("empty", "Todavía no hay recursos cargados en este módulo. Cuando subas el primero, aparecerá enseguida en la portada pública.")}
           </p>
         ) : null}
 
@@ -194,7 +182,7 @@ export async function AdminHomeHeroVideoSettings({
                         {message("entry.storageProvider", "Origen: {provider}", {
                           provider: message(
                             `storageProviders.${video.storageProvider}`,
-                            video.storageProvider === "cloudinary" ? "Cloudinary" : "archivo local heredado",
+                            video.storageProvider === "cloudinary" ? "Cloudinary" : "archivo local del sitio",
                           ),
                         })}
                       </p>
@@ -251,20 +239,20 @@ export async function AdminHomeHeroVideoSettings({
                         {canDelete ? (
                           <DestructiveActionConfirmation
                             title={message("delete.title", "Confirmar eliminación")}
-                            description={message("delete.description", "Eliminar quita este video del panel y del carrusel de la home pública.")}
+                            description={message("delete.description", "Eliminar quita este recurso del panel y del carrusel de la home pública.")}
                             warning={
                                 video.storageProvider === "cloudinary"
                                   ? message(
                                       "delete.cloudinaryWarning",
-                                      "En videos subidos con el flujo nuevo, también se intenta borrar el asset real en Cloudinary para no dejar basura remota.",
+                                      "Al eliminar este recurso, también se quitará su archivo alojado en Cloudinary.",
                                     )
                                   : message(
                                       "delete.localWarning",
-                                      "Los videos heredados locales solo se eliminan de la metadata persistida. El archivo estático del proyecto no se borra desde esta interfaz.",
+                                      "Al eliminar este recurso, se quitará del listado visible en esta configuración. El archivo local del proyecto no se borra desde esta interfaz.",
                                     )
                               }
-                            triggerLabel={message("actions.delete", "Eliminar video")}
-                            confirmLabel={message("delete.confirm", "Sí, eliminar video")}
+                            triggerLabel={message("actions.delete", "Eliminar recurso")}
+                            confirmLabel={message("delete.confirm", "Sí, eliminar recurso")}
                             cancelLabel={message("delete.cancel", "Cancelar")}
                             confirmValue="delete"
                             formAction={deleteHomeHeroVideoAction.bind(null, activeLocale, video.id)}
@@ -278,7 +266,7 @@ export async function AdminHomeHeroVideoSettings({
                     </form>
                   ) : (
                     <p className="text-sm leading-7 text-slate-600">
-                      {message("permissions.manageRequired", "Tu sesión puede ver este módulo, pero no tiene permisos para subir, reordenar o eliminar videos.")}
+                      {message("permissions.manageRequired", "Tu sesión puede ver este módulo, pero no tiene permisos para subir, reordenar o eliminar recursos.")}
                     </p>
                   )}
                 </div>

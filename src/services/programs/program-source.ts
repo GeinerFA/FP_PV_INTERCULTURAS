@@ -70,7 +70,7 @@ const rawProgramCatalog = [
         shortDescription:
           "Ideal para estudiantes que desean fortalecer experiencia en coordinación de programas, documentación y mejora operativa de una organización social.",
         fullDescription:
-          "La pasantía ofrece una experiencia práctica dentro de la operación diaria de Pura Vida Interculturas. La persona participante puede colaborar en levantamiento de información, apoyo administrativo, seguimiento de procesos, sistematización de aprendizajes y propuestas de mejora alineadas con el MVP institucional.",
+          "La pasantía ofrece una experiencia práctica dentro de la operación diaria de Pura Vida Interculturas. La persona participante puede colaborar en levantamiento de información, apoyo administrativo, seguimiento de procesos, sistematización de aprendizajes y propuestas de mejora alineadas con la propuesta institucional.",
         requirements: [
           "Ser estudiante activo o recién graduado en áreas afines.",
           "Capacidad para trabajar con documentación, hojas de cálculo o investigación aplicada.",
@@ -173,7 +173,7 @@ const rawProgramCatalog = [
         included: [
           "Inducción contextual una vez se publique la convocatoria.",
           "Seguimiento operativo del equipo coordinador.",
-          "Definición final de inclusiones en la siguiente iteración administrativa.",
+          "Definición final de inclusiones antes de confirmar la convocatoria.",
         ],
       },
     },
@@ -181,7 +181,7 @@ const rawProgramCatalog = [
       es: {
         title: "Voluntariado de acompañamiento familiar",
         description:
-          "Programa en borrador para apoyo familiar y trabajo comunitario dentro de futuras convocatorias de Pura Vida Interculturas.",
+          "Programa orientado a apoyo familiar y trabajo comunitario dentro de la propuesta de Pura Vida Interculturas.",
       },
     },
     createdBy: "seed-system",

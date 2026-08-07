@@ -42,47 +42,47 @@
   "AdminPages": {
     "login": {
         "title": "Acceso administrativo",
-        "description": "Pantalla reservada para el acceso administrativo con Google, autorización persistida en Mongo y retorno seguro a la ruta protegida solicitada.",
+        "description": "Ingresá con Google para acceder al área administrativa.",
         "sections": [
-          "Mantiene separada la entrada al panel desde el sitio público.",
-          "Acepta solo cuentas verificadas por Google que además estén activas en la base administrativa.",
-          "Devuelve a la ruta protegida pedida después de validar la sesión."
+          "El acceso administrativo está separado del sitio público.",
+          "Solo pueden ingresar cuentas autorizadas.",
+          "Después de iniciar sesión, volvés a la sección que querías abrir."
         ]
     },
     "dashboard": {
       "title": "Panel administrativo",
-      "description": "Resumen operativo con datos reales del catálogo de programas y de la bandeja de solicitudes desde una sola vista administrativa.",
+      "description": "Resumen general de programas y solicitudes en un solo lugar.",
       "sections": [
-        "Consolida datos reales disponibles hoy, sin inventar métricas ni flujos protegidos.",
-        "Prioriza navegación directa hacia solicitudes y gestión de programas.",
-        "Mantiene el layout compartido del panel para el resto de rutas administrativas."
+        "Reúne la información clave del día en una sola vista.",
+        "Facilita el acceso rápido a solicitudes y programas.",
+        "Te ayuda a ubicar lo importante sin rodeos."
       ]
     },
     "programs": {
       "title": "Gestión de programas",
-      "description": "Gestiona los progamas de la pagina, agrega, edita o archiva los programas que se ofrecen.",
+      "description": "Creá, editá, publicá o archivá los programas del sitio.",
       "sections": [
-        "Usa la fuente persistida compartida entre rutas administrativas y públicas.",
-        "Mantiene visible cuándo un programa está publicado, en borrador o archivado.",
-        "Favorece lectura densa para revisar el catálogo y abrir acciones rápido."
+        "Desde acá administrás el catálogo y cada ficha de programa.",
+        "Podés ver si un programa está publicado, en borrador o archivado.",
+        "Las acciones principales quedan disponibles en la misma vista."
       ]
     },
     "programsNew": {
       "title": "Crear programa",
-      "description": "Espacio de creación persistido para guardar borradores y publicar cuando el contenido público esté completo.",
+      "description": "Completá la información del programa y elegí si querés guardarlo o publicarlo.",
       "sections": [
-        "Guarda un único borrador pendiente por programa en la misma ruta administrativa.",
-        "Separa guardar de publicar para no tocar la versión pública antes de tiempo.",
-        "Exige campos públicos completos antes de permitir la publicación."
+        "Podés guardar un borrador si todavía te falta información.",
+        "Publicar queda disponible cuando el contenido ya está listo.",
+        "Antes de publicar, los campos obligatorios tienen que estar completos."
       ]
     },
     "programsEdit": {
       "title": "Editar programa",
-      "description": "Editor persistido que carga el estado administrativo real, conserva el borrador pendiente y permite publicar, archivar o reactivar.",
+      "description": "Actualizá un programa y elegí si querés publicarlo, archivarlo o reactivarlo.",
       "sections": [
-        "Carga la entidad actual desde la capa de servicios compartida.",
-        "Mantiene el comportamiento not-found cuando el identificador no existe.",
-        "Mantiene la versión pública intacta hasta que la publicación vuelva a ejecutarse."
+        "Vas a encontrar la información actual del programa lista para editar.",
+        "Si el programa no existe, la página lo informa de forma clara.",
+        "Los cambios se verán en el sitio cuando vuelvas a publicar."
       ]
     },
     "applications": {
@@ -91,16 +91,16 @@
       "sections": [
         "Muestra nombre, contacto, fecha de envío y estado actual de cada solicitud registrada.",
         "Permite detectar rápidamente si la bandeja está vacía o si hay trabajo pendiente por revisar.",
-        "Funciona sobre la persistencia real del flujo de aplicación del módulo 2."
+          "Funciona sobre las solicitudes registradas desde el formulario público."
       ]
     },
     "applicationDetail": {
       "title": "Detalle de solicitud",
-      "description": "Vista individual para revisar los datos persistidos de la persona postulante, su estado actual y el historial administrativo del flujo.",
+        "description": "Vista individual para revisar los datos de la persona postulante, su estado actual y el historial de seguimiento.",
       "sections": [
-        "Carga la solicitud real desde la capa de servicios compartida del dominio applications.",
+          "Carga la solicitud registrada y la presenta en un formato claro para revisión administrativa.",
         "Permite cambiar el estado dentro del conjunto aprobado: pendiente, en proceso, finalizado y cancelado.",
-        "Muestra la trazabilidad básica del estado sin expandirse todavía a notas internas ni reporting."
+        "Muestra el recorrido básico del estado para facilitar el seguimiento."
       ]
     },
     "activity": {
@@ -108,33 +108,33 @@
       "description": "Vista operativa con movimientos administrativos reales para seguir cambios recientes sobre solicitudes y programas.",
       "sections": [
         "Ordena los eventos más recientes primero para facilitar el seguimiento diario.",
-        "Registra acciones reales desde los flujos administrativos instrumentados.",
-        "Prioriza trazabilidad operativa básica sin expandirse todavía a analítica o reportes."
+        "Registra las acciones realizadas dentro del panel.",
+        "Ayuda a entender qué cambió y quién hizo cada acción reciente."
       ]
     },
     "settings": {
       "title": "Configuración del sitio",
-      "description": "Punto de entrada para módulos de mantenimiento del sitio dentro del panel administrativo protegido.",
+      "description": "Administrá contenidos y ajustes clave del sitio desde un solo lugar.",
       "sections": [
-        "Agrupa mantenimientos operativos sin mezclar todos los formularios directamente en la pantalla principal.",
-        "Mantiene rutas dedicadas para cada módulo de configuración que necesite CRUD propio.",
-        "Ahora incluye categorías, videos de home, preguntas frecuentes y control de usuarios como fuentes vivas de verdad para el sitio y el panel administrativo."
+        "Reúne las secciones de configuración sin recargar la pantalla principal.",
+        "Cada sección tiene su propio espacio para trabajar con claridad.",
+        "Incluye categorías, videos de la home, preguntas frecuentes y control de usuarios."
       ]
     },
     "settingsHomeVideos": {
       "title": "Videos de la home",
-      "description": "Gestión persistida del carrusel principal de videos de la portada usando Cloudinary para los archivos y MongoDB para el orden visible.",
+      "description": "Gestioná el carrusel principal de la portada: subí recursos, ordenalos y mantené actualizada la presentación.",
       "sections": [
-        "Permite subir videos MP4 grandes desde el dispositivo sin depender del límite chico de server actions.",
-        "Guarda el orden y la metadata mínima en MongoDB, mientras Cloudinary hospeda el archivo real de reproducción.",
-        "Mantiene una base segura para no dejar la home en blanco durante la transición desde los videos estáticos heredados."
+        "Permite subir videos e imágenes directamente desde el dispositivo.",
+        "Guarda el orden visible y la información necesaria de cada recurso para la portada.",
+        "Mantiene una base segura para no dejar la home en blanco mientras se actualizan los recursos de portada."
       ]
     },
     "settingsUsers": {
       "title": "Usuarios administrativos",
-      "description": "Gestión persistida de acceso al espacio administrativo con roles, activación y permisos por módulo.",
+      "description": "Gestioná quién puede entrar al panel y qué permisos tiene cada persona administradora.",
       "sections": [
-        "Google sigue autenticando la identidad, pero el acceso real depende del registro activo en Mongo.",
+          "Google autentica la identidad y el acceso se valida según el registro administrativo activo.",
         "Cada persona administradora puede tener permisos distintos por módulo y nivel de acción.",
         "La seguridad protege que nunca desaparezca el último superadmin activo del panel."
       ]
@@ -142,48 +142,48 @@
   },
   "AdminSettingsOverview": {
     "eyebrow": "Módulos disponibles",
-    "title": "Configuraciones de la pagina",
-    "description": "Este modulo permite editar algunas partes de la pagina.",
+    "title": "Configuraciones de la página",
+      "description": "Reúne accesos directos para actualizar contenidos y configuraciones clave del sitio.",
     "backAction": "Volver a configuración",
-    "note": "Cada módulo conserva el mismo flujo protegido del panel administrativo y publica sus cambios sobre la fuente real que usan las rutas públicas o editoriales.",
+    "note": "Cada sección te permite actualizar una parte del sitio desde el área administrativa.",
     "modules": {
       "categories": {
         "eyebrow": "Catálogo base",
         "title": "Categorías de programas",
-        "description": "Creá, editá o eliminá categorías gestionadas. Estas categorías ahora alimentan directamente el editor de programas, el catálogo público y los resúmenes administrativos.",
-        "action": "Mantenimiento de categorías"
+        "description": "Creá, editá o eliminá categorías para organizar programas en el editor y en el catálogo público.",
+        "action": "Gestionar categorías"
       },
       "homeVideos": {
         "eyebrow": "Portada pública",
         "title": "Media del home",
-        "description": "Subí videos o imagenes, mantené el orden visible de la pagina principal y eliminá recursos que ya no deban aparecer en la portada.",
-        "action": "Mantenimiento del home"
+        "description": "Subí videos o imágenes, ordená la portada y quitá los recursos que ya no deban mostrarse.",
+        "action": "Gestionar portada"
       },
       "faqs": {
         "eyebrow": "Contenido público",
         "title": "Preguntas frecuentes",
-        "description": "Creá, editá, borrá o reordená preguntas frecuentes publicadas en /faqs con actualización inmediata.",
-        "action": "Mantenimiento de preguntas frecuentes"
+        "description": "Creá, editá, eliminá o reordená las preguntas frecuentes visibles en el sitio.",
+        "action": "Gestionar preguntas frecuentes"
       },
       "users": {
         "eyebrow": "Acceso administrativo",
         "title": "Usuarios",
-        "description": "Administrá quién puede entrar al panel, qué rol tiene y qué permisos conserva en cada módulo protegido.",
-        "action": "Mantenimiento de usuarios"
+        "description": "Administrá quién puede ingresar, qué rol tiene y qué permisos conserva en cada sección.",
+        "action": "Gestionar usuarios"
       }
     }
   },
-  "AdminUserSettings": {
-    "unavailable": {
-      "eyebrow": "Usuarios no disponibles",
-      "title": "No se pudo cargar la gestión de usuarios administrativos",
-      "description": "La autenticación se completó, pero la colección administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
-      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza los usuarios reales por datos simulados."
-    },
+    "AdminUserSettings": {
+      "unavailable": {
+        "eyebrow": "Usuarios no disponibles",
+        "title": "No se pudo cargar la gestión de usuarios administrativos",
+        "description": "No pudimos cargar esta sección en este momento.",
+        "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+      },
     "stats": {
       "total": {
         "label": "Usuarios registrados",
-        "description": "Total de personas registradas en la fuente persistida de acceso administrativo."
+        "description": "Total de personas con acceso administrativo registradas hoy."
       },
       "active": {
         "label": "Usuarios activos",
@@ -203,10 +203,10 @@
       "disclosureClosedLabel": "Agregar usuario",
       "disclosureOpenLabel": "Cerrar formulario de nuevo usuario"
     },
-    "list": {
-      "title": "Usuarios existentes",
-      "description": "Revisá el acceso actual, actualizá datos permitidos y activá o desactivá cuentas sin borrar el historial persistido."
-    },
+      "list": {
+        "title": "Usuarios existentes",
+        "description": "Revisá quién tiene acceso al panel y actualizá sus datos o permisos cuando haga falta."
+      },
     "fields": {
       "email": "Correo electrónico",
       "fullName": "Nombre completo",
@@ -229,7 +229,7 @@
       "module": "Módulo",
       "superadminNote": "El rol ya no se elige a mano: si toda la matriz queda marcada, el sistema guarda a la persona como superadmin; si falta cualquier permiso, queda como admin.",
       "deleteMeaning": "La columna Desactivar agrupa acciones sensibles o irreversibles según el módulo, como desactivar acceso, retirar registros o ejecutar cambios críticos.",
-      "usersDeleteMeaning": "En Usuarios, Desactivar significa poder quitar el acceso administrativo de otra persona sin borrar su registro persistido.",
+      "usersDeleteMeaning": "En Usuarios, Desactivar significa poder quitar el acceso administrativo de otra persona sin borrar su cuenta.",
       "actions": {
         "view": "Ver",
         "manage": "Gestionar",
@@ -275,7 +275,7 @@
       "created": "El usuario administrativo se creó correctamente.",
       "updated": "Los permisos y datos del usuario se actualizaron correctamente.",
       "activated": "El acceso administrativo quedó activado nuevamente.",
-      "deactivated": "El acceso administrativo quedó desactivado sin borrar el registro persistido.",
+      "deactivated": "El acceso administrativo quedó desactivado sin borrar la cuenta.",
       "invalid": "No se pudo interpretar el formulario. Revisá correo, nombre completo y permisos antes de reintentar.",
       "save-failed": "No se pudo guardar este usuario administrativo en este momento. Intentá nuevamente en unos minutos.",
       "toggle-failed": "No se pudo cambiar el estado activo de este usuario en este momento.",
@@ -287,19 +287,19 @@
       "fullName": "Nombre completo del usuario",
       "nationalId": "Documento o cédula"
     },
-    "empty": "Todavía no hay usuarios administrativos cargados en Mongo. El superadmin inicial puede generarse automáticamente desde ADMIN_ALLOWED_EMAIL cuando inicia sesión por Google."
+    "empty": "Todavía no hay personas con acceso administrativo. Cuando agregués la primera, aparecerá en esta lista."
   },
   "AdminCategorySettings": {
     "unavailable": {
       "eyebrow": "Categorías no disponibles",
-      "title": "No se pudo cargar el mantenimiento de categorías",
-      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
-      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza las categorías reales por datos simulados."
+      "title": "No se pudo cargar la gestión de categorías",
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
     },
     "stats": {
       "total": {
         "label": "Categorías activas",
-        "description": "Fuente viva de verdad para la selección de categorías en programas."
+          "description": "Categorías disponibles para organizar los programas."
       },
       "inUse": {
         "label": "En uso",
@@ -371,8 +371,8 @@
     "unavailable": {
       "eyebrow": "Panel no disponible",
       "title": "No se pudo cargar el panel administrativo",
-      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida.",
-      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Este panel no muestra datos simulados cuando la fuente administrativa falla."
+      "description": "No pudimos cargar este panel en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
     },
     "applications": {
       "eyebrow": "Carga de solicitudes",
@@ -405,7 +405,7 @@
     "programs": {
       "eyebrow": "Estado del catálogo",
       "title": "Programas administrados",
-      "description": "Resumen real del catálogo actual para revisar qué ya está publicado y qué sigue en borrador.",
+      "description": "Resumen del catálogo para ver qué ya está publicado y qué sigue en borrador.",
       "cta": "Abrir programas",
       "recentHeading": "Últimos programas actualizados",
       "empty": "Todavía no hay programas en el catálogo administrativo. Cuando existan, esta vista resumirá su estado real.",
@@ -435,14 +435,14 @@
     "no": "No",
     "unavailable": {
       "eyebrow": "Vista no disponible",
-      "title": "No se pudo cargar la vista de programas administrativos",
-      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
-      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza el catálogo administrativo real por datos vacíos o simulados."
+      "title": "No se pudo cargar la sección de programas",
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
     },
     "stats": {
       "catalogSize": {
         "label": "Tamaño del catálogo",
-        "description": "Cantidad de programas existentes en la pagina."
+        "description": "Cantidad total de programas cargados en el sitio."
       },
       "publishedNow": {
         "label": "Publicados ahora",
@@ -450,37 +450,37 @@
       },
         "draftBacklog": {
           "label": "Borradores activos",
-          "description": "Programas que siguen en revisión para cargar al sitio publico."        },
+        "description": "Programas que todavía no se publicaron."        },
         "archivedNow": {
           "label": "Archivados",
-          "description": "Programas retirados del sitio público pero todavía visibles para control administrativo."
+          "description": "Programas que ya no se muestran en el sitio, pero siguen disponibles para consulta interna."
         }
       },
     "summary": {
       "heading": "Lectura rápida del catálogo",
-      "description": "Distribución actual por categoría para detectar dónde ya hay oferta publicada y dónde sigue faltando completar el catálogo."
+      "description": "Distribución actual por categoría para ver dónde ya hay oferta publicada y dónde todavía falta contenido."
     },
     "actions": {
       "heading": "Siguiente movimiento",
-      "description": "La creación, edición y cambios de estado ya viven dentro del panel protegido para mantener separado el borrador de la versión pública.",
+      "description": "Desde acá podés crear, editar y cambiar el estado de cada programa sin perder de vista lo que ya está visible en el sitio.",
       "create": "Crear nuevo programa",
       "showArchived": "Programas archivados",
       "showActive": "Volver a programas activos",
-      "note": "Usá el editor para guardar borradores, publicar cuando el contenido esté completo y archivar sin borrar el registro."
+      "note": "Usá el editor para guardar borradores, publicar cuando el contenido esté listo y archivar sin borrar el registro."
     },
     "feedback": {
-      "archived": "El programa se archivó y ahora quedó fuera del listado activo.",
-      "deleted": "El programa se eliminó permanentemente del catálogo administrativo.",
+      "archived": "El programa se archivó y dejó de mostrarse entre los programas activos.",
+      "deleted": "El programa se eliminó correctamente.",
       "destructive-confirmation-required": "Para archivar desde la tabla primero confirmá la advertencia visible de esa fila.",
-      "draft-saved": "El borrador se guardó correctamente y ya volvés al listado activo.",
-      "published": "El programa quedó publicado y ya volvés al listado activo.",
-      "reactivated": "El programa volvió a borrador y ya aparece otra vez en el listado activo."
+      "draft-saved": "El borrador se guardó correctamente.",
+      "published": "El programa ya está visible en el sitio.",
+      "reactivated": "El programa volvió a borrador y ya podés seguir editándolo."
     },
     "table": {
       "heading": "Programas actuales",
-      "description": "Cada fila muestra el estado operativo actual: categoría, publicación, destacado, disponibilidad y puntos de entrada para editar o cambiar estado.",
+      "description": "Cada fila muestra categoría, estado, destacado, disponibilidad y acciones rápidas para editar o cambiar el estado.",
       "archivedHeading": "Programas archivados",
-      "archivedDescription": "Esta vista separada muestra solo programas archivados para no mezclar historial retirado con el trabajo activo del panel principal.",
+      "archivedDescription": "Esta vista reúne solo los programas archivados para separarlos del trabajo activo.",
       "newProgram": "Crear nuevo programa",
       "showArchived": "Programas archivados",
       "backToActive": "Volver a programas activos",
@@ -492,8 +492,8 @@
       "reactivate": "Reactivar",
       "archiveConfirmation": {
         "title": "Confirmar archivo",
-        "description": "Archivar retira el programa del sitio público sin borrar el registro administrativo.",
-        "warning": "La ruta pública dejará de estar disponible hasta reactivar el programa y publicarlo otra vez.",
+        "description": "Archivar retira el programa del sitio sin borrar el registro.",
+        "warning": "Dejará de estar visible hasta que lo reactives y vuelvas a publicarlo.",
         "confirm": "Sí, archivar",
         "cancel": "Cancelar"
       }
@@ -501,8 +501,8 @@
     "empty": {
       "eyebrow": "Punto de partida",
       "title": "Todavía no hay programas cargados",
-      "description": "El panel mantiene visible el punto de entrada para creación y ya permite guardar el primer borrador real sin inventar registros previos.",
-      "note": "Cuando aparezcan programas reales, esta misma vista seguirá priorizando resumen, próximos pasos y catálogo operativo sin cambiar el flujo editorial.",
+      "description": "Desde acá podés crear el primer programa y guardar un borrador cuando lo necesités.",
+      "note": "Cuando sumes programas, esta vista seguirá mostrando el resumen del catálogo y las acciones principales.",
       "cta": "Crear primer programa"
     },
     "columns": {
@@ -534,13 +534,13 @@
     "unavailable": {
       "eyebrow": "Bitácora no disponible",
       "title": "No se pudo cargar la bitácora administrativa",
-      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
-      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza la bitácora real por datos simulados."
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
     },
     "stats": {
       "total": {
         "label": "Eventos visibles",
-        "description": "Cantidad de movimientos recientes cargados desde la bitácora persistida."
+        "description": "Cantidad de movimientos recientes registrados en la bitácora."
       },
       "applications": {
         "label": "Cambios en solicitudes",
@@ -548,7 +548,7 @@
       },
       "programs": {
         "label": "Movimientos en programas",
-        "description": "Altas y cambios de flujo editorial registrados desde el módulo de programas."
+      "description": "Creaciones y cambios registrados desde la sección de programas."
       }
     },
     "entityTypes": {
@@ -579,7 +579,7 @@
     "feed": {
       "eyebrow": "Seguimiento reciente",
       "title": "Movimientos administrativos",
-      "description": "Cada evento resume qué pasó, sobre qué registro ocurrió y quién ejecutó la acción cuando ese dato estuvo disponible en el flujo protegido.",
+      "description": "Cada evento resume qué pasó, sobre qué registro ocurrió y quién realizó la acción cuando esa información está disponible.",
       "latestLabel": "Último registro",
       "empty": "Todavía no hay movimientos registrados en la bitácora. Cuando el panel ejecute cambios instrumentados, esta vista mostrará el historial real más reciente.",
       "openRecord": "Ver historial completo",
@@ -640,50 +640,50 @@
     "unavailable": {
       "eyebrow": "Editor no disponible",
       "title": "No se pudo cargar el editor de programas",
-      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
-      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Este editor no reemplaza los datos reales por valores simulados."
+      "description": "No pudimos cargar este editor en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
     },
     "mode": {
-      "create": "Creación persistida",
-      "edit": "Edición persistida"
+      "create": "Nuevo programa",
+      "edit": "Editar programa"
     },
     "intro": {
-      "create": "Esta pantalla ordena el editor de arriba hacia abajo para cargar primero el contenido que termina viendo la persona usuaria y dejar el control editorial al final.",
-      "edit": "Esta pantalla abre la entidad real y organiza la edición en un flujo vertical: primero el contenido público y después los límites editoriales del borrador pendiente."
+      "create": "Completá primero la información visible del programa y dejá al final las decisiones de publicación.",
+      "edit": "Revisá primero el contenido visible del programa y usá al final las acciones para guardar, publicar o archivar."
     },
     "notice": {
-      "title": "Espacio editorial persistido",
-      "body": "La edición sigue separando borrador, publicación, archivo y reactivación. Ahora la acción principal publica de inmediato, mientras que guardar borrador queda disponible como salida secundaria cuando necesitás trabajo incompleto."
+      "title": "Antes de guardar",
+      "body": "Podés guardar un borrador para seguir trabajando más tarde o publicar cuando el contenido ya esté listo para mostrarse en el sitio."
     },
     "required": {
       "badge": "* Obligatorio",
-      "legend": "Estos campos sí tienen que estar completos antes de publicar.",
-      "help": "La acción principal publica de inmediato, así que estos campos tienen que estar completos para que el cambio salga al sitio. Guardar borrador sigue disponible como camino secundario para trabajo incompleto."
+      "legend": "Completá estos campos antes de publicar.",
+      "help": "Si alguno falta, el programa no podrá publicarse. Si todavía no está listo, podés guardar un borrador."
     },
     "publishedEditWarning": {
-      "title": "Este programa publicado sigue en vivo hasta volver a publicarlo",
-      "description": "Estás editando el borrador administrativo de un programa que ya tiene una versión pública.",
-      "saveBoundary": "Actualizar y publicar reemplaza en el momento la versión pública. Usá guardar borrador solo cuando necesitás preparar cambios sin mover todavía el sitio.",
-      "liveBoundary": "La versión pública actual sigue visible hasta que la republicación confirme los cambios nuevos."
+      "title": "Este programa sigue visible con su versión actual",
+      "description": "Estás editando cambios nuevos de un programa que ya está publicado.",
+      "saveBoundary": "Al actualizar y publicar, el sitio mostrará de inmediato esta nueva versión. Si todavía no querés hacerla visible, guardá un borrador.",
+      "liveBoundary": "Hasta volver a publicar, el sitio seguirá mostrando la versión actual."
     },
     "sections": {
       "localizedPresentation": "Contenido principal del programa",
       "operationalDetails": "Resumen visible del programa",
       "coverImage": "Imagen de portada",
-      "workflow": "Flujo editorial",
+      "workflow": "Publicación",
       "editorialMeta": "Metadatos editoriales",
-      "boundaries": "Límites reales de esta iteración",
+      "boundaries": "Consideraciones importantes",
       "requirements": "Requisitos",
       "included": "Qué incluye",
-      "seoAuditPreview": "Vista previa SEO y auditoría"
+      "seoAuditPreview": "Buscadores y datos internos"
     },
     "descriptions": {
       "localizedPresentation": "Título, descripciones y narrativa pública primero, siguiendo el orden base de la página pública.",
       "operationalDetails": "Datos de apoyo que completan la ficha visible del programa: ubicación, duración, disponibilidad, categoría y destacado.",
-      "coverImage": "La imagen de portada vive en su propio bloque para evitar que el editor vuelva a leerse como una grilla lateral.",
+      "coverImage": "La imagen de portada se gestiona por separado para que el editor sea más claro.",
       "requirements": "Cargá un requisito por línea para mantener la lectura pública clara y editable.",
       "included": "Listá por línea lo que forma parte de la experiencia publicada.",
-      "editorialMeta": "Datos internos que sostienen el flujo administrativo pero no deberían liderar la edición del contenido."
+      "editorialMeta": "Datos internos para organizar el programa sin distraer de la información principal."
     },
     "fields": {
       "internalId": "ID interno",
@@ -699,8 +699,8 @@
       "location": "Ubicación",
       "duration": "Duración",
       "availability": "Disponibilidad",
-      "seoTitle": "SEO title",
-      "seoDescription": "SEO description"
+      "seoTitle": "Título para buscadores",
+      "seoDescription": "Descripción para buscadores"
     },
     "categoryEmptyState": "No hay categorías disponibles en este momento. Primero creá una categoría desde Configuración para poder guardar o publicar programas nuevos.",
     "statuses": {
@@ -724,17 +724,17 @@
       "statusLabel": "Estado",
       "pendingDraftLabel": "Borrador pendiente",
       "noteTitle": "Antes de salir",
-      "noteBody": "Publicar usa este mismo formulario completo. Archivar y eliminar piden una confirmación visible para evitar cambios destructivos por accidente."
+      "noteBody": "Desde este formulario podés guardar, publicar, archivar o eliminar. Las acciones más sensibles siempre te van a pedir confirmación."
     },
     "workflow": {
-      "description": "Agregar y publicar / Actualizar y publicar validan los campos públicos obligatorios y actualizan de inmediato la versión visible en /programs. Guardar borrador queda como camino secundario cuando todavía no querés mover la versión pública."
+      "description": "Publicar verifica los campos obligatorios y actualiza de inmediato la versión visible en el sitio. Guardar borrador te permite seguir trabajando sin hacer cambios públicos."
     },
     "destructive": {
       "cancel": "Cancelar",
       "archive": {
         "title": "Confirmación de archivo",
-        "description": "Archivar saca el programa del sitio público, pero conserva el registro administrativo.",
-        "warning": "La ficha pública deja de responder hasta que reactivés el programa y vuelvas a publicarlo.",
+        "description": "Archivar retira el programa del sitio, pero conserva el registro.",
+        "warning": "Dejará de estar visible hasta que lo reactives y vuelvas a publicarlo.",
         "confirm": "Sí, archivar programa"
       },
       "delete": {
@@ -745,11 +745,11 @@
       }
     },
     "feedback": {
-      "draft-saved": "El borrador se guardó correctamente dentro del panel administrativo.",
-      "published": "El programa quedó publicado y la versión pública ya se revalidó.",
-      "archived": "El programa se archivó. La ruta pública ahora debe resolver como no encontrada.",
-      "reactivated": "El programa volvió a borrador. Seguirá fuera del sitio público hasta publicar otra vez.",
-      "deleted": "El programa se eliminó permanentemente y las rutas relacionadas ya se revalidaron.",
+      "draft-saved": "El borrador se guardó correctamente.",
+      "published": "El programa ya está visible en el sitio.",
+      "archived": "El programa se archivó y dejó de estar visible en el sitio.",
+      "reactivated": "El programa volvió a borrador. Seguirá oculto hasta que vuelvas a publicarlo.",
+      "deleted": "El programa se eliminó correctamente y dejó de estar disponible en el sitio.",
       "destructive-confirmation-required": "Antes de archivar o eliminar, confirmá la advertencia visible del panel para evitar cambios destructivos accidentales.",
       "invalid": "No se pudo interpretar el formulario. Revisá categoría, slug y campos estructurados antes de reintentar.",
       "invalid-image-type": "La imagen de portada debe ser JPG, PNG, WEBP, GIF o AVIF.",
@@ -760,13 +760,13 @@
     },
     "translationLocale": "Contenido {locale}",
     "boundaries": {
-      "0": "Solo existe un borrador pendiente por programa; no hay historial completo de versiones.",
+      "0": "Cada programa conserva un solo borrador pendiente; no hay historial completo de versiones.",
       "1": "Archivar nunca elimina el registro: solo lo saca del sitio público hasta reactivarlo y publicar otra vez.",
       "2": "Después de la primera publicación, el slug queda fijo para proteger las rutas públicas existentes."
     },
     "coverImageUpload": {
       "description": "Subí una imagen local de portada en formato JPG, PNG, WEBP, GIF o AVIF de hasta 8 MB. No hace falta pegar una URL.",
-      "publishBoundary": "La acción principal publica la nueva imagen enseguida cuando la validación pasa. Si necesitás preparar una imagen sin mover todavía la versión pública, usá guardar borrador.",
+      "publishBoundary": "Si publicás, la nueva imagen se verá de inmediato en el sitio. Si todavía no querés mostrarla, guardá un borrador.",
       "selectedPreview": "Vista previa antes de publicar",
       "selectedPreviewAlt": "Vista previa local de la nueva imagen de portada",
       "selectedFile": "Archivo seleccionado",
@@ -778,7 +778,7 @@
       "previewDialogTitle": "Vista ampliada de la imagen pública actual",
       "closePreview": "Cerrar vista ampliada"
     },
-    "seoAuditDescription": "Los títulos/descripciones SEO, createdBy, updatedBy y timestamps ya forman parte de la entidad persistida y acompañan el ciclo de borrador, publicación y archivo.",
+    "seoAuditDescription": "Revisá cómo se verá este programa en buscadores y consultá sus datos internos de creación y actualización.",
     "audit": {
       "createdBy": "Creado por",
       "updatedBy": "Actualizado por",
@@ -797,12 +797,12 @@
       "localizedLocation": "Ubicación localizada",
       "localizedDuration": "Duración localizada",
       "localizedAvailability": "Disponibilidad localizada",
-      "pendingWorkflow": "pendiente de flujo autenticado",
+      "pendingWorkflow": "pendiente de revisión administrativa",
       "autoGenerated": "auto-generado",
       "requirementsLines": "Un requisito por línea",
       "includedLines": "Un elemento incluido por línea",
-      "seoTitle": "Título SEO visible en buscadores",
-      "seoDescription": "Descripción SEO visible en buscadores",
+      "seoTitle": "Título visible en buscadores",
+      "seoDescription": "Descripción visible en buscadores",
       "notPublishedYet": "todavía no publicado"
     },
     "yes": "Sí",
@@ -829,17 +829,17 @@
   },
   "NotFound": {
     "title": "Página no encontrada",
-    "description": "La ruta solicitada no existe o todavía no fue implementada dentro del MVP.",
+    "description": "La ruta solicitada no existe o no está disponible en este momento.",
     "backHome": "Volver al inicio"
   },
   "Pages": {
     "home": {
       "eyebrow": "Sitio público principal",
       "title": "Conectamos personas con programas interculturales en Costa Rica.",
-      "description": "Esta base presenta la organización, sus programas y el flujo inicial para captar voluntariado internacional desde una sola app fullstack.",
+      "description": "Conocé la organización, explorá sus programas y encontrá una forma clara de iniciar tu interés desde un solo sitio.",
       "highlightOne": "Promoción clara de voluntariado, pasantías y clases de español.",
-      "highlightTwo": "Arquitectura lista para integrar formularios, correo y base de datos.",
-      "highlightThree": "Ruta pública separada conceptualmente del panel administrativo."
+      "highlightTwo": "Información clara para comparar programas y dar el siguiente paso.",
+      "highlightThree": "Experiencia pública enfocada en orientación y contacto con el equipo."
     },
     "about": {
       "eyebrow": "Información institucional",
@@ -877,22 +877,26 @@
           "clarity": "Información práctica y expectativas transparentes para que cada decisión se tome con mejor preparación."
         }
       },
-      "methodology": {
-        "eyebrow": "Metodología",
-        "title": "Cómo se sostiene el trabajo día a día",
-        "description": "La metodología combina orientación previa, acompañamiento local y seguimiento continuo para que la experiencia sea útil tanto para la persona participante como para la comunidad que la recibe.",
-        "steps": {
-          "listen": {
-            "title": "Escuchar el objetivo de cada persona",
-            "description": "Antes de recomendar un programa, el equipo busca entender motivaciones, tiempos, expectativas y nivel de autonomía para orientar mejor la experiencia."
+      "partners": {
+        "eyebrow": "Organizaciones aliadas",
+        "title": "Organizaciones aliadas",
+        "description": "Estas organizaciones ayudan a que más personas descubran programas interculturales con información clara y señales de confianza reconocibles.",
+        "items": {
+          "volunteerWorld": {
+            "logoLabel": "Aliado confiable",
+            "logoAlt": "Logo de Volunteer World",
+            "title": "Volunteer World",
+            "description": "Directorio internacional de voluntariado que presenta oportunidades con contexto claro para personas que están comparando experiencias responsables en el extranjero.",
+            "href": "https://www.volunteerworld.com/en",
+            "linkLabel": "Visitar Volunteer World"
           },
-          "prepare": {
-            "title": "Preparar con información real del contexto",
-            "description": "La organización comparte detalles prácticos, culturales y comunitarios para reducir incertidumbre y llegar con expectativas más responsables."
-          },
-          "accompany": {
-            "title": "Acompañar con seguimiento cercano",
-            "description": "Durante la experiencia se mantiene una presencia local para resolver dudas, cuidar la comunicación y sostener el vínculo con las personas anfitrionas y aliadas."
+          "omprakash": {
+            "logoLabel": "Red aliada",
+            "logoAlt": "Logo de Omprakash",
+            "title": "Omprakash",
+            "description": "Red global enfocada en aprendizaje intercultural y participación responsable, con una trayectoria reconocida conectando personas y organizaciones de base.",
+            "href": "https://www.omprakash.org/about?section=omprakash",
+            "linkLabel": "Visitar Omprakash"
           }
         }
       }
@@ -900,26 +904,26 @@
     "programs": {
       "eyebrow": "Oferta principal",
       "title": "Programas disponibles",
-      "description": "Listado inicial para voluntariado, pasantías y clases de español con espacio para filtros y publicación dinámica.",
-      "highlightOne": "Preparado para categorías, estado de publicación y destacados.",
-      "highlightTwo": "Compatible con slugs por programa y SEO individual.",
-      "highlightThree": "Listo para conectar con MongoDB cuando se implemente persistencia."
+      "description": "Explorá oportunidades de voluntariado, pasantías y clases de español en un catálogo claro y fácil de recorrer.",
+      "highlightOne": "Organizado por categorías, disponibilidad y programas destacados.",
+      "highlightTwo": "Cada programa tiene su propia página con información clara y fácil de compartir.",
+      "highlightThree": "Cada ficha resume lo esencial para ayudarte a elegir mejor."
     },
     "programDetail": {
       "eyebrow": "Detalle de programa",
-      "title": "Vista de detalle del programa",
-      "description": "Pantalla reservada para mostrar descripción completa, ubicación, duración, requisitos y qué incluye cada programa.",
-      "highlightOne": "La URL dinámica usa slug para futuras páginas indexables.",
-      "highlightTwo": "Se podrá alimentar con contenido editorial y SEO desde el catálogo central.",
-      "highlightThree": "Es el punto natural para conectar el CTA hacia la postulación."
+      "title": "Conocé cada programa en detalle",
+      "description": "Encontrá en un solo lugar lo que ofrece cada programa, dónde se realiza, cuánto dura y qué necesitás para prepararte mejor.",
+      "highlightOne": "Te ayuda a comparar con más claridad antes de decidir.",
+      "highlightTwo": "Reúne la información más importante para entender si la experiencia encaja con vos.",
+      "highlightThree": "Desde acá podés dar el siguiente paso cuando ya estés listo para aplicar."
     },
     "apply": {
       "eyebrow": "Captación",
       "title": "Iniciá tu solicitud",
       "description": "Compartinos tus datos base para que el equipo revise tu interés y te acompañe en los próximos pasos del proceso.",
-      "highlightOne": "Un solo formulario general para la primera versión operativa del flujo.",
-      "highlightTwo": "La solicitud se valida y se registra directamente en la base de datos del proyecto.",
-      "highlightThree": "Si el envío sale bien, te llevamos a una confirmación dedicada."
+      "highlightOne": "Es una forma simple de contarnos quién sos y qué te interesa.",
+      "highlightTwo": "El equipo recibe tu información para revisar tu caso y orientarte mejor.",
+      "highlightThree": "Al terminar, vas a ver una confirmación con los próximos pasos."
     },
     "applySuccess": {
       "eyebrow": "Confirmación",
@@ -927,19 +931,19 @@
       "description": "Recibimos tu información correctamente y ya quedó lista para la revisión inicial del equipo.",
       "highlightOne": "La confirmación solo aparece después de un envío aceptado.",
       "highlightTwo": "Podés volver a explorar programas o regresar al inicio del sitio.",
-      "highlightThree": "El flujo queda preparado para sumar correo y seguimiento en módulos futuros."
+      "highlightThree": "El equipo continuará el seguimiento según corresponda después de revisar tu envío."
     },
     "contact": {
       "eyebrow": "Relación inicial",
       "title": "Contacto",
-      "description": "Pantalla para centralizar canales de atención, ubicación y futura recepción de mensajes directos.",
-      "highlightOne": "Puede evolucionar hacia formulario de contacto y datos institucionales.",
+      "description": "Espacio para centralizar canales de atención, ubicación y formas de contacto del equipo.",
+      "highlightOne": "Reúne la información clave para resolver dudas y ubicar al equipo.",
       "highlightTwo": "Mantiene la captación abierta sin exigir cuentas de usuario.",
       "highlightThree": "Ayuda a resolver dudas antes de iniciar una solicitud."
     }
   },
   "ProgramsUi": {
-    "empty": "Todavía no hay programas publicados. El catálogo administrativo ya está preparado para la siguiente iteración.",
+    "empty": "Todavía no hay programas publicados. Volvé pronto o escribinos si necesitás orientación para elegir una experiencia.",
     "featured": "Destacado",
     "viewDetails": "Ver detalle",
     "backToPrograms": "Volver a programas",
@@ -963,7 +967,7 @@
       "introTitle": "Completá tu solicitud general",
       "introDescription": "Este primer formulario nos permite conocer tus datos básicos y el contexto inicial de tu interés antes de coordinar el seguimiento.",
       "requiredLegend": "Todos los campos son obligatorios, excepto el mensaje y el curriculum.",
-      "privacyNotice": "Al enviar esta solicitud compartís información básica para que el equipo de Pura Vida Interculturas pueda revisar tu interés y darte seguimiento dentro de este flujo inicial del MVP.",
+      "privacyNotice": "Al enviar esta solicitud compartís información básica para que el equipo de Pura Vida Interculturas pueda revisar tu interés y darte seguimiento durante el proceso.",
       "captchaLabel": "Verificación de seguridad",
       "captchaHelp": "Completá la casilla de verificación para habilitar el envío de la solicitud.",
       "captchaExpired": "La verificación expiró. Completala de nuevo para volver a habilitar el envío.",
@@ -1027,11 +1031,11 @@
     "success": {
       "badgeLabel": "Confirmado",
       "title": "Tu solicitud ya fue enviada",
-      "description": "Gracias por compartir tu información. El equipo revisara tu solicitud general se pondra en contacto cuando corresponda.",
+      "description": "Gracias por compartir tu información. El equipo la revisará y se pondrá en contacto con vos cuando corresponda.",
       "nextStepsTitle": "Qué sigue?",
       "nextSteps": [
-        "Tu solicitud queda registrada dentro del flujo administrativo.",
-        "El equipo puede revisar tus datos dar seguimiento según disponibilidad.",
+        "Tu solicitud ya llegó al equipo.",
+        "Van a revisar tus datos y escribirte cuando corresponda.",
         "Mientras tanto, podés seguir explorando los programas y conocer mejor la propuesta de la organización."
       ],
       "primaryActionLabel": "Volver al inicio",
@@ -1040,7 +1044,7 @@
       "admin": {
         "list": {
           "heading": "Solicitudes registradas",
-          "description": "Revisá la bandeja actual y abrí cada detalle para seguir el flujo administrativo básico del módulo.",
+          "description": "Revisá la bandeja actual y abrí cada detalle para dar seguimiento a cada solicitud.",
           "summaryCardDescription": "Coincidencias visibles con los filtros actuales.",
           "pagination": {
             "previousLabel": "Página anterior",
@@ -1055,10 +1059,10 @@
           },
           "filters": {
             "heading": "Filtrar solicitudes",
-            "description": "Usá estos criterios para definir la bandeja visible ahora y la base reutilizable para futuras exportaciones administrativas.",
+            "description": "Usá estos criterios para definir la bandeja visible y preparar exportaciones administrativas cuando las necesités.",
             "disclosureClosedLabel": "Agregar filtros",
             "disclosureOpenLabel": "Ocultar filtros",
-            "disclosureHint": "Desplegá los filtros cuando necesités refinar la bandeja o preparar futuras exportaciones.",
+            "disclosureHint": "Desplegá los filtros cuando necesités refinar la bandeja o preparar una exportación.",
             "searchLabel": "Buscar por nombre o correo",
             "searchPlaceholder": "Ej. Ana o ana@correo.com",
             "statusLabel": "Estado",
@@ -1114,8 +1118,8 @@
           "unavailable": {
             "eyebrow": "Vista no disponible",
             "title": "No se pudo cargar la lista administrativa de solicitudes",
-            "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
-            "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no inventa una bandeja vacía cuando la fuente real falla."
+            "description": "No pudimos cargar esta sección en este momento.",
+            "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
           },
           "columns": {
             "applicant": "Postulante",
@@ -1127,8 +1131,8 @@
         "empty": {
           "eyebrow": "Estado de la bandeja",
           "title": "Todavía no hay solicitudes registradas.",
-          "description": "Cuando llegue la primera aplicación real desde el flujo público, esta bandeja mostrará su resumen y estado actual para revisión administrativa.",
-          "note": "La estructura ya queda lista para leer primero el estado de la bandeja y después abrir cada caso individual sin cambiar el workflow existente."
+          "description": "Cuando llegue la primera solicitud desde el sitio público, esta bandeja mostrará su resumen y estado actual para revisión administrativa.",
+          "note": "La vista prioriza primero el estado general de la bandeja y después el acceso al detalle de cada caso."
         },
         "statuses": {
           "pending": "Pendiente",
@@ -1166,7 +1170,7 @@
         },
         "statusCard": {
           "title": "Actualizar estado",
-          "description": "Guardá el siguiente paso administrativo usando solo los estados aprobados para este MVP.",
+          "description": "Guardá el siguiente paso administrativo usando solo los estados disponibles para esta solicitud.",
           "selectLabel": "Estado de la solicitud",
           "submitLabel": "Guardar estado",
           "submittingLabel": "Guardando estado...",
@@ -1319,7 +1323,7 @@
     "contact": {
       "eyebrow": "Contacto",
       "title": "Conversemos antes de que tomes el siguiente paso.",
-      "description": "Si todavía estás comparando opciones, este punto te ayuda a ordenar dudas frecuentes y encontrar la ruta correcta dentro del flujo público sin salir de la home.",
+      "description": "Si todavía estás comparando opciones, este espacio te ayuda a resolver dudas y encontrar el siguiente paso sin salir de la home.",
       "cards": {
         "questions": {
           "title": "Resolvé dudas comunes",
@@ -1338,7 +1342,8 @@
         "programs": "Revisar programas",
         "apply": "Aplicar ahora",
         "faqs": "Ver preguntas frecuentes",
-        "instagramLabel": "Abrir Instagram de Pura Vida Interculturas"
+        "instagramLabel": "Abrir Instagram de Pura Vida Interculturas",
+        "whatsappLabel": "Abrir WhatsApp de Pura Vida Interculturas"
       }
     }
   },
@@ -1346,13 +1351,13 @@
     "unavailable": {
       "eyebrow": "Gestión no disponible",
       "title": "No se pudo cargar la configuración de preguntas frecuentes",
-      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
-      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza las preguntas frecuentes persistidas por datos simulados."
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
     },
     "stats": {
       "total": {
         "label": "FAQs activas",
-        "description": "Fuente persistida compartida entre la página pública y el panel administrativo."
+        "description": "Cantidad actual de preguntas visibles en la página pública."
       }
     },
     "live": {
@@ -1361,7 +1366,7 @@
     },
     "create": {
       "title": "Agregar nueva pregunta frecuente",
-      "description": "Creá una entrada persistida en el mismo espacio administrativo donde después también podés editar, borrar o reordenar el listado público.",
+      "description": "Creá una nueva pregunta y después editála, eliminála o reordenála desde esta misma sección.",
       "disclosureClosedLabel": "Agregar nueva pregunta frecuente",
       "disclosureOpenLabel": "Ocultar formulario de nueva FAQ",
       "disclosureHint": "Abrí este panel cuando necesites crear una nueva entrada sin ocupar espacio constante en la vista de administración."
@@ -1387,18 +1392,18 @@
     },
     "entry": {
       "position": "Posición {order}",
-      "helper": "El orden se publica tal como aparece acá. Si movés una entrada, la página pública se revalida enseguida."
+      "helper": "El orden se publica tal como aparece acá. Si movés una entrada, el cambio se verá enseguida en la página pública."
     },
     "delete": {
       "title": "Confirmación de eliminación",
       "description": "Eliminar saca esta pregunta del panel y de la página pública inmediatamente.",
-      "warning": "No existe un flujo de borrador o papelera para recuperarla después desde esta iteración.",
+      "warning": "No hay una papelera ni una versión de borrador para recuperarla después.",
       "confirm": "Sí, eliminar FAQ",
       "cancel": "Cancelar"
     },
     "feedback": {
       "created": "La nueva pregunta frecuente ya quedó guardada y publicada.",
-      "updated": "La pregunta frecuente se actualizó y la página pública ya se revalidó.",
+      "updated": "La pregunta frecuente se actualizó correctamente y ya se ve en el sitio.",
       "deleted": "La pregunta frecuente se eliminó y el orden público ya se ajustó.",
       "reordered": "El orden de las preguntas frecuentes se actualizó correctamente.",
       "invalid": "Completá tanto la pregunta como la respuesta antes de guardar.",
@@ -1406,18 +1411,18 @@
       "delete-failed": "No se pudo eliminar la pregunta frecuente en este momento. Intentá nuevamente.",
       "reorder-failed": "No se pudo actualizar el orden de las preguntas frecuentes. Intentá nuevamente."
     },
-    "empty": "Todavía no hay preguntas frecuentes persistidas. Cuando agregués la primera, aparecerá enseguida en la página pública."
+    "empty": "Todavía no hay preguntas frecuentes cargadas. Cuando agregués la primera, aparecerá enseguida en la página pública."
   },
   "AdminHomeHeroVideoSettings": {
     "unavailable": {
-      "eyebrow": "Videos no disponibles",
-      "title": "No se pudo cargar el mantenimiento de videos de la home",
-      "description": "La autenticación se completó, pero la fuente administrativa de MongoDB no está disponible o tiene una configuración inválida para esta ruta protegida.",
-      "note": "Verificá la conectividad y la configuración de MongoDB antes de continuar. Esta vista no reemplaza los videos reales por datos simulados dentro del panel."
+      "eyebrow": "Recursos no disponibles",
+      "title": "No se pudo cargar la gestión de recursos del hero de la home",
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
     },
     "stats": {
       "total": {
-        "label": "Videos configurados",
+        "label": "Recursos configurados",
         "description": "Total actual de recursos ordenados para el hero principal de la portada."
       },
       "images": {
@@ -1426,35 +1431,35 @@
       },
       "cloudinary": {
         "label": "Hospedados en Cloudinary",
-        "description": "Cantidad de videos ya migrados al flujo nuevo de subida desde el dispositivo."
+        "description": "Cantidad de recursos alojados en Cloudinary y disponibles para la portada pública."
       }
     },
     "live": {
       "label": "Impacto inmediato",
-      "description": "El orden y las eliminaciones impactan la home pública en cuanto se revalida esta ruta. No existe un paso separado de publicación.",
-      "note": "Las subidas nuevas quedan disponibles en esta misma configuración apenas termina el guardado del recurso."
+      "description": "El orden y las eliminaciones se reflejan de inmediato en la portada. No hay un paso separado de publicación.",
+      "note": "Las nuevas subidas quedan disponibles apenas termina el guardado del recurso."
     },
     "upload": {
-      "title": "Subir un nuevo video",
-      "description": "Agregá un recurso nuevo al carrusel principal desde tu dispositivo con almacenamiento real en Cloudinary.",
-      "descriptionBody": "Este flujo sube directamente a Cloudinary y después guarda solo la metadata necesaria en MongoDB para el orden público.",
+      "title": "Subir un nuevo recurso",
+      "description": "Agregá un nuevo recurso al carrusel principal desde tu dispositivo.",
+      "descriptionBody": "Al subirlo, quedará disponible para ordenarlo dentro del carrusel de la portada.",
       "chooseFile": "Archivo de video o imagen",
-      "helper": "Límite operativo inicial: hasta 150 MB para videos y 25 MB para imágenes para mantener una calidad útil sin reintroducir el cuello de botella anterior.",
-      "acceptedFormats": "Formatos aceptados en esta iteración: JPG, PNG, WEBP, AVIF y MP4.",
+      "helper": "Límite de carga: hasta 150 MB para videos y 25 MB para imágenes.",
+      "acceptedFormats": "Formatos aceptados: JPG, PNG, WEBP, AVIF y MP4.",
       "previewTitle": "Vista previa local",
       "selectedFile": "Archivo elegido",
       "fileSize": "Tamaño",
       "action": "Cargar",
       "uploading": "Subiendo…",
-      "failed": "No se pudo completar la subida del video en este momento. Reintentá en unos minutos.",
+      "failed": "No se pudo completar la subida del recurso en este momento. Reintentá en unos minutos.",
       "emptySelection": "Elegí un archivo antes de subirlo.",
-      "invalidMimeType": "Por ahora este mantenimiento acepta imágenes compatibles y archivos MP4.",
-      "fileTooLarge": "El archivo supera el límite permitido para este flujo. Reducí el peso o reemplazalo por una versión optimizada.",
+      "invalidMimeType": "Este espacio acepta imágenes compatibles y archivos MP4.",
+      "fileTooLarge": "El archivo supera el límite permitido. Reducí el peso o reemplazalo por una versión optimizada.",
       "imageDuration": "Duración de la imagen (segundos)",
       "imageDurationHelper": "Ingresá un número entero mayor o igual a 1 para definir cuánto tiempo se muestra esta imagen."
     },
     "list": {
-      "title": "Videos configurados",
+      "title": "Recursos configurados",
       "description": "Cada tarjeta representa el orden real del hero público. Cambiá la posición con un número entero y guardá para reorganizar el carrusel."
     },
     "fields": {
@@ -1463,10 +1468,10 @@
     },
     "actions": {
       "saveOrder": "Guardar posición",
-      "delete": "Eliminar video"
+      "delete": "Eliminar recurso"
     },
     "storageProviders": {
-      "local": "archivo local heredado",
+      "local": "archivo local del sitio",
       "cloudinary": "Cloudinary"
     },
     "entry": {
@@ -1482,30 +1487,30 @@
     },
     "delete": {
       "title": "Confirmar eliminación",
-      "description": "Eliminar quita este video del panel y del carrusel de la home pública.",
-      "cloudinaryWarning": "En videos subidos con el flujo nuevo, también se intenta borrar el asset real en Cloudinary para no dejar basura remota.",
-      "localWarning": "Los videos heredados locales solo se eliminan de la metadata persistida. El archivo estático del proyecto no se borra desde esta interfaz.",
-      "confirm": "Sí, eliminar video",
+      "description": "Eliminar quita este recurso del panel y del carrusel de la home pública.",
+      "cloudinaryWarning": "Al eliminar este recurso, también se quitará su archivo alojado en Cloudinary.",
+      "localWarning": "Al eliminar este recurso, se quitará del listado visible en esta configuración. El archivo local del proyecto no se borra desde esta interfaz.",
+      "confirm": "Sí, eliminar recurso",
       "cancel": "Cancelar"
     },
     "permissions": {
-      "manageRequired": "Tu sesión puede ver este módulo, pero no tiene permisos para subir, reordenar o eliminar videos."
+      "manageRequired": "Tu sesión puede ver este módulo, pero no tiene permisos para subir, reordenar o eliminar recursos."
     },
     "feedback": {
-      "created": "El video se subió correctamente y ya forma parte del hero público.",
-      "reordered": "El orden de los videos se actualizó correctamente.",
-      "deleted": "El video se eliminó correctamente del hero público.",
+      "created": "El recurso se subió correctamente y ya forma parte del hero público.",
+      "reordered": "El orden de los recursos se actualizó correctamente.",
+      "deleted": "El recurso se eliminó correctamente del hero público.",
       "invalid": "Ingresá una posición válida mayor o igual a 1 antes de guardar.",
-      "save-failed": "No se pudo guardar el video en este momento. Reintentá nuevamente.",
-      "delete-failed": "No se pudo eliminar el video en este momento. Reintentá nuevamente.",
-      "reorder-failed": "No se pudo actualizar el orden de los videos. Reintentá nuevamente."
+      "save-failed": "No se pudo guardar el recurso en este momento. Reintentá nuevamente.",
+      "delete-failed": "No se pudo eliminar el recurso en este momento. Reintentá nuevamente.",
+      "reorder-failed": "No se pudo actualizar el orden de los recursos. Reintentá nuevamente."
     },
-    "empty": "Todavía no hay videos persistidos en este módulo. Cuando subas el primero, aparecerá enseguida en la portada pública."
+    "empty": "Todavía no hay recursos cargados en este módulo. Cuando subas el primero, aparecerá enseguida en la portada pública."
   },
   "Faqs": {
     "metadata": {
       "title": "Preguntas frecuentes",
-      "description": "Respuestas iniciales sobre programas, tiempos, idioma y próximos pasos dentro del flujo público de Pura Vida Interculturas."
+      "description": "Respuestas claras sobre programas, tiempos, idioma y próximos pasos en Pura Vida Interculturas."
     },
     "eyebrow": "Guía rápida",
     "title": "Preguntas frecuentes para empezar con más claridad.",
@@ -1530,11 +1535,11 @@
     },
     "emptyState": {
       "title": "Todavía no publicamos preguntas frecuentes para este idioma.",
-      "description": "Mientras completamos esta guía, igual podés revisar programas, iniciar la aplicación o volver a la sección de contacto para seguir el flujo público principal."
+      "description": "Mientras publicamos contenido para este idioma, podés revisar programas, iniciar la aplicación o volver a la sección de contacto para seguir avanzando."
     },
     "nextSteps": {
       "title": "¿Tu duda sigue abierta?",
-      "description": "Entonces lo correcto es volver al flujo principal: compará programas, iniciá una aplicación o regresá a la sección de contacto de la home para ordenar tu siguiente acción."
+      "description": "Podés comparar programas, iniciar una aplicación o volver a contacto para elegir tu siguiente paso con más claridad."
     },
     "actions": {
       "programs": "Explorar programas",

@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Pura Vida Interculturas",
   adminName: "Pura Vida Interculturas Admin",
   description:
-    "Plataforma para visibilidad internacional, captación de voluntariado y gestión administrativa del MVP.",
+    "Programas y experiencias interculturales con orientación clara para explorar oportunidades, postular y contactar a Pura Vida Interculturas.",
   publicNavigation: [
     { href: "/", labelKey: "home" },
     { href: "/about", labelKey: "about" },

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     template: "%s | Pura Vida Interculturas",
   },
   description:
-    "Plataforma fullstack para presentar programas, captar voluntariado internacional y gestionar la operación administrativa.",
+    "Programas y experiencias interculturales con orientación clara para explorar oportunidades, postular y contactar a Pura Vida Interculturas.",
   icons: {
     icon: "/branding/logo-sin-fondo.png",
     shortcut: "/branding/logo-sin-fondo.png",

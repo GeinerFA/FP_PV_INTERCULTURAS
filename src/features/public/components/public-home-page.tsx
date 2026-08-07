@@ -94,6 +94,7 @@ type HomeMessages = {
       apply: string;
       faqs: string;
       instagramLabel: string;
+      whatsappLabel: string;
     };
   };
 };
@@ -109,6 +110,8 @@ export async function PublicHomePage({
 }: PublicHomePageProps) {
   const instagramHref =
     "https://www.instagram.com/voluntariado_pvi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==";
+  const whatsappHref =
+    "https://wa.me/50689511665?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20Pura%20Vida%20Interculturas.%20Muchas%20gracias.";
   const [messages, featuredPrograms, heroVideos] = await Promise.all([
     getMessages(),
     forceEmptyFeatured ? Promise.resolve([]) : listFeaturedPublicPrograms(locale),
@@ -354,28 +357,49 @@ export async function PublicHomePage({
               {home.contact.actions.faqs}
             </LocaleLink>
           </div>
-          <a
-            href={instagramHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={home.contact.actions.instagramLabel}
-            className="mt-4 inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300 bg-white text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a
+              href={instagramHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={home.contact.actions.instagramLabel}
+              className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300 bg-white transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
             >
-              <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" stroke="none" />
-            </svg>
-          </a>
+              <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6">
+                <defs>
+                  <linearGradient id="instagram-contact-logo" x1="20.12" x2="3.88" y1="3.88" y2="20.12" gradientUnits="userSpaceOnUse">
+                    <stop offset="0" stopColor="#F58529" />
+                    <stop offset="0.3" stopColor="#FEDA77" />
+                    <stop offset="0.55" stopColor="#DD2A7B" />
+                    <stop offset="0.78" stopColor="#8134AF" />
+                    <stop offset="1" stopColor="#515BD4" />
+                  </linearGradient>
+                </defs>
+                <rect x="3" y="3" width="18" height="18" rx="5" fill="url(#instagram-contact-logo)" />
+                <circle cx="12" cy="12" r="4.1" fill="none" stroke="#FFFFFF" strokeWidth="1.8" />
+                <rect x="7.4" y="7.4" width="9.2" height="9.2" rx="2.8" fill="none" stroke="#FFFFFF" strokeWidth="1.8" />
+                <circle cx="17.2" cy="6.9" r="1.05" fill="#FFFFFF" />
+              </svg>
+            </a>
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={home.contact.actions.whatsappLabel}
+              className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-emerald-300 bg-white transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+            >
+              <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6">
+                <path
+                  fill="#25D366"
+                  d="M12 2.75A9.24 9.24 0 0 0 4.1 16.8L2.75 21.25l4.56-1.31A9.25 9.25 0 1 0 12 2.75Z"
+                />
+                <path
+                  fill="#FFFFFF"
+                  d="M17.12 14.18c-.28-.14-1.67-.82-1.93-.91-.26-.09-.45-.14-.64.14-.18.28-.73.91-.89 1.1-.16.19-.33.21-.61.07-.28-.14-1.18-.43-2.24-1.37-.82-.73-1.38-1.63-1.54-1.91-.16-.28-.02-.43.12-.57.12-.12.28-.33.42-.49.14-.16.18-.28.28-.47.09-.19.05-.35-.02-.49-.07-.14-.64-1.55-.88-2.12-.23-.55-.47-.48-.64-.49h-.54c-.19 0-.49.07-.75.35-.26.28-.98.96-.98 2.35s1 2.73 1.14 2.92c.14.19 1.95 2.97 4.72 4.17.66.28 1.17.45 1.57.58.66.21 1.25.18 1.72.11.52-.08 1.67-.68 1.91-1.34.23-.65.23-1.21.16-1.34-.07-.12-.26-.19-.54-.33Z"
+                />
+              </svg>
+            </a>
+          </div>
         </div>
       </section>
     </div>
