@@ -40,7 +40,7 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.32),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_36%,#eff6f1_100%)] text-slate-900">
-      <header className="sticky top-0 z-20 bg-white/42 backdrop-blur-lg">
+      <header className="sticky top-0 z-20 border-b border-white/70 bg-white/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-start justify-between gap-3 px-6 py-3 md:flex-nowrap md:items-center md:gap-4 lg:gap-6">
           <div className="min-w-0 flex-1">
             <PublicNavbar locale={locale} navigationLabels={navigationLabels} />
@@ -57,7 +57,7 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
         </div>
       </header>
 
-      <main className="mx-auto flex max-w-6xl flex-1 flex-col gap-14 px-6 py-10 md:py-12">
+      <main className="mx-auto flex max-w-6xl flex-1 flex-col gap-14 px-6 py-8 md:py-10 lg:py-12">
         {children}
       </main>
 

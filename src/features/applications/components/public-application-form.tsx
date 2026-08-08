@@ -23,6 +23,15 @@ import {
   type SearchableSelectOption,
 } from "@/features/applications/components/searchable-select";
 
+const textFieldClassName =
+  "min-h-12 w-full rounded-2xl border border-white/80 bg-white/88 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
+
+const textAreaClassName =
+  "min-h-32 w-full rounded-2xl border border-white/80 bg-white/88 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
+
+const fileFieldClassName =
+  "block min-h-12 w-full rounded-2xl border border-white/80 bg-white/88 px-4 py-3 text-sm text-slate-900 file:mr-4 file:rounded-full file:border-0 file:bg-emerald-800 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-emerald-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
+
 type FieldCopy = {
   label: string;
   placeholder: string;
@@ -123,7 +132,7 @@ function SubmitButton({ idleLabel, pendingLabel }: { idleLabel: string; pendingL
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex min-h-12 items-center justify-center rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-500"
+      className="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_34px_-24px_rgba(6,95,70,0.55)] transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-emerald-500 sm:w-auto"
     >
       {pending ? pendingLabel : idleLabel}
     </button>
@@ -207,7 +216,7 @@ function PhoneField({
           placeholder={copy.fields.phone.placeholder}
           aria-invalid={errorMessage ? true : undefined}
           aria-describedby={errorMessage ? `${fieldId}-error` : undefined}
-          className="min-h-12 w-full rounded-2xl border border-white/75 bg-white/80 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+          className={textFieldClassName}
         />
       </div>
 
@@ -278,6 +287,45 @@ function getValidationMessage(
   return copy.validation[code];
 }
 
+function StandardField({
+  copy,
+  name,
+  value,
+  errorMessage,
+}: {
+  copy: PublicApplicationFormCopy;
+  name: Exclude<ApplicationFormFieldName, "phone" | "nationality" | "message">;
+  value: string;
+  errorMessage: string | null;
+}) {
+  const fieldCopy = copy.fields[name];
+  const fieldId = `application-${name}`;
+
+  return (
+    <div>
+      <label htmlFor={fieldId} className="mb-2 block text-sm font-semibold text-slate-900">
+        {fieldCopy.label}
+      </label>
+      <input
+        id={fieldId}
+        name={name}
+        type={getInputType(name)}
+        autoComplete={getAutoComplete(name)}
+        defaultValue={value}
+        placeholder={fieldCopy.placeholder}
+        aria-invalid={errorMessage ? true : undefined}
+        aria-describedby={errorMessage ? `${fieldId}-error` : undefined}
+        className={textFieldClassName}
+      />
+      {errorMessage ? (
+        <p id={`${fieldId}-error`} className="mt-2 text-sm text-rose-600">
+          {errorMessage}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export function PublicApplicationForm({
   action,
   copy,
@@ -336,145 +384,143 @@ export function PublicApplicationForm({
     return copy.captchaHelp;
   }
 
+  const primaryFieldNames = applicationFormFieldNames.filter(
+    (name): name is Exclude<ApplicationFormFieldName, "message"> => name !== "message",
+  );
+
   return (
-    <div className="surface-soft rounded-3xl p-6 md:p-8">
-      <div className="max-w-3xl space-y-3">
-        <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{copy.introTitle}</h2>
-        <p className="text-base leading-7 text-slate-600">{copy.introDescription}</p>
-        <p className="text-sm font-medium text-slate-500">{copy.requiredLegend}</p>
+    <div className="surface-soft-strong overflow-hidden rounded-[2rem] border border-white/80 shadow-[0_36px_110px_-44px_rgba(15,23,42,0.3)]">
+      <div className="border-b border-emerald-900/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(248,244,232,0.8)_100%)] px-6 py-6 md:px-8 md:py-7">
+        <div className="max-w-3xl space-y-3">
+          <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{copy.introTitle}</h2>
+          <p className="text-base leading-7 text-slate-600">{copy.introDescription}</p>
+          <p className="inline-flex rounded-full border border-emerald-900/10 bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600">
+            {copy.requiredLegend}
+          </p>
+        </div>
       </div>
 
-      <form action={formAction} className="mt-8 space-y-6">
+      <form action={formAction} className="space-y-6 px-6 py-6 md:px-8 md:py-8">
         {state.formError ? (
           <div className="rounded-2xl border border-rose-200/80 bg-rose-50/95 px-4 py-3 text-sm text-rose-700 shadow-[0_14px_36px_-30px_rgba(190,24,93,0.55)]">
             {copy.errors[state.formError]}
           </div>
         ) : null}
 
-        <div className="grid gap-5 md:grid-cols-2">
-          {applicationFormFieldNames.map((name) => {
-            const fieldCopy = copy.fields[name];
-            const errorMessage = getValidationMessage(state.fieldErrors[name], copy);
-            const fieldId = `application-${name}`;
-            const isTextArea = name === "message";
-            const fullWidth = isTextArea;
+        <section className="rounded-[1.75rem] border border-white/80 bg-white/72 p-5 shadow-[0_20px_45px_-38px_rgba(15,23,42,0.16)] md:p-6">
+          <div className="grid gap-5 md:grid-cols-2">
+            {primaryFieldNames.map((name) => {
+              const errorMessage = getValidationMessage(state.fieldErrors[name], copy);
 
-            if (name === "phone") {
-              return (
-                <PhoneField
-                  key={name}
-                  copy={copy}
-                  value={state.values.phone}
-                  dialCode={state.values.phoneDialCode}
-                  errorMessage={errorMessage}
-                />
-              );
-            }
-
-            if (name === "nationality") {
-              return (
-                <CountryField
-                  key={name}
-                  copy={copy}
-                  value={state.values.nationality}
-                  errorMessage={errorMessage}
-                />
-              );
-            }
-
-            return (
-              <div key={name} className={fullWidth ? "md:col-span-2" : undefined}>
-                <label htmlFor={fieldId} className="mb-2 block text-sm font-semibold text-slate-900">
-                  {fieldCopy.label}
-                </label>
-                {fieldCopy.description ? (
-                  <p className="mb-3 text-sm leading-6 text-slate-600">{fieldCopy.description}</p>
-                ) : null}
-                {isTextArea ? (
-                  <textarea
-                    id={fieldId}
-                    name={name}
-                    rows={5}
-                    defaultValue={state.values[name]}
-                    placeholder={fieldCopy.placeholder}
-                    aria-invalid={errorMessage ? true : undefined}
-                    aria-describedby={errorMessage ? `${fieldId}-error` : undefined}
-                    className="min-h-32 w-full rounded-2xl border border-white/75 bg-white/80 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              if (name === "phone") {
+                return (
+                  <PhoneField
+                    key={name}
+                    copy={copy}
+                    value={state.values.phone}
+                    dialCode={state.values.phoneDialCode}
+                    errorMessage={errorMessage}
                   />
-                ) : (
+                );
+              }
+
+              if (name === "nationality") {
+                return (
+                  <CountryField
+                    key={name}
+                    copy={copy}
+                    value={state.values.nationality}
+                    errorMessage={errorMessage}
+                  />
+                );
+              }
+
+              return <StandardField key={name} copy={copy} name={name} value={state.values[name]} errorMessage={errorMessage} />;
+            })}
+          </div>
+        </section>
+
+        <section className="rounded-[1.75rem] border border-white/80 bg-white/68 p-5 shadow-[0_20px_45px_-38px_rgba(15,23,42,0.14)] md:p-6">
+          <div className="grid gap-5">
+            <div>
+              <label htmlFor="application-message" className="mb-2 block text-sm font-semibold text-slate-900">
+                {copy.fields.message.label}
+              </label>
+              {copy.fields.message.description ? (
+                <p className="mb-3 text-sm leading-6 text-slate-600">{copy.fields.message.description}</p>
+              ) : null}
+              <textarea
+                id="application-message"
+                name="message"
+                rows={5}
+                defaultValue={state.values.message}
+                placeholder={copy.fields.message.placeholder}
+                aria-invalid={state.fieldErrors.message ? true : undefined}
+                aria-describedby={state.fieldErrors.message ? "application-message-error" : undefined}
+                className={textAreaClassName}
+              />
+              {state.fieldErrors.message ? (
+                <p id="application-message-error" className="mt-2 text-sm text-rose-600">
+                  {getValidationMessage(state.fieldErrors.message, copy)}
+                </p>
+              ) : null}
+            </div>
+
+            {applicationAttachmentFieldNames.map((name) => {
+              const fieldCopy = copy.fields[name];
+              const errorMessage = getValidationMessage(state.fieldErrors[name], copy);
+              const fieldId = `application-${name}`;
+
+              return (
+                <div key={name}>
+                  <label htmlFor={fieldId} className="mb-2 block text-sm font-semibold text-slate-900">
+                    {fieldCopy.label}
+                  </label>
+                  {fieldCopy.description ? (
+                    <p className="mb-3 text-sm leading-6 text-slate-600">{fieldCopy.description}</p>
+                  ) : null}
                   <input
                     id={fieldId}
                     name={name}
-                    type={getInputType(name)}
-                    autoComplete={getAutoComplete(name)}
-                    defaultValue={state.values[name]}
-                    placeholder={fieldCopy.placeholder}
+                    type="file"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                     aria-invalid={errorMessage ? true : undefined}
                     aria-describedby={errorMessage ? `${fieldId}-error` : undefined}
-                    className="min-h-12 w-full rounded-2xl border border-white/75 bg-white/80 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                    className={fileFieldClassName}
                   />
-                )}
-                {errorMessage ? (
-                  <p id={`${fieldId}-error`} className="mt-2 text-sm text-rose-600">
-                    {errorMessage}
-                  </p>
-                ) : null}
-              </div>
-            );
-          })}
-
-          {applicationAttachmentFieldNames.map((name) => {
-            const fieldCopy = copy.fields[name];
-            const errorMessage = getValidationMessage(state.fieldErrors[name], copy);
-            const fieldId = `application-${name}`;
-
-            return (
-              <div key={name} className="md:col-span-2">
-                <label htmlFor={fieldId} className="mb-2 block text-sm font-semibold text-slate-900">
-                  {fieldCopy.label}
-                </label>
-                {fieldCopy.description ? (
-                  <p className="mb-3 text-sm leading-6 text-slate-600">{fieldCopy.description}</p>
-                ) : null}
-                <input
-                  id={fieldId}
-                  name={name}
-                  type="file"
-                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  aria-invalid={errorMessage ? true : undefined}
-                  aria-describedby={errorMessage ? `${fieldId}-error` : undefined}
-                  className="block min-h-12 w-full rounded-2xl border border-white/75 bg-white/80 px-4 py-3 text-sm text-slate-900 file:mr-4 file:rounded-full file:border-0 file:bg-emerald-800 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-emerald-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                />
-                {errorMessage ? (
-                  <p id={`${fieldId}-error`} className="mt-2 text-sm text-rose-600">
-                    {errorMessage}
-                  </p>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="flex flex-col gap-4 border-t border-slate-200 pt-6">
-          <p className="text-sm leading-6 text-slate-600">{copy.privacyNotice}</p>
-          <div className="space-y-3">
-            <div>
-              <p className="mb-2 text-sm font-semibold text-slate-900">{copy.captchaLabel}</p>
-              <CaptchaComponent
-                ref={captchaRef}
-                language={recaptchaLanguage}
-                onChange={handleCaptchaChange}
-                onErrored={handleCaptchaErrored}
-                onExpired={handleCaptchaExpired}
-                siteKey={recaptchaSiteKey}
-              />
-              <input type="hidden" name="recaptchaToken" value={captchaToken ?? ""} />
-              <p className="mt-3 text-sm leading-6 text-slate-600">{getCaptchaMessage()}</p>
-            </div>
-
-            {captchaToken ? <SubmitButton idleLabel={copy.submitLabel} pendingLabel={copy.submittingLabel} /> : null}
+                  {errorMessage ? (
+                    <p id={`${fieldId}-error`} className="mt-2 text-sm text-rose-600">
+                      {errorMessage}
+                    </p>
+                  ) : null}
+                </div>
+              );
+            })}
           </div>
-        </div>
+        </section>
+
+        <section className="rounded-[1.75rem] border border-slate-200/80 bg-white/78 p-5 shadow-[0_20px_45px_-38px_rgba(15,23,42,0.16)] md:p-6">
+          <div className="flex flex-col gap-4">
+            <p className="text-sm leading-6 text-slate-600">{copy.privacyNotice}</p>
+            <div className="space-y-3">
+              <div>
+                <p className="mb-2 text-sm font-semibold text-slate-900">{copy.captchaLabel}</p>
+                <CaptchaComponent
+                  ref={captchaRef}
+                  language={recaptchaLanguage}
+                  onChange={handleCaptchaChange}
+                  onErrored={handleCaptchaErrored}
+                  onExpired={handleCaptchaExpired}
+                  siteKey={recaptchaSiteKey}
+                />
+                <input type="hidden" name="recaptchaToken" value={captchaToken ?? ""} />
+                <p className="mt-3 text-sm leading-6 text-slate-600">{getCaptchaMessage()}</p>
+              </div>
+
+              {captchaToken ? <SubmitButton idleLabel={copy.submitLabel} pendingLabel={copy.submittingLabel} /> : null}
+            </div>
+          </div>
+        </section>
       </form>
     </div>
   );

@@ -1,3 +1,4 @@
+import NextLink from "next/link";
 import { getMessages } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
@@ -132,6 +133,10 @@ export async function PublicHomePage({
   const infoCards = Object.entries(home.info.cards);
   const contactCards = Object.entries(home.contact.cards);
   const featuredHeadingId = "featured-programs-heading";
+  const programsHref = "/programs" as const;
+  const applyHref = "/apply" as const;
+  const faqsHref = "/faqs" as const;
+  const contactHref = `/${locale}#contact`;
 
   return (
     <div className="flex flex-col gap-16 lg:gap-20">
@@ -145,9 +150,9 @@ export async function PublicHomePage({
         }))}
       />
 
-      <section className="animate-fade-up -mt-2 md:-mt-6 lg:-mt-10" style={{ animationDelay: "40ms" }}>
-        <div className="max-w-4xl border-t border-slate-200/80 pt-8 md:pt-10 lg:pt-12">
-          <div className="max-w-3xl">
+      <section className="-mt-2 md:-mt-6 lg:-mt-10">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-end lg:gap-10">
+          <div className="max-w-3xl pt-8 md:pt-10 lg:pt-12">
             <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
               {home.hero.eyebrow}
             </p>
@@ -157,12 +162,42 @@ export async function PublicHomePage({
             <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">
               {home.hero.description}
             </p>
+
+            <div className="mt-8 flex flex-wrap gap-4">
+              <LocaleLink
+                href={programsHref}
+                className="inline-flex items-center justify-center rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
+              >
+                {home.hero.primaryAction}
+              </LocaleLink>
+              <LocaleLink
+                href={applyHref}
+                className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white/90 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:border-slate-400 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
+              >
+                {home.hero.secondaryAction}
+              </LocaleLink>
+            </div>
           </div>
+
+          <aside className="rounded-[2rem] border border-white/80 bg-white/72 p-6 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.28)] backdrop-blur-sm md:p-7">
+            <p className="text-sm font-semibold text-emerald-900 md:text-base">
+              {home.cta.title}
+            </p>
+            <p className="mt-4 text-sm leading-7 text-slate-600 md:text-base">
+              {home.cta.description}
+            </p>
+            <NextLink
+              href={contactHref}
+              className="mt-6 inline-flex text-sm font-semibold text-emerald-900 transition hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
+            >
+              {home.hero.contactAction}
+            </NextLink>
+          </aside>
         </div>
       </section>
 
-      <div className="grid gap-14 border-t border-slate-200/80 pt-2 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-12 lg:pt-4">
-        <section className="animate-fade-up pt-4 lg:pt-0" style={{ animationDelay: "80ms" }}>
+      <div className="grid gap-14 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-12">
+        <section>
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
             {home.story.eyebrow}
           </p>
@@ -170,7 +205,7 @@ export async function PublicHomePage({
             {home.story.title}
           </h2>
           <p className="mt-4 text-base leading-8 text-slate-600">{home.story.description}</p>
-          <div className="mt-8 grid gap-5 border-t border-slate-200/80 pt-6">
+          <div className="mt-8 grid gap-5">
             {storyPoints.map(([key, point], index) => (
               <article key={key} className="flex gap-3 text-sm leading-7 text-slate-700">
                 <span
@@ -183,7 +218,7 @@ export async function PublicHomePage({
           </div>
         </section>
 
-        <section className="animate-fade-up border-t border-slate-200/80 pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-4" style={{ animationDelay: "140ms" }}>
+        <section className="lg:border-l lg:border-slate-200/80 lg:pl-10">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
             {home.history.eyebrow}
           </p>
@@ -206,7 +241,7 @@ export async function PublicHomePage({
         </section>
       </div>
 
-      <section className="animate-fade-up border-t border-slate-200/80 pt-2 md:pt-4" style={{ animationDelay: "180ms" }}>
+      <section>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
           {home.offerings.eyebrow}
         </p>
@@ -220,22 +255,22 @@ export async function PublicHomePage({
             </p>
           </div>
           <LocaleLink
-            href="/faqs"
+            href={faqsHref}
             className="inline-flex rounded-full border border-emerald-300 bg-emerald-100/80 px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100"
           >
             {home.contact.actions.faqs}
           </LocaleLink>
         </div>
 
-        <div className="mt-8 grid gap-6 border-t border-slate-200/80 pt-6 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
           {offeringCards.map(([key, card], index) => (
             <article
               key={key}
-              className="relative border-l border-slate-200/80 pl-5 lg:min-h-full lg:pr-4"
+              className="relative rounded-[1.75rem] border border-white/80 bg-white/60 p-6 shadow-[0_20px_45px_-40px_rgba(15,23,42,0.28)] lg:min-h-full"
             >
               <span
                 aria-hidden="true"
-                className={`absolute -left-1 top-2 h-2 w-2 rounded-full ${index % 2 === 0 ? "bg-emerald-500/70" : "bg-amber-400/80"}`}
+                className={`absolute left-6 top-0 h-2 w-12 -translate-y-1/2 rounded-full ${index % 2 === 0 ? "bg-emerald-500/70" : "bg-amber-400/80"}`}
               />
               <h3 className="text-xl font-semibold text-slate-950">{card.title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">{card.description}</p>
@@ -244,7 +279,7 @@ export async function PublicHomePage({
         </div>
       </section>
 
-      <section className="animate-fade-up border-t border-slate-200/80 pt-2 md:pt-4" style={{ animationDelay: "220ms" }}>
+      <section>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
           {home.info.eyebrow}
         </p>
@@ -253,12 +288,12 @@ export async function PublicHomePage({
         </h2>
         <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{home.info.description}</p>
 
-        <div className="mt-8 grid gap-6 border-t border-slate-200/80 pt-6 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
           {infoCards.map(([key, card], index) => (
-            <article key={key} className="relative border-l border-slate-200/80 pl-5 lg:min-h-full lg:pr-4">
+            <article key={key} className="relative rounded-[1.75rem] border border-white/80 bg-white/60 p-6 shadow-[0_20px_45px_-40px_rgba(15,23,42,0.28)] lg:min-h-full">
               <span
                 aria-hidden="true"
-                className={`absolute -left-1 top-2 h-2 w-2 rounded-full ${index % 2 === 0 ? "bg-amber-400/80" : "bg-emerald-500/70"}`}
+                className={`absolute left-6 top-0 h-2 w-12 -translate-y-1/2 rounded-full ${index % 2 === 0 ? "bg-amber-400/80" : "bg-emerald-500/70"}`}
               />
               <h3 className="text-lg font-semibold text-slate-950">{card.title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">{card.description}</p>
@@ -267,11 +302,11 @@ export async function PublicHomePage({
         </div>
       </section>
 
-      <section className="animate-fade-up border-t border-slate-200/80 pt-2 md:pt-4" style={{ animationDelay: "260ms" }}>
+      <section>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
           {home.featured.eyebrow}
         </p>
-        <div className="mt-3 grid gap-6 border-b border-slate-200/80 pb-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="mt-3 grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="max-w-3xl">
             <h2 id={featuredHeadingId} className="text-3xl font-semibold tracking-tight text-slate-950">
               {home.featured.title}
@@ -281,7 +316,7 @@ export async function PublicHomePage({
             </p>
           </div>
           <LocaleLink
-            href="/programs"
+            href={programsHref}
             className="inline-flex items-center justify-center rounded-full bg-emerald-800 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 lg:self-start"
           >
             {home.featured.browsePrograms}
@@ -312,7 +347,7 @@ export async function PublicHomePage({
         )}
       </section>
 
-      <section id="contact" className="animate-fade-up scroll-mt-24 border-t border-slate-200/80 pt-2 md:pt-4" style={{ animationDelay: "360ms" }}>
+      <section id="contact" className="scroll-mt-24 rounded-[2rem] border border-white/80 bg-white/64 px-6 py-8 shadow-[0_24px_60px_-44px_rgba(15,23,42,0.28)] backdrop-blur-sm md:px-8 md:py-10">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
           {home.contact.eyebrow}
         </p>
@@ -323,12 +358,12 @@ export async function PublicHomePage({
           {home.contact.description}
         </p>
 
-        <div className="mt-8 grid gap-6 border-t border-slate-200/80 pt-6 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 lg:grid-cols-3">
           {contactCards.map(([key, card], index) => (
-            <article key={key} className="relative border-l border-slate-200/80 pl-5 lg:min-h-full lg:pr-4">
+            <article key={key} className="relative rounded-[1.5rem] border border-white/75 bg-white/72 p-5 lg:min-h-full">
               <span
                 aria-hidden="true"
-                className={`absolute -left-1 top-2 h-2 w-2 rounded-full ${index % 2 === 0 ? "bg-emerald-500/70" : "bg-amber-400/80"}`}
+                className={`absolute left-5 top-0 h-2 w-10 -translate-y-1/2 rounded-full ${index % 2 === 0 ? "bg-emerald-500/70" : "bg-amber-400/80"}`}
               />
               <h3 className="text-lg font-semibold text-slate-950">{card.title}</h3>
               <p className="mt-3 text-sm leading-7 text-slate-600">{card.description}</p>
@@ -339,19 +374,19 @@ export async function PublicHomePage({
         <div className="mt-8">
           <div className="flex flex-wrap gap-4">
             <LocaleLink
-              href="/programs"
+              href={programsHref}
               className="inline-flex rounded-full border border-emerald-300 bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100"
             >
               {home.contact.actions.programs}
             </LocaleLink>
             <LocaleLink
-              href="/apply"
+              href={applyHref}
               className="inline-flex rounded-full bg-emerald-800 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700"
             >
               {home.contact.actions.apply}
             </LocaleLink>
             <LocaleLink
-              href="/faqs"
+              href={faqsHref}
               className="inline-flex rounded-full border border-amber-300 bg-amber-100/80 px-5 py-3 text-sm font-semibold text-amber-950 transition hover:-translate-y-0.5 hover:border-amber-400 hover:bg-amber-200"
             >
               {home.contact.actions.faqs}

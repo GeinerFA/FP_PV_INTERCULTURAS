@@ -73,99 +73,123 @@ export async function PublicAboutPage({ locale }: PublicAboutPageProps) {
   const partnerEntries = Object.entries(about.partners.items);
 
   return (
-    <div lang={locale} className="space-y-14">
-      <section className="animate-fade-up pb-2">
-        <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
-          {about.eyebrow}
-        </p>
-        <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl">
-          {about.title}
-        </h1>
-        <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600">{about.description}</p>
+    <div lang={locale} className="space-y-16 lg:space-y-20">
+      <section className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)] lg:items-end">
+        <div className="max-w-4xl pt-2 md:pt-4">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
+            {about.eyebrow}
+          </p>
+          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl lg:text-6xl">
+            {about.title}
+          </h1>
+          <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 md:text-lg">
+            {about.description}
+          </p>
+        </div>
+
+        <aside className="rounded-[2rem] border border-white/80 bg-white/72 p-6 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.28)] backdrop-blur-sm md:p-7">
+          <div className="space-y-5">
+            {[
+              about.history.title,
+              about.mission.title,
+              about.partners.title,
+            ].map((title, index) => (
+              <article key={title} className="flex gap-4">
+                <span className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <p className="text-sm font-medium leading-6 text-slate-700 md:text-base">{title}</p>
+              </article>
+            ))}
+          </div>
+        </aside>
       </section>
 
-      <section
-        className="animate-fade-up grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start"
-        style={{ animationDelay: "80ms" }}
-      >
-        <div className="space-y-6">
-          <div>
+      <section className="grid gap-10 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-14">
+        <div className="max-w-xl lg:pt-2">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
+            {about.history.eyebrow}
+          </p>
+          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
+            {about.history.title}
+          </h2>
+          <p className="mt-4 text-base leading-8 text-slate-600">{about.history.description}</p>
+        </div>
+
+        <div className="space-y-8">
+          {historyMilestones.map(([key, milestone], index) => (
+            <article
+              key={key}
+              className="grid gap-4 border-t border-slate-200/80 pt-8 first:border-t-0 first:pt-0 md:grid-cols-[7rem_minmax(0,1fr)] md:gap-6"
+            >
+              <div>
+                <span
+                  className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${
+                    index % 2 === 0
+                      ? "bg-emerald-100 text-emerald-900"
+                      : "bg-amber-100 text-amber-900"
+                  }`}
+                >
+                  {milestone.year}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-slate-950">{milestone.title}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600 md:text-base">
+                  {milestone.description}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-[2rem] border border-white/80 bg-[linear-gradient(135deg,rgba(248,251,248,0.72)_0%,rgba(223,243,231,0.48)_52%,rgba(246,223,173,0.28)_100%)] px-6 py-8 shadow-[0_24px_60px_-44px_rgba(15,23,42,0.2)] md:px-8 md:py-10">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:gap-12">
+          <div className="max-w-xl lg:pt-2">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
-              {about.history.eyebrow}
+              {about.mission.eyebrow}
             </p>
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-              {about.history.title}
+              {about.mission.title}
             </h2>
-            <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{about.history.description}</p>
+            <p className="mt-4 text-base leading-8 text-slate-600">{about.mission.description}</p>
           </div>
 
-          <div className="space-y-4 border-l border-emerald-200/70 pl-5 text-sm leading-7 text-slate-600">
-            {historyMilestones.slice(0, 2).map(([key, milestone]) => (
-              <article key={key} className="relative">
+          <div className="grid gap-4 md:grid-cols-3">
+            {missionPillars.map(([key, pillar], index) => (
+              <article
+                key={key}
+                className="rounded-[1.5rem] border border-white/85 bg-white/72 p-5 shadow-[0_18px_40px_-36px_rgba(15,23,42,0.22)]"
+              >
                 <span
-                  aria-hidden="true"
-                  className="absolute -left-[1.55rem] top-2 h-2 w-2 rounded-full bg-amber-400/80"
-                />
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  {milestone.year}
-                </p>
-                <h3 className="mt-2 text-lg font-semibold text-slate-950">{milestone.title}</h3>
-                <p className="mt-2">{milestone.description}</p>
+                  className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold ${
+                    index % 2 === 0
+                      ? "bg-emerald-100 text-emerald-900"
+                      : "bg-amber-100 text-amber-900"
+                  }`}
+                >
+                  {index + 1}
+                </span>
+                <p className="mt-4 text-sm leading-7 text-slate-700">{pillar}</p>
               </article>
             ))}
           </div>
         </div>
-
-        <div className="space-y-6 border-t border-slate-200 pt-2 lg:border-l lg:border-t-0 lg:pl-10">
-          {historyMilestones.slice(2).map(([key, milestone]) => (
-            <article key={key} className="relative pl-5">
-              <span aria-hidden="true" className="absolute left-0 top-2 h-2 w-2 rounded-full bg-amber-400/80" />
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{milestone.year}</p>
-              <h3 className="mt-2 text-lg font-semibold text-slate-950">{milestone.title}</h3>
-              <p className="mt-2 text-sm leading-7 text-slate-600">{milestone.description}</p>
-            </article>
-          ))}
-        </div>
       </section>
 
-      <section
-        className="animate-fade-up grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start"
-        style={{ animationDelay: "140ms" }}
-      >
-        <div className="lg:pr-6">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
-            {about.mission.eyebrow}
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-            {about.mission.title}
-          </h2>
-          <p className="mt-4 text-base leading-8 text-slate-600">{about.mission.description}</p>
+      <section className="rounded-[2rem] bg-[linear-gradient(135deg,rgba(248,251,248,0.56)_0%,rgba(223,243,231,0.4)_52%,rgba(246,223,173,0.3)_100%)] px-6 py-8 md:px-8 md:py-10">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:items-end">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
+              {about.partners.eyebrow}
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
+              {about.partners.title}
+            </h2>
+            <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{about.partners.description}</p>
+          </div>
         </div>
-
-        <div className="grid gap-x-10 gap-y-6 border-t border-slate-200 pt-6 md:grid-cols-2 lg:border-t-0 lg:pt-2">
-          {missionPillars.map(([key, pillar], index) => (
-            <article key={key} className="relative pl-5 text-sm leading-7 text-slate-700">
-              <span
-                aria-hidden="true"
-                className={`absolute left-0 top-2 h-2 w-2 rounded-full ${index % 2 === 0 ? "bg-emerald-500/70" : "bg-amber-400/80"}`}
-              />
-              {pillar}
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section
-        className="animate-fade-up rounded-[2rem] bg-[linear-gradient(135deg,rgba(248,251,248,0.56)_0%,rgba(223,243,231,0.4)_52%,rgba(246,223,173,0.3)_100%)] px-6 py-8 md:px-8 md:py-10"
-        style={{ animationDelay: "200ms" }}
-      >
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-800">
-          {about.partners.eyebrow}
-        </p>
-        <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950">
-          {about.partners.title}
-        </h2>
-        <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">{about.partners.description}</p>
 
         <div className="mt-8 grid gap-5 lg:grid-cols-2">
           {partnerEntries.map(([key, partner], index) => (
@@ -175,7 +199,7 @@ export async function PublicAboutPage({ locale }: PublicAboutPageProps) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={partner.linkLabel}
-              className="group relative flex h-full flex-col rounded-[1.5rem] border border-white/70 bg-white/80 p-6 shadow-sm ring-1 ring-transparent transition duration-200 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
+              className="group relative flex h-full flex-col rounded-[1.5rem] border border-white/70 bg-white/80 p-6 shadow-[0_20px_45px_-38px_rgba(15,23,42,0.24)] ring-1 ring-transparent transition duration-200 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-[0_28px_60px_-40px_rgba(15,23,42,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-4 focus-visible:ring-offset-transparent"
             >
               {(() => {
                 const logo = partnerLogoMap[key as keyof typeof partnerLogoMap];
