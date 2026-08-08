@@ -51,8 +51,8 @@ export async function PublicFaqPage({
 
   return (
     <div lang={locale} className="space-y-16 lg:space-y-20">
-      <section className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(18rem,0.95fr)] lg:items-end">
-        <div className="max-w-4xl pt-2 md:pt-4">
+      <section className="max-w-4xl pt-2 md:pt-4">
+        <div>
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
             {faqs.eyebrow}
           </p>
@@ -63,37 +63,6 @@ export async function PublicFaqPage({
             {faqs.description}
           </p>
         </div>
-
-        <aside className="rounded-[2rem] border border-white/80 bg-white/72 p-6 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.28)] backdrop-blur-sm md:p-7">
-          {hasEntries ? (
-            <nav aria-label={faqs.title} className="space-y-5">
-              <ul className="space-y-5">
-                {entries.map((entry, index) => (
-                  <li key={entry.id}>
-                    <a
-                      href={`#faq-${entry.id}`}
-                      className="flex gap-4 rounded-[1.25rem] border border-transparent px-1 py-1 transition hover:border-emerald-100 hover:bg-emerald-50/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
-                    >
-                      <span className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <p className="text-sm font-medium leading-6 text-slate-700 md:text-base">
-                        {entry.question}
-                      </p>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ) : (
-            <div>
-              <h2 className="text-xl font-semibold tracking-tight text-slate-950">{faqs.emptyState.title}</h2>
-              <p className="mt-4 text-sm leading-7 text-slate-600 md:text-base">
-                {faqs.emptyState.description}
-              </p>
-            </div>
-          )}
-        </aside>
       </section>
 
       {!hasEntries ? (
