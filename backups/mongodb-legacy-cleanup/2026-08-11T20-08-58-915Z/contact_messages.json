@@ -1,0 +1,21 @@
+{
+  "collection": "contact_messages",
+  "exportedAt": "2026-08-11T20:09:02.737Z",
+  "documentCount": 1,
+  "documents": [
+    {
+      "_id": {
+        "$type": "ObjectId",
+        "value": "6a1f448707425ea3f6360bc8"
+      },
+      "name": "Laura Smith",
+      "email": "laura.smith@example.com",
+      "phone": "+50677778888",
+      "subject": "Information about volunteering",
+      "message": "Hello, I would like to receive more information about the volunteering programs available in Costa Rica.",
+      "status": "new",
+      "createdAt": "2026-06-02T20:30:00.000Z",
+      "updatedAt": "2026-06-02T20:30:00.000Z"
+    }
+  ]
+}

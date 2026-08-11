@@ -1,0 +1,21 @@
+{
+  "collection": "gallery",
+  "exportedAt": "2026-08-11T20:09:03.039Z",
+  "documentCount": 1,
+  "documents": [
+    {
+      "_id": {
+        "$type": "ObjectId",
+        "value": "6a1f447607425ea3f6360bc2"
+      },
+      "title": "Volunteers in community activity",
+      "description": "Volunteers participating in a cultural and community support activity in Costa Rica.",
+      "imageUrl": "https://example.com/images/community-activity.jpg",
+      "altText": "Volunteers working with a local community in Costa Rica",
+      "active": true,
+      "order": 1,
+      "createdAt": "2026-06-02T20:20:00.000Z",
+      "updatedAt": "2026-06-02T20:20:00.000Z"
+    }
+  ]
+}

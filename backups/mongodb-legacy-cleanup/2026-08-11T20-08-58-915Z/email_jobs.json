@@ -1,0 +1,27 @@
+{
+  "collection": "email_jobs",
+  "exportedAt": "2026-08-11T20:09:02.836Z",
+  "documentCount": 1,
+  "documents": [
+    {
+      "_id": {
+        "$type": "ObjectId",
+        "value": "6a1f43ed07425ea3f6360bb7"
+      },
+      "type": "application_confirmation",
+      "status": "pending",
+      "applicationId": null,
+      "attempts": 0,
+      "maxAttempts": 3,
+      "nextRunAt": "2026-06-02T20:00:00.000Z",
+      "lastError": null,
+      "payload": {
+        "to": "carlos.ramirez@example.com",
+        "subject": "We received your application",
+        "body": "Hello Carlos,\n\nWe received your volunteering application. Our team will contact you soon.\n\nBest regards,\nPura Vida Interculturas."
+      },
+      "createdAt": "2026-06-02T19:45:00.000Z",
+      "updatedAt": "2026-06-02T19:45:00.000Z"
+    }
+  ]
+}

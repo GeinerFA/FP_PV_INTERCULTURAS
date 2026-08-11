@@ -1,0 +1,33 @@
+{
+  "collection": "application_types",
+  "exportedAt": "2026-08-11T20:09:02.430Z",
+  "documentCount": 2,
+  "documents": [
+    {
+      "_id": {
+        "$type": "ObjectId",
+        "value": "6a1f30f3bbc2ad4f8cda4c17"
+      },
+      "code": "volunteering",
+      "active": true,
+      "createdAt": "2026-06-02T19:32:23.376Z",
+      "description": "General application for volunteering programs.",
+      "name": "Volunteering",
+      "order": 1,
+      "updatedAt": "2026-06-02T19:32:23.376Z"
+    },
+    {
+      "_id": {
+        "$type": "ObjectId",
+        "value": "6a1f3957f26d342af2e86fa2"
+      },
+      "code": "Clases",
+      "active": true,
+      "createdAt": "2026-06-02T19:32:23.376Z",
+      "description": "Aplcar a clases de Español",
+      "name": "Clases",
+      "order": 1,
+      "updatedAt": "2026-06-02T19:32:23.376Z"
+    }
+  ]
+}
