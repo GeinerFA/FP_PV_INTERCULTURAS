@@ -228,12 +228,12 @@
       "description": "Marcá qué puede ver, gestionar o ejecutar como acción crítica esta persona en cada módulo administrativo.",
       "module": "Módulo",
       "superadminNote": "El rol ya no se elige a mano: si toda la matriz queda marcada, el sistema guarda a la persona como superadmin; si falta cualquier permiso, queda como admin.",
-      "deleteMeaning": "La columna Desactivar agrupa acciones sensibles o irreversibles según el módulo, como desactivar acceso, retirar registros o ejecutar cambios críticos.",
-      "usersDeleteMeaning": "En Usuarios, Desactivar significa poder quitar el acceso administrativo de otra persona sin borrar su cuenta.",
+      "deleteMeaning": "La columna Control total agrupa acciones sensibles o irreversibles según el módulo, como desactivar acceso, retirar registros o ejecutar cambios críticos.",
+      "usersDeleteMeaning": "En Usuarios, Control total significa poder quitar el acceso administrativo de otra persona sin borrar su cuenta.",
       "actions": {
         "view": "Ver",
         "manage": "Gestionar",
-        "delete": "Desactivar"
+        "delete": "Control total"
       }
     },
     "modules": {
