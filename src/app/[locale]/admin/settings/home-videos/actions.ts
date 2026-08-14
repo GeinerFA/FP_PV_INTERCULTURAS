@@ -5,7 +5,13 @@ import { redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
 import { requireAdminSession } from "@/lib/admin-session";
-import { deleteAdminHomeHeroVideo, updateAdminHomeHeroVideoOrder } from "@/services/home-hero-videos/home-hero-video-service";
+import { recordAdminActivitySafely } from "@/services/admin/activity-service";
+import { createAdminActivityActor, resolveHomeHeroVideoActivityLabel } from "@/services/admin/settings-activity";
+import {
+  deleteAdminHomeHeroVideo,
+  listAdminHomeHeroVideos,
+  updateAdminHomeHeroVideoOrder,
+} from "@/services/home-hero-videos/home-hero-video-service";
 
 function buildHomeVideoSettingsPath(locale: AppLocale): string {
   return `/${locale}/admin/settings/home-videos`;
@@ -74,6 +80,8 @@ export async function updateHomeHeroVideoOrderAction(locale: AppLocale, id: stri
       params = { video: id };
       hash = undefined;
     } else {
+      const existingVideos = await listAdminHomeHeroVideos();
+      const previousVideo = existingVideos.find((entry) => entry.id === id);
       const reorderedVideos = await updateAdminHomeHeroVideoOrder({
         id,
         order,
@@ -86,6 +94,23 @@ export async function updateHomeHeroVideoOrderAction(locale: AppLocale, id: stri
         params = { video: id };
         hash = undefined;
       } else {
+        const reorderedVideo = reorderedVideos.find((entry) => entry.id === id);
+
+        if (reorderedVideo) {
+          await recordAdminActivitySafely({
+            action: "home_hero_video.reordered",
+            entityType: "home_hero_video",
+            entityId: reorderedVideo.id,
+            entityLabel: resolveHomeHeroVideoActivityLabel(reorderedVideo),
+            actor: createAdminActivityActor(session),
+            happenedAt: reorderedVideo.updatedAt,
+            metadata: {
+              fromPosition: previousVideo?.order,
+              toPosition: reorderedVideo.order,
+            },
+          });
+        }
+
         revalidateHomeVideoPaths(locale);
       }
     }
@@ -100,7 +125,7 @@ export async function updateHomeHeroVideoOrderAction(locale: AppLocale, id: stri
 
 export async function deleteHomeHeroVideoAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildHomeVideoSettingsPath(locale);
-  await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
+  const session = await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
   let status = "deleted";
   let params: Record<string, string | undefined> | undefined;
   let hash: string | undefined = "admin-home-hero-video-settings-top";
@@ -113,6 +138,15 @@ export async function deleteHomeHeroVideoAction(locale: AppLocale, id: string): 
       params = { video: id };
       hash = undefined;
     } else {
+      await recordAdminActivitySafely({
+        action: "home_hero_video.deleted",
+        entityType: "home_hero_video",
+        entityId: deletedVideo.id,
+        entityLabel: resolveHomeHeroVideoActivityLabel(deletedVideo),
+        actor: createAdminActivityActor(session),
+        happenedAt: deletedVideo.updatedAt,
+      });
+
       revalidateHomeVideoPaths(locale);
     }
   } catch {

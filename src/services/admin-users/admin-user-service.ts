@@ -15,6 +15,12 @@ export class LastActiveSuperadminError extends Error {
   }
 }
 
+export class AdminUserSelfDeleteError extends Error {
+  constructor() {
+    super("An admin user cannot delete their own account.");
+  }
+}
+
 function isDuplicateMongoError(error: unknown): boolean {
   return Boolean(
     error &&
@@ -227,4 +233,24 @@ export async function updateAdminUserActiveState(id: string, active: boolean): P
     ...currentUser,
     active,
   });
+}
+
+export async function deleteAdminUser(id: string, options?: { actorAdminUserId?: string }): Promise<AdminUserRecord | null> {
+  if (options?.actorAdminUserId && options.actorAdminUserId === id) {
+    throw new AdminUserSelfDeleteError();
+  }
+
+  const currentUser = await getAdminUserRepository().findById(id);
+
+  if (!currentUser) {
+    return null;
+  }
+
+  await assertSuperadminSafety(currentUser, {
+    email: currentUser.email,
+    active: false,
+    role: currentUser.role,
+  });
+
+  return getAdminUserRepository().delete(id);
 }

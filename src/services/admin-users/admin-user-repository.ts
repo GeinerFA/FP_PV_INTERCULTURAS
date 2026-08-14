@@ -11,6 +11,7 @@ type AdminUserRepository = {
   findByEmail(email: string): Promise<AdminUserRecord | null>;
   create(input: CreateAdminUserInput): Promise<AdminUserRecord>;
   update(input: UpdateAdminUserInput): Promise<AdminUserRecord | null>;
+  delete(id: string): Promise<AdminUserRecord | null>;
   bootstrapSuperadmin(input: AdminUserBootstrapInput): Promise<AdminUserRecord>;
   countActiveSuperadmins(excludeId?: string): Promise<number>;
 };
@@ -140,6 +141,17 @@ const mongoAdminUserRepository: AdminUserRepository = {
     )
       .lean()
       .exec();
+
+    return mapDocument(document);
+  },
+  async delete(id) {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    await connectToDatabase();
+
+    const document = await AdminUserModel.findByIdAndDelete(id).lean().exec();
 
     return mapDocument(document);
   },

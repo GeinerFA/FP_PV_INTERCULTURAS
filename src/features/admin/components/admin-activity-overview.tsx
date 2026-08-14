@@ -14,10 +14,29 @@ import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known
 import { ADMIN_LIST_PAGE_SIZE } from "@/features/admin/lib/pagination";
 import { Link } from "@/i18n/navigation";
 import { listAdminActivityLogs } from "@/services/admin/activity-service";
-import type { AdminActivityAction, AdminActivityLog } from "@/types/admin-activity";
+import {
+  adminSettingsActivityEntityTypes,
+  type AdminActivityAction,
+  type AdminActivityLog,
+} from "@/types/admin-activity";
 
 const actionTranslationKeys: Record<AdminActivityAction, string> = {
   "application.status_updated": "applicationStatusUpdated",
+  "faq.created": "faqCreated",
+  "faq.updated": "faqUpdated",
+  "faq.deleted": "faqDeleted",
+  "faq.reordered": "faqReordered",
+  "program_category.created": "programCategoryCreated",
+  "program_category.updated": "programCategoryUpdated",
+  "program_category.deleted": "programCategoryDeleted",
+  "admin_user.created": "adminUserCreated",
+  "admin_user.updated": "adminUserUpdated",
+  "admin_user.activated": "adminUserActivated",
+  "admin_user.deactivated": "adminUserDeactivated",
+  "admin_user.deleted": "adminUserDeleted",
+  "home_hero_video.created": "homeHeroVideoCreated",
+  "home_hero_video.reordered": "homeHeroVideoReordered",
+  "home_hero_video.deleted": "homeHeroVideoDeleted",
   "program.created": "programCreated",
   "program.updated": "programUpdated",
   "program.published": "programPublished",
@@ -38,6 +57,81 @@ const actionThemeClassNames: Record<
     accent: "from-sky-500 via-cyan-500 to-teal-500",
     badge: "bg-sky-50 text-sky-900 ring-sky-200",
     detail: "border-sky-200/70 bg-sky-50/80 text-sky-950",
+  },
+  "faq.created": {
+    accent: "from-cyan-500 via-sky-500 to-blue-500",
+    badge: "bg-cyan-50 text-cyan-900 ring-cyan-200",
+    detail: "border-cyan-200/70 bg-cyan-50/80 text-cyan-950",
+  },
+  "faq.updated": {
+    accent: "from-cyan-500 via-teal-500 to-emerald-500",
+    badge: "bg-cyan-50 text-cyan-900 ring-cyan-200",
+    detail: "border-cyan-200/70 bg-cyan-50/80 text-cyan-950",
+  },
+  "faq.deleted": {
+    accent: "from-rose-500 via-red-500 to-orange-500",
+    badge: "bg-rose-50 text-rose-900 ring-rose-200",
+    detail: "border-rose-200/70 bg-rose-50/80 text-rose-950",
+  },
+  "faq.reordered": {
+    accent: "from-indigo-500 via-sky-500 to-cyan-500",
+    badge: "bg-indigo-50 text-indigo-900 ring-indigo-200",
+    detail: "border-indigo-200/70 bg-indigo-50/80 text-indigo-950",
+  },
+  "program_category.created": {
+    accent: "from-emerald-500 via-lime-500 to-teal-500",
+    badge: "bg-emerald-50 text-emerald-900 ring-emerald-200",
+    detail: "border-emerald-200/70 bg-emerald-50/80 text-emerald-950",
+  },
+  "program_category.updated": {
+    accent: "from-amber-500 via-yellow-500 to-emerald-500",
+    badge: "bg-amber-50 text-amber-900 ring-amber-200",
+    detail: "border-amber-200/70 bg-amber-50/80 text-amber-950",
+  },
+  "program_category.deleted": {
+    accent: "from-rose-500 via-red-500 to-orange-500",
+    badge: "bg-rose-50 text-rose-900 ring-rose-200",
+    detail: "border-rose-200/70 bg-rose-50/80 text-rose-950",
+  },
+  "admin_user.created": {
+    accent: "from-violet-500 via-fuchsia-500 to-sky-500",
+    badge: "bg-violet-50 text-violet-900 ring-violet-200",
+    detail: "border-violet-200/70 bg-violet-50/80 text-violet-950",
+  },
+  "admin_user.updated": {
+    accent: "from-violet-500 via-fuchsia-500 to-emerald-500",
+    badge: "bg-violet-50 text-violet-900 ring-violet-200",
+    detail: "border-violet-200/70 bg-violet-50/80 text-violet-950",
+  },
+  "admin_user.activated": {
+    accent: "from-emerald-500 via-teal-500 to-cyan-500",
+    badge: "bg-emerald-50 text-emerald-900 ring-emerald-200",
+    detail: "border-emerald-200/70 bg-emerald-50/80 text-emerald-950",
+  },
+  "admin_user.deactivated": {
+    accent: "from-amber-500 via-orange-500 to-rose-500",
+    badge: "bg-amber-50 text-amber-900 ring-amber-200",
+    detail: "border-amber-200/70 bg-amber-50/80 text-amber-950",
+  },
+  "admin_user.deleted": {
+    accent: "from-rose-500 via-red-500 to-orange-500",
+    badge: "bg-rose-50 text-rose-900 ring-rose-200",
+    detail: "border-rose-200/70 bg-rose-50/80 text-rose-950",
+  },
+  "home_hero_video.created": {
+    accent: "from-sky-500 via-indigo-500 to-violet-500",
+    badge: "bg-sky-50 text-sky-900 ring-sky-200",
+    detail: "border-sky-200/70 bg-sky-50/80 text-sky-950",
+  },
+  "home_hero_video.reordered": {
+    accent: "from-indigo-500 via-violet-500 to-fuchsia-500",
+    badge: "bg-indigo-50 text-indigo-900 ring-indigo-200",
+    detail: "border-indigo-200/70 bg-indigo-50/80 text-indigo-950",
+  },
+  "home_hero_video.deleted": {
+    accent: "from-rose-500 via-red-500 to-orange-500",
+    badge: "bg-rose-50 text-rose-900 ring-rose-200",
+    detail: "border-rose-200/70 bg-rose-50/80 text-rose-950",
   },
   "program.created": {
     accent: "from-emerald-500 via-green-500 to-teal-500",
@@ -118,15 +212,17 @@ export async function AdminActivityOverview({ page }: AdminActivityOverviewProps
   const { currentPage, entries, entityCounts, totalCount, totalPages } = activity;
   const applicationEvents = entityCounts.application;
   const programEvents = entityCounts.program;
+  const settingsEvents = adminSettingsActivityEntityTypes.reduce((total, entityType) => total + entityCounts[entityType], 0);
   const latestEvent = currentPage === 1 ? (entries[0] ?? null) : null;
 
   return (
     <div className="space-y-8">
-      <div className="grid gap-4 xl:grid-cols-3">
+      <div className="grid gap-4 xl:grid-cols-4">
         {[
           { key: "total", value: totalCount },
           { key: "applications", value: applicationEvents },
           { key: "programs", value: programEvents },
+          { key: "settings", value: settingsEvents },
         ].map((item) => (
           <article key={item.key} className="admin-inner-panel rounded-3xl p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
@@ -186,9 +282,6 @@ export async function AdminActivityOverview({ page }: AdminActivityOverviewProps
                           <p className="text-base font-semibold leading-7 text-slate-950 xl:text-[1.05rem]">
                             {getAdminActivityFeedSummary(entry, t)}
                           </p>
-                          {entry.metadata?.slug ? (
-                            <p className="break-all text-sm font-medium text-slate-600">/{entry.metadata.slug}</p>
-                          ) : null}
                         </div>
                       </div>
 

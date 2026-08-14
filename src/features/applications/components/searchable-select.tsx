@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 
 type SearchableSelectOption = {
   value: string;
   label: string;
+  optionLabel?: ReactNode;
+  selectedLabel?: ReactNode;
   searchText?: string;
 };
 
@@ -16,13 +18,17 @@ type SearchableSelectCopy = {
 type SearchableSelectProps = {
   id: string;
   name: string;
-  label: string;
+  label: ReactNode;
+  labelClassName?: string;
   placeholder: string;
   autoComplete?: string;
   value: string;
   options: SearchableSelectOption[];
   copy: SearchableSelectCopy;
   errorMessage?: string | null;
+  triggerClassName?: string;
+  panelClassName?: string;
+  panelPosition?: "absolute" | "mobile-fixed";
 };
 
 function normalizeSearchValue(value: string): string {
@@ -33,12 +39,16 @@ export function SearchableSelect({
   id,
   name,
   label,
+  labelClassName,
   placeholder,
   autoComplete,
   value,
   options,
   copy,
   errorMessage,
+  triggerClassName,
+  panelClassName,
+  panelPosition = "absolute",
 }: SearchableSelectProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -50,6 +60,7 @@ export function SearchableSelect({
   const [query, setQuery] = useState("");
   const [selectedValue, setSelectedValue] = useState(value);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [mobilePanelStyle, setMobilePanelStyle] = useState<CSSProperties | undefined>(undefined);
 
   useEffect(() => {
     setSelectedValue(value);
@@ -59,11 +70,52 @@ export function SearchableSelect({
     if (!isOpen) {
       setQuery("");
       setHighlightedIndex(-1);
+      setMobilePanelStyle(undefined);
       return;
     }
 
     searchInputRef.current?.focus();
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || panelPosition !== "mobile-fixed") {
+      return;
+    }
+
+    const viewportBreakpoint = 640;
+    const viewportPadding = 16;
+    const maxPanelWidth = 352;
+
+    function syncMobilePanelStyle() {
+      if (!triggerRef.current || window.innerWidth >= viewportBreakpoint) {
+        setMobilePanelStyle(undefined);
+        return;
+      }
+
+      const triggerBounds = triggerRef.current.getBoundingClientRect();
+      const panelWidth = Math.min(maxPanelWidth, Math.max(window.innerWidth - viewportPadding * 2, 0));
+      const left = Math.min(
+        Math.max(triggerBounds.left, viewportPadding),
+        Math.max(window.innerWidth - viewportPadding - panelWidth, viewportPadding),
+      );
+
+      setMobilePanelStyle({
+        left: `${left}px`,
+        position: "fixed",
+        top: `${triggerBounds.bottom + 8}px`,
+        width: `${panelWidth}px`,
+      });
+    }
+
+    syncMobilePanelStyle();
+    window.addEventListener("resize", syncMobilePanelStyle);
+    window.addEventListener("scroll", syncMobilePanelStyle, true);
+
+    return () => {
+      window.removeEventListener("resize", syncMobilePanelStyle);
+      window.removeEventListener("scroll", syncMobilePanelStyle, true);
+    };
+  }, [isOpen, panelPosition]);
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent | TouchEvent) {
@@ -228,7 +280,10 @@ export function SearchableSelect({
     <div ref={containerRef} className="relative">
       <input type="hidden" name={name} value={selectedValue} autoComplete={autoComplete} />
 
-      <label htmlFor={`${id}-trigger`} className="mb-2 block text-sm font-semibold text-slate-900">
+      <label
+        htmlFor={`${id}-trigger`}
+        className={["mb-2 block text-sm font-semibold text-slate-900", labelClassName].filter(Boolean).join(" ")}
+      >
         {label}
       </label>
 
@@ -240,12 +295,15 @@ export function SearchableSelect({
         aria-expanded={isOpen}
         aria-controls={isOpen ? listboxId : undefined}
         aria-describedby={errorMessage ? `${id}-error` : undefined}
-        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border border-white/75 bg-white/80 px-4 py-3 text-left text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+        className={[
+          "flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border border-white/75 bg-white/80 px-4 py-3 text-left text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100",
+          triggerClassName,
+        ].filter(Boolean).join(" ")}
         onClick={() => setIsOpen((open) => !open)}
         onKeyDown={handleTriggerKeyDown}
       >
-        <span className={selectedOption ? undefined : "text-slate-400"}>
-          {selectedOption ? selectedOption.label : placeholder}
+        <span className={selectedOption ? "min-w-0" : "min-w-0 text-slate-400"}>
+          {selectedOption ? selectedOption.selectedLabel ?? selectedOption.label : placeholder}
         </span>
         <span aria-hidden="true" className="text-slate-400">
           ▾
@@ -253,7 +311,13 @@ export function SearchableSelect({
       </button>
 
       {isOpen ? (
-        <div className="absolute left-0 right-0 z-20 mt-2 rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_24px_60px_-28px_rgba(15,23,42,0.4)]">
+        <div
+          className={[
+            "absolute left-0 z-20 mt-2 min-w-full rounded-2xl border border-slate-200 bg-white p-3 shadow-[0_24px_60px_-28px_rgba(15,23,42,0.4)]",
+            panelClassName,
+          ].filter(Boolean).join(" ")}
+          style={mobilePanelStyle}
+        >
           <input
             ref={searchInputRef}
             type="text"
@@ -295,7 +359,7 @@ export function SearchableSelect({
                       onMouseEnter={() => setHighlightedIndex(index)}
                       onClick={() => selectOption(option)}
                     >
-                      {option.label}
+                      {option.optionLabel ?? option.label}
                     </button>
                   );
                 })}

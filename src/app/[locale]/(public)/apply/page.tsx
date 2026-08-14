@@ -94,8 +94,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
 
         <aside className="space-y-4 xl:sticky xl:top-24">
           <section className="rounded-[1.75rem] border border-white/80 bg-white/72 p-5 shadow-[0_20px_45px_-38px_rgba(15,23,42,0.2)] backdrop-blur-sm">
-            <p className="text-sm font-semibold text-slate-950">{formCopy.requiredLegend}</p>
-            <p className="mt-4 text-sm leading-7 text-slate-600">{formCopy.privacyNotice}</p>
+            <p className="text-sm leading-7 text-slate-600">{formCopy.privacyNotice}</p>
           </section>
 
           <section className="rounded-[1.75rem] border border-emerald-200/80 bg-emerald-50/80 p-5 shadow-[0_20px_45px_-38px_rgba(5,150,105,0.18)]">

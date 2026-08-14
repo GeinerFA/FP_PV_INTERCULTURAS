@@ -1,11 +1,12 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
-import { createAdminUserAction, toggleAdminUserActiveAction, updateAdminUserAction } from "@/app/[locale]/admin/settings/users/actions";
+import { createAdminUserAction, deleteAdminUserAction, toggleAdminUserActiveAction, updateAdminUserAction } from "@/app/[locale]/admin/settings/users/actions";
 import type { AppLocale } from "@/config/i18n";
 import { EditAdminUserPermissionMatrix } from "@/features/admin/components/edit-admin-user-permission-matrix";
 import { CreateAdminUserForm } from "@/features/admin/components/create-admin-user-form";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
+import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
 import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 import { listAdminUsers } from "@/services/admin-users/admin-user-service";
 import { adminPermissionModules, type AdminUserRecord } from "@/types/admin-user";
@@ -16,11 +17,15 @@ type AdminUserSettingsProps = {
     | "updated"
     | "activated"
     | "deactivated"
+    | "deleted"
     | "invalid"
     | "save-failed"
     | "toggle-failed"
+    | "delete-failed"
     | "duplicate-email"
-    | "last-superadmin-protected";
+    | "last-superadmin-protected"
+    | "self-delete-blocked"
+    | "destructive-confirmation-required";
   selectedUserId?: string;
   session: AdminSession;
   shouldOpenCreateDisclosure?: boolean;
@@ -55,22 +60,28 @@ function formatPermissionSummary(user: AdminUserRecord, t: Awaited<ReturnType<ty
 function UserEntry({
   canActivate,
   canDeactivate,
+  canDelete,
   activeLocale,
   canManage,
+  session,
   t,
   user,
   shouldOpen,
 }: {
   canActivate: boolean;
   canDeactivate: boolean;
+  canDelete: boolean;
   activeLocale: AppLocale;
   canManage: boolean;
+  session: AdminSession;
   shouldOpen: boolean;
   t: Awaited<ReturnType<typeof getTranslations>>;
   user: AdminUserRecord;
 }) {
   const roleTone = user.role === "superadmin" ? "border-amber-300 bg-amber-50 text-amber-900" : "border-slate-300 bg-slate-50 text-slate-700";
   const activeTone = user.active ? "border-emerald-300 bg-emerald-50 text-emerald-900" : "border-slate-300 bg-white text-slate-700";
+  const formId = `admin-user-entry-${user.id}`;
+  const isCurrentAdmin = session.adminUserId === user.id;
 
   return (
     <details className="group admin-inner-panel rounded-[28px]" open={shouldOpen}>
@@ -105,7 +116,7 @@ function UserEntry({
       </summary>
 
       <div className="border-t border-emerald-900/8 px-5 pb-5 pt-5 md:px-6 md:pb-6">
-        <form action={updateAdminUserAction.bind(null, activeLocale, user.id)} className="space-y-5">
+        <form id={formId} action={updateAdminUserAction.bind(null, activeLocale, user.id)} className="space-y-5">
           <div className="grid gap-4 md:grid-cols-2">
             <label className="block space-y-2.5">
               <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.email")}</span>
@@ -179,8 +190,27 @@ function UserEntry({
                   {t("actions.activate")}
                 </button>
               ) : null}
+              {canDelete && !isCurrentAdmin ? (
+                <DestructiveActionConfirmation
+                  title={t("delete.title")}
+                  description={t("delete.description")}
+                  warning={t("delete.warning")}
+                  triggerLabel={t("actions.delete")}
+                  confirmLabel={t("delete.confirm")}
+                  cancelLabel={t("delete.cancel")}
+                  confirmValue="delete"
+                  formId={formId}
+                  formAction={deleteAdminUserAction.bind(null, activeLocale, user.id)}
+                  tone="danger"
+                  actionLayout="stacked"
+                  className="w-full sm:w-auto"
+                />
+              ) : null}
             </div>
-            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{t("entry.updatedAt", { updatedAt: new Date(user.updatedAt).toLocaleString() })}</p>
+            <div className="space-y-2 text-right">
+              {isCurrentAdmin ? <p className="text-xs text-slate-500">{t("entry.currentAdminDeleteBlocked")}</p> : null}
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{t("entry.updatedAt", { updatedAt: new Date(user.updatedAt).toLocaleString() })}</p>
+            </div>
           </div>
         </form>
       </div>
@@ -211,8 +241,9 @@ export async function AdminUserSettings({ feedback, selectedUserId, session, sho
   const canManage = hasAdminPermission(session, "users.manage");
   const canActivate = canManage;
   const canDeactivate = hasAdminPermission(session, "users.delete");
+  const canDelete = canDeactivate;
   const createAction = createAdminUserAction.bind(null, activeLocale);
-  const feedbackTone = feedback === "invalid" || feedback === "save-failed" || feedback === "toggle-failed" || feedback === "duplicate-email" || feedback === "last-superadmin-protected"
+  const feedbackTone = feedback === "invalid" || feedback === "save-failed" || feedback === "toggle-failed" || feedback === "delete-failed" || feedback === "duplicate-email" || feedback === "last-superadmin-protected" || feedback === "self-delete-blocked" || feedback === "destructive-confirmation-required"
     ? "admin-warning-banner"
     : "admin-success-banner";
   const activeUsers = adminUsers.filter((user) => user.active).length;
@@ -250,7 +281,9 @@ export async function AdminUserSettings({ feedback, selectedUserId, session, sho
               activeLocale={activeLocale}
               canActivate={canActivate}
               canDeactivate={canDeactivate}
+              canDelete={canDelete}
               canManage={canManage}
+              session={session}
               shouldOpen={selectedUserId === user.id}
               t={t}
               user={user}

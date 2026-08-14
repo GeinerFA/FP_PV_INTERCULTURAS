@@ -161,7 +161,6 @@ export async function AdminProgramsOverview({ feedback, view, page }: AdminProgr
                     <tr key={program.id} className="align-top">
                       <td className="px-6 py-5">
                         <p className="font-semibold text-slate-950">{program.translations[activeLocale].title}</p>
-                        <p className="mt-1 text-xs text-slate-500">/{program.slug}</p>
                         <p className="mt-2 max-w-sm text-sm text-slate-600">
                           {program.translations[activeLocale].shortDescription}
                         </p>
@@ -373,7 +372,6 @@ export async function AdminProgramsOverview({ feedback, view, page }: AdminProgr
                 <tr key={program.id} className="align-top">
                   <td className="px-6 py-5">
                     <p className="font-semibold text-slate-950">{program.translations[activeLocale].title}</p>
-                    <p className="mt-1 text-xs text-slate-500">/{program.slug}</p>
                     <p className="mt-2 max-w-sm text-sm text-slate-600">
                       {program.translations[activeLocale].shortDescription}
                     </p>

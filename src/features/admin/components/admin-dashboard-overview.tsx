@@ -177,7 +177,6 @@ export async function AdminDashboardOverview() {
                   >
                     <div>
                       <p className="font-semibold text-slate-950">{program.translations[activeLocale].title}</p>
-                      <p className="mt-1 text-sm text-slate-500">/{program.slug}</p>
                     </div>
                     <div className="text-sm text-slate-700 md:text-right">
                       <p>{t(`programs.statuses.${program.status}`)}</p>

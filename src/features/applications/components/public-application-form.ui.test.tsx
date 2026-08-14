@@ -11,6 +11,7 @@ import {
   type ApplicationSubmissionActionState,
 } from "@/features/applications/public-application-form-contract";
 import { PublicApplicationForm } from "@/features/applications/components/public-application-form";
+import { publicPhoneCountryOptions } from "@/features/applications/phone-country-options";
 
 type RenderHandle = {
   root: Root;
@@ -130,6 +131,26 @@ function renderForm(stateOverride: ApplicationSubmissionActionState = initialSta
   defineGlobal("Node", window.Node);
   defineGlobal("IS_REACT_ACT_ENVIRONMENT", true);
 
+  if (!window.HTMLElement.prototype.scrollIntoView) {
+    window.HTMLElement.prototype.scrollIntoView = () => {};
+  }
+
+  if (!("attachEvent" in window.HTMLElement.prototype)) {
+    Object.defineProperty(window.HTMLElement.prototype, "attachEvent", {
+      configurable: true,
+      writable: true,
+      value: () => {},
+    });
+  }
+
+  if (!("detachEvent" in window.HTMLElement.prototype)) {
+    Object.defineProperty(window.HTMLElement.prototype, "detachEvent", {
+      configurable: true,
+      writable: true,
+      value: () => {},
+    });
+  }
+
   const container = window.document.createElement("div");
   window.document.body.appendChild(container);
   const root = createRoot(container);
@@ -223,6 +244,130 @@ test("submit button stays hidden until captcha succeeds", async () => {
 
   assert.ok(querySubmitButton(handle.container));
   assert.equal(handle.container.querySelector('[name="recaptchaToken"]')?.getAttribute("value"), "captcha-token");
+});
+
+test("required fields show an asterisk legend without marking optional fields", () => {
+  const handle = renderForm();
+
+  const labelTexts = Array.from(handle.container.querySelectorAll("label")).map((label) => label.textContent?.replace(/\s+/g, " ").trim());
+
+  assert.ok(labelTexts.includes("First name*"));
+  assert.ok(labelTexts.includes("Last name*"));
+  assert.ok(labelTexts.includes("Email*"));
+  assert.ok(labelTexts.includes("Phone*"));
+  assert.ok(labelTexts.includes("Nationality*"));
+  assert.ok(labelTexts.includes("Birth date*"));
+  assert.ok(labelTexts.includes("Message"));
+  assert.ok(labelTexts.includes("Curriculum"));
+  assert.ok(!labelTexts.includes("Message*"));
+  assert.ok(!labelTexts.includes("Curriculum*"));
+  assert.match(handle.container.textContent ?? "", /\*\s*Required/);
+});
+
+test("phone dial-code trigger stays compact while the open list keeps country names", async () => {
+  const handle = renderForm();
+  const selectedPhoneOption = publicPhoneCountryOptions.find((option) => option.dialCode === emptyApplicationFormValues.phoneDialCode);
+
+  assert.ok(selectedPhoneOption, "Expected a default phone dial-code option");
+
+  const dialCodeTrigger = handle.container.querySelector("#application-phoneDialCode-trigger");
+  const dialCodeLabel = handle.container.querySelector('label[for="application-phoneDialCode-trigger"]');
+
+  assert.ok(dialCodeTrigger, "Expected the phone dial-code trigger to exist");
+  assert.ok(dialCodeLabel, "Expected the phone dial-code label to exist for accessibility");
+  assert.match(dialCodeLabel.className, /sr-only/);
+  const compactTriggerText = dialCodeTrigger.textContent?.replace(/\s+/g, " ").trim() ?? "";
+
+  assert.ok(compactTriggerText.startsWith(`${selectedPhoneOption.flag} ${selectedPhoneOption.dialCode}`));
+  assert.ok(!compactTriggerText.includes(selectedPhoneOption.name));
+  assert.match(dialCodeTrigger.className, /w-auto/);
+
+  await act(async () => {
+    (dialCodeTrigger as HTMLButtonElement).click();
+  });
+
+  const dialCodePanel = dialCodeTrigger.parentElement?.querySelector('.absolute.z-20');
+  assert.ok(dialCodePanel, "Expected the open phone dial-code panel to exist");
+  assert.match((dialCodePanel as HTMLDivElement).className, /w-\[min\(22rem,calc\(100vw-4rem\)\)\]/);
+  assert.match((dialCodePanel as HTMLDivElement).className, /sm:right-0/);
+  assert.match((dialCodePanel as HTMLDivElement).className, /sm:min-w-\[24rem\]/);
+
+  const selectedListOption = Array.from(handle.container.querySelectorAll('[role="option"]')).find(
+    (option) => option.textContent?.includes(selectedPhoneOption.dialCode),
+  );
+
+  assert.ok(selectedListOption, "Expected the open list to include the selected phone dial-code option");
+  assert.match(selectedListOption.textContent ?? "", new RegExp(selectedPhoneOption.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(selectedListOption.textContent ?? "", new RegExp(selectedPhoneOption.dialCode.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+});
+
+test("shared dial codes use a neutral closed-state indicator", async () => {
+  const handle = renderForm();
+  const sharedDialCodeOption = publicPhoneCountryOptions.find((option) => option.dialCode === "+1");
+
+  assert.ok(sharedDialCodeOption, "Expected a shared +1 phone dial-code option");
+
+  const dialCodeTrigger = handle.container.querySelector("#application-phoneDialCode-trigger") as HTMLButtonElement | null;
+  assert.ok(dialCodeTrigger, "Expected the phone dial-code trigger to exist");
+
+  await act(async () => {
+    dialCodeTrigger.click();
+  });
+
+  const sharedListOption = Array.from(handle.container.querySelectorAll('[role="option"]')).find(
+    (option) => option.textContent?.includes("+1"),
+  ) as HTMLButtonElement | undefined;
+
+  assert.ok(sharedListOption, "Expected the +1 option to exist in the open list");
+  assert.match(sharedListOption.textContent ?? "", /🌐 \+1/);
+  assert.doesNotMatch(sharedListOption.textContent ?? "", /🇦🇬 \+1/);
+
+  await act(async () => {
+    sharedListOption.click();
+  });
+
+  const compactTriggerText = dialCodeTrigger.textContent?.replace(/\s+/g, " ").trim() ?? "";
+  assert.ok(compactTriggerText.startsWith("🌐 +1"));
+  assert.doesNotMatch(compactTriggerText, /🇦🇬/);
+});
+
+test("phone field keeps the number input wide without increasing its height", () => {
+  const handle = renderForm();
+  const phoneInput = handle.container.querySelector('#application-phone');
+
+  assert.ok(phoneInput, "Expected the phone input to exist");
+  const phoneRow = phoneInput.parentElement?.parentElement;
+
+  assert.ok(phoneRow, "Expected the phone field row to exist");
+  assert.match(phoneRow.className, /grid-cols-\[max-content_minmax\(0,1fr\)\]/);
+  assert.match(phoneRow.className, /items-end/);
+  assert.match(phoneInput.parentElement?.className ?? "", /min-w-0/);
+  assert.match(phoneInput.className, /text-sm/);
+  assert.doesNotMatch(phoneInput.className, /md:text-lg/);
+});
+
+test("phone dial-code list uses a fixed mobile panel so the form does not shift sideways", async () => {
+  const handle = renderForm();
+  const dialCodeTrigger = handle.container.querySelector("#application-phoneDialCode-trigger") as HTMLButtonElement | null;
+
+  assert.ok(dialCodeTrigger, "Expected the phone dial-code trigger to exist");
+
+  Object.defineProperty(handle.window, "innerWidth", {
+    configurable: true,
+    writable: true,
+    value: 390,
+  });
+
+  await act(async () => {
+    dialCodeTrigger.click();
+  });
+
+  const dialCodePanel = dialCodeTrigger.parentElement?.querySelector('.z-20') as HTMLDivElement | null;
+
+  assert.ok(dialCodePanel, "Expected the open phone dial-code panel to exist");
+  assert.equal(dialCodePanel.style.position, "fixed");
+  assert.equal(dialCodePanel.style.width, "352px");
+  assert.equal(dialCodePanel.style.left, "16px");
 });
 
 test("submit button hides again when captcha expires", async () => {

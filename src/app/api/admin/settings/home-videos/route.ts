@@ -8,6 +8,8 @@ import {
   getAuthorizedAdminSessionFromToken,
   hasAdminPermission,
 } from "@/lib/admin-session";
+import { recordAdminActivitySafely } from "@/services/admin/activity-service";
+import { createAdminActivityActor, resolveHomeHeroVideoActivityLabel } from "@/services/admin/settings-activity";
 import { createAdminHomeHeroVideoFromUpload } from "@/services/home-hero-videos/home-hero-video-service";
 import { parseHomeHeroVideoCreateInput } from "@/validators/home-hero-video";
 
@@ -69,6 +71,15 @@ export async function POST(request: NextRequest) {
       cloudinaryAssetId: verifiedAsset.assetId,
       createdBy: session.email,
       updatedBy: session.email,
+    });
+
+    await recordAdminActivitySafely({
+      action: "home_hero_video.created",
+      entityType: "home_hero_video",
+      entityId: createdVideo.id,
+      entityLabel: resolveHomeHeroVideoActivityLabel(createdVideo),
+      actor: createAdminActivityActor(session),
+      happenedAt: createdVideo.updatedAt,
     });
 
     verifiedPublicIdToCleanup = null;

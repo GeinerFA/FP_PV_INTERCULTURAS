@@ -6,6 +6,7 @@ import {
   adminProgramActivityChangeFields,
 } from "@/types/admin-activity";
 import { applicationStatuses } from "@/types/application";
+import { adminRoles } from "@/types/admin-user";
 
 const adminActivityActorSchema = new Schema(
   {
@@ -31,9 +32,19 @@ const adminActivityActorSchema = new Schema(
 
 const adminActivityMetadataSchema = new Schema(
   {
+    adminUserRole: {
+      type: String,
+      enum: adminRoles,
+      default: null,
+    },
     fromStatus: {
       type: String,
       enum: applicationStatuses,
+      default: null,
+    },
+    fromPosition: {
+      type: Number,
+      min: 1,
       default: null,
     },
     slug: {
@@ -69,6 +80,11 @@ const adminActivityMetadataSchema = new Schema(
     toStatus: {
       type: String,
       enum: applicationStatuses,
+      default: null,
+    },
+    toPosition: {
+      type: Number,
+      min: 1,
       default: null,
     },
   },

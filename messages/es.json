@@ -205,7 +205,7 @@
     },
       "list": {
         "title": "Usuarios existentes",
-        "description": "Revisá quién tiene acceso al panel y actualizá sus datos o permisos cuando haga falta."
+        "description": "Revisá quién tiene acceso al panel y actualizá sus datos o permisos, desactivá su acceso o eliminá definitivamente su registro cuando haga falta."
       },
     "fields": {
       "email": "Correo electrónico",
@@ -229,12 +229,12 @@
       "module": "Módulo",
       "superadminNote": "El rol ya no se elige a mano: si toda la matriz queda marcada, el sistema guarda a la persona como superadmin; si falta cualquier permiso, queda como admin.",
       "deleteMeaning": "La columna Control total agrupa acciones sensibles o irreversibles según el módulo, como desactivar acceso, retirar registros o ejecutar cambios críticos.",
-      "usersDeleteMeaning": "En Usuarios, Control total significa poder quitar el acceso administrativo de otra persona sin borrar su cuenta.",
-      "actions": {
-        "view": "Ver",
-        "manage": "Gestionar",
-        "delete": "Control total"
-      }
+        "usersDeleteMeaning": "En Usuarios, Control total significa poder desactivar el acceso administrativo o eliminar definitivamente a otra persona según la acción elegida.",
+        "actions": {
+          "view": "Ver",
+          "manage": "Gestionar",
+          "delete": "Control total"
+        }
     },
     "modules": {
       "dashboard": {
@@ -256,32 +256,45 @@
         "title": "Usuarios"
       }
     },
-    "actions": {
-      "create": "Crear usuario",
-      "save": "Guardar cambios",
-      "activate": "Activar acceso",
-      "deactivate": "Desactivar acceso"
-    },
-    "entry": {
+      "actions": {
+        "create": "Crear usuario",
+        "save": "Guardar cambios",
+        "activate": "Activar acceso",
+        "deactivate": "Desactivar acceso",
+        "delete": "Eliminar definitivamente"
+      },
+      "delete": {
+        "title": "Confirmar eliminación permanente",
+        "description": "Esta acción elimina el registro del usuario administrativo de forma definitiva.",
+        "warning": "Si solo querés quitar el acceso temporalmente, usá Desactivar acceso. La eliminación permanente no se puede deshacer.",
+        "confirm": "Sí, eliminar definitivamente",
+        "cancel": "Cancelar"
+      },
+      "entry": {
       "nationalId": "Identificación",
       "missingNationalId": "pendiente",
       "permissions": "Permisos visibles",
       "noPermissions": "sin permisos de acceso",
       "disclosureClosedLabel": "Ver y editar detalles",
       "disclosureOpenLabel": "Ocultar detalles",
+      "currentAdminDeleteBlocked": "No podés eliminar tu propio acceso desde esta sesión activa.",
       "updatedAt": "Actualizado {updatedAt}"
     },
-    "feedback": {
-      "created": "El usuario administrativo se creó correctamente.",
-      "updated": "Los permisos y datos del usuario se actualizaron correctamente.",
-      "activated": "El acceso administrativo quedó activado nuevamente.",
-      "deactivated": "El acceso administrativo quedó desactivado sin borrar la cuenta.",
-      "invalid": "No se pudo interpretar el formulario. Revisá correo, nombre completo y permisos antes de reintentar.",
-      "save-failed": "No se pudo guardar este usuario administrativo en este momento. Intentá nuevamente en unos minutos.",
-      "toggle-failed": "No se pudo cambiar el estado activo de este usuario en este momento.",
-      "duplicate-email": "Ya existe otro usuario administrativo con ese correo.",
-      "last-superadmin-protected": "No se puede dejar al panel sin su último superadmin activo. Primero activá o promové a otra persona con ese rol."
-    },
+      "feedback": {
+        "created": "El usuario administrativo se creó correctamente.",
+        "updated": "Los permisos y datos del usuario se actualizaron correctamente.",
+        "activated": "El acceso administrativo quedó activado nuevamente.",
+        "deactivated": "El acceso administrativo quedó desactivado sin borrar la cuenta.",
+        "deleted": "El usuario administrativo se eliminó definitivamente.",
+        "invalid": "No se pudo interpretar el formulario. Revisá correo, nombre completo y permisos antes de reintentar.",
+        "save-failed": "No se pudo guardar este usuario administrativo en este momento. Intentá nuevamente en unos minutos.",
+        "toggle-failed": "No se pudo cambiar el estado activo de este usuario en este momento.",
+        "delete-failed": "No se pudo eliminar este usuario administrativo en este momento.",
+        "duplicate-email": "Ya existe otro usuario administrativo con ese correo.",
+        "last-superadmin-protected": "No se puede dejar al panel sin su último superadmin activo. Primero activá o promové a otra persona con ese rol.",
+        "self-delete-blocked": "No podés eliminar tu propio usuario administrativo mientras esta sesión siga activa.",
+        "destructive-confirmation-required": "Confirmá la eliminación permanente antes de ejecutar esta acción."
+      },
     "placeholders": {
       "email": "admin@correo.com",
       "fullName": "Nombre completo del usuario",
@@ -548,15 +561,38 @@
       },
       "programs": {
         "label": "Movimientos en programas",
-      "description": "Creaciones y cambios registrados desde la sección de programas."
+        "description": "Creaciones y cambios registrados desde la sección de programas."
+      },
+      "settings": {
+        "label": "Movimientos en configuración",
+        "description": "Cambios reales registrados desde FAQs, categorías, usuarios y videos del inicio."
       }
     },
     "entityTypes": {
       "application": "Solicitud",
+      "faq": "Pregunta frecuente",
+      "program_category": "Categoría",
+      "admin_user": "Usuario administrador",
+      "home_hero_video": "Video de inicio",
       "program": "Programa"
     },
     "actions": {
       "applicationStatusUpdated": "Estado actualizado",
+      "faqCreated": "Creación",
+      "faqUpdated": "Edición",
+      "faqDeleted": "Eliminación",
+      "faqReordered": "Reordenamiento",
+      "programCategoryCreated": "Creación",
+      "programCategoryUpdated": "Edición",
+      "programCategoryDeleted": "Eliminación",
+      "adminUserCreated": "Creación",
+      "adminUserUpdated": "Edición",
+      "adminUserActivated": "Activación",
+      "adminUserDeactivated": "Desactivación",
+      "adminUserDeleted": "Eliminación",
+      "homeHeroVideoCreated": "Creación",
+      "homeHeroVideoReordered": "Reordenamiento",
+      "homeHeroVideoDeleted": "Eliminación",
       "programCreated": "Creación",
       "programUpdated": "Edición",
       "programPublished": "Publicación",
@@ -595,6 +631,23 @@
       "unknownCurrentStatus": "estado actual no disponible",
       "summary": {
         "applicationStatusUpdated": "Estado actualizado en solicitud {target}.",
+        "faqCreated": "Pregunta frecuente creada: {target}.",
+        "faqUpdated": "Pregunta frecuente actualizada: {target}.",
+        "faqDeleted": "Pregunta frecuente eliminada: {target}.",
+        "faqReordered": "Pregunta frecuente reordenada: {target}.",
+        "programCategoryCreated": "Categoría creada: {target}.",
+        "programCategoryUpdated": "Categoría actualizada: {target}.",
+        "programCategoryDeleted": "Categoría eliminada: {target}.",
+        "adminCreated": "Admin creado: {target}.",
+        "adminUserCreated": "Usuario administrador creado: {target}.",
+        "adminUserUpdated": "Usuario administrador actualizado: {target}.",
+        "adminUserActivated": "Usuario administrador activado: {target}.",
+        "superadminCreated": "Superadmin creado: {target}.",
+        "adminUserDeactivated": "Usuario administrador desactivado: {target}.",
+        "adminUserDeleted": "Usuario administrador eliminado: {target}.",
+        "homeHeroVideoCreated": "Video de inicio creado: {target}.",
+        "homeHeroVideoReordered": "Video de inicio reordenado.",
+        "homeHeroVideoDeleted": "Video de inicio eliminado: {target}.",
         "programCreated": "Programa creado: {target}.",
         "programUpdated": "Cambio realizado a programa {target}.",
         "programPublished": "Programa publicado: {target}.",
@@ -614,6 +667,24 @@
       },
       "detail": {
         "applicationStatusUpdated": "Se cambió el estado de la solicitud {target} de {from} a {to}.",
+        "faqCreated": "Se creó la pregunta frecuente {target}.",
+        "faqUpdated": "Se actualizó la pregunta frecuente {target}.",
+        "faqDeleted": "Se eliminó la pregunta frecuente {target}.",
+        "faqReordered": "Se reordenó la pregunta frecuente {target}.",
+        "programCategoryCreated": "Se creó la categoría {target}.",
+        "programCategoryUpdated": "Se actualizó la categoría {target}.",
+        "programCategoryDeleted": "Se eliminó la categoría {target}.",
+        "adminCreated": "Se creó el admin {target}.",
+        "adminUserCreated": "Se creó el usuario administrador {target}.",
+        "adminUserUpdated": "Se actualizó el usuario administrador {target}.",
+        "adminUserActivated": "Se activó el usuario administrador {target}.",
+        "superadminCreated": "Se creó el superadmin {target}.",
+        "adminUserDeactivated": "Se desactivó el usuario administrador {target}.",
+        "adminUserDeleted": "Se eliminó el usuario administrador {target}.",
+        "homeHeroVideoCreated": "Se creó el video de inicio {target}.",
+        "homeHeroVideoReordered": "Se reordenó el video de inicio {target}.",
+        "homeHeroVideoReorderedWithPositions": "Se reordenó el video de inicio {target} de la posición {fromPosition} a la posición {toPosition}.",
+        "homeHeroVideoDeleted": "Se eliminó el video de inicio {target}.",
         "programCreated": "Se creó el programa {target}.",
         "programUpdated": "Se actualizó el programa {target}.",
         "programPublished": "Se publicó el programa {target}.",
@@ -1362,7 +1433,7 @@
     },
     "live": {
       "label": "Publicación inmediata",
-      "description": "Cada guardado impacta de inmediato la página pública de preguntas frecuentes. No hay borradores ni paso separado de publicación."
+      "description": "Cada guardado impacta de inmediato la página pública de preguntas frecuentes."
     },
     "create": {
       "title": "Agregar nueva pregunta frecuente",

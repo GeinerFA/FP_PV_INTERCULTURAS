@@ -2,7 +2,12 @@ import { type HydratedDocument, Types } from "mongoose";
 
 import { connectToDatabase } from "@/lib/mongoose";
 import { AdminActivityModel, type AdminActivityDocument } from "@/models/admin-activity";
-import type { AdminActivityEntityType, AdminActivityLog, CreateAdminActivityLogInput } from "@/types/admin-activity";
+import {
+  adminActivityEntityTypes,
+  type AdminActivityEntityType,
+  type AdminActivityLog,
+  type CreateAdminActivityLogInput,
+} from "@/types/admin-activity";
 import { parseAdminActivityLog } from "@/validators/admin-activity";
 
 type RawAdminActivityDocument = {
@@ -50,6 +55,13 @@ function mapAdminActivityLog(document: RawAdminActivityDocument): AdminActivityL
     createdAt,
     updatedAt,
   });
+}
+
+function createEmptyAdminActivityEntityCounts(): Record<AdminActivityEntityType, number> {
+  return Object.fromEntries(adminActivityEntityTypes.map((entityType) => [entityType, 0])) as Record<
+    AdminActivityEntityType,
+    number
+  >;
 }
 
 export type AdminActivityRepository = {
@@ -111,10 +123,7 @@ const mongoAdminActivityRepository: AdminActivityRepository = {
       .lean()
       .exec();
 
-    const entityCounts: Record<AdminActivityEntityType, number> = {
-      application: 0,
-      program: 0,
-    };
+    const entityCounts = createEmptyAdminActivityEntityCounts();
 
     if (options?.includeEntityCounts) {
       const aggregates = await AdminActivityModel.aggregate<{ _id: AdminActivityEntityType; count: number }>([

@@ -8,6 +8,7 @@ import {
   applicationAttachmentFieldNames,
   applicationFormFieldNames,
   initialApplicationSubmissionState,
+  requiredApplicationFormFieldNames,
   type ApplicationFormErrorFieldName,
   type ApplicationFormFieldName,
   type ApplicationSubmissionActionState,
@@ -32,11 +33,33 @@ const textAreaClassName =
 const fileFieldClassName =
   "block min-h-12 w-full rounded-2xl border border-white/80 bg-white/88 px-4 py-3 text-sm text-slate-900 file:mr-4 file:rounded-full file:border-0 file:bg-emerald-800 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-emerald-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
 
+const phoneFieldClassName =
+  "min-h-12 w-full rounded-2xl border border-white/80 bg-white/88 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
+
 type FieldCopy = {
   label: string;
   placeholder: string;
   description?: string;
 };
+
+function RequiredLabel({ label }: { label: string }) {
+  return (
+    <>
+      <span>{label}</span>
+      <span aria-hidden="true" className="ml-1 align-super text-[0.65rem] font-semibold text-emerald-700">
+        *
+      </span>
+    </>
+  );
+}
+
+function renderFieldLabel(label: string, isRequired: boolean) {
+  if (!isRequired) {
+    return label;
+  }
+
+  return <RequiredLabel label={label} />;
+}
 
 type PublicApplicationFormCopy = {
   introTitle: string;
@@ -189,35 +212,45 @@ function PhoneField({
   return (
     <div>
       <label htmlFor={fieldId} className="mb-2 block text-sm font-semibold text-slate-900">
-        {copy.fields.phone.label}
+        {renderFieldLabel(copy.fields.phone.label, true)}
       </label>
 
-      <div className="grid gap-3 sm:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
-        <SearchableSelect
-          id={dialCodeFieldId}
-          name="phoneDialCode"
-          label={copy.phoneDialCodeLabel}
-          placeholder={copy.phoneDialCodeLabel}
-          value={dialCode}
-          options={publicPhoneCountryOptions.map<SearchableSelectOption>((option) => ({
-            value: option.dialCode,
-            label: formatPhoneCountryOption(option),
-            searchText: `${option.countries.join(" ")} ${option.dialCode}`,
-          }))}
-          copy={copy.searchableSelect}
-        />
+      <div className="grid grid-cols-[max-content_minmax(0,1fr)] items-end gap-3">
+        <div>
+          <SearchableSelect
+            id={dialCodeFieldId}
+            name="phoneDialCode"
+            label={copy.phoneDialCodeLabel}
+            labelClassName="sr-only"
+            placeholder={copy.phoneDialCodeLabel}
+            value={dialCode}
+            options={publicPhoneCountryOptions.map<SearchableSelectOption>((option) => ({
+              value: option.dialCode,
+              label: formatPhoneCountryOption(option),
+              optionLabel: renderPhoneCountryOption(option),
+              selectedLabel: formatPhoneCountryTriggerOption(option),
+              searchText: `${option.countries.join(" ")} ${option.dialCode}`,
+            }))}
+            copy={copy.searchableSelect}
+            triggerClassName="w-auto max-w-full justify-self-start px-3 py-2 text-sm font-medium"
+            panelClassName="right-auto w-[min(22rem,calc(100vw-4rem))] sm:left-auto sm:right-0 sm:min-w-[24rem] sm:w-auto"
+            panelPosition="mobile-fixed"
+          />
+        </div>
 
-        <input
-          id={fieldId}
-          name="phone"
-          type="tel"
-          autoComplete="tel"
-          defaultValue={value}
-          placeholder={copy.fields.phone.placeholder}
-          aria-invalid={errorMessage ? true : undefined}
-          aria-describedby={errorMessage ? `${fieldId}-error` : undefined}
-          className={textFieldClassName}
-        />
+        <div className="min-w-0">
+          <input
+            id={fieldId}
+            name="phone"
+            type="tel"
+            autoComplete="tel"
+            defaultValue={value}
+            placeholder={copy.fields.phone.placeholder}
+            aria-invalid={errorMessage ? true : undefined}
+            aria-describedby={errorMessage ? `${fieldId}-error` : undefined}
+            className={phoneFieldClassName}
+          />
+        </div>
       </div>
 
       {errorMessage ? <p id={`${fieldId}-error`} className="mt-2 text-sm text-rose-600">{errorMessage}</p> : null}
@@ -226,18 +259,52 @@ function PhoneField({
 }
 
 function formatPhoneCountryOption(option: PhoneCountryOption): string {
+  const indicator = option.countries.length > 1 ? "🌐" : option.flag;
+
   if (option.countries.length === 1) {
-    return `${option.flag} ${option.name} (${option.dialCode})`;
+    return `${option.name} ${indicator} ${option.dialCode}`;
   }
 
   const [firstCountry, secondCountry] = option.countries;
   const remainingCountries = option.countries.length - 2;
 
   if (remainingCountries > 0) {
-    return `${option.flag} ${option.dialCode} · ${firstCountry}, ${secondCountry} +${remainingCountries}`;
+    return `${firstCountry}, ${secondCountry} +${remainingCountries} ${indicator} ${option.dialCode}`;
   }
 
-  return `${option.flag} ${option.dialCode} · ${firstCountry}, ${secondCountry}`;
+  return `${firstCountry}, ${secondCountry} ${indicator} ${option.dialCode}`;
+}
+
+function getPhoneCountryIndicator(option: PhoneCountryOption): string {
+  return option.countries.length > 1 ? "🌐" : option.flag;
+}
+
+function formatPhoneCountryTriggerOption(option: PhoneCountryOption): string {
+  return `${getPhoneCountryIndicator(option)} ${option.dialCode}`;
+}
+
+function renderPhoneCountryOption(option: PhoneCountryOption): ReactNode {
+  return (
+    <span className="flex items-center justify-between gap-3 overflow-hidden whitespace-nowrap">
+      <span className="truncate text-slate-900">{formatPhoneCountryOptionName(option)}</span>
+      <span className="shrink-0 font-medium text-slate-700">{formatPhoneCountryTriggerOption(option)}</span>
+    </span>
+  );
+}
+
+function formatPhoneCountryOptionName(option: PhoneCountryOption): string {
+  if (option.countries.length === 1) {
+    return option.name;
+  }
+
+  const [firstCountry, secondCountry] = option.countries;
+  const remainingCountries = option.countries.length - 2;
+
+  if (remainingCountries > 0) {
+    return `${firstCountry}, ${secondCountry} +${remainingCountries}`;
+  }
+
+  return `${firstCountry}, ${secondCountry}`;
 }
 
 function formatCountryOption(option: CountryOption): string {
@@ -260,7 +327,7 @@ function CountryField({
       <SearchableSelect
         id={fieldId}
         name="nationality"
-        label={copy.fields.nationality.label}
+        label={renderFieldLabel(copy.fields.nationality.label, true)}
         placeholder={copy.fields.nationality.placeholder}
         value={value}
         autoComplete="country-name"
@@ -300,11 +367,12 @@ function StandardField({
 }) {
   const fieldCopy = copy.fields[name];
   const fieldId = `application-${name}`;
+  const isRequired = requiredApplicationFormFieldNames.includes(name);
 
   return (
     <div>
       <label htmlFor={fieldId} className="mb-2 block text-sm font-semibold text-slate-900">
-        {fieldCopy.label}
+        {renderFieldLabel(fieldCopy.label, isRequired)}
       </label>
       <input
         id={fieldId}
@@ -394,9 +462,12 @@ export function PublicApplicationForm({
         <div className="max-w-3xl space-y-3">
           <h2 className="text-2xl font-semibold tracking-tight text-slate-950">{copy.introTitle}</h2>
           <p className="text-base leading-7 text-slate-600">{copy.introDescription}</p>
-          <p className="inline-flex rounded-full border border-emerald-900/10 bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-600">
-            {copy.requiredLegend}
-          </p>
+          <div className="inline-flex items-start gap-3 rounded-2xl border border-emerald-900/10 bg-white/88 px-4 py-3 text-sm text-slate-600 shadow-[0_18px_34px_-30px_rgba(6,95,70,0.28)]">
+            <span aria-hidden="true" className="text-base font-semibold leading-none text-emerald-700">
+              *
+            </span>
+            <p className="leading-6">{copy.requiredLegend}</p>
+          </div>
         </div>
       </div>
 

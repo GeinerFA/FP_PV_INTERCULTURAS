@@ -8,6 +8,12 @@ import { redirect } from "next/navigation";
 import type { AppLocale } from "@/config/i18n";
 import { requireAdminSession } from "@/lib/admin-session";
 import {
+  createAdminActivityActor,
+  resolveFaqActivityLabel,
+  resolveProgramCategoryActivityLabel,
+} from "@/services/admin/settings-activity";
+import { recordAdminActivitySafely } from "@/services/admin/activity-service";
+import {
   createAdminProgramCategory,
   deleteAdminProgramCategory,
   ProgramCategoryDuplicateFieldError,
@@ -95,11 +101,20 @@ export async function createFaqAction(locale: AppLocale, formData: FormData): Pr
   let hash: string | undefined = "admin-faq-settings-top";
 
   try {
-    await createAdminFaq({
+    const createdFaq = await createAdminFaq({
       question,
       answer,
       createdBy: session.email,
       updatedBy: session.email,
+    });
+
+    await recordAdminActivitySafely({
+      action: "faq.created",
+      entityType: "faq",
+      entityId: createdFaq.id,
+      entityLabel: resolveFaqActivityLabel(createdFaq),
+      actor: createAdminActivityActor(session),
+      happenedAt: createdFaq.updatedAt,
     });
 
     revalidateFaqPaths(locale);
@@ -136,6 +151,15 @@ export async function updateFaqAction(locale: AppLocale, id: string, formData: F
       params = { faq: id };
       hash = undefined;
     } else {
+      await recordAdminActivitySafely({
+        action: "faq.updated",
+        entityType: "faq",
+        entityId: updatedFaq.id,
+        entityLabel: resolveFaqActivityLabel(updatedFaq),
+        actor: createAdminActivityActor(session),
+        happenedAt: updatedFaq.updatedAt,
+      });
+
       revalidateFaqPaths(locale);
     }
   } catch (error) {
@@ -151,7 +175,7 @@ export async function updateFaqAction(locale: AppLocale, id: string, formData: F
 
 export async function deleteFaqAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
-  await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
+  const session = await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
   let status = "deleted";
   let params: Record<string, string | undefined> | undefined;
   let hash: string | undefined = "admin-faq-settings-top";
@@ -163,6 +187,15 @@ export async function deleteFaqAction(locale: AppLocale, id: string): Promise<vo
     params = { faq: id };
     hash = undefined;
   } else {
+    await recordAdminActivitySafely({
+      action: "faq.deleted",
+      entityType: "faq",
+      entityId: deletedFaq.id,
+      entityLabel: resolveFaqActivityLabel(deletedFaq),
+      actor: createAdminActivityActor(session),
+      happenedAt: deletedFaq.updatedAt,
+    });
+
     revalidateFaqPaths(locale);
   }
 
@@ -185,6 +218,19 @@ export async function moveFaqAction(locale: AppLocale, id: string, formData: For
       params = { faq: id };
       hash = undefined;
     } else {
+      const movedFaq = movedFaqs.find((entry) => entry.id === id);
+
+      if (movedFaq) {
+        await recordAdminActivitySafely({
+          action: "faq.reordered",
+          entityType: "faq",
+          entityId: movedFaq.id,
+          entityLabel: resolveFaqActivityLabel(movedFaq),
+          actor: createAdminActivityActor(session),
+          happenedAt: movedFaq.updatedAt,
+        });
+      }
+
       revalidateFaqPaths(locale);
     }
   } catch (error) {
@@ -208,11 +254,20 @@ export async function createProgramCategoryAction(locale: AppLocale, formData: F
   let hash: string | undefined = "admin-category-settings-top";
 
   try {
-    await createAdminProgramCategory({
+    const createdCategory = await createAdminProgramCategory({
       name,
       theme: theme as Parameters<typeof createAdminProgramCategory>[0]["theme"],
       createdBy: session.email,
       updatedBy: session.email,
+    });
+
+    await recordAdminActivitySafely({
+      action: "program_category.created",
+      entityType: "program_category",
+      entityId: createdCategory.id,
+      entityLabel: resolveProgramCategoryActivityLabel(createdCategory),
+      actor: createAdminActivityActor(session),
+      happenedAt: createdCategory.updatedAt,
     });
 
     revalidateCategoryPaths(locale);
@@ -255,6 +310,15 @@ export async function updateProgramCategoryAction(locale: AppLocale, id: string,
       params = { category: id };
       hash = undefined;
     } else {
+      await recordAdminActivitySafely({
+        action: "program_category.updated",
+        entityType: "program_category",
+        entityId: updatedCategory.id,
+        entityLabel: resolveProgramCategoryActivityLabel(updatedCategory),
+        actor: createAdminActivityActor(session),
+        happenedAt: updatedCategory.updatedAt,
+      });
+
       revalidateCategoryPaths(locale);
     }
   } catch (error) {
@@ -270,7 +334,7 @@ export async function updateProgramCategoryAction(locale: AppLocale, id: string,
 
 export async function deleteProgramCategoryAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildCategorySettingsPath(locale);
-  await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
+  const session = await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
   let status = "deleted";
   let params: Record<string, string | undefined> | undefined;
   let hash: string | undefined = "admin-category-settings-top";
@@ -283,6 +347,15 @@ export async function deleteProgramCategoryAction(locale: AppLocale, id: string)
       params = { category: id };
       hash = undefined;
     } else {
+      await recordAdminActivitySafely({
+        action: "program_category.deleted",
+        entityType: "program_category",
+        entityId: deletedCategory.id,
+        entityLabel: resolveProgramCategoryActivityLabel(deletedCategory),
+        actor: createAdminActivityActor(session),
+        happenedAt: deletedCategory.updatedAt,
+      });
+
       revalidateCategoryPaths(locale);
     }
   } catch (error) {

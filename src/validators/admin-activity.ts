@@ -12,6 +12,7 @@ import {
   type CreateAdminActivityLogInput,
 } from "@/types/admin-activity";
 import { applicationStatuses, type ApplicationStatus } from "@/types/application";
+import { adminRoles, type AdminRole } from "@/types/admin-user";
 
 type PlainObject = Record<string, unknown>;
 
@@ -67,6 +68,14 @@ function assertIsoDate(value: unknown, path: string): string {
   return new Date(isoDate).toISOString();
 }
 
+function assertPositiveInteger(value: unknown, path: string): number {
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 1) {
+    throw new Error(`${path} must be a positive integer.`);
+  }
+
+  return value;
+}
+
 function assertAction(value: unknown, path: string): AdminActivityAction {
   if (typeof value !== "string" || !adminActivityActions.includes(value as AdminActivityAction)) {
     throw new Error(`${path} must be one of: ${adminActivityActions.join(", ")}.`);
@@ -89,6 +98,14 @@ function assertApplicationStatus(value: unknown, path: string): ApplicationStatu
   }
 
   return value as ApplicationStatus;
+}
+
+function assertAdminRole(value: unknown, path: string): AdminRole {
+  if (typeof value !== "string" || !adminRoles.includes(value as AdminRole)) {
+    throw new Error(`${path} must be one of: ${adminRoles.join(", ")}.`);
+  }
+
+  return value as AdminRole;
 }
 
 function assertProgramActivityChangeField(value: unknown, path: string): AdminProgramActivityChangeField {
@@ -161,16 +178,34 @@ function parseMetadata(value: unknown, path: string): AdminActivityMetadata | nu
   const object = assertPlainObject(value, path);
   const metadata: AdminActivityMetadata = {};
 
+  if (object.adminUserRole === null) {
+    metadata.adminUserRole = null;
+  } else if (object.adminUserRole !== undefined) {
+    metadata.adminUserRole = assertAdminRole(object.adminUserRole, `${path}.adminUserRole`);
+  }
+
   if (object.fromStatus === null) {
     metadata.fromStatus = null;
   } else if (object.fromStatus !== undefined) {
     metadata.fromStatus = assertApplicationStatus(object.fromStatus, `${path}.fromStatus`);
   }
 
+  if (object.fromPosition === null) {
+    metadata.fromPosition = null;
+  } else if (object.fromPosition !== undefined) {
+    metadata.fromPosition = assertPositiveInteger(object.fromPosition, `${path}.fromPosition`);
+  }
+
   if (object.toStatus === null) {
     metadata.toStatus = null;
   } else if (object.toStatus !== undefined) {
     metadata.toStatus = assertApplicationStatus(object.toStatus, `${path}.toStatus`);
+  }
+
+  if (object.toPosition === null) {
+    metadata.toPosition = null;
+  } else if (object.toPosition !== undefined) {
+    metadata.toPosition = assertPositiveInteger(object.toPosition, `${path}.toPosition`);
   }
 
   if (object.slug === null) {

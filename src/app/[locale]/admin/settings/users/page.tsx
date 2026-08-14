@@ -13,11 +13,15 @@ const adminUserSettingsFeedbackStatuses = new Set<AdminUserSettingsFeedback>([
   "updated",
   "activated",
   "deactivated",
+  "deleted",
   "invalid",
   "save-failed",
   "toggle-failed",
+  "delete-failed",
   "duplicate-email",
   "last-superadmin-protected",
+  "self-delete-blocked",
+  "destructive-confirmation-required",
 ]);
 
 function parseAdminUserSettingsFeedback(status?: string): Parameters<typeof AdminUserSettings>[0]["feedback"] {
