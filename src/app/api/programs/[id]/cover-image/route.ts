@@ -3,7 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   adminSessionCookieName,
   buildAdminLoginPath,
-  readAdminSessionToken,
+  getAdminAreaPermission,
+  getAuthorizedAdminSessionFromToken,
+  hasAdminPermission,
   resolveLocaleFromAdminPath,
 } from "@/lib/admin-session";
 import { defaultLocale } from "@/config/i18n";
@@ -54,11 +56,15 @@ export async function GET(request: NextRequest, { params }: ProgramCoverImageRou
   }
 
   if (state === "draft") {
-    const session = await readAdminSessionToken(request.cookies.get(adminSessionCookieName)?.value);
+    const locale = resolveDraftRedirectLocale(request);
+    const session = await getAuthorizedAdminSessionFromToken(request.cookies.get(adminSessionCookieName)?.value);
 
     if (!session) {
-      const locale = resolveDraftRedirectLocale(request);
       return NextResponse.redirect(new URL(buildAdminLoginPath(locale), request.url));
+    }
+
+    if (!hasAdminPermission(session, getAdminAreaPermission("programs", "view"))) {
+      return buildNotFoundResponse();
     }
   }
 

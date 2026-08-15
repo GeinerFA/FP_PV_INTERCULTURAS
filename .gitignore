@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+/backups/mongodb-legacy-cleanup/
 
 # debug
 npm-debug.log*
