@@ -37,7 +37,7 @@ export default async function AdminSettingsCategoriesPage({ params, searchParams
   const feedback = parseAdminCategorySettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/categories`, permission: "settings.view" });
+  const session = await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/categories`, permission: "settings.view" });
 
   return (
     <AdminPageTemplate
@@ -54,7 +54,7 @@ export default async function AdminSettingsCategoriesPage({ params, searchParams
         </Link>
       }
     >
-      <AdminCategorySettings feedback={feedback} selectedCategoryId={category} shouldOpenCreateDisclosure={focus === "create"} />
+      <AdminCategorySettings feedback={feedback} selectedCategoryId={category} session={session} shouldOpenCreateDisclosure={focus === "create"} />
     </AdminPageTemplate>
   );
 }

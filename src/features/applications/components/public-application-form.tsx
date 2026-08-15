@@ -65,6 +65,11 @@ type PublicApplicationFormCopy = {
   introTitle: string;
   introDescription: string;
   requiredLegend: string;
+  requiredFieldWarning?: {
+    badge: string;
+    title: string;
+    description: string;
+  };
   privacyNotice: string;
   captchaLabel: string;
   captchaHelp: string;
@@ -407,6 +412,13 @@ export function PublicApplicationForm({
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaUiState, setCaptchaUiState] = useState<CaptchaUiState>("idle");
   const captchaRef = useRef<CaptchaHandle | null>(null);
+  const requiredFieldWarningRef = useRef<HTMLElement | null>(null);
+  const hadRequiredFieldErrorsRef = useRef(false);
+  const primaryFieldNames = applicationFormFieldNames.filter(
+    (name): name is Exclude<ApplicationFormFieldName, "message"> => name !== "message",
+  );
+  const hasRequiredFieldErrors = Object.values(state.fieldErrors).some((code) => code === "required");
+  const requiredFieldWarning = hasRequiredFieldErrors ? copy.requiredFieldWarning : undefined;
 
   useEffect(() => {
     if (!state.resetCaptcha || !shouldResetCaptchaForFormError(state.formError)) {
@@ -424,6 +436,21 @@ export function PublicApplicationForm({
       window.clearTimeout(resetTimer);
     };
   }, [state.formError, state.resetCaptcha]);
+
+  useEffect(() => {
+    if (!requiredFieldWarning) {
+      hadRequiredFieldErrorsRef.current = false;
+      return;
+    }
+
+    if (hadRequiredFieldErrorsRef.current) {
+      return;
+    }
+
+    requiredFieldWarningRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    requiredFieldWarningRef.current?.focus({ preventScroll: true });
+    hadRequiredFieldErrorsRef.current = true;
+  }, [requiredFieldWarning]);
 
   function handleCaptchaChange(value: string | null) {
     setCaptchaToken(value);
@@ -452,10 +479,6 @@ export function PublicApplicationForm({
     return copy.captchaHelp;
   }
 
-  const primaryFieldNames = applicationFormFieldNames.filter(
-    (name): name is Exclude<ApplicationFormFieldName, "message"> => name !== "message",
-  );
-
   return (
     <div className="surface-soft-strong overflow-hidden rounded-[2rem] border border-white/80 shadow-[0_36px_110px_-44px_rgba(15,23,42,0.3)]">
       <div className="border-b border-emerald-900/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.94)_0%,rgba(248,244,232,0.8)_100%)] px-6 py-6 md:px-8 md:py-7">
@@ -472,6 +495,22 @@ export function PublicApplicationForm({
       </div>
 
       <form action={formAction} className="space-y-6 px-6 py-6 md:px-8 md:py-8">
+        {requiredFieldWarning ? (
+          <section
+            ref={requiredFieldWarningRef}
+            tabIndex={-1}
+            className="rounded-3xl border border-rose-200/80 bg-[linear-gradient(180deg,rgba(255,241,242,0.96)_0%,rgba(255,228,230,0.88)_100%)] px-5 py-5 shadow-[0_20px_48px_-36px_rgba(190,24,93,0.55)] md:px-6"
+          >
+            <div className="max-w-3xl space-y-3">
+              <div className="inline-flex rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-rose-900">
+                {requiredFieldWarning.badge}
+              </div>
+              <h3 className="text-lg font-semibold tracking-tight text-rose-950">{requiredFieldWarning.title}</h3>
+              <p className="text-sm leading-7 text-rose-900/85">{requiredFieldWarning.description}</p>
+            </div>
+          </section>
+        ) : null}
+
         {state.formError ? (
           <div className="rounded-2xl border border-rose-200/80 bg-rose-50/95 px-4 py-3 text-sm text-rose-700 shadow-[0_14px_36px_-30px_rgba(190,24,93,0.55)]">
             {copy.errors[state.formError]}

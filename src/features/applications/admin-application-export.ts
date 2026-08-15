@@ -3,7 +3,7 @@ import "server-only";
 import type { PDFFont } from "pdf-lib";
 
 import type { AdminApplicationListFilters } from "@/features/applications/admin-application-list-filters";
-import type { Application, ApplicationChangeActor, ApplicationStatus, ApplicationTypeCode } from "@/types/application";
+import type { Application, ApplicationStatus, ApplicationTypeCode } from "@/types/application";
 
 export type AdminApplicationExportCopy = {
   title: string;
@@ -19,20 +19,15 @@ export type AdminApplicationExportCopy = {
   fields: {
     status: string;
     applicationType: string;
-    applicationTypeName: string;
     submittedAt: string;
     updatedAt: string;
-    firstName: string;
-    lastName: string;
     fullName: string;
     email: string;
     phone: string;
     nationality: string;
     birthDate: string;
-    identityDocument: string;
     message: string;
     curriculumFileName: string;
-    statusHistory: string;
   };
   filters: {
     query: string;
@@ -114,39 +109,6 @@ function formatDateOnly(value: string | null, locale: string, fallback: string):
   return new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(parsed);
 }
 
-function formatChangedBy(actor: ApplicationChangeActor, fallback: string): string {
-  if (!actor) {
-    return fallback;
-  }
-
-  if (actor.email) {
-    return actor.email;
-  }
-
-  return actor.role ?? actor.userId ?? fallback;
-}
-
-function formatStatusHistory(application: Application, copy: AdminApplicationExportCopy, locale: string): string {
-  if (application.statusHistory.length === 0) {
-    return copy.placeholders.none;
-  }
-
-  return application.statusHistory
-    .map((entry) => {
-      const fromLabel = entry.from ? copy.statuses[entry.from] : copy.placeholders.none;
-      const toLabel = copy.statuses[entry.to];
-      const reason = entry.reason ?? copy.placeholders.empty;
-
-      return [
-        `${fromLabel} → ${toLabel}`,
-        formatDateTime(entry.changedAt, locale),
-        formatChangedBy(entry.changedBy, copy.placeholders.empty),
-        reason,
-      ].join(" | ");
-    })
-    .join("\n");
-}
-
 function formatFilters(filters: AdminApplicationListFilters, copy: AdminApplicationExportCopy, locale: string): string {
   const parts: string[] = [];
 
@@ -181,21 +143,38 @@ function buildExportRows(
   return applications.map((application) => ({
     [copy.fields.status]: copy.statuses[application.status],
     [copy.fields.applicationType]: copy.applicationTypes[application.applicationType.code],
-    [copy.fields.applicationTypeName]: application.applicationType.name,
     [copy.fields.submittedAt]: formatDateTime(application.createdAt, locale),
     [copy.fields.updatedAt]: formatDateTime(application.updatedAt, locale),
-    [copy.fields.firstName]: application.firstName,
-    [copy.fields.lastName]: application.lastName,
     [copy.fields.fullName]: application.fullName,
     [copy.fields.email]: application.email,
     [copy.fields.phone]: application.phone,
     [copy.fields.nationality]: application.nationality,
     [copy.fields.birthDate]: formatDateOnly(application.birthDate, locale, copy.placeholders.empty),
-    [copy.fields.identityDocument]: application.identityDocument ?? copy.placeholders.empty,
     [copy.fields.message]: application.message ?? copy.placeholders.empty,
     [copy.fields.curriculumFileName]: application.curriculum?.fileName ?? copy.placeholders.empty,
-    [copy.fields.statusHistory]: formatStatusHistory(application, copy, locale),
   }));
+}
+
+export function buildAdminApplicationPdfDetailFields(
+  application: Application,
+  copy: AdminApplicationExportCopy,
+  locale: string,
+): Array<{ label: string; value: string }> {
+  return [
+    { label: copy.fields.status, value: copy.statuses[application.status] },
+    { label: copy.fields.applicationType, value: copy.applicationTypes[application.applicationType.code] },
+    { label: copy.fields.submittedAt, value: formatDateTime(application.createdAt, locale) },
+    { label: copy.fields.updatedAt, value: formatDateTime(application.updatedAt, locale) },
+    { label: copy.fields.fullName, value: application.fullName || copy.placeholders.empty },
+    { label: copy.fields.email, value: application.email || copy.placeholders.empty },
+    { label: copy.fields.phone, value: application.phone || copy.placeholders.empty },
+    { label: copy.fields.nationality, value: application.nationality || copy.placeholders.empty },
+    {
+      label: copy.fields.birthDate,
+      value: formatDateOnly(application.birthDate, locale, copy.placeholders.empty),
+    },
+    { label: copy.fields.message, value: application.message ?? copy.placeholders.empty },
+  ];
 }
 
 export async function buildAdminApplicationsWorkbook(context: PdfContext): Promise<Buffer> {
@@ -453,24 +432,9 @@ export async function buildAdminApplicationsPdf(context: PdfContext): Promise<Ui
     drawWrappedText(application.fullName, boldFont, 16, pdfColors.title, 20);
     cursorY -= 4;
 
-    drawField(context.copy.fields.status, context.copy.statuses[application.status]);
-    drawField(context.copy.fields.applicationType, context.copy.applicationTypes[application.applicationType.code]);
-    drawField(context.copy.fields.applicationTypeName, application.applicationType.name);
-    drawField(context.copy.fields.submittedAt, formatDateTime(application.createdAt, context.locale));
-    drawField(context.copy.fields.updatedAt, formatDateTime(application.updatedAt, context.locale));
-    drawField(context.copy.fields.firstName, application.firstName || context.copy.placeholders.empty);
-    drawField(context.copy.fields.lastName, application.lastName || context.copy.placeholders.empty);
-    drawField(context.copy.fields.fullName, application.fullName || context.copy.placeholders.empty);
-    drawField(context.copy.fields.email, application.email || context.copy.placeholders.empty);
-    drawField(context.copy.fields.phone, application.phone || context.copy.placeholders.empty);
-    drawField(context.copy.fields.nationality, application.nationality || context.copy.placeholders.empty);
-    drawField(
-      context.copy.fields.birthDate,
-      formatDateOnly(application.birthDate, context.locale, context.copy.placeholders.empty),
-    );
-    drawField(context.copy.fields.identityDocument, application.identityDocument ?? context.copy.placeholders.empty);
-    drawField(context.copy.fields.message, application.message ?? context.copy.placeholders.empty);
-    drawField(context.copy.fields.statusHistory, formatStatusHistory(application, context.copy, context.locale));
+    buildAdminApplicationPdfDetailFields(application, context.copy, context.locale).forEach(({ label, value }) => {
+      drawField(label, value);
+    });
 
     if (index < context.applications.length - 1) {
       drawDivider();

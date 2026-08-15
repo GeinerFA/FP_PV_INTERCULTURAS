@@ -6,7 +6,7 @@ import { isHTTPAccessFallbackError } from "next/dist/client/components/http-acce
 import { notFound, redirect } from "next/navigation";
 
 import { defaultLocale, locales, type AppLocale } from "@/config/i18n";
-import { requireAdminSession } from "@/lib/admin-session";
+import { requireAdminAreaSession } from "@/lib/admin-session";
 import { recordAdminActivitySafely } from "@/services/admin/activity-service";
 import {
   archiveAdminProgram,
@@ -322,7 +322,7 @@ export async function saveProgramDraftAction(
   formData: FormData,
 ): Promise<void> {
   const nextPath = id ? buildProgramEditPath(locale, id) : buildProgramCreatePath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "programs.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "programs", action: "manage" });
   const currentProgram = id ? await getAdminProgramById(id) : null;
 
   if (id && !currentProgram) {
@@ -415,7 +415,7 @@ export async function publishProgramAction(
   formData: FormData,
 ): Promise<void> {
   const nextPath = id ? buildProgramEditPath(locale, id) : buildProgramCreatePath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "programs.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "programs", action: "manage" });
   const currentProgram = id ? await getAdminProgramById(id) : null;
 
   if (id && !currentProgram) {
@@ -528,11 +528,11 @@ export async function publishProgramAction(
 export async function archiveProgramAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildProgramEditPath(locale, id);
 
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "programs", action: "delete" });
+
   if (!hasConfirmedDestructiveIntent(formData, "archive")) {
     redirect(buildStatusUrl(nextPath, "destructive-confirmation-required"));
   }
-
-  const session = await requireAdminSession({ locale, nextPath, permission: "programs.delete" });
 
   const archivedProgram = await archiveAdminProgram({
     id,
@@ -566,11 +566,11 @@ export async function archiveProgramAction(locale: AppLocale, id: string, formDa
 export async function deleteProgramAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildProgramEditPath(locale, id);
 
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "programs", action: "delete" });
+
   if (!hasConfirmedDestructiveIntent(formData, "delete")) {
     redirect(buildStatusUrl(nextPath, "destructive-confirmation-required"));
   }
-
-  const session = await requireAdminSession({ locale, nextPath, permission: "programs.delete" });
 
   try {
     const deletedProgram = await deleteAdminProgram({
@@ -608,7 +608,7 @@ export async function deleteProgramAction(locale: AppLocale, id: string, formDat
 
 export async function reactivateProgramAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildProgramEditPath(locale, id);
-  const session = await requireAdminSession({ locale, nextPath, permission: "programs.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "programs", action: "manage" });
 
   const reactivatedProgram = await reactivateAdminProgram({
     id,

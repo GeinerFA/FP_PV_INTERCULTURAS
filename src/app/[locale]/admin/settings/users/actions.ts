@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
-import { requireAdminSession } from "@/lib/admin-session";
+import { requireAdminAreaSession } from "@/lib/admin-session";
 import { recordAdminActivitySafely } from "@/services/admin/activity-service";
 import { createAdminActivityActor, resolveAdminUserActivityLabel } from "@/services/admin/settings-activity";
 import {
@@ -17,7 +17,7 @@ import {
   updateAdminUserActiveState,
 } from "@/services/admin-users/admin-user-service";
 import { adminPermissionActions, adminPermissionModules, type AdminPermissionMatrix } from "@/types/admin-user";
-import { createEmptyAdminPermissions, createFullAdminPermissions, normalizeAdminEmail } from "@/validators/admin-user";
+import { createEmptyAdminPermissions, createFullAdminPermissions, normalizeAdminEmail, normalizeAdminPermissions } from "@/validators/admin-user";
 
 function buildUsersSettingsPath(locale: AppLocale): string {
   return `/${locale}/admin/settings/users`;
@@ -56,7 +56,7 @@ function parsePermissions(formData: FormData): AdminPermissionMatrix {
     }
   }
 
-  return permissions;
+  return normalizeAdminPermissions(permissions);
 }
 
 function shouldGrantAllPermissions(formData: FormData): boolean {
@@ -70,7 +70,7 @@ function revalidateUserSettingsPaths(locale: AppLocale): void {
 
 export async function createAdminUserAction(locale: AppLocale, formData: FormData): Promise<void> {
   const nextPath = buildUsersSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "users.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "users", action: "manage" });
   const permissions = shouldGrantAllPermissions(formData) ? createFullAdminPermissions() : parsePermissions(formData);
   let status = "created";
   let params: Record<string, string | undefined> | undefined;
@@ -115,7 +115,7 @@ export async function createAdminUserAction(locale: AppLocale, formData: FormDat
 
 export async function updateAdminUserAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildUsersSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "users.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "users", action: "manage" });
   const active = formData.get("active") === "on";
   let status = "updated";
   let params: Record<string, string | undefined> | undefined;
@@ -168,7 +168,7 @@ export async function updateAdminUserAction(locale: AppLocale, id: string, formD
 
 export async function toggleAdminUserActiveAction(locale: AppLocale, id: string, active: boolean): Promise<void> {
   const nextPath = buildUsersSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: active ? "users.manage" : "users.delete" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "users", action: active ? "manage" : "delete" });
   let status = active ? "activated" : "deactivated";
   let params: Record<string, string | undefined> | undefined;
   let hash: string | undefined = "admin-user-settings-top";
@@ -209,11 +209,11 @@ export async function toggleAdminUserActiveAction(locale: AppLocale, id: string,
 export async function deleteAdminUserAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildUsersSettingsPath(locale);
 
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "users", action: "delete" });
+
   if (!hasConfirmedDestructiveIntent(formData, "delete")) {
     redirect(buildStatusUrl(nextPath, "destructive-confirmation-required", { user: id }));
   }
-
-  const session = await requireAdminSession({ locale, nextPath, permission: "users.delete" });
   let status = "deleted";
   let params: Record<string, string | undefined> | undefined;
   let hash: string | undefined = "admin-user-settings-top";

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
-import { requireAdminSession } from "@/lib/admin-session";
+import { requireAdminAreaSession } from "@/lib/admin-session";
 import { recordAdminActivitySafely } from "@/services/admin/activity-service";
 import { sendApplicationStatusNotification } from "@/services/notifications/application-status-notification-service";
 import {
@@ -39,7 +39,12 @@ export async function updateApplicationStatusAction(
   id: string,
   formData: FormData,
 ): Promise<void> {
-  const session = await requireAdminSession({ locale, nextPath: buildDetailPath(locale, id), permission: "applications.manage" });
+  const session = await requireAdminAreaSession({
+    locale,
+    nextPath: buildDetailPath(locale, id),
+    area: "applications",
+    action: "manage",
+  });
 
   const currentApplication = await getApplicationById(id);
 

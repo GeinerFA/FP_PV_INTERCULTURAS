@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { adminPermissionActions, adminPermissionModules, type AdminPermissionAction, type AdminPermissionMatrix, type AdminPermissionModule } from "@/types/admin-user";
-import { areAllAdminPermissionsGranted, createEmptyAdminPermissions, updateAdminPermissionSelection } from "@/validators/admin-user";
+import { areAllAdminPermissionsGranted, createEmptyAdminPermissions, createFullAdminPermissions, updateAdminPermissionSelection } from "@/validators/admin-user";
 
 type CreateAdminUserFormCopy = {
   disclosureHint: string;
@@ -41,9 +41,7 @@ type CreateAdminUserFormProps = {
 };
 
 function createFilledPermissions(value: boolean): AdminPermissionMatrix {
-  return Object.fromEntries(
-    adminPermissionModules.map((module) => [module, { view: value, manage: value, delete: value }]),
-  ) as AdminPermissionMatrix;
+  return value ? createFullAdminPermissions() : createEmptyAdminPermissions();
 }
 
 export function CreateAdminUserForm({ action, copy }: CreateAdminUserFormProps) {
@@ -122,6 +120,7 @@ export function CreateAdminUserForm({ action, copy }: CreateAdminUserFormProps) 
                   <td className="px-4 py-3 font-medium text-slate-900">{copy.modules[module].title}</td>
                   {adminPermissionActions.map((action) => {
                     const fieldName = `permissions.${module}.${action}`;
+                    const isRequiredPermission = module === "dashboard" && action === "view";
 
                     return (
                       <td key={fieldName} className="px-4 py-3">
@@ -131,6 +130,7 @@ export function CreateAdminUserForm({ action, copy }: CreateAdminUserFormProps) 
                             name={fieldName}
                             checked={permissions[module][action]}
                             onChange={(event) => handlePermissionChange(module, action, event.currentTarget.checked)}
+                            disabled={isRequiredPermission}
                             className="h-4 w-4 rounded border-slate-300 text-emerald-600"
                           />
                           <span className="sr-only">{`${copy.modules[module].title} ${copy.matrix.actions[action]}`}</span>

@@ -57,6 +57,22 @@ function formatPermissionSummary(user: AdminUserRecord, t: Awaited<ReturnType<ty
     .join(" · ");
 }
 
+function formatPermissionLevel(user: AdminUserRecord, module: (typeof adminPermissionModules)[number], t: Awaited<ReturnType<typeof getTranslations>>) {
+  if (user.permissions[module].delete) {
+    return t("matrix.actions.delete");
+  }
+
+  if (user.permissions[module].manage) {
+    return t("matrix.actions.manage");
+  }
+
+  if (user.permissions[module].view) {
+    return t("matrix.actions.view");
+  }
+
+  return "—";
+}
+
 function UserEntry({
   canActivate,
   canDeactivate,
@@ -82,6 +98,7 @@ function UserEntry({
   const activeTone = user.active ? "border-emerald-300 bg-emerald-50 text-emerald-900" : "border-slate-300 bg-white text-slate-700";
   const formId = `admin-user-entry-${user.id}`;
   const isCurrentAdmin = session.adminUserId === user.id;
+  const canViewOnly = !canManage && !canActivate && !canDeactivate && !canDelete;
 
   return (
     <details className="group admin-inner-panel rounded-[28px]" open={shouldOpen}>
@@ -116,103 +133,142 @@ function UserEntry({
       </summary>
 
       <div className="border-t border-emerald-900/8 px-5 pb-5 pt-5 md:px-6 md:pb-6">
-        <form id={formId} action={updateAdminUserAction.bind(null, activeLocale, user.id)} className="space-y-5">
-          <div className="grid gap-4 md:grid-cols-2">
-            <label className="block space-y-2.5">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.email")}</span>
-              <input name="email" defaultValue={user.email} disabled={!canManage} className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition disabled:opacity-60" />
-            </label>
-            <label className="block space-y-2.5">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.fullName")}</span>
-              <input name="fullName" defaultValue={user.fullName} disabled={!canManage} className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition disabled:opacity-60" />
-            </label>
-            <label className="block space-y-2.5">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.nationalId")}</span>
-              <input name="nationalId" defaultValue={user.nationalId ?? ""} disabled={!canManage} className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition disabled:opacity-60" />
-            </label>
-            <div className="block space-y-2.5">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.role")}</span>
-              <div className="admin-inner-input flex min-h-12 items-center rounded-2xl px-4 py-3 text-sm text-slate-700">
-                {t(`roles.${user.role}`)}
+        {canViewOnly ? (
+          <div className="space-y-5">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="admin-inner-panel-subtle rounded-2xl px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.email")}</p>
+                <p className="mt-2 text-sm text-slate-700">{user.email}</p>
               </div>
-              <p className="text-sm leading-7 text-slate-600">{t("fields.roleDerived")}</p>
+              <div className="admin-inner-panel-subtle rounded-2xl px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.fullName")}</p>
+                <p className="mt-2 text-sm text-slate-700">{user.fullName}</p>
+              </div>
+              <div className="admin-inner-panel-subtle rounded-2xl px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.nationalId")}</p>
+                <p className="mt-2 text-sm text-slate-700">{user.nationalId ?? t("entry.missingNationalId")}</p>
+              </div>
+              <div className="admin-inner-panel-subtle rounded-2xl px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.role")}</p>
+                <p className="mt-2 text-sm text-slate-700">{t(`roles.${user.role}`)}</p>
+              </div>
             </div>
-          </div>
 
-          <input type="hidden" name="active" value={user.active ? "on" : "off"} />
-          <p className="text-sm text-slate-700">{t("fields.keepActive")}: {user.active ? t("statuses.active") : t("statuses.inactive")}</p>
-
-          <div className="space-y-3">
-            <div>
+            <div className="space-y-3">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("matrix.title")}</p>
-              <p className="mt-2 text-sm leading-7 text-slate-600">{t("matrix.description")}</p>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {adminPermissionModules.map((module) => (
+                  <div key={module} className="admin-inner-panel-subtle rounded-2xl px-4 py-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t(`modules.${module}.title`)}</p>
+                    <p className="mt-2 text-sm text-slate-700">{formatPermissionLevel(user, module, t)}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <EditAdminUserPermissionMatrix
-              permissions={user.permissions}
-              disabled={!canManage}
-              grantAllLabel={t("create.grantAllLabel")}
-              grantAllHint={t("create.grantAllHint")}
-              moduleLabel={t("matrix.module")}
-              description={t("matrix.description")}
-              actionLabels={{
-                view: t("matrix.actions.view"),
-                manage: t("matrix.actions.manage"),
-                delete: t("matrix.actions.delete"),
-              }}
-              moduleTitles={{
-                dashboard: t("modules.dashboard.title"),
-                programs: t("modules.programs.title"),
-                applications: t("modules.applications.title"),
-                activity: t("modules.activity.title"),
-                settings: t("modules.settings.title"),
-                users: t("modules.users.title"),
-              }}
-            />
-            <p className="text-sm leading-7 text-slate-600">{t("matrix.superadminNote")}</p>
-            <p className="text-sm leading-7 text-slate-600">{t("matrix.deleteMeaning")}</p>
-            <p className="text-sm leading-7 text-slate-600">{t("matrix.usersDeleteMeaning")}</p>
-          </div>
 
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-wrap gap-3">
-              {canManage ? (
-                <button type="submit" className="admin-secondary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition">
-                  {t("actions.save")}
-                </button>
-              ) : null}
-              {user.active && canDeactivate ? (
-                <button formAction={toggleAdminUserActiveAction.bind(null, activeLocale, user.id, false)} type="submit" className="admin-outline-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition">
-                  {t("actions.deactivate")}
-                </button>
-              ) : null}
-              {!user.active && canActivate ? (
-                <button formAction={toggleAdminUserActiveAction.bind(null, activeLocale, user.id, true)} type="submit" className="admin-outline-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition">
-                  {t("actions.activate")}
-                </button>
-              ) : null}
-              {canDelete && !isCurrentAdmin ? (
-                <DestructiveActionConfirmation
-                  title={t("delete.title")}
-                  description={t("delete.description")}
-                  warning={t("delete.warning")}
-                  triggerLabel={t("actions.delete")}
-                  confirmLabel={t("delete.confirm")}
-                  cancelLabel={t("delete.cancel")}
-                  confirmValue="delete"
-                  formId={formId}
-                  formAction={deleteAdminUserAction.bind(null, activeLocale, user.id)}
-                  tone="danger"
-                  actionLayout="stacked"
-                  className="w-full sm:w-auto"
-                />
-              ) : null}
-            </div>
             <div className="space-y-2 text-right">
-              {isCurrentAdmin ? <p className="text-xs text-slate-500">{t("entry.currentAdminDeleteBlocked")}</p> : null}
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{t("entry.updatedAt", { updatedAt: new Date(user.updatedAt).toLocaleString() })}</p>
             </div>
           </div>
-        </form>
+        ) : (
+          <form id={formId} action={updateAdminUserAction.bind(null, activeLocale, user.id)} className="space-y-5">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block space-y-2.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.email")}</span>
+                <input name="email" defaultValue={user.email} disabled={!canManage} className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition disabled:opacity-60" />
+              </label>
+              <label className="block space-y-2.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.fullName")}</span>
+                <input name="fullName" defaultValue={user.fullName} disabled={!canManage} className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition disabled:opacity-60" />
+              </label>
+              <label className="block space-y-2.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.nationalId")}</span>
+                <input name="nationalId" defaultValue={user.nationalId ?? ""} disabled={!canManage} className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition disabled:opacity-60" />
+              </label>
+              <div className="block space-y-2.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.role")}</span>
+                <div className="admin-inner-input flex min-h-12 items-center rounded-2xl px-4 py-3 text-sm text-slate-700">
+                  {t(`roles.${user.role}`)}
+                </div>
+                <p className="text-sm leading-7 text-slate-600">{t("fields.roleDerived")}</p>
+              </div>
+            </div>
+
+            <input type="hidden" name="active" value={user.active ? "on" : "off"} />
+            <p className="text-sm text-slate-700">{t("fields.keepActive")}: {user.active ? t("statuses.active") : t("statuses.inactive")}</p>
+
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("matrix.title")}</p>
+                <p className="mt-2 text-sm leading-7 text-slate-600">{t("matrix.description")}</p>
+              </div>
+              <EditAdminUserPermissionMatrix
+                permissions={user.permissions}
+                disabled={!canManage}
+                grantAllLabel={t("create.grantAllLabel")}
+                grantAllHint={t("create.grantAllHint")}
+                moduleLabel={t("matrix.module")}
+                description={t("matrix.description")}
+                actionLabels={{
+                  view: t("matrix.actions.view"),
+                  manage: t("matrix.actions.manage"),
+                  delete: t("matrix.actions.delete"),
+                }}
+                moduleTitles={{
+                  dashboard: t("modules.dashboard.title"),
+                  programs: t("modules.programs.title"),
+                  applications: t("modules.applications.title"),
+                  activity: t("modules.activity.title"),
+                  settings: t("modules.settings.title"),
+                  users: t("modules.users.title"),
+                }}
+              />
+              <p className="text-sm leading-7 text-slate-600">{t("matrix.superadminNote")}</p>
+              <p className="text-sm leading-7 text-slate-600">{t("matrix.deleteMeaning")}</p>
+              <p className="text-sm leading-7 text-slate-600">{t("matrix.usersDeleteMeaning")}</p>
+            </div>
+
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-wrap gap-3">
+                {canManage ? (
+                  <button type="submit" className="admin-secondary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition">
+                    {t("actions.save")}
+                  </button>
+                ) : null}
+                {user.active && canDeactivate ? (
+                  <button formAction={toggleAdminUserActiveAction.bind(null, activeLocale, user.id, false)} type="submit" className="admin-outline-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition">
+                    {t("actions.deactivate")}
+                  </button>
+                ) : null}
+                {!user.active && canActivate ? (
+                  <button formAction={toggleAdminUserActiveAction.bind(null, activeLocale, user.id, true)} type="submit" className="admin-outline-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition">
+                    {t("actions.activate")}
+                  </button>
+                ) : null}
+                {canDelete && !isCurrentAdmin ? (
+                  <DestructiveActionConfirmation
+                    title={t("delete.title")}
+                    description={t("delete.description")}
+                    warning={t("delete.warning")}
+                    triggerLabel={t("actions.delete")}
+                    confirmLabel={t("delete.confirm")}
+                    cancelLabel={t("delete.cancel")}
+                    confirmValue="delete"
+                    formId={formId}
+                    formAction={deleteAdminUserAction.bind(null, activeLocale, user.id)}
+                    tone="danger"
+                    actionLayout="stacked"
+                    className="w-full sm:w-auto"
+                  />
+                ) : null}
+              </div>
+              <div className="space-y-2 text-right">
+                {isCurrentAdmin ? <p className="text-xs text-slate-500">{t("entry.currentAdminDeleteBlocked")}</p> : null}
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{t("entry.updatedAt", { updatedAt: new Date(user.updatedAt).toLocaleString() })}</p>
+              </div>
+            </div>
+          </form>
+        )}
       </div>
     </details>
   );

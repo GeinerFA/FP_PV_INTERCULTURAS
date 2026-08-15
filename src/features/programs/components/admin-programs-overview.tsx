@@ -9,6 +9,7 @@ import { ADMIN_LIST_PAGE_SIZE, buildPaginationState, paginateItems } from "@/fea
 import { getProgramCategoryName } from "@/features/programs/lib/program-category-presentation";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
 import { Link } from "@/i18n/navigation";
+import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 import { listAdminPrograms } from "@/services/programs/program-service";
 
 const statusTheme = {
@@ -34,9 +35,10 @@ type AdminProgramsOverviewProps = {
     | "reactivated";
   view?: "archived";
   page: number;
+  session: AdminSession;
 };
 
-export async function AdminProgramsOverview({ feedback, view, page }: AdminProgramsOverviewProps) {
+export async function AdminProgramsOverview({ feedback, view, page, session }: AdminProgramsOverviewProps) {
   const [t, locale] = await Promise.all([getTranslations("AdminProgramsOverview"), getLocale()]);
 
   let programs: Awaited<ReturnType<typeof listAdminPrograms>>;
@@ -61,6 +63,8 @@ export async function AdminProgramsOverview({ feedback, view, page }: AdminProgr
   }
 
   const activeLocale = locale as AppLocale;
+  const canManage = hasAdminPermission(session, "programs.manage");
+  const canDelete = hasAdminPermission(session, "programs.delete");
   const isArchivedView = view === "archived";
   const filteredPrograms = programs.filter((program) =>
     isArchivedView ? program.status === "archived" : program.status === "published" || program.status === "draft",
@@ -111,12 +115,14 @@ export async function AdminProgramsOverview({ feedback, view, page }: AdminProgr
       >
         {t("table.showArchived")}
       </Link>
-      <Link
-        href="/admin/programs/new"
-        className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-      >
-        {t("table.newProgram")}
-      </Link>
+      {canManage ? (
+        <Link
+          href="/admin/programs/new"
+          className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
+        >
+          {t("table.newProgram")}
+        </Link>
+      ) : null}
     </div>
   );
 
@@ -180,26 +186,30 @@ export async function AdminProgramsOverview({ feedback, view, page }: AdminProgr
                       </td>
                       <td className="px-6 py-5 text-slate-700">{program.availability[activeLocale]}</td>
                       <td className="px-6 py-5">
-                        <div className="flex flex-wrap gap-2">
-                          <Link
-                            href={{
-                              pathname: "/admin/programs/[id]/edit",
-                              params: { id: program.id },
-                            }}
-                            className={programRowActionLinkClassName}
-                          >
-                            {t("table.openEditor")}
-                          </Link>
-                          <form action={reactivateProgramAction.bind(null, activeLocale, program.id)}>
-                            <button
-                              type="submit"
-                              className={programRowActionInfoClassName}
-                            >
-                              {t("table.reactivate")}
-                            </button>
-                          </form>
-                        </div>
-                      </td>
+                         {canManage ? (
+                           <div className="flex flex-wrap gap-2">
+                             <Link
+                               href={{
+                                 pathname: "/admin/programs/[id]/edit",
+                                 params: { id: program.id },
+                               }}
+                               className={programRowActionLinkClassName}
+                             >
+                               {t("table.openEditor")}
+                             </Link>
+                             <form action={reactivateProgramAction.bind(null, activeLocale, program.id)}>
+                               <button
+                                 type="submit"
+                                 className={programRowActionInfoClassName}
+                               >
+                                 {t("table.reactivate")}
+                               </button>
+                             </form>
+                           </div>
+                         ) : (
+                           <span aria-hidden="true">—</span>
+                         )}
+                       </td>
                     </tr>
                   ))}
                 </tbody>
@@ -262,15 +272,15 @@ export async function AdminProgramsOverview({ feedback, view, page }: AdminProgr
           eyebrow={t("empty.eyebrow")}
           title={t("empty.title")}
           description={t("empty.description")}
-          action={
-            <Link
-              href="/admin/programs/new"
-              className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-            >
-              {t("empty.cta")}
-            </Link>
-          }
-          tone="default"
+           action={canManage ? (
+             <Link
+               href="/admin/programs/new"
+               className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
+             >
+               {t("empty.cta")}
+             </Link>
+           ) : null}
+           tone="default"
         >
           <p className="max-w-3xl text-sm leading-7 text-slate-600">{t("empty.note")}</p>
         </AdminWorkspaceSection>
@@ -321,12 +331,14 @@ export async function AdminProgramsOverview({ feedback, view, page }: AdminProgr
 
         <AdminWorkspaceSection title={t("actions.heading")} description={t("actions.description")}>
           <div className="space-y-3 text-sm leading-7 text-slate-700">
-            <Link
-              href="/admin/programs/new"
-              className="admin-primary-action inline-flex w-full items-center justify-center rounded-full px-5 py-3 font-semibold transition"
-            >
-              {t("actions.create")}
-            </Link>
+            {canManage ? (
+              <Link
+                href="/admin/programs/new"
+                className="admin-primary-action inline-flex w-full items-center justify-center rounded-full px-5 py-3 font-semibold transition"
+              >
+                {t("actions.create")}
+              </Link>
+            ) : null}
             <Link
               href={
                 isArchivedView
@@ -391,44 +403,48 @@ export async function AdminProgramsOverview({ feedback, view, page }: AdminProgr
                   </td>
                   <td className="px-6 py-5 text-slate-700">{program.availability[activeLocale]}</td>
                   <td className="px-6 py-5">
-                    <div className="flex flex-wrap gap-2">
-                      <Link
-                        href={{
-                          pathname: "/admin/programs/[id]/edit",
-                          params: { id: program.id },
-                        }}
-                        className={programRowActionLinkClassName}
-                      >
-                        {t("table.openEditor")}
-                      </Link>
-                      {program.status === "archived" ? (
-                        <form action={reactivateProgramAction.bind(null, activeLocale, program.id)}>
-                          <button
-                            type="submit"
-                            className="admin-info-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition"
-                          >
-                            {t("table.reactivate")}
-                          </button>
-                        </form>
-                      ) : (
-                        <form className={programRowActionFormClassName}>
-                          <DestructiveActionConfirmation
-                            title={t("table.archiveConfirmation.title")}
-                            description={t("table.archiveConfirmation.description")}
-                            warning={t("table.archiveConfirmation.warning")}
-                            triggerLabel={t("table.archive")}
-                            confirmLabel={t("table.archiveConfirmation.confirm")}
-                            cancelLabel={t("table.archiveConfirmation.cancel")}
-                            confirmValue="archive"
-                            formAction={archiveProgramAction.bind(null, activeLocale, program.id)}
-                            tone="warning"
-                            actionLayout="stacked"
-                            className="min-w-[10.5rem]"
-                          />
-                        </form>
-                      )}
-                    </div>
-                  </td>
+                     {canManage ? (
+                       <div className="flex flex-wrap gap-2">
+                         <Link
+                           href={{
+                             pathname: "/admin/programs/[id]/edit",
+                             params: { id: program.id },
+                           }}
+                           className={programRowActionLinkClassName}
+                         >
+                           {t("table.openEditor")}
+                         </Link>
+                         {program.status === "archived" ? (
+                           <form action={reactivateProgramAction.bind(null, activeLocale, program.id)}>
+                             <button
+                               type="submit"
+                               className="admin-info-action inline-flex rounded-full px-4 py-2 text-xs font-semibold transition"
+                             >
+                               {t("table.reactivate")}
+                             </button>
+                           </form>
+                         ) : canDelete ? (
+                           <form className={programRowActionFormClassName}>
+                             <DestructiveActionConfirmation
+                               title={t("table.archiveConfirmation.title")}
+                               description={t("table.archiveConfirmation.description")}
+                               warning={t("table.archiveConfirmation.warning")}
+                               triggerLabel={t("table.archive")}
+                               confirmLabel={t("table.archiveConfirmation.confirm")}
+                               cancelLabel={t("table.archiveConfirmation.cancel")}
+                               confirmValue="archive"
+                               formAction={archiveProgramAction.bind(null, activeLocale, program.id)}
+                               tone="warning"
+                               actionLayout="stacked"
+                               className="min-w-[10.5rem]"
+                             />
+                           </form>
+                         ) : null}
+                       </div>
+                     ) : (
+                       <span aria-hidden="true">—</span>
+                     )}
+                   </td>
                 </tr>
               ))}
             </tbody>

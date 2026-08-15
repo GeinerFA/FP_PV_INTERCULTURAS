@@ -6,7 +6,7 @@ import { isHTTPAccessFallbackError } from "next/dist/client/components/http-acce
 import { redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
-import { requireAdminSession } from "@/lib/admin-session";
+import { requireAdminAreaSession } from "@/lib/admin-session";
 import {
   createAdminActivityActor,
   resolveFaqActivityLabel,
@@ -93,7 +93,7 @@ function revalidateCategoryPaths(locale: AppLocale): void {
 
 export async function createFaqAction(locale: AppLocale, formData: FormData): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "settings", action: "manage" });
   const question = readString(formData, "question");
   const answer = readString(formData, "answer");
   let status = "created";
@@ -131,7 +131,7 @@ export async function createFaqAction(locale: AppLocale, formData: FormData): Pr
 
 export async function updateFaqAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "settings", action: "manage" });
   const question = readString(formData, "question");
   const answer = readString(formData, "answer");
   let status = "updated";
@@ -175,7 +175,7 @@ export async function updateFaqAction(locale: AppLocale, id: string, formData: F
 
 export async function deleteFaqAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "settings", action: "delete" });
   let status = "deleted";
   let params: Record<string, string | undefined> | undefined;
   let hash: string | undefined = "admin-faq-settings-top";
@@ -204,7 +204,7 @@ export async function deleteFaqAction(locale: AppLocale, id: string): Promise<vo
 
 export async function moveFaqAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildFaqSettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "settings", action: "manage" });
   let status = "reordered";
   let params: Record<string, string | undefined> | undefined;
   let hash: string | undefined = "admin-faq-settings-top";
@@ -246,7 +246,7 @@ export async function moveFaqAction(locale: AppLocale, id: string, formData: For
 
 export async function createProgramCategoryAction(locale: AppLocale, formData: FormData): Promise<void> {
   const nextPath = buildCategorySettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "settings", action: "manage" });
   const name = readString(formData, "name");
   const theme = readString(formData, "theme");
   let status = "created";
@@ -290,7 +290,7 @@ export async function createProgramCategoryAction(locale: AppLocale, formData: F
 
 export async function updateProgramCategoryAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
   const nextPath = buildCategorySettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "settings.manage" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "settings", action: "manage" });
   const name = readString(formData, "name");
   const theme = readString(formData, "theme");
   let status = "updated";
@@ -334,7 +334,7 @@ export async function updateProgramCategoryAction(locale: AppLocale, id: string,
 
 export async function deleteProgramCategoryAction(locale: AppLocale, id: string): Promise<void> {
   const nextPath = buildCategorySettingsPath(locale);
-  const session = await requireAdminSession({ locale, nextPath, permission: "settings.delete" });
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "settings", action: "delete" });
   let status = "deleted";
   let params: Record<string, string | undefined> | undefined;
   let hash: string | undefined = "admin-category-settings-top";

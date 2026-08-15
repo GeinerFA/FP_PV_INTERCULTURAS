@@ -35,6 +35,7 @@ export default async function AdminProgramsPage({ params, searchParams }: AdminP
     >
       <AdminProgramsOverview
         feedback={feedback as Parameters<typeof AdminProgramsOverview>[0]["feedback"]}
+        session={session}
         view={view === "archived" ? "archived" : undefined}
         page={normalizePageParam(page)}
       />

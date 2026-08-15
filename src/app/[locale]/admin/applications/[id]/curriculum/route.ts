@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { buildAdminLoginPath, getAuthorizedAdminSessionFromToken, resolveLocaleFromAdminPath } from "@/lib/admin-session";
+import {
+  buildAdminLoginPath,
+  getAdminAreaPermission,
+  getAuthorizedAdminSessionFromToken,
+  hasAdminPermission,
+  resolveLocaleFromAdminPath,
+} from "@/lib/admin-session";
 import { getApplicationCurriculumById } from "@/services/applications/application-service";
 
 type CurriculumRouteContext = {
@@ -31,7 +37,7 @@ export async function GET(request: NextRequest, { params }: CurriculumRouteConte
     );
   }
 
-  if (!session.permissions.applications.view && session.role !== "superadmin") {
+  if (!hasAdminPermission(session, getAdminAreaPermission("applications", "view"))) {
     return buildNotFoundResponse();
   }
 

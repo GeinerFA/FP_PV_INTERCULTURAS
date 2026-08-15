@@ -1038,6 +1038,11 @@
       "introTitle": "Completá tu solicitud general",
       "introDescription": "Este primer formulario nos permite conocer tus datos básicos y el contexto inicial de tu interés antes de coordinar el seguimiento.",
       "requiredLegend": "Todos los campos son obligatorios, excepto el mensaje y el curriculum.",
+      "requiredFieldWarning": {
+        "badge": "Revisá el formulario",
+        "title": "Faltan datos obligatorios antes de enviar la solicitud",
+        "description": "Uno o más campos obligatorios están vacíos. Revisá la información marcada como obligatoria y completala antes de enviar el formulario."
+      },
       "privacyNotice": "Al enviar esta solicitud compartís información básica para que el equipo de Pura Vida Interculturas pueda revisar tu interés y darte seguimiento durante el proceso.",
       "captchaLabel": "Verificación de seguridad",
       "captchaHelp": "Completá la casilla de verificación para habilitar el envío de la solicitud.",

@@ -7,7 +7,13 @@ import {
   type AdminApplicationExportCopy,
 } from "@/features/applications/admin-application-export";
 import { normalizeAdminApplicationListFilters } from "@/features/applications/admin-application-list-filters";
-import { buildAdminLoginPath, getAuthorizedAdminSessionFromToken, resolveLocaleFromAdminPath } from "@/lib/admin-session";
+import {
+  buildAdminLoginPath,
+  getAdminAreaPermission,
+  getAuthorizedAdminSessionFromToken,
+  hasAdminPermission,
+  resolveLocaleFromAdminPath,
+} from "@/lib/admin-session";
 import { listApplications } from "@/services/applications/application-service";
 import type { AppLocale } from "@/config/i18n";
 
@@ -29,20 +35,15 @@ function buildExportCopy(
     fields: {
       status: tList("filters.exportFields.status"),
       applicationType: tList("filters.exportFields.applicationType"),
-      applicationTypeName: tList("filters.exportFields.applicationTypeName"),
       submittedAt: tList("filters.exportFields.submittedAt"),
       updatedAt: tList("filters.exportFields.updatedAt"),
-      firstName: tList("filters.exportFields.firstName"),
-      lastName: tList("filters.exportFields.lastName"),
       fullName: tList("filters.exportFields.fullName"),
       email: tDetail("fields.email"),
       phone: tDetail("fields.phone"),
       nationality: tDetail("fields.nationality"),
       birthDate: tDetail("fields.birthDate"),
-      identityDocument: tList("filters.exportFields.identityDocument"),
       message: tDetail("fields.message"),
       curriculumFileName: tList("filters.exportFields.curriculumFileName"),
-      statusHistory: tList("filters.exportFields.statusHistory"),
     },
     filters: {
       query: tList("filters.searchLabel"),
@@ -77,7 +78,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (!session.permissions.applications.view && session.role !== "superadmin") {
+  if (!hasAdminPermission(session, getAdminAreaPermission("applications", "view"))) {
     return new NextResponse("Not Found", { status: 404, headers: { "cache-control": "no-store" } });
   }
 

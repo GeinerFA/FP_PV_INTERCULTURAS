@@ -1,5 +1,7 @@
 import { adminPermissionActions, adminPermissionModules, type AdminPermissionAction, type AdminPermissionKey, type AdminPermissionMatrix, type AdminRole, type AdminUserRecord } from "@/types/admin-user";
 
+const requiredAdminPermissions = [{ module: "dashboard", action: "view" }] as const;
+
 function getAdminPermissionActionIndex(action: AdminPermissionAction): number {
   return adminPermissionActions.indexOf(action);
 }
@@ -85,28 +87,43 @@ function normalizeModulePermissions(value: unknown) {
   } satisfies Record<AdminPermissionAction, boolean>;
 }
 
+function enforceRequiredAdminPermissions(permissions: AdminPermissionMatrix): AdminPermissionMatrix {
+  const nextPermissions = {
+    ...permissions,
+    dashboard: {
+      ...permissions.dashboard,
+    },
+  };
+
+  for (const permission of requiredAdminPermissions) {
+    nextPermissions[permission.module][permission.action] = true;
+  }
+
+  return nextPermissions;
+}
+
 export function normalizeAdminEmail(email: string | null | undefined): string {
   return (email ?? "").trim().toLowerCase();
 }
 
 export function createEmptyAdminPermissions(): AdminPermissionMatrix {
-  return Object.fromEntries(
+  return enforceRequiredAdminPermissions(Object.fromEntries(
     adminPermissionModules.map((module) => [module, { view: false, manage: false, delete: false }]),
-  ) as AdminPermissionMatrix;
+  ) as AdminPermissionMatrix);
 }
 
 export function createFullAdminPermissions(): AdminPermissionMatrix {
-  return Object.fromEntries(
+  return enforceRequiredAdminPermissions(Object.fromEntries(
     adminPermissionModules.map((module) => [module, { view: true, manage: true, delete: true }]),
-  ) as AdminPermissionMatrix;
+  ) as AdminPermissionMatrix);
 }
 
 export function normalizeAdminPermissions(value: unknown): AdminPermissionMatrix {
   const rawPermissions = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
 
-  return Object.fromEntries(
+  return enforceRequiredAdminPermissions(Object.fromEntries(
     adminPermissionModules.map((module) => [module, normalizeModulePermissions(rawPermissions[module])]),
-  ) as AdminPermissionMatrix;
+  ) as AdminPermissionMatrix);
 }
 
 export function updateAdminPermissionSelection(
@@ -117,7 +134,7 @@ export function updateAdminPermissionSelection(
 ): AdminPermissionMatrix {
   const targetActionIndex = getAdminPermissionActionIndex(action);
 
-  return {
+  return enforceRequiredAdminPermissions({
     ...permissions,
     [module]: Object.fromEntries(
       adminPermissionActions.map((candidateAction, candidateIndex) => {
@@ -130,7 +147,7 @@ export function updateAdminPermissionSelection(
         return [candidateAction, candidateIndex < targetActionIndex ? currentValue : false];
       }),
     ) as AdminPermissionMatrix[keyof AdminPermissionMatrix],
-  };
+  });
 }
 
 export function areAllAdminPermissionsGranted(permissions: AdminPermissionMatrix): boolean {

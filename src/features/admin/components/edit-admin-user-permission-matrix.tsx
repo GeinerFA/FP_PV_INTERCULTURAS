@@ -71,6 +71,7 @@ export function EditAdminUserPermissionMatrix({
               <td className="px-4 py-3 font-medium text-slate-900">{moduleTitles[module]}</td>
               {adminPermissionActions.map((action) => {
                 const fieldName = `permissions.${module}.${action}`;
+                const isRequiredPermission = module === "dashboard" && action === "view";
 
                 return (
                   <td key={fieldName} className="px-4 py-3">
@@ -80,7 +81,7 @@ export function EditAdminUserPermissionMatrix({
                         name={fieldName}
                         checked={permissions[module][action]}
                         onChange={(event) => handlePermissionChange(module, action, event.currentTarget.checked)}
-                        disabled={disabled}
+                        disabled={disabled || isRequiredPermission}
                         className="h-4 w-4 rounded border-slate-300 text-emerald-600 disabled:opacity-60"
                       />
                       <span className="sr-only">{`${moduleTitles[module]} ${description} ${actionLabels[action]}`}</span>

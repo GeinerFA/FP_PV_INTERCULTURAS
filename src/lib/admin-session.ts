@@ -7,7 +7,7 @@ import type { NextRequest, NextResponse } from "next/server";
 
 import { defaultLocale, locales, type AppLocale } from "@/config/i18n";
 import { resolveAuthorizedAdminUserByEmail } from "@/services/admin-users/admin-user-service";
-import type { AdminPermissionKey, AdminRole, AdminUserRecord } from "@/types/admin-user";
+import type { AdminPermissionAction, AdminPermissionKey, AdminRole, AdminUserRecord } from "@/types/admin-user";
 import { hasPermission, normalizeAdminEmail } from "@/validators/admin-user";
 
 export type AdminSession = {
@@ -21,6 +21,41 @@ export type AdminSession = {
   permissions: AdminUserRecord["permissions"];
   role: AdminRole;
 };
+
+export const adminAreaPermissionMap = {
+  activity: {
+    delete: "activity.delete",
+    manage: "activity.manage",
+    view: "activity.view",
+  },
+  applications: {
+    delete: "applications.delete",
+    manage: "applications.manage",
+    view: "applications.view",
+  },
+  dashboard: {
+    delete: "dashboard.delete",
+    manage: "dashboard.manage",
+    view: "dashboard.view",
+  },
+  programs: {
+    delete: "programs.delete",
+    manage: "programs.manage",
+    view: "programs.view",
+  },
+  settings: {
+    delete: "settings.delete",
+    manage: "settings.manage",
+    view: "settings.view",
+  },
+  users: {
+    delete: "users.delete",
+    manage: "users.manage",
+    view: "users.view",
+  },
+} as const satisfies Record<string, Record<AdminPermissionAction, AdminPermissionKey>>;
+
+export type AdminPermissionArea = keyof typeof adminAreaPermissionMap;
 
 type AdminSessionTokenPayload = {
   displayName: string | null;
@@ -400,6 +435,23 @@ export async function requireAdminSession(options: {
   }
 
   return session;
+}
+
+export function getAdminAreaPermission(area: AdminPermissionArea, action: AdminPermissionAction): AdminPermissionKey {
+  return adminAreaPermissionMap[area][action];
+}
+
+export async function requireAdminAreaSession(options: {
+  locale: AppLocale;
+  nextPath?: string;
+  area: AdminPermissionArea;
+  action: AdminPermissionAction;
+}): Promise<AdminSession> {
+  return requireAdminSession({
+    locale: options.locale,
+    nextPath: options.nextPath,
+    permission: getAdminAreaPermission(options.area, options.action),
+  });
 }
 
 export function hasAdminPermission(

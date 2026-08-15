@@ -37,6 +37,7 @@ export default async function ApplyPage({ params }: ApplyPageProps) {
     introTitle: formT("introTitle"),
     introDescription: formT("introDescription"),
     requiredLegend: formT("requiredLegend"),
+    requiredFieldWarning: formT.raw("requiredFieldWarning") as PublicApplicationFormCopy["requiredFieldWarning"],
     privacyNotice: formT("privacyNotice"),
     captchaLabel: formT("captchaLabel"),
     captchaHelp: formT("captchaHelp"),

@@ -10,7 +10,10 @@ import {
   emptyApplicationFormValues,
   type ApplicationSubmissionActionState,
 } from "@/features/applications/public-application-form-contract";
-import { PublicApplicationForm } from "@/features/applications/components/public-application-form";
+import {
+  PublicApplicationForm,
+  type PublicApplicationFormCopy,
+} from "@/features/applications/components/public-application-form";
 import { publicPhoneCountryOptions } from "@/features/applications/phone-country-options";
 
 type RenderHandle = {
@@ -20,10 +23,15 @@ type RenderHandle = {
   cleanup: () => void;
 };
 
-const defaultCopy = {
+const defaultCopy: PublicApplicationFormCopy = {
   introTitle: "Apply",
   introDescription: "Complete the form",
   requiredLegend: "Required",
+  requiredFieldWarning: {
+    badge: "Warning",
+    title: "Review the required information",
+    description: "One or more required fields are empty. Complete them before sending the form.",
+  },
   privacyNotice: "Privacy",
   captchaLabel: "Security check",
   captchaHelp: "Complete the captcha to enable submit.",
@@ -58,7 +66,7 @@ const defaultCopy = {
     captchaFailed: "Captcha failed",
     submissionFailed: "Submission failed",
   },
-} as const;
+};
 
 const initialState: ApplicationSubmissionActionState = {
   status: "idle",
@@ -107,7 +115,10 @@ const FakeCaptcha = forwardRef<{ reset: () => void }, {
   );
 });
 
-function renderForm(stateOverride: ApplicationSubmissionActionState = initialState): RenderHandle {
+function renderForm(
+  stateOverride: ApplicationSubmissionActionState = initialState,
+  copyOverride: PublicApplicationFormCopy = defaultCopy,
+): RenderHandle {
   const dom = new JSDOM("<!doctype html><html><body></body></html>");
   const { window } = dom;
   const previousWindow = globalThis.window;
@@ -180,7 +191,7 @@ function renderForm(stateOverride: ApplicationSubmissionActionState = initialSta
     root.render(
       <PublicApplicationForm
         action={async () => stateOverride}
-        copy={defaultCopy}
+        copy={copyOverride}
         recaptchaLanguage="es"
         recaptchaSiteKey="site-key"
         captchaComponent={FakeCaptcha}
@@ -192,12 +203,16 @@ function renderForm(stateOverride: ApplicationSubmissionActionState = initialSta
   return handle;
 }
 
-async function rerenderForm(handle: RenderHandle, stateOverride: ApplicationSubmissionActionState) {
+async function rerenderForm(
+  handle: RenderHandle,
+  stateOverride: ApplicationSubmissionActionState,
+  copyOverride: PublicApplicationFormCopy = defaultCopy,
+) {
   await act(async () => {
     handle.root.render(
       <PublicApplicationForm
         action={async () => stateOverride}
-        copy={defaultCopy}
+        copy={copyOverride}
         recaptchaLanguage="es"
         recaptchaSiteKey="site-key"
         captchaComponent={FakeCaptcha}
@@ -262,6 +277,112 @@ test("required fields show an asterisk legend without marking optional fields", 
   assert.ok(!labelTexts.includes("Message*"));
   assert.ok(!labelTexts.includes("Curriculum*"));
   assert.match(handle.container.textContent ?? "", /\*\s*Required/);
+});
+
+test("missing required fields show a destructive warning card on submit attempt", () => {
+  const handle = renderForm({
+    ...initialState,
+    status: "error",
+    fieldErrors: {
+      firstName: "required",
+      email: "required",
+    },
+  });
+
+  assert.match(handle.container.textContent ?? "", /Warning/);
+  assert.match(handle.container.textContent ?? "", /Review the required information/);
+  assert.match(handle.container.textContent ?? "", /One or more required fields are empty\. Complete them before sending the form\./);
+});
+
+test("missing required fields scroll the warning card into view and focus it", async () => {
+  const handle = renderForm();
+  const scrollCalls: ScrollIntoViewOptions[] = [];
+  const originalScrollIntoView = handle.window.HTMLElement.prototype.scrollIntoView;
+  const originalFocus = handle.window.HTMLElement.prototype.focus;
+
+  handle.window.HTMLElement.prototype.scrollIntoView = function scrollIntoView(options?: ScrollIntoViewOptions) {
+    scrollCalls.push(options ?? {});
+  };
+
+  handle.window.HTMLElement.prototype.focus = function focus(options?: FocusOptions) {
+    originalFocus.call(this, options);
+  };
+
+  await rerenderForm(handle, {
+    ...initialState,
+    status: "error",
+    fieldErrors: {
+      firstName: "required",
+      email: "required",
+    },
+  });
+
+  const warningCard = Array.from(handle.container.querySelectorAll("section")).find((candidate) =>
+    candidate.textContent?.includes("Review the required information"),
+  );
+
+  assert.ok(warningCard, "Expected the required-fields warning card to exist");
+  assert.equal(scrollCalls.length, 1);
+  assert.deepEqual(scrollCalls[0], { behavior: "smooth", block: "start" });
+  assert.equal(handle.window.document.activeElement, warningCard);
+
+  handle.window.HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
+  handle.window.HTMLElement.prototype.focus = originalFocus;
+});
+
+test("missing required fields do not crash when warning copy is unavailable", () => {
+  const copyWithoutWarning: PublicApplicationFormCopy = {
+    ...defaultCopy,
+    requiredFieldWarning: undefined,
+  };
+
+  const handle = renderForm(
+    {
+      ...initialState,
+      status: "error",
+      fieldErrors: {
+        firstName: "required",
+      },
+    },
+    copyWithoutWarning,
+  );
+
+  assert.doesNotMatch(handle.container.textContent ?? "", /Review the required information/);
+  assert.match(handle.container.textContent ?? "", /Required/);
+});
+
+test("non-required validation errors do not show the missing-required warning card", () => {
+  const handle = renderForm({
+    ...initialState,
+    status: "error",
+    fieldErrors: {
+      email: "invalidEmail",
+    },
+  });
+
+  assert.doesNotMatch(handle.container.textContent ?? "", /Review the required information/);
+});
+
+test("non-required validation errors do not trigger auto-scroll", async () => {
+  const handle = renderForm();
+  const scrollCalls: ScrollIntoViewOptions[] = [];
+  const originalScrollIntoView = handle.window.HTMLElement.prototype.scrollIntoView;
+
+  handle.window.HTMLElement.prototype.scrollIntoView = function scrollIntoView(options?: ScrollIntoViewOptions) {
+    scrollCalls.push(options ?? {});
+  };
+
+  await rerenderForm(handle, {
+    ...initialState,
+    status: "error",
+    fieldErrors: {
+      email: "invalidEmail",
+    },
+  });
+
+  assert.equal(scrollCalls.length, 0);
+
+  handle.window.HTMLElement.prototype.scrollIntoView = originalScrollIntoView;
 });
 
 test("phone dial-code trigger stays compact while the open list keeps country names", async () => {

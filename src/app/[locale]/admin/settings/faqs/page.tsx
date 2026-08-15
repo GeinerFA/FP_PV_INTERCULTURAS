@@ -36,7 +36,7 @@ export default async function AdminSettingsFaqPage({ params, searchParams }: Adm
   const feedback = parseAdminSettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/faqs`, permission: "settings.view" });
+  const session = await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/faqs`, permission: "settings.view" });
 
   return (
     <AdminPageTemplate
@@ -53,7 +53,7 @@ export default async function AdminSettingsFaqPage({ params, searchParams }: Adm
         </Link>
       }
     >
-      <AdminFaqSettings feedback={feedback} selectedFaqId={faq} shouldOpenCreateDisclosure={focus === "create"} />
+      <AdminFaqSettings feedback={feedback} selectedFaqId={faq} session={session} shouldOpenCreateDisclosure={focus === "create"} />
     </AdminPageTemplate>
   );
 }

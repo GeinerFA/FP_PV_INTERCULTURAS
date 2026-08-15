@@ -19,7 +19,7 @@ export default async function AdminApplicationDetailPage({
 }: AdminApplicationDetailPageProps) {
   const [{ id, locale }, { status }] = await Promise.all([params, searchParams]);
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/applications/${id}`, permission: "applications.view" });
+  const session = await requireAdminSession({ locale, nextPath: `/${locale}/admin/applications/${id}`, permission: "applications.view" });
 
   const application = await getApplicationById(id);
 
@@ -43,11 +43,12 @@ export default async function AdminApplicationDetailPage({
 
   return (
     <AdminPageTemplate pageKey="applicationDetail" variant="workspace" useInnerWorkspace>
-      <AdminApplicationDetail
-        application={application}
-        updateAction={updateApplicationStatusAction.bind(null, locale, id)}
-        feedback={feedback}
-      />
+        <AdminApplicationDetail
+          application={application}
+          session={session}
+          updateAction={updateApplicationStatusAction.bind(null, locale, id)}
+          feedback={feedback}
+        />
     </AdminPageTemplate>
   );
 }

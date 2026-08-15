@@ -9,6 +9,7 @@ import type { AppLocale } from "@/config/i18n";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
+import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 import { listAdminProgramCategories } from "@/services/categories/category-service";
 import { programCategoryThemes } from "@/types/category";
 
@@ -23,6 +24,7 @@ type AdminCategorySettingsProps = {
     | "delete-blocked"
     | "duplicate-code";
   selectedCategoryId?: string;
+  session: AdminSession;
   shouldOpenCreateDisclosure?: boolean;
 };
 
@@ -37,6 +39,7 @@ function ChevronDownIcon({ className }: { className?: string }) {
 export async function AdminCategorySettings({
   feedback,
   selectedCategoryId,
+  session,
   shouldOpenCreateDisclosure = false,
 }: AdminCategorySettingsProps) {
   const [t, locale] = await Promise.all([getTranslations("AdminCategorySettings"), getLocale()]);
@@ -63,6 +66,8 @@ export async function AdminCategorySettings({
   }
 
   const activeLocale = locale as AppLocale;
+  const canManage = hasAdminPermission(session, "settings.manage");
+  const canDelete = hasAdminPermission(session, "settings.delete");
   const createAction = createProgramCategoryAction.bind(null, activeLocale);
   const feedbackTone =
     feedback === "invalid" ||
@@ -101,56 +106,58 @@ export async function AdminCategorySettings({
         </article>
       </div>
 
-      <details className="group" open={shouldOpenCreateDisclosure}>
-        <summary className="inline-flex max-w-full cursor-pointer list-none items-center gap-3 rounded-full border border-emerald-900/12 bg-white px-4 py-2.5 text-left shadow-[0_12px_30px_-24px_rgba(15,23,42,0.32)] transition hover:border-emerald-300 hover:bg-emerald-50/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white [&::-webkit-details-marker]:hidden">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-950/[0.04] text-lg font-semibold leading-none text-slate-500 transition duration-300 ease-out group-open:rotate-45 group-open:bg-emerald-100 group-open:text-emerald-800 motion-reduce:transition-none">
-            +
-          </span>
-          <span className="text-sm font-semibold text-slate-950">
-            <span className="group-open:hidden">{t("create.disclosureClosedLabel")}</span>
-            <span className="hidden group-open:inline">{t("create.disclosureOpenLabel")}</span>
-          </span>
-        </summary>
+      {canManage ? (
+        <details className="group" open={shouldOpenCreateDisclosure}>
+          <summary className="inline-flex max-w-full cursor-pointer list-none items-center gap-3 rounded-full border border-emerald-900/12 bg-white px-4 py-2.5 text-left shadow-[0_12px_30px_-24px_rgba(15,23,42,0.32)] transition hover:border-emerald-300 hover:bg-emerald-50/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white [&::-webkit-details-marker]:hidden">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-950/[0.04] text-lg font-semibold leading-none text-slate-500 transition duration-300 ease-out group-open:rotate-45 group-open:bg-emerald-100 group-open:text-emerald-800 motion-reduce:transition-none">
+              +
+            </span>
+            <span className="text-sm font-semibold text-slate-950">
+              <span className="group-open:hidden">{t("create.disclosureClosedLabel")}</span>
+              <span className="hidden group-open:inline">{t("create.disclosureOpenLabel")}</span>
+            </span>
+          </summary>
 
-        <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-300 ease-out group-open:grid-rows-[1fr] group-open:opacity-100 motion-reduce:transition-none">
-          <div className="overflow-hidden">
-            <AdminWorkspaceSection className="mt-4" title={t("create.title")} description={t("create.description")}>
-              <form action={createAction} className="space-y-4">
-                <p className="text-sm leading-7 text-slate-600">{t("create.disclosureHint")}</p>
+          <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-300 ease-out group-open:grid-rows-[1fr] group-open:opacity-100 motion-reduce:transition-none">
+            <div className="overflow-hidden">
+              <AdminWorkspaceSection className="mt-4" title={t("create.title")} description={t("create.description")}>
+                <form action={createAction} className="space-y-4">
+                  <p className="text-sm leading-7 text-slate-600">{t("create.disclosureHint")}</p>
 
-                <label className="block space-y-2.5">
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.name")}</span>
-                  <input
-                    name="name"
-                    className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                    placeholder={t("placeholders.name")}
-                  />
-                </label>
-                <label className="block space-y-2.5">
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.theme")}</span>
-                  <select
-                    name="theme"
-                    defaultValue="emerald"
-                    className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                  <label className="block space-y-2.5">
+                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.name")}</span>
+                    <input
+                      name="name"
+                      className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                      placeholder={t("placeholders.name")}
+                    />
+                  </label>
+                  <label className="block space-y-2.5">
+                    <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.theme")}</span>
+                    <select
+                      name="theme"
+                      defaultValue="emerald"
+                      className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                    >
+                      {programCategoryThemes.map((theme) => (
+                        <option key={theme} value={theme}>
+                          {t(`themes.${theme}`)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    type="submit"
+                    className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
                   >
-                    {programCategoryThemes.map((theme) => (
-                      <option key={theme} value={theme}>
-                        {t(`themes.${theme}`)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <button
-                  type="submit"
-                  className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-                >
-                  {t("actions.create")}
-                </button>
-              </form>
-            </AdminWorkspaceSection>
+                    {t("actions.create")}
+                  </button>
+                </form>
+              </AdminWorkspaceSection>
+            </div>
           </div>
-        </div>
-      </details>
+        </details>
+      ) : null}
 
       <AdminWorkspaceSection title={t("list.title")} description={t("list.description")}>
         {categories.length === 0 ? <p className="text-sm leading-7 text-slate-600">{t("empty")}</p> : null}
@@ -183,54 +190,58 @@ export async function AdminCategorySettings({
                   </div>
                 </summary>
 
-                <div className="border-t border-emerald-900/8 px-5 pb-5 pt-5 md:px-6 md:pb-6">
-                  <form id={formId} action={updateProgramCategoryAction.bind(null, activeLocale, category.id)} className="space-y-4">
-                    <label className="block space-y-2.5">
-                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.name")}</span>
-                      <input
-                        name="name"
-                        defaultValue={category.name}
-                        className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                      />
-                    </label>
-                    <label className="block space-y-2.5">
-                      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.theme")}</span>
-                      <select
-                        name="theme"
-                        defaultValue={category.theme}
-                        className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
-                      >
-                        {programCategoryThemes.map((theme) => (
-                          <option key={theme} value={theme}>
-                            {t(`themes.${theme}`)}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                      <button
-                        type="submit"
-                        className="admin-secondary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-                      >
-                        {t("actions.save")}
-                      </button>
-                      <DestructiveActionConfirmation
-                        title={t("delete.title")}
-                        description={t("delete.description")}
-                        warning={category.programCount > 0 ? t("delete.blockedWarning") : t("delete.warning")}
-                        triggerLabel={t("actions.delete")}
-                        confirmLabel={t("delete.confirm")}
-                        cancelLabel={t("delete.cancel")}
-                        confirmValue="delete"
-                        formAction={deleteProgramCategoryAction.bind(null, activeLocale, category.id)}
-                        formId={formId}
-                        tone="danger"
-                        actionLayout="stacked"
-                        className="w-full md:max-w-xs"
-                      />
-                    </div>
-                  </form>
-                </div>
+                 <div className="border-t border-emerald-900/8 px-5 pb-5 pt-5 md:px-6 md:pb-6">
+                   {canManage ? (
+                     <form id={formId} action={updateProgramCategoryAction.bind(null, activeLocale, category.id)} className="space-y-4">
+                       <label className="block space-y-2.5">
+                         <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.name")}</span>
+                         <input
+                           name="name"
+                           defaultValue={category.name}
+                           className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                         />
+                       </label>
+                       <label className="block space-y-2.5">
+                         <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.theme")}</span>
+                         <select
+                           name="theme"
+                           defaultValue={category.theme}
+                           className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                         >
+                           {programCategoryThemes.map((theme) => (
+                             <option key={theme} value={theme}>
+                               {t(`themes.${theme}`)}
+                             </option>
+                           ))}
+                         </select>
+                       </label>
+                       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                         <button
+                           type="submit"
+                           className="admin-secondary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
+                         >
+                           {t("actions.save")}
+                         </button>
+                         {canDelete ? (
+                           <DestructiveActionConfirmation
+                             title={t("delete.title")}
+                             description={t("delete.description")}
+                             warning={category.programCount > 0 ? t("delete.blockedWarning") : t("delete.warning")}
+                             triggerLabel={t("actions.delete")}
+                             confirmLabel={t("delete.confirm")}
+                             cancelLabel={t("delete.cancel")}
+                             confirmValue="delete"
+                             formAction={deleteProgramCategoryAction.bind(null, activeLocale, category.id)}
+                             formId={formId}
+                             tone="danger"
+                             actionLayout="stacked"
+                             className="w-full md:max-w-xs"
+                           />
+                         ) : null}
+                       </div>
+                     </form>
+                   ) : null}
+                 </div>
               </details>
             );
           })}

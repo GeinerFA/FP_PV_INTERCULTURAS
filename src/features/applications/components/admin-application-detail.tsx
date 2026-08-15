@@ -6,10 +6,12 @@ import {
   AdminApplicationStatusForm,
   type AdminApplicationStatusFormCopy,
 } from "@/features/applications/components/admin-application-status-form";
+import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 import type { Application } from "@/types/application";
 
 type AdminApplicationDetailProps = {
   application: Application;
+  session: AdminSession;
   updateAction: (formData: FormData) => Promise<void>;
   feedback?:
     | "updated"
@@ -70,6 +72,7 @@ function formatFileSize(sizeBytes: number): string {
 
 export async function AdminApplicationDetail({
   application,
+  session,
   updateAction,
   feedback,
 }: AdminApplicationDetailProps) {
@@ -114,6 +117,7 @@ export async function AdminApplicationDetail({
     },
   };
   const history = [...application.statusHistory].reverse();
+  const canManage = hasAdminPermission(session, "applications.manage");
   const fields = [
     { key: "email", value: application.email },
     { key: "phone", value: application.phone },
@@ -187,13 +191,15 @@ export async function AdminApplicationDetail({
         </AdminWorkspaceSection>
 
         <div className="space-y-6">
-          <AdminWorkspaceSection title={t("statusCard.title")} description={t("statusCard.description")}>
-            <AdminApplicationStatusForm
-              currentStatus={application.status}
-              updateAction={updateAction}
-              copy={statusFormCopy}
-            />
-          </AdminWorkspaceSection>
+          {canManage ? (
+            <AdminWorkspaceSection title={t("statusCard.title")} description={t("statusCard.description")}>
+              <AdminApplicationStatusForm
+                currentStatus={application.status}
+                updateAction={updateAction}
+                copy={statusFormCopy}
+              />
+            </AdminWorkspaceSection>
+          ) : null}
 
           <AdminWorkspaceSection title={t("history.title")} description={t("history.description")} tone="subtle">
             <ol className="space-y-4">
