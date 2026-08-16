@@ -12,6 +12,27 @@ import {
   type ApplicationTypeSnapshot,
 } from "@/types/application";
 
+export const applicationCurriculumPdfContentType = "application/pdf";
+export const applicationCurriculumPdfExtension = ".pdf";
+
+export function isApplicationCurriculumPdfMetadata(fileName: string, contentType: string): boolean {
+  return (
+    fileName.trim().toLowerCase().endsWith(applicationCurriculumPdfExtension) &&
+    contentType.trim().toLowerCase() === applicationCurriculumPdfContentType
+  );
+}
+
+export function hasApplicationCurriculumPdfSignature(data: Uint8Array): boolean {
+  return (
+    data.length >= 5 &&
+    data[0] === 0x25 &&
+    data[1] === 0x50 &&
+    data[2] === 0x44 &&
+    data[3] === 0x46 &&
+    data[4] === 0x2d
+  );
+}
+
 type PlainObject = Record<string, unknown>;
 
 type ParseSuccess<T> = {
@@ -116,28 +137,71 @@ function assertBinaryData(value: unknown, path: string): Buffer {
   return Buffer.from(value);
 }
 
-function assertApplicationCurriculumSummary(
+export function parseApplicationCurriculumSummary(
   value: unknown,
   path: string,
 ): ApplicationCurriculumSummary {
   const object = assertPlainObject(value, path);
 
+  const fileName = assertString(object.fileName, `${path}.fileName`);
+  const contentType = assertString(object.contentType, `${path}.contentType`);
+
+  if (!isApplicationCurriculumPdfMetadata(fileName, contentType)) {
+    throw new Error(`${path} must be a PDF upload.`);
+  }
+
   return {
-    fileName: assertString(object.fileName, `${path}.fileName`),
-    contentType: assertString(object.contentType, `${path}.contentType`),
+    fileName,
+    contentType,
     sizeBytes: assertInteger(object.sizeBytes, `${path}.sizeBytes`),
     uploadedAt: assertIsoDate(object.uploadedAt, `${path}.uploadedAt`),
   };
 }
 
-function assertApplicationCurriculumUpload(value: unknown, path: string): ApplicationCurriculumUpload {
+export function safeParseApplicationCurriculumSummary(
+  value: unknown,
+  path = "application.curriculum",
+): SafeParseResult<ApplicationCurriculumSummary> {
+  try {
+    return { success: true, data: parseApplicationCurriculumSummary(value, path) };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unable to parse application curriculum.",
+    };
+  }
+}
+
+export function parseApplicationCurriculumUpload(
+  value: unknown,
+  path: string,
+): ApplicationCurriculumUpload {
   const object = assertPlainObject(value, path);
-  const summary = assertApplicationCurriculumSummary(object, path);
+  const summary = parseApplicationCurriculumSummary(object, path);
+  const data = assertBinaryData(object.data, `${path}.data`);
+
+  if (!hasApplicationCurriculumPdfSignature(data)) {
+    throw new Error(`${path}.data must contain a PDF file signature.`);
+  }
 
   return {
     ...summary,
-    data: assertBinaryData(object.data, `${path}.data`),
+    data,
   };
+}
+
+export function safeParseApplicationCurriculumUpload(
+  value: unknown,
+  path = "application.curriculum",
+): SafeParseResult<ApplicationCurriculumUpload> {
+  try {
+    return { success: true, data: parseApplicationCurriculumUpload(value, path) };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unable to parse application curriculum upload.",
+    };
+  }
 }
 
 function assertApplicationTypeSnapshot(value: unknown, path: string): ApplicationTypeSnapshot {
@@ -244,7 +308,7 @@ export function parseApplicationSubmission(
     curriculum:
       object.curriculum === null || object.curriculum === undefined
         ? null
-        : assertApplicationCurriculumUpload(object.curriculum, `${path}.curriculum`),
+        : parseApplicationCurriculumUpload(object.curriculum, `${path}.curriculum`),
   };
 }
 
@@ -303,7 +367,7 @@ export function parseApplication(value: unknown, path = "application"): Applicat
     curriculum:
       object.curriculum === null || object.curriculum === undefined
         ? null
-        : assertApplicationCurriculumSummary(object.curriculum, `${path}.curriculum`),
+        : parseApplicationCurriculumSummary(object.curriculum, `${path}.curriculum`),
     applicationType: assertApplicationTypeSnapshot(object.applicationType, `${path}.applicationType`),
     applicationTypeHistory: assertApplicationTypeHistory(
       object.applicationTypeHistory,

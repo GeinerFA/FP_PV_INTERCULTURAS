@@ -5,13 +5,18 @@ import { ApplicationModel, type ApplicationDocument } from "@/models/application
 import type {
   Application,
   ApplicationChangeActor,
+  ApplicationCurriculumSummary,
   ApplicationCurriculumUpload,
   ApplicationStatus,
   ApplicationTypeSnapshot,
   CreateApplicationRecordInput,
   UpdateApplicationStatusInput,
 } from "@/types/application";
-import { parseApplication } from "@/validators/application";
+import {
+  parseApplication,
+  safeParseApplicationCurriculumSummary,
+  safeParseApplicationCurriculumUpload,
+} from "@/validators/application";
 
 const normalizedApplicationTypeDefaults: ApplicationTypeSnapshot = {
   code: "volunteering",
@@ -71,7 +76,7 @@ function normalizeNullableText(value: unknown): string | null {
   return typeof value === "string" ? value : null;
 }
 
-function normalizeCurriculum(value: unknown) {
+export function normalizeStoredCurriculumSummary(value: unknown): ApplicationCurriculumSummary | null {
   if (!isPlainObject(value)) {
     return null;
   }
@@ -79,18 +84,49 @@ function normalizeCurriculum(value: unknown) {
   const fileName = isNonEmptyString(value.fileName) ? value.fileName.trim() : null;
   const contentType = isNonEmptyString(value.contentType) ? value.contentType.trim() : null;
   const sizeBytes = typeof value.sizeBytes === "number" && Number.isFinite(value.sizeBytes) ? value.sizeBytes : null;
-  const uploadedAt = normalizeDateLike(value.uploadedAt, new Date(0).toISOString());
+  const uploadedAt = value.uploadedAt;
 
   if (!fileName || !contentType || sizeBytes === null) {
     return null;
   }
 
-  return {
+  const result = safeParseApplicationCurriculumSummary({
     fileName,
     contentType,
     sizeBytes,
     uploadedAt,
-  };
+  });
+
+  return result.success ? result.data : null;
+}
+
+export function normalizeStoredCurriculumUpload(value: unknown): ApplicationCurriculumUpload | null {
+  if (!isPlainObject(value)) {
+    return null;
+  }
+
+  const summary = normalizeStoredCurriculumSummary(value);
+
+  if (!summary) {
+    return null;
+  }
+
+  const data = Buffer.isBuffer(value.data)
+    ? value.data
+    : value.data instanceof Uint8Array
+      ? Buffer.from(value.data)
+      : null;
+
+  if (!data) {
+    return null;
+  }
+
+  const result = safeParseApplicationCurriculumUpload({
+    ...summary,
+    data,
+  });
+
+  return result.success ? result.data : null;
 }
 
 function normalizeStatus(value: unknown): ApplicationStatus {
@@ -253,7 +289,7 @@ function normalizeApplicationDocument(document: RawApplicationDocument) {
     identityDocument: normalizeNullableText(document.identityDocument),
     message: normalizeNullableText(document.message),
     availability: normalizeNullableText(document.availability),
-    curriculum: normalizeCurriculum(document.curriculum),
+    curriculum: normalizeStoredCurriculumSummary(document.curriculum),
     applicationType,
     applicationTypeHistory: normalizeApplicationTypeHistory(
       document.applicationTypeHistory,
@@ -317,38 +353,7 @@ const mongoApplicationRepository: ApplicationRepository = {
     await connectToDatabase();
 
     const document = await ApplicationModel.findById(id).select({ curriculum: 1 }).exec();
-    const curriculum = document?.get("curriculum") as
-      | {
-          fileName?: unknown;
-          contentType?: unknown;
-          sizeBytes?: unknown;
-          uploadedAt?: unknown;
-          data?: unknown;
-        }
-      | null
-      | undefined;
-
-    if (!curriculum) {
-      return null;
-    }
-
-    if (
-      !isNonEmptyString(curriculum.fileName) ||
-      !isNonEmptyString(curriculum.contentType) ||
-      typeof curriculum.sizeBytes !== "number" ||
-      !(curriculum.uploadedAt instanceof Date) ||
-      !Buffer.isBuffer(curriculum.data)
-    ) {
-      return null;
-    }
-
-    return {
-      fileName: curriculum.fileName.trim(),
-      contentType: curriculum.contentType.trim(),
-      sizeBytes: curriculum.sizeBytes,
-      uploadedAt: curriculum.uploadedAt.toISOString(),
-      data: curriculum.data,
-    };
+    return normalizeStoredCurriculumUpload(document?.get("curriculum"));
   },
   async updateStatus({ id, nextStatus, changedBy, reason }) {
     if (!Types.ObjectId.isValid(id)) {

@@ -3,6 +3,7 @@ import "server-only";
 import type { PDFFont } from "pdf-lib";
 
 import type { AdminApplicationListFilters } from "@/features/applications/admin-application-list-filters";
+import { escapeSpreadsheetFormulaCellValue } from "@/features/applications/spreadsheet-security";
 import type { Application, ApplicationStatus, ApplicationTypeCode } from "@/types/application";
 
 export type AdminApplicationExportCopy = {
@@ -145,13 +146,17 @@ function buildExportRows(
     [copy.fields.applicationType]: copy.applicationTypes[application.applicationType.code],
     [copy.fields.submittedAt]: formatDateTime(application.createdAt, locale),
     [copy.fields.updatedAt]: formatDateTime(application.updatedAt, locale),
-    [copy.fields.fullName]: application.fullName,
-    [copy.fields.email]: application.email,
-    [copy.fields.phone]: application.phone,
-    [copy.fields.nationality]: application.nationality,
-    [copy.fields.birthDate]: formatDateOnly(application.birthDate, locale, copy.placeholders.empty),
-    [copy.fields.message]: application.message ?? copy.placeholders.empty,
-    [copy.fields.curriculumFileName]: application.curriculum?.fileName ?? copy.placeholders.empty,
+    [copy.fields.fullName]: escapeSpreadsheetFormulaCellValue(application.fullName),
+    [copy.fields.email]: escapeSpreadsheetFormulaCellValue(application.email),
+    [copy.fields.phone]: escapeSpreadsheetFormulaCellValue(application.phone),
+    [copy.fields.nationality]: escapeSpreadsheetFormulaCellValue(application.nationality),
+    [copy.fields.birthDate]: escapeSpreadsheetFormulaCellValue(
+      formatDateOnly(application.birthDate, locale, copy.placeholders.empty),
+    ),
+    [copy.fields.message]: escapeSpreadsheetFormulaCellValue(application.message ?? copy.placeholders.empty),
+    [copy.fields.curriculumFileName]: escapeSpreadsheetFormulaCellValue(
+      application.curriculum?.fileName ?? copy.placeholders.empty,
+    ),
   }));
 }
 

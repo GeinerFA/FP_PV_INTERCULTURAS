@@ -279,6 +279,14 @@ test("required fields show an asterisk legend without marking optional fields", 
   assert.match(handle.container.textContent ?? "", /\*\s*Required/);
 });
 
+test("curriculum input accepts PDF uploads only", () => {
+  const handle = renderForm();
+  const curriculumInput = handle.container.querySelector('#application-curriculum');
+
+  assert.ok(curriculumInput, "Expected the curriculum file input to exist");
+  assert.equal(curriculumInput.getAttribute("accept"), ".pdf,application/pdf");
+});
+
 test("missing required fields show a destructive warning card on submit attempt", () => {
   const handle = renderForm({
     ...initialState,

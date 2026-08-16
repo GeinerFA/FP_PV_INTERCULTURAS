@@ -1,11 +1,17 @@
 import assert from "node:assert/strict";
 import test, { afterEach } from "node:test";
 
-import { getPublicRecaptchaSiteKey, verifyRecaptchaToken } from "./recaptcha.ts";
+import {
+  getPublicRecaptchaSiteKey,
+  isExpectedRecaptchaHostname,
+  resolveExpectedRecaptchaHostname,
+  verifyRecaptchaToken,
+} from "./recaptcha.ts";
 
 const originalNodeEnv = process.env.NODE_ENV;
 const originalSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 const originalSecretKey = process.env.RECAPTCHA_SECRET_KEY;
+const originalAppOrigin = process.env.APP_ORIGIN;
 const originalFetch = globalThis.fetch;
 const originalConsoleError = console.error;
 
@@ -28,8 +34,69 @@ afterEach(() => {
     process.env.RECAPTCHA_SECRET_KEY = originalSecretKey;
   }
 
+  if (originalAppOrigin === undefined) {
+    delete process.env.APP_ORIGIN;
+  } else {
+    process.env.APP_ORIGIN = originalAppOrigin;
+  }
+
   globalThis.fetch = originalFetch;
   console.error = originalConsoleError;
+});
+
+test("resolves the expected reCAPTCHA hostname from APP_ORIGIN when configured", () => {
+  process.env.APP_ORIGIN = "https://Apply.Example.org:8443";
+
+  const expectedHostname = resolveExpectedRecaptchaHostname(new Headers({ host: "ignored.example.com" }));
+
+  assert.equal(expectedHostname, "apply.example.org");
+});
+
+test("returns null when APP_ORIGIN is invalid", () => {
+  process.env.APP_ORIGIN = "://not-a-valid-origin";
+
+  const expectedHostname = resolveExpectedRecaptchaHostname(new Headers({ host: "localhost:3000" }));
+
+  assert.equal(expectedHostname, null);
+});
+
+test("requires APP_ORIGIN in production instead of trusting forwarded hosts", () => {
+  setNodeEnv("production");
+  delete process.env.APP_ORIGIN;
+
+  const expectedHostname = resolveExpectedRecaptchaHostname(
+    new Headers({ "x-forwarded-host": "apply.example.org", host: "apply.example.org" }),
+  );
+
+  assert.equal(expectedHostname, null);
+});
+
+test("returns null for invalid APP_ORIGIN in production instead of falling back to request hosts", () => {
+  setNodeEnv("production");
+  process.env.APP_ORIGIN = "://not-a-valid-origin";
+
+  const expectedHostname = resolveExpectedRecaptchaHostname(
+    new Headers({ "x-forwarded-host": "apply.example.org", host: "apply.example.org" }),
+  );
+
+  assert.equal(expectedHostname, null);
+});
+
+test("falls back to the forwarded request host when APP_ORIGIN is absent", () => {
+  setNodeEnv("development");
+  delete process.env.APP_ORIGIN;
+
+  const expectedHostname = resolveExpectedRecaptchaHostname(
+    new Headers({ "x-forwarded-host": "[::1]:3000", host: "localhost:3000" }),
+  );
+
+  assert.equal(expectedHostname, "::1");
+});
+
+test("matches reCAPTCHA hostnames case-insensitively after normalization", () => {
+  assert.equal(isExpectedRecaptchaHostname("Apply.Example.org", "apply.example.org"), true);
+  assert.equal(isExpectedRecaptchaHostname("evil.example.org", "apply.example.org"), false);
+  assert.equal(isExpectedRecaptchaHostname(null, "apply.example.org"), false);
 });
 
 test("returns the configured public site key when present", () => {

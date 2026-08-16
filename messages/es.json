@@ -1060,7 +1060,7 @@
         "invalidEmail": "Ingresá un correo electrónico válido.",
         "invalidDate": "Ingresá una fecha válida.",
         "invalidSelection": "Seleccioná una opción válida de la lista.",
-        "invalidFileType": "Subí un archivo PDF, DOC o DOCX válido.",
+        "invalidFileType": "Subí un archivo PDF válido.",
         "fileTooLarge": "El archivo debe pesar 5 MB o menos."
       },
       "errors": {
@@ -1100,7 +1100,7 @@
         "curriculum": {
           "label": "Curriculum",
           "placeholder": "",
-          "description": "Opcional. Podés adjuntar tu curriculum en formato PDF, DOC o DOCX de hasta 5 MB."
+          "description": "Opcional. Podés adjuntar tu curriculum en formato PDF de hasta 5 MB."
         }
       }
     },

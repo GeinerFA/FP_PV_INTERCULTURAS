@@ -18,6 +18,24 @@ export type RecaptchaVerificationResult = {
   errorCodes: string[];
 };
 
+function normalizeHostname(hostname: string): string {
+  return hostname.trim().replace(/^\[/, "").replace(/\]$/, "").toLowerCase();
+}
+
+function parseHostnameFromHostHeader(hostHeader: string): string | null {
+  const normalizedHost = hostHeader.split(",")[0]?.trim() ?? "";
+
+  if (normalizedHost.length === 0 || normalizedHost.startsWith("/")) {
+    return null;
+  }
+
+  try {
+    return new URL(`https://${normalizedHost}`).hostname;
+  } catch {
+    return null;
+  }
+}
+
 function readRecaptchaEnvValue(
   envName: "NEXT_PUBLIC_RECAPTCHA_SITE_KEY" | "RECAPTCHA_SECRET_KEY",
   fallbackValue: string,
@@ -41,6 +59,39 @@ export function getPublicRecaptchaSiteKey(): string {
 
 function getRecaptchaSecretKey(): string {
   return readRecaptchaEnvValue("RECAPTCHA_SECRET_KEY", googleRecaptchaV2TestSecretKey);
+}
+
+export function resolveExpectedRecaptchaHostname(requestHeaders: Headers): string | null {
+  const configuredOrigin = process.env.APP_ORIGIN?.trim();
+
+  if (configuredOrigin) {
+    try {
+      return normalizeHostname(new URL(configuredOrigin).hostname);
+    } catch {
+      return null;
+    }
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return null;
+  }
+
+  const forwardedHost = requestHeaders.get("x-forwarded-host");
+  const host = forwardedHost ?? requestHeaders.get("host");
+  const parsedHostname = host ? parseHostnameFromHostHeader(host) : null;
+
+  return parsedHostname ? normalizeHostname(parsedHostname) : null;
+}
+
+export function isExpectedRecaptchaHostname(
+  verificationHostname: string | null,
+  expectedHostname: string | null,
+): boolean {
+  if (!verificationHostname || !expectedHostname) {
+    return false;
+  }
+
+  return normalizeHostname(verificationHostname) === normalizeHostname(expectedHostname);
 }
 
 export async function verifyRecaptchaToken({

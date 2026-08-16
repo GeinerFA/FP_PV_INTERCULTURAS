@@ -27,16 +27,17 @@ import {
   publicApplicationSuccessCookieValue,
 } from "@/features/applications/public-application-flow";
 import { buildApplicationSubmissionErrorState } from "@/features/applications/public-application-submission-state";
-import { verifyRecaptchaToken } from "@/lib/recaptcha";
+import {
+  isExpectedRecaptchaHostname,
+  resolveExpectedRecaptchaHostname,
+  verifyRecaptchaToken,
+} from "@/lib/recaptcha";
 import { createApplication } from "@/services/applications/application-service";
-
-const supportedCurriculumContentTypes = new Set([
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-]);
-
-const supportedCurriculumExtensions = [".pdf", ".doc", ".docx"];
+import {
+  applicationCurriculumPdfContentType,
+  hasApplicationCurriculumPdfSignature,
+  isApplicationCurriculumPdfMetadata,
+} from "@/validators/application";
 
 const maxCurriculumFileSizeBytes = 5 * 1024 * 1024;
 
@@ -120,13 +121,7 @@ function validateCurriculumFile(file: File | null): ApplicationFormValidationCod
     return null;
   }
 
-  const normalizedName = file.name.trim().toLowerCase();
-  const hasSupportedExtension = supportedCurriculumExtensions.some((extension) =>
-    normalizedName.endsWith(extension),
-  );
-  const hasSupportedContentType = file.type.length === 0 || supportedCurriculumContentTypes.has(file.type);
-
-  if (!hasSupportedExtension || !hasSupportedContentType) {
+  if (!isApplicationCurriculumPdfMetadata(file.name, file.type)) {
     return "invalidFileType";
   }
 
@@ -137,13 +132,28 @@ function validateCurriculumFile(file: File | null): ApplicationFormValidationCod
   return null;
 }
 
-async function buildCurriculumPayload(file: File) {
+async function buildCurriculumPayload(file: File): Promise<
+  | {
+      fileName: string;
+      contentType: string;
+      sizeBytes: number;
+      uploadedAt: string;
+      data: Buffer;
+    }
+  | null
+> {
+  const data = Buffer.from(await file.arrayBuffer());
+
+  if (!hasApplicationCurriculumPdfSignature(data)) {
+    return null;
+  }
+
   return {
     fileName: file.name.trim() || "curriculum",
-    contentType: file.type,
+    contentType: applicationCurriculumPdfContentType,
     sizeBytes: file.size,
     uploadedAt: new Date().toISOString(),
-    data: Buffer.from(await file.arrayBuffer()),
+    data,
   };
 }
 
@@ -183,6 +193,7 @@ export async function submitApplicationAction(
   }
 
   const requestHeaders = await headers();
+  const expectedRecaptchaHostname = resolveExpectedRecaptchaHostname(requestHeaders);
   const recaptchaVerification = await verifyRecaptchaToken({
     token: recaptchaToken,
     remoteIp: getRequestIp(requestHeaders),
@@ -198,9 +209,23 @@ export async function submitApplicationAction(
     return buildApplicationSubmissionErrorState(values, {}, "captchaFailed");
   }
 
-  try {
-    const curriculum = curriculumFile ? await buildCurriculumPayload(curriculumFile) : null;
+  if (!isExpectedRecaptchaHostname(recaptchaVerification.hostname, expectedRecaptchaHostname)) {
+    console.warn("[apply] reCAPTCHA hostname mismatch", {
+      email: values.email,
+      expectedHostname: expectedRecaptchaHostname,
+      receivedHostname: recaptchaVerification.hostname,
+    });
 
+    return buildApplicationSubmissionErrorState(values, {}, "captchaFailed");
+  }
+
+  const curriculum = curriculumFile ? await buildCurriculumPayload(curriculumFile) : null;
+
+  if (curriculumFile && !curriculum) {
+    return buildApplicationSubmissionErrorState(values, { curriculum: "invalidFileType" });
+  }
+
+  try {
     await createApplication({
       ...values,
       phone: normalizePhoneNumber(values.phoneDialCode, values.phone),

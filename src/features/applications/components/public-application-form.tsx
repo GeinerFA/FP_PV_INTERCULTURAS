@@ -593,7 +593,7 @@ export function PublicApplicationForm({
                     id={fieldId}
                     name={name}
                     type="file"
-                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    accept=".pdf,application/pdf"
                     aria-invalid={errorMessage ? true : undefined}
                     aria-describedby={errorMessage ? `${fieldId}-error` : undefined}
                     className={fileFieldClassName}
