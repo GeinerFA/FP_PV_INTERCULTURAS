@@ -3,6 +3,7 @@ const recaptchaVerificationTimeoutMs = 5_000;
 
 const googleRecaptchaV2TestSiteKey = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
 const googleRecaptchaV2TestSecretKey = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
+const googleRecaptchaTestHostname = "testkey.google.com";
 
 type GoogleRecaptchaSiteVerifyResponse = {
   success?: boolean;
@@ -36,6 +37,14 @@ function parseHostnameFromHostHeader(hostHeader: string): string | null {
   }
 }
 
+function resolveHostnameFromRequestHeaders(requestHeaders: Headers): string | null {
+  const forwardedHost = requestHeaders.get("x-forwarded-host");
+  const host = forwardedHost ?? requestHeaders.get("host");
+  const parsedHostname = host ? parseHostnameFromHostHeader(host) : null;
+
+  return parsedHostname ? normalizeHostname(parsedHostname) : null;
+}
+
 function readRecaptchaEnvValue(
   envName: "NEXT_PUBLIC_RECAPTCHA_SITE_KEY" | "RECAPTCHA_SECRET_KEY",
   fallbackValue: string,
@@ -61,6 +70,17 @@ function getRecaptchaSecretKey(): string {
   return readRecaptchaEnvValue("RECAPTCHA_SECRET_KEY", googleRecaptchaV2TestSecretKey);
 }
 
+function isUsingGoogleRecaptchaFallbackTestCredentials(): boolean {
+  if (process.env.NODE_ENV === "production") {
+    return false;
+  }
+
+  const configuredSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY?.trim();
+  const configuredSecretKey = process.env.RECAPTCHA_SECRET_KEY?.trim();
+
+  return !configuredSiteKey && !configuredSecretKey;
+}
+
 export function resolveExpectedRecaptchaHostname(requestHeaders: Headers): string | null {
   const configuredOrigin = process.env.APP_ORIGIN?.trim();
 
@@ -68,19 +88,13 @@ export function resolveExpectedRecaptchaHostname(requestHeaders: Headers): strin
     try {
       return normalizeHostname(new URL(configuredOrigin).hostname);
     } catch {
-      return null;
+      console.warn("[recaptcha] Ignoring invalid APP_ORIGIN and falling back to request host", {
+        appOrigin: configuredOrigin,
+      });
     }
   }
 
-  if (process.env.NODE_ENV === "production") {
-    return null;
-  }
-
-  const forwardedHost = requestHeaders.get("x-forwarded-host");
-  const host = forwardedHost ?? requestHeaders.get("host");
-  const parsedHostname = host ? parseHostnameFromHostHeader(host) : null;
-
-  return parsedHostname ? normalizeHostname(parsedHostname) : null;
+  return resolveHostnameFromRequestHeaders(requestHeaders);
 }
 
 export function isExpectedRecaptchaHostname(
@@ -91,7 +105,17 @@ export function isExpectedRecaptchaHostname(
     return false;
   }
 
-  return normalizeHostname(verificationHostname) === normalizeHostname(expectedHostname);
+  const normalizedVerificationHostname = normalizeHostname(verificationHostname);
+  const normalizedExpectedHostname = normalizeHostname(expectedHostname);
+
+  if (normalizedVerificationHostname === normalizedExpectedHostname) {
+    return true;
+  }
+
+  return (
+    isUsingGoogleRecaptchaFallbackTestCredentials() &&
+    normalizedVerificationHostname === googleRecaptchaTestHostname
+  );
 }
 
 export async function verifyRecaptchaToken({

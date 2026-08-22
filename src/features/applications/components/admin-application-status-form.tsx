@@ -76,7 +76,7 @@ export function AdminApplicationStatusForm({
   const [notificationSubject, setNotificationSubject] = useState(initialTemplate?.subject ?? "");
   const [notificationMessage, setNotificationMessage] = useState(initialTemplate?.message ?? "");
 
-  const requiresNotificationDecision = currentStatus === "pending" && selectedStatus !== "pending";
+  const requiresNotificationDecision = currentStatus === "pending" && selectedStatus === "in_process";
   const canSendNotification =
     notificationSubject.trim().length > 0 && notificationMessage.trim().length > 0;
 

@@ -6,7 +6,10 @@ import { notFound, redirect } from "next/navigation";
 import type { AppLocale } from "@/config/i18n";
 import { requireAdminAreaSession } from "@/lib/admin-session";
 import { recordAdminActivitySafely } from "@/services/admin/activity-service";
-import { sendApplicationStatusNotification } from "@/services/notifications/application-status-notification-service";
+import {
+  sendApplicationStatusNotification,
+  shouldSendApplicationStatusNotification,
+} from "@/services/notifications/application-status-notification-service";
 import {
   getApplicationById,
   updateApplicationStatus,
@@ -66,15 +69,16 @@ export async function updateApplicationStatusAction(
   }
 
   const notificationIntent = parseNotificationIntent(formData.get("notificationIntent"));
+  const canSendNotification = shouldSendApplicationStatusNotification(currentApplication.status, nextStatus);
 
-  if (currentApplication.status === "pending" && nextStatus !== "pending" && notificationIntent === "none") {
+  if (canSendNotification && notificationIntent === "none") {
     redirectWithStatus(locale, id, "notification-required");
   }
 
   const notificationSubject = readString(formData, "notificationSubject");
   const notificationMessage = readString(formData, "notificationMessage");
 
-  if (notificationIntent === "send" && (!notificationSubject || !notificationMessage)) {
+  if (canSendNotification && notificationIntent === "send" && (!notificationSubject || !notificationMessage)) {
     redirectWithStatus(locale, id, "notification-invalid");
   }
 
@@ -117,11 +121,11 @@ export async function updateApplicationStatusAction(
     },
   });
 
-  if (notificationIntent === "skip") {
+  if (canSendNotification && notificationIntent === "skip") {
     redirectWithStatus(locale, id, "updated-email-skipped");
   }
 
-  if (notificationIntent === "send") {
+  if (canSendNotification && notificationIntent === "send") {
     let notificationResult;
 
     try {
@@ -129,6 +133,7 @@ export async function updateApplicationStatusAction(
         applicationId: updatedApplication.id,
         applicantEmail: updatedApplication.email,
         applicantName: updatedApplication.fullName,
+        previousStatus: currentApplication.status,
         nextStatus,
         subject: notificationSubject,
         message: notificationMessage,

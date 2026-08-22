@@ -29,6 +29,10 @@ The admin workspace and persisted program flows require these environment variab
 - `RECAPTCHA_SECRET_KEY`: Google reCAPTCHA secret key used by the `/[locale]/apply` server action to verify the browser token with Google before accepting a submission. In non-production environments, the app falls back to Google's official reCAPTCHA v2 test secret when this variable is absent. Production still requires a real secret from the same Google reCAPTCHA project as the public site key.
 - `ADMIN_ALLOWED_EMAIL`: Bootstrap superadmin Google email. On the first verified login, this address can auto-create the initial `admin_users` record if it does not already exist.
 - `ADMIN_SESSION_SECRET`: Secret used to sign the admin session and OAuth state cookies.
+- `EMAIL_PROVIDER`: Email delivery backend selector. Set this to `gmail` to enable the temporary Gmail SMTP provider, or leave it unset/`noop` to disable outbound mail.
+- `EMAIL_GMAIL_USER`: Gmail sender account used by the temporary SMTP provider.
+- `EMAIL_GMAIL_APP_PASSWORD`: Gmail App Password for the sender account. Use a local-only secret in `.env.local`; do not commit it.
+- `EMAIL_FROM`: Sender address shown on outbound application confirmation and admin status-update emails.
 
 Notes:
 
@@ -42,6 +46,7 @@ Notes:
 - `APP_ORIGIN` should point to `localhost` for local-machine development or to a public domain in shared environments. Raw IP origins such as `http://192.168.x.x:3001` are rejected for Google web OAuth redirect URIs.
 - The current runtime locale is Spanish-only (`es`), so admin-facing runtime copy should stay aligned with that path.
 - If `ADMIN_ALLOWED_EMAIL` or `ADMIN_SESSION_SECRET` is missing, the admin login flow intentionally fails with a configuration error instead of creating a partial session.
+- The temporary outbound email implementation uses Nodemailer with Gmail's service preset and an App Password-backed sender account. Local development should keep these values in `.env.local` only.
 
 ## Validation Commands
 
@@ -50,6 +55,7 @@ When validating this repo locally, run the focused captcha tests before the broa
 ```bash
 pnpm exec tsx --test src/lib/recaptcha.test.ts
 pnpm exec tsx --test src/features/applications/public-application-submission-state.test.ts
+pnpm exec tsx --test src/services/notifications/email-provider.test.ts
 pnpm lint
 pnpm exec tsc --noEmit
 pnpm build

@@ -1228,7 +1228,7 @@
           "updated-email-failed": "El estado se actualizó, pero no pudimos enviar el correo en este momento.",
           "invalid": "No pudimos procesar el estado enviado. Probá nuevamente desde la lista aprobada.",
           "notification-invalid": "Completá asunto y mensaje antes de intentar enviar la notificación.",
-          "notification-required": "Antes de guardar este cambio tenés que decidir si querés enviar o saltear la notificación.",
+          "notification-required": "Antes de guardar este cambio a En proceso tenés que decidir si querés enviar o saltear la notificación.",
           "no-change": "Elegí un estado diferente para registrar un nuevo cambio en el historial.",
           "failed": "No pudimos actualizar la solicitud en este momento. Intentá nuevamente."
         },
@@ -1250,7 +1250,7 @@
           "selectLabel": "Estado de la solicitud",
           "submitLabel": "Guardar estado",
           "submittingLabel": "Guardando estado...",
-          "notificationDecisionRequired": "Si la solicitud pasa de pendiente a otro estado, primero vas a revisar el mensaje opcional para la persona postulante."
+          "notificationDecisionRequired": "Si la solicitud pasa de pendiente a En proceso, primero vas a revisar el mensaje opcional para la persona postulante."
         },
         "notificationModal": {
           "badge": "Notificación opcional",
@@ -1264,8 +1264,8 @@
         },
         "notificationTemplates": {
           "in_process": {
-            "subject": "Tu solicitud está en revisión",
-            "message": "Hola {name},\n\nGracias por tu interés en Pura Vida Interculturas. Queremos informarte que tu solicitud se encuentra en revisión y que nuestro equipo está evaluando la información que compartiste.\n\nSi necesitamos datos adicionales o tenemos una nueva actualización, nos pondremos en contacto contigo.\n\nSaludos cordiales,\nPura Vida Interculturas"
+            "subject": "Tu solicitud ahora está en proceso",
+            "message": "Hola {name},\n\nQueremos informarte que recibimos tu solicitud y ahora se encuentra en proceso con el equipo de Pura Vida Interculturas.\n\nEstamos revisando la información que compartiste y, si necesitamos datos adicionales o tenemos una nueva actualización, nos pondremos en contacto contigo.\n\nSaludos cordiales,\nPura Vida Interculturas"
           },
           "resolved": {
             "subject": "Hemos finalizado la revisión de tu solicitud",

@@ -33,6 +33,7 @@ import {
   verifyRecaptchaToken,
 } from "@/lib/recaptcha";
 import { createApplication } from "@/services/applications/application-service";
+import { sendPublicApplicationConfirmation } from "@/services/notifications/public-application-confirmation-notification-service";
 import {
   applicationCurriculumPdfContentType,
   hasApplicationCurriculumPdfSignature,
@@ -173,6 +174,10 @@ function getRequestIp(headerStore: Headers): string | null {
   return realIp && realIp.trim().length > 0 ? realIp.trim() : null;
 }
 
+function buildApplicantFullName(firstName: string, lastName: string): string {
+  return `${firstName} ${lastName}`.trim();
+}
+
 export async function submitApplicationAction(
   locale: AppLocale,
   _previousState: ApplicationSubmissionActionState,
@@ -241,6 +246,28 @@ export async function submitApplicationAction(
     });
 
     return buildApplicationSubmissionErrorState(values, {}, "submissionFailed");
+  }
+
+  try {
+    const confirmationResult = await sendPublicApplicationConfirmation({
+      locale,
+      applicantEmail: values.email,
+      applicantName: buildApplicantFullName(values.firstName, values.lastName),
+    });
+
+    if (confirmationResult.status !== "sent") {
+      console.warn("[apply] Application confirmation email was not sent", {
+        email: values.email,
+        provider: confirmationResult.provider,
+        code: confirmationResult.code,
+        status: confirmationResult.status,
+      });
+    }
+  } catch (error) {
+    console.error("[apply] Failed to send application confirmation email", {
+      email: values.email,
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 
   const cookieStore = await cookies();

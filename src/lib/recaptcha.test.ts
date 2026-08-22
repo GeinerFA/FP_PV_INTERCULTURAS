@@ -14,6 +14,7 @@ const originalSecretKey = process.env.RECAPTCHA_SECRET_KEY;
 const originalAppOrigin = process.env.APP_ORIGIN;
 const originalFetch = globalThis.fetch;
 const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
 
 function setNodeEnv(value: string | undefined) {
   (process.env as Record<string, string | undefined>).NODE_ENV = value;
@@ -42,6 +43,7 @@ afterEach(() => {
 
   globalThis.fetch = originalFetch;
   console.error = originalConsoleError;
+  console.warn = originalConsoleWarn;
 });
 
 test("resolves the expected reCAPTCHA hostname from APP_ORIGIN when configured", () => {
@@ -52,15 +54,18 @@ test("resolves the expected reCAPTCHA hostname from APP_ORIGIN when configured",
   assert.equal(expectedHostname, "apply.example.org");
 });
 
-test("returns null when APP_ORIGIN is invalid", () => {
+test("falls back to the request host when APP_ORIGIN is invalid", () => {
   process.env.APP_ORIGIN = "://not-a-valid-origin";
+  console.warn = () => {};
 
-  const expectedHostname = resolveExpectedRecaptchaHostname(new Headers({ host: "localhost:3000" }));
+  const expectedHostname = resolveExpectedRecaptchaHostname(
+    new Headers({ "x-forwarded-host": "apply.example.org", host: "localhost:3000" }),
+  );
 
-  assert.equal(expectedHostname, null);
+  assert.equal(expectedHostname, "apply.example.org");
 });
 
-test("requires APP_ORIGIN in production instead of trusting forwarded hosts", () => {
+test("falls back to the forwarded request host in production when APP_ORIGIN is absent", () => {
   setNodeEnv("production");
   delete process.env.APP_ORIGIN;
 
@@ -68,18 +73,19 @@ test("requires APP_ORIGIN in production instead of trusting forwarded hosts", ()
     new Headers({ "x-forwarded-host": "apply.example.org", host: "apply.example.org" }),
   );
 
-  assert.equal(expectedHostname, null);
+  assert.equal(expectedHostname, "apply.example.org");
 });
 
-test("returns null for invalid APP_ORIGIN in production instead of falling back to request hosts", () => {
+test("falls back to the request host in production when APP_ORIGIN is invalid", () => {
   setNodeEnv("production");
   process.env.APP_ORIGIN = "://not-a-valid-origin";
+  console.warn = () => {};
 
   const expectedHostname = resolveExpectedRecaptchaHostname(
     new Headers({ "x-forwarded-host": "apply.example.org", host: "apply.example.org" }),
   );
 
-  assert.equal(expectedHostname, null);
+  assert.equal(expectedHostname, "apply.example.org");
 });
 
 test("falls back to the forwarded request host when APP_ORIGIN is absent", () => {
@@ -94,9 +100,37 @@ test("falls back to the forwarded request host when APP_ORIGIN is absent", () =>
 });
 
 test("matches reCAPTCHA hostnames case-insensitively after normalization", () => {
+  setNodeEnv("development");
+  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY = "real-site-key";
+  process.env.RECAPTCHA_SECRET_KEY = "real-secret-key";
+
   assert.equal(isExpectedRecaptchaHostname("Apply.Example.org", "apply.example.org"), true);
   assert.equal(isExpectedRecaptchaHostname("evil.example.org", "apply.example.org"), false);
   assert.equal(isExpectedRecaptchaHostname(null, "apply.example.org"), false);
+});
+
+test("accepts Google's test hostname outside production when fallback test credentials are active", () => {
+  setNodeEnv("development");
+  delete process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  delete process.env.RECAPTCHA_SECRET_KEY;
+
+  assert.equal(isExpectedRecaptchaHostname("testkey.google.com", "localhost"), true);
+});
+
+test("keeps test hostname rejection when real credentials are configured outside production", () => {
+  setNodeEnv("development");
+  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY = "real-site-key";
+  process.env.RECAPTCHA_SECRET_KEY = "real-secret-key";
+
+  assert.equal(isExpectedRecaptchaHostname("testkey.google.com", "localhost"), false);
+});
+
+test("keeps test hostname rejection in production", () => {
+  setNodeEnv("production");
+  delete process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  delete process.env.RECAPTCHA_SECRET_KEY;
+
+  assert.equal(isExpectedRecaptchaHostname("testkey.google.com", "localhost"), false);
 });
 
 test("returns the configured public site key when present", () => {
