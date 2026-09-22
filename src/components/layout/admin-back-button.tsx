@@ -43,7 +43,7 @@ export function AdminBackButton({ locale, label }: AdminBackButtonProps) {
   const searchParams = useSearchParams();
   const search = searchParams.toString();
   const currentRoute = search.length > 0 ? `${pathname}?${search}` : pathname;
-  const fallbackHref = pathname === `/${locale}/admin/login` ? `/${locale}` : `/${locale}/admin`;
+  const fallbackHref = pathname === "/admin/login" || pathname === `/${locale}/admin/login` ? "/" : "/admin";
 
   useEffect(() => {
     if (typeof window === "undefined") {

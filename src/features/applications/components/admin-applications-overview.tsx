@@ -170,8 +170,8 @@ export async function AdminApplicationsOverview({ filters, page }: AdminApplicat
   const exportQuery = new URLSearchParams(filterQuery).toString();
   const exportSuffix = exportQuery ? `?${exportQuery}` : "";
   const exportUrls = {
-    excel: `/${locale}/admin/applications/export/excel${exportSuffix}`,
-    pdf: `/${locale}/admin/applications/export/pdf${exportSuffix}`,
+    excel: `/admin/applications/export/excel${exportSuffix}`,
+    pdf: `/admin/applications/export/pdf${exportSuffix}`,
   };
 
   if (applications.length === 0) {

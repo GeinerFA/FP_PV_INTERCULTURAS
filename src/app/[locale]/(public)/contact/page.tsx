@@ -9,5 +9,5 @@ type ContactPageProps = {
 export default async function ContactPage({ params }: ContactPageProps) {
   const { locale } = await params;
 
-  redirect(`/${locale}#contact`);
+  redirect("/#contact");
 }

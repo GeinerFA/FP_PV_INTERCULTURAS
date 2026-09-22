@@ -47,7 +47,7 @@ export async function PublicFaqPage({
     ? []
     : persistedEntries.filter((entry) => entry.question.trim().length > 0 && entry.answer.trim().length > 0);
   const hasEntries = entries.length > 0;
-  const contactHref = `/${locale}#contact`;
+  const contactHref = "/#contact";
 
   return (
     <div lang={locale} className="space-y-16 lg:space-y-20">

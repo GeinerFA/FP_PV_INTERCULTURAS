@@ -15,7 +15,7 @@ type AdminProgramsPageProps = {
 export default async function AdminProgramsPage({ params, searchParams }: AdminProgramsPageProps) {
   const [{ locale }, { status, view, page }] = await Promise.all([params, searchParams]);
   const feedback = typeof status === "string" ? status : undefined;
-  const session = await requireAdminSession({ locale, nextPath: `/${locale}/admin/programs`, permission: "programs.view" });
+  const session = await requireAdminSession({ locale, nextPath: "/admin/programs", permission: "programs.view" });
 
   return (
     <AdminPageTemplate

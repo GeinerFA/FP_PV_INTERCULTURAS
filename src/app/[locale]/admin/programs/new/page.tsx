@@ -11,7 +11,7 @@ type AdminProgramsNewPageProps = {
 export default async function AdminProgramsNewPage({ params, searchParams }: AdminProgramsNewPageProps) {
   const [{ locale }, { status }] = await Promise.all([params, searchParams]);
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/programs/new`, permission: "programs.manage" });
+  await requireAdminSession({ locale, nextPath: "/admin/programs/new", permission: "programs.manage" });
 
   return (
     <AdminPageTemplate pageKey="programsNew" variant="workspace" useInnerWorkspace className="admin-program-preview-page">

@@ -1,7 +1,6 @@
 import NextLink from "next/link";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
-import type { AppLocale } from "@/config/i18n";
 import { siteConfig } from "@/config/site";
 import { buildAdminGoogleAuthUrl, getAdminSession } from "@/lib/admin-session";
 import { PublicHeaderControls } from "./public-header-controls";
@@ -12,13 +11,12 @@ type PublicSiteShellProps = {
 };
 
 export async function PublicSiteShell({ children }: PublicSiteShellProps) {
-  const [resolvedLocale, t, session] = await Promise.all([getLocale(), getTranslations(), getAdminSession()]);
-  const locale = resolvedLocale as AppLocale;
-  const homeHref = `/${locale}`;
-  const adminHref = `/${locale}/admin`;
+  const [t, session] = await Promise.all([getTranslations(), getAdminSession()]);
+  const homeHref = "/";
+  const adminHref = "/admin";
   const loginHref = buildAdminGoogleAuthUrl(adminHref);
   const logoutHref = `/api/admin/auth/logout?next=${encodeURIComponent(homeHref)}`;
-  const contactHref = `/${locale}#contact`;
+  const contactHref = "/#contact";
   const navigationLabels = {
     home: t("Navigation.home"),
     about: t("Navigation.about"),
@@ -43,7 +41,7 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
       <header className="sticky top-0 z-20 border-b border-white/70 bg-white/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-start justify-between gap-3 px-6 py-3 md:flex-nowrap md:items-center md:gap-4 lg:gap-6">
           <div className="min-w-0 flex-1">
-            <PublicNavbar locale={locale} navigationLabels={navigationLabels} />
+            <PublicNavbar navigationLabels={navigationLabels} />
           </div>
           <div className="shrink-0">
             <PublicHeaderControls

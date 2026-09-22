@@ -174,7 +174,7 @@ export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
   const stateFromQuery = await readAdminOauthStateToken(state ?? undefined);
-  const nextPath = stateFromQuery?.nextPath ?? "/es/admin";
+  const nextPath = stateFromQuery?.nextPath ?? "/admin";
 
   if (!code || !state || request.nextUrl.searchParams.get("error")) {
     return buildLoginRedirect(request, nextPath, "oauth");

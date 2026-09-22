@@ -12,7 +12,7 @@ export default async function AdminSettingsPage({ params }: AdminSettingsPagePro
 
   const session = await requireAdminSession({
     locale,
-    nextPath: `/${locale}/admin/settings`,
+    nextPath: "/admin/settings",
     permission: ["settings.view", "users.view"],
   });
 

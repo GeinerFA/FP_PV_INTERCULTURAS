@@ -14,11 +14,11 @@ import {
 } from "@/services/home-hero-videos/home-hero-video-service";
 
 function buildHomeVideoSettingsPath(locale: AppLocale): string {
-  return `/${locale}/admin/settings/home-videos`;
+  return "/admin/settings/home-videos";
 }
 
 function buildPublicHomePath(locale: AppLocale): string {
-  return `/${locale}`;
+  return "/";
 }
 
 function buildStatusUrl(path: string, status: string, params?: Record<string, string | undefined>, hash?: string): string {
@@ -55,7 +55,7 @@ function readDisplayDurationSeconds(formData: FormData): number | null {
 }
 
 function revalidateHomeVideoPaths(locale: AppLocale): void {
-  revalidatePath(`/${locale}/admin/settings`);
+  revalidatePath("/admin/settings");
   revalidatePath(buildHomeVideoSettingsPath(locale));
   revalidatePath(buildPublicHomePath(locale));
 }

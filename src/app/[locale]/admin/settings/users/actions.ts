@@ -20,7 +20,7 @@ import { adminPermissionActions, adminPermissionModules, type AdminPermissionMat
 import { createEmptyAdminPermissions, createFullAdminPermissions, normalizeAdminEmail, normalizeAdminPermissions } from "@/validators/admin-user";
 
 function buildUsersSettingsPath(locale: AppLocale): string {
-  return `/${locale}/admin/settings/users`;
+  return "/admin/settings/users";
 }
 
 function buildStatusUrl(path: string, status: string, params?: Record<string, string | undefined>, hash?: string): string {
@@ -64,7 +64,7 @@ function shouldGrantAllPermissions(formData: FormData): boolean {
 }
 
 function revalidateUserSettingsPaths(locale: AppLocale): void {
-  revalidatePath(`/${locale}/admin/settings`);
+  revalidatePath("/admin/settings");
   revalidatePath(buildUsersSettingsPath(locale));
 }
 

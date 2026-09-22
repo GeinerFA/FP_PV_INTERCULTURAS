@@ -10,7 +10,7 @@ type AdminDashboardPageProps = {
 export default async function AdminDashboardPage({ params }: AdminDashboardPageProps) {
   const { locale } = await params;
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin`, permission: "dashboard.view" });
+  await requireAdminSession({ locale, nextPath: "/admin", permission: "dashboard.view" });
 
   return (
     <AdminPageTemplate pageKey="dashboard" variant="workspace">

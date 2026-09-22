@@ -19,7 +19,7 @@ export default async function AdminApplicationDetailPage({
 }: AdminApplicationDetailPageProps) {
   const [{ id, locale }, { status }] = await Promise.all([params, searchParams]);
 
-  const session = await requireAdminSession({ locale, nextPath: `/${locale}/admin/applications/${id}`, permission: "applications.view" });
+  const session = await requireAdminSession({ locale, nextPath: `/admin/applications/${id}`, permission: "applications.view" });
 
   const application = await getApplicationById(id);
 

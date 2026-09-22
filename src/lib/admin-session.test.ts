@@ -1,7 +1,34 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { getAdminAreaPermission, hasAdminPermission } from "./admin-session.ts";
+import {
+  buildAdminLoginPath,
+  getAdminAreaPermission,
+  getAdminHomePath,
+  hasAdminPermission,
+  isLocalizedAdminLoginPath,
+  isLocalizedAdminPath,
+  resolveLocaleFromAdminPath,
+  sanitizeAdminNextPath,
+} from "./admin-session.ts";
+
+test("admin paths recognize canonical and legacy locale-prefixed routes", () => {
+  assert.equal(isLocalizedAdminPath("/admin"), true);
+  assert.equal(isLocalizedAdminPath("/admin/programs/123/edit"), true);
+  assert.equal(isLocalizedAdminPath("/es/admin/applications"), true);
+  assert.equal(resolveLocaleFromAdminPath("/admin/settings"), "es");
+  assert.equal(resolveLocaleFromAdminPath("/es/settings"), null);
+  assert.equal(isLocalizedAdminLoginPath("/admin/login"), true);
+  assert.equal(isLocalizedAdminLoginPath("/es/admin/login"), true);
+});
+
+test("admin login URLs stay canonical and preserve safe legacy next paths", () => {
+  assert.equal(getAdminHomePath(), "/admin");
+  assert.equal(sanitizeAdminNextPath("/admin/applications"), "/admin/applications");
+  assert.equal(sanitizeAdminNextPath("/es/admin/applications"), "/admin/applications");
+  assert.equal(sanitizeAdminNextPath("https://evil.example/admin"), "/admin");
+  assert.equal(buildAdminLoginPath("es", "/es/admin/applications"), "/admin/login?next=%2Fadmin%2Fapplications");
+});
 
 test("getAdminAreaPermission resolves target module permissions for hardened admin mutations", () => {
   assert.equal(getAdminAreaPermission("programs", "manage"), "programs.manage");

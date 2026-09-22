@@ -24,31 +24,31 @@ import { createAdminFaq, deleteAdminFaq, moveAdminFaq, updateAdminFaq } from "@/
 import { parseFaqMoveDirection } from "@/validators/faq";
 
 function buildFaqSettingsPath(locale: AppLocale): string {
-  return `/${locale}/admin/settings/faqs`;
+  return "/admin/settings/faqs";
 }
 
 function buildCategorySettingsPath(locale: AppLocale): string {
-  return `/${locale}/admin/settings/categories`;
+  return "/admin/settings/categories";
 }
 
 function buildPublicFaqPath(locale: AppLocale): string {
-  return `/${locale}/faqs`;
+  return "/faqs";
 }
 
 function buildProgramsOverviewPath(locale: AppLocale): string {
-  return `/${locale}/admin/programs`;
+  return "/admin/programs";
 }
 
 function buildProgramsCreatePath(locale: AppLocale): string {
-  return `/${locale}/admin/programs/new`;
+  return "/admin/programs/new";
 }
 
 function buildPublicProgramsPath(locale: AppLocale): string {
-  return `/${locale}/programs`;
+  return "/programs";
 }
 
 function buildPublicHomePath(locale: AppLocale): string {
-  return `/${locale}`;
+  return "/";
 }
 
 function buildStatusUrl(path: string, status: string, params?: Record<string, string | undefined>, hash?: string): string {
@@ -83,7 +83,7 @@ function revalidateFaqPaths(locale: AppLocale): void {
 }
 
 function revalidateCategoryPaths(locale: AppLocale): void {
-  revalidatePath(`/${locale}/admin/settings`);
+  revalidatePath("/admin/settings");
   revalidatePath(buildCategorySettingsPath(locale));
   revalidatePath(buildProgramsOverviewPath(locale));
   revalidatePath(buildProgramsCreatePath(locale));

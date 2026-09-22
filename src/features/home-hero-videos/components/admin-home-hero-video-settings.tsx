@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { AdaptiveVideo } from "@/components/media/adaptive-video";
 import type { AppLocale } from "@/config/i18n";
 import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
@@ -197,7 +198,7 @@ export async function AdminHomeHeroVideoSettings({
                     {video.mediaType === "image" ? (
                       <img src={video.sourceUrl} alt={video.fileName} className="aspect-video w-full object-cover" />
                     ) : (
-                      <video src={video.sourceUrl} controls muted className="aspect-video w-full object-cover" />
+                      <AdaptiveVideo src={video.sourceUrl} controls muted className="aspect-video w-full" />
                     )}
                   </div>
                 </div>

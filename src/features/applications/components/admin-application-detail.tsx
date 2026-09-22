@@ -176,7 +176,7 @@ export async function AdminApplicationDetail({
                       {application.curriculum.fileName} · {formatFileSize(application.curriculum.sizeBytes)}
                     </p>
                     <a
-                      href={`/${locale}/admin/applications/${application.id}/curriculum`}
+                       href={`/admin/applications/${application.id}/curriculum`}
                         className="admin-secondary-action inline-flex w-fit rounded-full px-4 py-2 text-sm font-semibold transition"
                       >
                       {t("curriculum.downloadLabel")}

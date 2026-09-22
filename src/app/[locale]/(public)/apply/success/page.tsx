@@ -30,7 +30,7 @@ export default async function ApplySuccessPage({ params }: ApplySuccessPageProps
   ]);
 
   if (cookieStore.get(publicApplicationSuccessCookieName)?.value !== publicApplicationSuccessCookieValue) {
-    redirect(`/${locale}/apply`);
+    redirect("/apply");
   }
 
   return (

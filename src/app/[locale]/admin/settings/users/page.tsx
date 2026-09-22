@@ -41,7 +41,7 @@ export default async function AdminSettingsUsersPage({ params, searchParams }: A
   const [{ locale }, { focus, status, user }] = await Promise.all([params, searchParams]);
   const feedback = parseAdminUserSettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
-  const session = await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/users`, permission: "users.view" });
+  const session = await requireAdminSession({ locale, nextPath: "/admin/settings/users", permission: "users.view" });
 
   return (
     <AdminPageTemplate

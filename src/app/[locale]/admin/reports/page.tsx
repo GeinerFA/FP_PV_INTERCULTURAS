@@ -10,7 +10,7 @@ type AdminReportsPageProps = {
 export default async function AdminReportsPage({ params }: AdminReportsPageProps) {
   const { locale } = await params;
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/reports`, permission: "applications.view" });
+  await requireAdminSession({ locale, nextPath: "/admin/reports", permission: "applications.view" });
 
-  permanentRedirect(`/${locale}/admin/applications`);
+  permanentRedirect("/admin/applications");
 }

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 import { siteConfig } from "@/config/site";
 import { AdminSidebarAccountControl } from "@/components/layout/admin-sidebar-account-control";
@@ -13,9 +13,9 @@ type AdminShellProps = {
 };
 
 export async function AdminShell({ children, session }: AdminShellProps) {
-  const [locale, t] = await Promise.all([getLocale(), getTranslations("AdminShell")]);
-  const homePath = `/${locale}`;
-  const adminHomePath = `/${locale}/admin`;
+  const t = await getTranslations("AdminShell");
+  const homePath = "/";
+  const adminHomePath = "/admin";
   const loginHref = buildAdminGoogleAuthUrl(adminHomePath);
   const logoutHref = `/api/admin/auth/logout?next=${encodeURIComponent(homePath)}`;
   const accountLabels = {
@@ -47,7 +47,6 @@ export async function AdminShell({ children, session }: AdminShellProps) {
           <div className="relative z-20 flex items-center justify-between gap-3">
             <Link
               href="/"
-              locale={locale}
               aria-label={t("homeLabel")}
               title={t("homeLabel")}
               className="admin-sidebar-home-link inline-flex h-11 w-11 items-center justify-center rounded-full"

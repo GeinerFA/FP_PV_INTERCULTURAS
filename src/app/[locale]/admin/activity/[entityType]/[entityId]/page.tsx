@@ -18,7 +18,7 @@ export default async function AdminActivityHistoryPage({ params, searchParams }:
 
   await requireAdminSession({
     locale,
-    nextPath: `/${locale}/admin/activity/${entityType}/${entityId}${pageSuffix}`,
+    nextPath: `/admin/activity/${entityType}/${entityId}${pageSuffix}`,
     permission: "activity.view",
   });
 

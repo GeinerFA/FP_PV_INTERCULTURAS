@@ -13,17 +13,8 @@ const localePrefixPattern = new RegExp(`^/(?:${locales.join("|")})(?=/|$)`);
 type NavigationLabels = Record<(typeof siteConfig.publicNavigation)[number]["labelKey"] | "contact" | "admin", string>;
 
 type PublicNavbarProps = {
-  locale: string;
   navigationLabels: NavigationLabels;
 };
-
-function getLocalizedHref(locale: string, href: string) {
-  if (href === "/") {
-    return `/${locale}`;
-  }
-
-  return `/${locale}${href}`;
-}
 
 function getNormalizedPathname(pathname: string | null) {
   if (!pathname || pathname === "/") {
@@ -35,10 +26,10 @@ function getNormalizedPathname(pathname: string | null) {
   return withoutLocale || "/";
 }
 
-export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
+export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
   const pathname = usePathname();
   const normalizedPathname = getNormalizedPathname(pathname);
-  const contactHref = `/${locale}#contact`;
+  const contactHref = "/#contact";
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = siteConfig.publicNavigation.filter((item) => item.href !== "/");
@@ -48,7 +39,7 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
       <div className="flex flex-wrap items-center justify-between gap-4 xl:flex-nowrap xl:gap-6">
         <div className="flex min-w-0 shrink-0 items-center gap-3 md:gap-4">
           <NextLink
-            href={`/${locale}`}
+            href="/"
             className="group inline-flex min-w-0 items-center rounded-2xl py-1 xl:pr-2 text-slate-950 transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-200/80 focus:ring-offset-2 focus:ring-offset-transparent"
           >
             <Image
@@ -83,7 +74,7 @@ export function PublicNavbar({ locale, navigationLabels }: PublicNavbarProps) {
           className={`${isOpen ? "flex" : "hidden"} w-full flex-col gap-2 text-sm xl:flex xl:min-w-0 xl:flex-1 xl:flex-row xl:flex-nowrap xl:items-center xl:justify-end xl:gap-4 2xl:gap-5`}
         >
           {navItems.map((item) => {
-            const href = getLocalizedHref(locale, item.href);
+            const href = item.href;
             const isActive = normalizedPathname === item.href;
 
             return (

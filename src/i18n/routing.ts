@@ -5,7 +5,7 @@ import { defaultLocale, locales } from "@/config/i18n";
 export const routing = defineRouting({
   locales: [...locales],
   defaultLocale,
-  localePrefix: "always",
+  localePrefix: "as-needed",
   pathnames: {
     "/": "/",
     "/about": "/about",

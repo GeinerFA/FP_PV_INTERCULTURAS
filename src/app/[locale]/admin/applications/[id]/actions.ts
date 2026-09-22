@@ -20,7 +20,7 @@ import { parseApplicationStatus } from "@/validators/application";
 type NotificationIntent = "none" | "send" | "skip";
 
 function buildDetailPath(locale: AppLocale, id: string): string {
-  return `/${locale}/admin/applications/${id}`;
+  return `/admin/applications/${id}`;
 }
 
 function redirectWithStatus(locale: AppLocale, id: string, key: string): never {
@@ -99,7 +99,7 @@ export async function updateApplicationStatusAction(
     notFound();
   }
 
-  revalidatePath(`/${locale}/admin/applications`);
+  revalidatePath("/admin/applications");
   revalidatePath(buildDetailPath(locale, id));
 
   const latestStatusEntry = updatedApplication.statusHistory.at(-1);

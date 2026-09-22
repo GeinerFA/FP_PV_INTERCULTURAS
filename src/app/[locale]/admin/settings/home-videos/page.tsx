@@ -35,7 +35,7 @@ export default async function AdminSettingsHomeVideosPage({ params, searchParams
   const [{ locale }, { status, video }] = await Promise.all([params, searchParams]);
   const feedback = parseAdminHomeHeroVideoFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
-  const session = await requireAdminSession({ locale, nextPath: `/${locale}/admin/settings/home-videos`, permission: "settings.view" });
+  const session = await requireAdminSession({ locale, nextPath: "/admin/settings/home-videos", permission: "settings.view" });
 
   return (
     <AdminPageTemplate

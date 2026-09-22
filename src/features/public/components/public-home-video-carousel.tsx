@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { AdaptiveVideo } from "@/components/media/adaptive-video";
+
 type CarouselSlide = {
   id: string;
   src: string;
@@ -105,12 +107,12 @@ export function PublicHomeVideoCarousel({
             {slide.mediaType === "image" ? (
               <img src={slide.src} alt={slide.fileName} className="h-full w-full object-cover" />
             ) : (
-              <video
+              <AdaptiveVideo
                 ref={(node) => {
                   videoRefs.current[index] = node;
                 }}
                 aria-hidden="true"
-                className="h-full w-full object-cover"
+                className="h-full w-full"
                 loop
                 muted
                 playsInline
@@ -124,7 +126,7 @@ export function PublicHomeVideoCarousel({
               >
                 <source src={slide.src} type="video/mp4" />
                 {slide.fileName}
-              </video>
+              </AdaptiveVideo>
             )}
           </div>
         ))}

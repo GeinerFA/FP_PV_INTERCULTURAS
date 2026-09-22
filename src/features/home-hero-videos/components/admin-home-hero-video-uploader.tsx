@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { AdaptiveVideo } from "@/components/media/adaptive-video";
 import type { HomeHeroVideoMediaType } from "@/types/home-hero-video";
 
 type AdminHomeHeroVideoUploaderProps = {
@@ -325,7 +326,7 @@ export function AdminHomeHeroVideoUploader({
             {selectedMediaType === "image" ? (
               <img src={previewUrl} alt={selectedFile.name} className="aspect-video w-full object-cover" />
             ) : (
-              <video src={previewUrl} controls muted className="aspect-video w-full object-cover" />
+              <AdaptiveVideo src={previewUrl} controls muted className="aspect-video w-full" />
             )}
           </div>
         </div>

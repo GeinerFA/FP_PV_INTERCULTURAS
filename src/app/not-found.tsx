@@ -10,7 +10,7 @@ export default function GlobalNotFound() {
           This route does not exist yet inside the current architectural base.
         </p>
         <Link
-          href="/es"
+          href="/"
           className="mt-8 inline-flex rounded-full bg-teal-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-teal-300"
         >
           Go to public site

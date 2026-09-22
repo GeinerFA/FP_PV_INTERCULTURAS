@@ -76,9 +76,9 @@ export const adminOauthStateCookieName = "fp_pv_admin_oauth_state";
 export const adminSessionMaxAgeSeconds = 60 * 60 * 8;
 export const adminOauthStateMaxAgeSeconds = 60 * 10;
 
-const localizedAdminPathPattern = /^\/([a-z]{2}(?:-[a-z]{2})?)\/admin(?:[/?#].*)?$/i;
-const localizedAdminLoginPathPattern = /^\/([a-z]{2}(?:-[a-z]{2})?)\/admin\/login(?:[/?#].*)?$/i;
-const localizedPathPattern = /^\/([a-z]{2}(?:-[a-z]{2})?)(?:[/?#].*)?$/i;
+const localePrefixPattern = /^\/([a-z]{2}(?:-[a-z]{2})?)(?=\/|$)/i;
+const localizedAdminPathPattern = /^(?:\/([a-z]{2}(?:-[a-z]{2})?))?\/admin(?:[/?#].*)?$/i;
+const localizedAdminLoginPathPattern = /^(?:\/([a-z]{2}(?:-[a-z]{2})?))?\/admin\/login(?:[/?#].*)?$/i;
 
 function isSupportedLocale(locale: string): locale is AppLocale {
   return locales.includes(locale as AppLocale);
@@ -213,21 +213,23 @@ export function hasVerifiedAdminEmail(
 }
 
 export function getAdminHomePath(locale: AppLocale = defaultLocale): string {
-  return `/${locale}/admin`;
+  void locale;
+  return "/admin";
 }
 
 export function getLocalizedHomePath(locale: AppLocale = defaultLocale): string {
-  return `/${locale}`;
+  void locale;
+  return "/";
 }
 
 export function resolveLocaleFromLocalizedPath(pathname: string): AppLocale | null {
-  const match = pathname.match(localizedPathPattern);
+  const match = pathname.match(localePrefixPattern);
 
   if (!match) {
-    return null;
+    return defaultLocale;
   }
 
-  const locale = match[1].toLowerCase();
+  const locale = match[1]?.toLowerCase() ?? defaultLocale;
 
   return isSupportedLocale(locale) ? locale : null;
 }
@@ -239,7 +241,7 @@ export function resolveLocaleFromAdminPath(pathname: string): AppLocale | null {
     return null;
   }
 
-  const locale = match[1].toLowerCase();
+  const locale = match[1]?.toLowerCase() ?? defaultLocale;
 
   return isSupportedLocale(locale) ? locale : null;
 }
@@ -255,7 +257,7 @@ export function isLocalizedAdminLoginPath(pathname: string): boolean {
     return false;
   }
 
-  const locale = match[1].toLowerCase();
+  const locale = match[1]?.toLowerCase() ?? defaultLocale;
 
   return isSupportedLocale(locale);
 }
@@ -288,6 +290,16 @@ export function sanitizeLocalizedNextPath(
     return fallbackPath;
   }
 
+  const localePrefix = `/${locale}`;
+
+  if (candidate === localePrefix) {
+    return "/";
+  }
+
+  if (candidate.startsWith(`${localePrefix}/`)) {
+    return candidate.slice(localePrefix.length) || "/";
+  }
+
   return candidate;
 }
 
@@ -295,7 +307,7 @@ export function buildAdminLoginPath(locale: AppLocale, nextPath?: string): strin
   const safeNextPath = sanitizeAdminNextPath(nextPath, locale);
   const searchParams = new URLSearchParams({ next: safeNextPath });
 
-  return `/${locale}/admin/login?${searchParams.toString()}`;
+  return `/admin/login?${searchParams.toString()}`;
 }
 
 export function buildAdminGoogleAuthUrl(nextPath: string): string {

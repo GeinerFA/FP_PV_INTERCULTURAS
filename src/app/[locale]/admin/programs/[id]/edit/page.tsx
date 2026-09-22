@@ -17,7 +17,7 @@ export default async function AdminProgramEditPage({
 }: AdminProgramEditPageProps) {
   const [{ id, locale }, { status }] = await Promise.all([params, searchParams]);
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/programs/${id}/edit`, permission: "programs.manage" });
+  await requireAdminSession({ locale, nextPath: `/admin/programs/${id}/edit`, permission: "programs.manage" });
 
   const program = await getAdminProgramById(id);
 

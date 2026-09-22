@@ -14,7 +14,7 @@ type AdminActivityPageProps = {
 export default async function AdminActivityPage({ params, searchParams }: AdminActivityPageProps) {
   const [{ locale }, { page }] = await Promise.all([params, searchParams]);
 
-  await requireAdminSession({ locale, nextPath: `/${locale}/admin/activity`, permission: "activity.view" });
+  await requireAdminSession({ locale, nextPath: "/admin/activity", permission: "activity.view" });
 
   return (
     <AdminPageTemplate pageKey="activity" variant="workspace" useInnerWorkspace>

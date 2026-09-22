@@ -34,23 +34,23 @@ const supportedCoverImageExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif",
 const maxCoverImageFileSizeBytes = 8 * 1024 * 1024;
 
 function buildProgramsOverviewPath(locale: AppLocale): string {
-  return `/${locale}/admin/programs`;
+  return "/admin/programs";
 }
 
 function buildProgramCreatePath(locale: AppLocale): string {
-  return `/${locale}/admin/programs/new`;
+  return "/admin/programs/new";
 }
 
 function buildProgramEditPath(locale: AppLocale, id: string): string {
-  return `/${locale}/admin/programs/${id}/edit`;
+  return `/admin/programs/${id}/edit`;
 }
 
 function buildProgramPublicListPath(locale: AppLocale): string {
-  return `/${locale}/programs`;
+  return "/programs";
 }
 
 function buildProgramPublicDetailPath(locale: AppLocale, slug: string): string {
-  return `/${locale}/programs/${slug}`;
+  return `/programs/${slug}`;
 }
 
 function buildStatusUrl(path: string, status: string): string {

@@ -279,8 +279,8 @@ export async function submitApplicationAction(
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     maxAge: publicApplicationSuccessCookieMaxAgeSeconds,
-    path: `/${locale}/apply`,
+    path: "/apply",
   });
 
-  redirect(`/${locale}/apply/success`);
+  redirect("/apply/success");
 }

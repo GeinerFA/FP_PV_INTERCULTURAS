@@ -136,7 +136,7 @@ export async function PublicHomePage({
   const programsHref = "/programs" as const;
   const applyHref = "/apply" as const;
   const faqsHref = "/faqs" as const;
-  const contactHref = `/${locale}#contact`;
+  const contactHref = "/#contact";
 
   return (
     <div className="flex flex-col gap-16 lg:gap-20">

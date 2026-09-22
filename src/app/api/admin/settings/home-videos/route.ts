@@ -1,7 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { locales } from "@/config/i18n";
 import { deleteCloudinaryAsset, verifyCloudinaryHomeHeroVideoAsset } from "@/lib/cloudinary";
 import {
   adminSessionCookieName,
@@ -84,11 +83,9 @@ export async function POST(request: NextRequest) {
 
     verifiedPublicIdToCleanup = null;
 
-    for (const locale of locales) {
-      revalidatePath(`/${locale}/admin/settings`);
-      revalidatePath(`/${locale}/admin/settings/home-videos`);
-      revalidatePath(`/${locale}`);
-    }
+    revalidatePath("/admin/settings");
+    revalidatePath("/admin/settings/home-videos");
+    revalidatePath("/");
 
     return NextResponse.json(createdVideo, { status: 201 });
   } catch (error) {
