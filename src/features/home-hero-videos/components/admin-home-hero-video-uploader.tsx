@@ -324,7 +324,7 @@ export function AdminHomeHeroVideoUploader({
 
           <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-950">
             {selectedMediaType === "image" ? (
-              <img src={previewUrl} alt={selectedFile.name} className="aspect-video w-full object-cover" />
+              <img src={previewUrl} alt={selectedFile.name} className="aspect-video w-full object-contain" />
             ) : (
               <AdaptiveVideo src={previewUrl} controls muted className="aspect-video w-full" />
             )}

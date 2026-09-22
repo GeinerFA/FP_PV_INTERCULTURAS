@@ -105,7 +105,7 @@ export function PublicHomeVideoCarousel({
             className={`absolute inset-0 transition-opacity duration-700 ${index === activeIndex ? "opacity-100" : "opacity-0"}`}
           >
             {slide.mediaType === "image" ? (
-              <img src={slide.src} alt={slide.fileName} className="h-full w-full object-cover" />
+              <img src={slide.src} alt={slide.fileName} className="h-full w-full object-contain" />
             ) : (
               <AdaptiveVideo
                 ref={(node) => {

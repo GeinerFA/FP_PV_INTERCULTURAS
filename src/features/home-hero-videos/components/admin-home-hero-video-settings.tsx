@@ -196,7 +196,7 @@ export async function AdminHomeHeroVideoSettings({
 
                   <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-950">
                     {video.mediaType === "image" ? (
-                      <img src={video.sourceUrl} alt={video.fileName} className="aspect-video w-full object-cover" />
+                      <img src={video.sourceUrl} alt={video.fileName} className="aspect-video w-full object-contain" />
                     ) : (
                       <AdaptiveVideo src={video.sourceUrl} controls muted className="aspect-video w-full" />
                     )}
