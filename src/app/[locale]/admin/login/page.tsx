@@ -60,7 +60,7 @@ export default async function AdminLoginPage({ params, searchParams }: AdminLogi
         <p className="mt-4 text-base leading-7 text-slate-600 md:text-lg">{t("description")}</p>
       </div>
 
-      <div className="relative mt-8 grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="relative mt-8">
         <div className="surface-dark-panel rounded-3xl p-6 text-sm leading-6 text-slate-700">
           <p>{t("protectedNotice", { locale })}</p>
           <p className="mt-4 text-slate-500">{t("nextLabel", { nextPath })}</p>
@@ -75,15 +75,6 @@ export default async function AdminLoginPage({ params, searchParams }: AdminLogi
           >
             {t("continueWithGoogle")}
           </a>
-        </div>
-
-        <div className="surface-dark-panel rounded-3xl p-6 text-sm leading-6 text-slate-700">
-          <h2 className="text-base font-semibold text-slate-950">{t("rulesTitle")}</h2>
-          <ul className="mt-4 space-y-3 text-slate-700">
-            {[t("rules.0"), t("rules.1"), t("rules.2")].map((item) => (
-              <li key={item}>• {item}</li>
-            ))}
-          </ul>
         </div>
       </div>
     </section>

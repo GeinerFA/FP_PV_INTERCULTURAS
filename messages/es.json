@@ -885,12 +885,6 @@
     "protectedNotice": "El acceso protege todo /{locale}/admin y te devuelve a la ruta solicitada después de validar la sesión.",
     "nextLabel": "Destino después de iniciar sesión: {nextPath}",
     "continueWithGoogle": "Continuar con Google",
-    "rulesTitle": "Reglas del acceso",
-    "rules": {
-      "0": "Google debe devolver el correo como verificado.",
-      "1": "El correo debe existir activo en la base administrativa o coincidir con el superadmin inicial de ADMIN_ALLOWED_EMAIL.",
-      "2": "Las rutas públicas siguen visibles sin autenticación."
-    },
     "errors": {
       "access_denied": "La cuenta de Google no está autorizada para ingresar al panel.",
       "config": "Falta completar la configuración administrativa antes de iniciar sesión.",
