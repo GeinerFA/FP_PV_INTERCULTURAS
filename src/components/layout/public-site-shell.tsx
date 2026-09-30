@@ -37,19 +37,35 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
     accountAdminAction: t("Shell.accountAdminAction"),
     accountLogoutAction: t("Shell.accountLogoutAction"),
   } as const;
+  const languageSwitcher = (
+    <PublicLanguageSwitcher
+      label={t("Shell.languageSwitcherLabel")}
+      localeNames={{ es: t("Shell.localeNames.es"), en: t("Shell.localeNames.en") }}
+    />
+  );
+  // En el menú móvil: sin sesión lleva al ingreso con Google, que después redirige al panel.
+  const mobileMenuFooter = (
+    <>
+      {languageSwitcher}
+      <a
+        href={session ? adminHref : loginHref}
+        className="inline-flex items-center justify-center rounded-full bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-emerald-700"
+      >
+        {headerControlsLabels.accountAdminAction}
+      </a>
+    </>
+  );
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.32),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_36%,#eff6f1_100%)] text-slate-900">
       <PublicHeader>
         <div className="mx-auto flex max-w-6xl items-start justify-between gap-3 px-6 py-3 md:flex-nowrap md:items-center md:gap-4 lg:gap-6">
           <div className="min-w-0 flex-1">
-            <PublicNavbar navigationLabels={navigationLabels} />
+            <PublicNavbar navigationLabels={navigationLabels} mobileMenuFooter={mobileMenuFooter} />
           </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <PublicLanguageSwitcher
-              label={t("Shell.languageSwitcherLabel")}
-              localeNames={{ es: t("Shell.localeNames.es"), en: t("Shell.localeNames.en") }}
-            />
+          {/* Debajo de xl el idioma y el panel se muestran dentro del menú hamburguesa. */}
+          <div className="hidden shrink-0 items-center gap-2 xl:flex">
+            {languageSwitcher}
             <PublicHeaderControls
               adminHref={adminHref}
               loginHref={loginHref}

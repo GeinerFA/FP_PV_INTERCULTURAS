@@ -167,12 +167,9 @@ export async function PublicHomePage({
           <div className="flex flex-wrap gap-3 lg:shrink-0 lg:justify-end">
             <LocaleLink
               href={programsHref}
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-emerald-400 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-emerald-950 shadow-[0_18px_40px_-18px_rgba(52,211,153,0.8)] transition hover:-translate-y-0.5 hover:bg-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 motion-reduce:transition-none"
+              className="inline-flex items-center justify-center rounded-full bg-emerald-800 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-white shadow-[0_18px_40px_-20px_rgba(6,95,70,0.9)] transition hover:-translate-y-0.5 hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 motion-reduce:transition-none"
             >
               {home.hero.primaryAction}
-              <span aria-hidden="true" className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-                ↗
-              </span>
             </LocaleLink>
             <LocaleLink
               href={applyHref}

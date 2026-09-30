@@ -11,9 +11,11 @@ type NavigationLabels = Record<(typeof siteConfig.publicNavigation)[number]["lab
 
 type PublicNavbarProps = {
   navigationLabels: NavigationLabels;
+  /** Contenido extra al final del menú móvil (idioma, panel administrativo). */
+  mobileMenuFooter?: React.ReactNode;
 };
 
-export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
+export function PublicNavbar({ navigationLabels, mobileMenuFooter }: PublicNavbarProps) {
   // Locale-less internal pathname ("/programs" on both / and /en).
   const normalizedPathname: string = usePathname();
   const { isTransparent, menuOpen: isOpen, setMenuOpen: setIsOpen } = usePublicHeader();
@@ -23,7 +25,8 @@ export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
   return (
     <nav className="w-full" aria-label="Public navigation">
       <div className="flex flex-wrap items-center justify-between gap-4 xl:flex-nowrap xl:gap-6">
-        <div className="flex min-w-0 shrink-0 items-center gap-3 md:gap-4">
+        {/* En móvil la hamburguesa queda en el extremo derecho. */}
+        <div className="flex w-full min-w-0 items-center justify-between gap-3 md:gap-4 xl:w-auto xl:shrink-0 xl:justify-start">
           <NextLink
             href="/"
             className="group inline-flex min-w-0 items-center rounded-2xl py-1 xl:pr-2 text-slate-950 transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-200/80 focus:ring-offset-2 focus:ring-offset-transparent"
@@ -33,7 +36,7 @@ export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
               alt={siteConfig.name}
               width={2420}
               height={778}
-              className={`h-10 w-auto object-contain transition-[filter] duration-500 md:h-12 ${isTransparent ? "brightness-0 invert" : ""}`}
+              className="h-10 w-auto object-contain md:h-12"
               priority
             />
           </NextLink>
@@ -99,6 +102,15 @@ export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
           >
             <span className="border-b border-emerald-400/45 pb-0.5">{navigationLabels.contact}</span>
           </NextLink>
+
+          {mobileMenuFooter ? (
+            <div
+              className="mt-2 flex flex-wrap items-center gap-3 border-t border-slate-200/80 pt-4 xl:hidden"
+              onClick={() => setIsOpen(false)}
+            >
+              {mobileMenuFooter}
+            </div>
+          ) : null}
         </div>
       </div>
     </nav>
