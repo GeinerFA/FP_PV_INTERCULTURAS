@@ -31,6 +31,8 @@ type AdminHomeHeroVideoUploaderProps = {
 type SignatureResponse = {
   acceptedMimeTypes: string[];
   apiKey: string;
+  eager: string | null;
+  eagerAsync: string | null;
   folder: string;
   maxFileSizeBytes: number;
   publicId: string;
@@ -55,7 +57,7 @@ function inferMediaType(file: File | null): HomeHeroVideoMediaType | null {
     return null;
   }
 
-  if (file.type === "video/mp4") {
+  if (file.type === "video/mp4" || file.type === "video/quicktime") {
     return "video";
   }
 
@@ -86,6 +88,16 @@ function getCloudinaryErrorMessage(responseText: string): string | null {
   }
 }
 
+async function readServerErrorMessage(response: Response): Promise<string | null> {
+  try {
+    const body = (await response.json()) as { error?: unknown };
+
+    return typeof body.error === "string" && body.error.trim().length > 0 ? body.error.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
 function uploadFileToCloudinary(file: File, signature: SignatureResponse): Promise<UploadedVideoPayload> {
   return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
@@ -93,6 +105,10 @@ function uploadFileToCloudinary(file: File, signature: SignatureResponse): Promi
 
     formData.set("file", file);
     formData.set("api_key", signature.apiKey);
+    if (signature.eager && signature.eagerAsync) {
+      formData.set("eager", signature.eager);
+      formData.set("eager_async", signature.eagerAsync);
+    }
     formData.set("folder", signature.folder);
     formData.set("public_id", signature.publicId);
     formData.set("signature", signature.signature);
@@ -207,7 +223,9 @@ export function AdminHomeHeroVideoUploader({
       });
 
       if (!signatureResponse.ok) {
-        throw new Error(strings.uploadFailed);
+        const detail = await readServerErrorMessage(signatureResponse);
+
+        throw new Error(detail ? `${strings.uploadFailed} (${detail})` : strings.uploadFailed);
       }
 
       const signature = (await signatureResponse.json()) as SignatureResponse;
@@ -237,7 +255,9 @@ export function AdminHomeHeroVideoUploader({
       });
 
       if (!persistResponse.ok) {
-        throw new Error(strings.uploadFailed);
+        const detail = await readServerErrorMessage(persistResponse);
+
+        throw new Error(detail ? `${strings.uploadFailed} (${detail})` : strings.uploadFailed);
       }
 
       window.location.assign(successRedirectPath);
@@ -255,7 +275,7 @@ export function AdminHomeHeroVideoUploader({
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{strings.chooseFile}</span>
             <input
               type="file"
-              accept="image/jpeg,image/png,image/webp,image/avif,video/mp4"
+              accept="image/jpeg,image/png,image/webp,image/avif,video/mp4,video/quicktime,.mov"
               className="admin-inner-input block w-full rounded-2xl border-dashed px-4 py-3 text-sm file:mr-4 file:rounded-full file:border-0 file:bg-emerald-700 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-emerald-800"
               onChange={(event) => {
                 const file = event.currentTarget.files?.[0] ?? null;

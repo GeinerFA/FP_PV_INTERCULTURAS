@@ -3,7 +3,7 @@ import test, { afterEach } from "node:test";
 
 import { v2 as cloudinary } from "cloudinary";
 
-import { verifyCloudinaryHomeHeroVideoAsset } from "./cloudinary";
+import { mapVerifiedCloudinaryHomeHeroVideoAsset, verifyCloudinaryHomeHeroVideoAsset } from "./cloudinary";
 
 type ResourcesByAssetIds = typeof cloudinary.api.resources_by_asset_ids;
 type CloudinaryAssetLookupResponse = Awaited<ReturnType<ResourcesByAssetIds>>;
@@ -116,6 +116,25 @@ test("requests Cloudinary tags during asset verification so workflow-tagged uplo
     mediaType: "video",
     mimeType: "video/mp4",
     publicId: "fp-pv-interculturas/home-hero-videos/hero-video-123",
-    sourceUrl: "https://res.cloudinary.com/demo/video/upload/v1/hero-video-123.mp4",
+    sourceUrl: "https://res.cloudinary.com/demo/video/upload/c_limit,h_1920,q_auto,vc_h264,w_1920/v1/hero-video-123.mp4",
   });
+});
+
+test("accepts QuickTime videos and delivers them through the MP4 derivative", () => {
+  const verifiedAsset = mapVerifiedCloudinaryHomeHeroVideoAsset({
+    asset_id: "asset-mov",
+    bytes: 39_269_102,
+    created_at: new Date().toISOString(),
+    format: "mov",
+    public_id: "fp-pv-interculturas/home-hero-videos/hero-video-mov",
+    resource_type: "video",
+    secure_url: "https://res.cloudinary.com/demo/video/upload/v1790734003/fp-pv-interculturas/home-hero-videos/hero-video-mov.mov",
+    tags: ["fp-pv-interculturas", "home-hero-media"],
+  });
+
+  assert.equal(verifiedAsset.mimeType, "video/mp4");
+  assert.equal(
+    verifiedAsset.sourceUrl,
+    "https://res.cloudinary.com/demo/video/upload/c_limit,h_1920,q_auto,vc_h264,w_1920/v1790734003/fp-pv-interculturas/home-hero-videos/hero-video-mov.mp4",
+  );
 });

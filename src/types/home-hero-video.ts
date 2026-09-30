@@ -2,8 +2,20 @@ export const homeHeroVideoStorageProviders = ["local", "cloudinary"] as const;
 export const homeHeroVideoMediaTypes = ["image", "video"] as const;
 export const homeHeroVideoMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/avif", "video/mp4"] as const;
 
-export const homeHeroVideoMaxImageFileSizeBytes = 25 * 1024 * 1024;
-export const homeHeroVideoMaxVideoFileSizeBytes = 150 * 1024 * 1024;
+// Uploaded source files the admin may pick. Videos are always delivered as an MP4 derivative, so the stored
+// mimeType stays inside homeHeroVideoMimeTypes even when the source is a QuickTime (.mov) container.
+export const homeHeroVideoUploadMimeTypes = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/avif",
+  "video/mp4",
+  "video/quicktime",
+] as const;
+
+// Aligned with the Cloudinary Free plan per-file limits (10 MB images, 100 MB videos).
+export const homeHeroVideoMaxImageFileSizeBytes = 10 * 1024 * 1024;
+export const homeHeroVideoMaxVideoFileSizeBytes = 100 * 1024 * 1024;
 
 export type HomeHeroVideoStorageProvider = (typeof homeHeroVideoStorageProviders)[number];
 export type HomeHeroVideoMediaType = (typeof homeHeroVideoMediaTypes)[number];

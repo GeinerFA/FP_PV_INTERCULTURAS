@@ -6,6 +6,7 @@ import {
   homeHeroVideoMaxImageFileSizeBytes,
   homeHeroVideoMaxVideoFileSizeBytes,
   homeHeroVideoMimeTypes,
+  homeHeroVideoUploadMimeTypes,
   type HomeHeroVideoMediaType,
   type HomeHeroVideoMimeType,
 } from "@/types/home-hero-video";
@@ -20,6 +21,8 @@ type HomeHeroVideoUploadSignature = {
   acceptedMimeTypes: readonly string[];
   apiKey: string;
   cloudName: string;
+  eager: string | null;
+  eagerAsync: string | null;
   folder: string;
   maxFileSizeBytes: number;
   publicId: string;
@@ -44,6 +47,11 @@ const homeHeroVideoCloudinaryPublicIdPrefix = `${homeHeroVideoCloudinaryFolder}/
 const homeHeroVideoCloudinaryTags = ["fp-pv-interculturas", "home-hero-media"] as const;
 const homeHeroVideoUploadVerificationMaxAgeMs = 60 * 60 * 1000;
 const homeHeroVideoUploadClockSkewMs = 5 * 60 * 1000;
+// Hero videos are delivered as a web-friendly H.264 MP4 capped at 1080p/1920px, whatever container the source
+// used (camera, drone and iPhone files are often QuickTime even when named .MP4). The derivative is generated
+// eagerly at upload time so large sources never hit Cloudinary's on-the-fly video transformation limit.
+const homeHeroVideoDeliveryTransformation = "c_limit,h_1920,q_auto,vc_h264,w_1920";
+const homeHeroVideoEagerTransformation = `${homeHeroVideoDeliveryTransformation}/mp4`;
 
 function readCloudinaryCredentials(): CloudinaryCredentials {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME?.trim();
@@ -72,10 +80,11 @@ function getCloudinaryClient() {
 
 function parseCloudinaryMimeType(mediaType: HomeHeroVideoMediaType, format: unknown): HomeHeroVideoMimeType {
   if (mediaType === "video") {
-    if (format !== "mp4") {
-      throw new Error(`Cloudinary home hero videos must use one of: ${homeHeroVideoMimeTypes.join(", ")}.`);
+    if (typeof format !== "string" || format.trim().length === 0) {
+      throw new Error("Cloudinary home hero videos must report a source format.");
     }
 
+    // Any container Cloudinary accepted as a video is delivered through the MP4 derivative.
     return "video/mp4";
   }
 
@@ -108,6 +117,23 @@ function assertVerifiedHomeHeroVideoSourceUrl(value: unknown): string {
   if (parsedUrl.protocol !== "https:") {
     throw new Error("Cloudinary home hero media must expose an https delivery URL.");
   }
+
+  return parsedUrl.toString();
+}
+
+function buildHomeHeroVideoDeliveryUrl(secureUrl: string): string {
+  const parsedUrl = new URL(secureUrl);
+  const uploadSegment = "/video/upload/";
+  const uploadSegmentIndex = parsedUrl.pathname.indexOf(uploadSegment);
+
+  if (uploadSegmentIndex === -1) {
+    throw new Error("Cloudinary home hero video URL must be a video upload delivery URL.");
+  }
+
+  const prefix = parsedUrl.pathname.slice(0, uploadSegmentIndex + uploadSegment.length);
+  const assetPath = parsedUrl.pathname.slice(uploadSegmentIndex + uploadSegment.length).replace(/\.[^./]+$/, "");
+
+  parsedUrl.pathname = `${prefix}${homeHeroVideoDeliveryTransformation}/${assetPath}.mp4`;
 
   return parsedUrl.toString();
 }
@@ -188,25 +214,30 @@ export function mapVerifiedCloudinaryHomeHeroVideoAsset(value: unknown): Verifie
 
   assertRecentHomeHeroVideoUpload(asset.created_at);
 
+  const secureUrl = assertVerifiedHomeHeroVideoSourceUrl(asset.secure_url);
+
   return {
     assetId,
     bytes,
     mediaType,
     mimeType: parseCloudinaryMimeType(mediaType, asset.format),
     publicId,
-    sourceUrl: assertVerifiedHomeHeroVideoSourceUrl(asset.secure_url),
+    sourceUrl: mediaType === "video" ? buildHomeHeroVideoDeliveryUrl(secureUrl) : secureUrl,
   };
 }
 
-function getAcceptedMimeTypes(mediaType: HomeHeroVideoMediaType): HomeHeroVideoMimeType[] {
-  return homeHeroVideoMimeTypes.filter((mimeType) => mimeType.startsWith(`${mediaType}/`)) as HomeHeroVideoMimeType[];
+function getAcceptedMimeTypes(mediaType: HomeHeroVideoMediaType): string[] {
+  return homeHeroVideoUploadMimeTypes.filter((mimeType) => mimeType.startsWith(`${mediaType}/`));
 }
 
 export function createHomeHeroVideoUploadSignature(mediaType: HomeHeroVideoMediaType): HomeHeroVideoUploadSignature {
   const { client, credentials } = getCloudinaryClient();
   const timestamp = Math.floor(Date.now() / 1000);
   const publicId = `hero-${mediaType}-${randomUUID()}`;
+  const eager = mediaType === "video" ? homeHeroVideoEagerTransformation : null;
+  const eagerAsync = mediaType === "video" ? "true" : null;
   const paramsToSign = {
+    ...(eager && eagerAsync ? { eager, eager_async: eagerAsync } : {}),
     folder: homeHeroVideoCloudinaryFolder,
     public_id: publicId,
     tags: homeHeroVideoCloudinaryTags.join(","),
@@ -217,6 +248,8 @@ export function createHomeHeroVideoUploadSignature(mediaType: HomeHeroVideoMedia
     acceptedMimeTypes: getAcceptedMimeTypes(mediaType),
     apiKey: credentials.apiKey,
     cloudName: credentials.cloudName,
+    eager,
+    eagerAsync,
     folder: homeHeroVideoCloudinaryFolder,
     maxFileSizeBytes: mediaType === "image" ? homeHeroVideoMaxImageFileSizeBytes : homeHeroVideoMaxVideoFileSizeBytes,
     publicId,

@@ -39,7 +39,7 @@ test("rejects uploads above the configured hero video limit", () => {
         cloudinaryPublicId: "fp-pv/home-videos/oversized",
         cloudinaryAssetId: "asset-456",
       }),
-    /must be 157286400 bytes or smaller/,
+    /must be 104857600 bytes or smaller/,
   );
 });
 
@@ -74,7 +74,7 @@ test("rejects images above the configured hero image limit", () => {
         cloudinaryPublicId: "fp-pv/home-videos/oversized",
         cloudinaryAssetId: "asset-999",
       }),
-    /must be 26214400 bytes or smaller/,
+    /must be 10485760 bytes or smaller/,
   );
 });
 
@@ -108,7 +108,7 @@ test("maps verified Cloudinary home hero video metadata", () => {
     mediaType: "video",
     mimeType: "video/mp4",
     publicId: "fp-pv-interculturas/home-hero-videos/hero-video-123",
-    sourceUrl: "https://res.cloudinary.com/demo/video/upload/v1/hero-video-123.mp4",
+    sourceUrl: "https://res.cloudinary.com/demo/video/upload/c_limit,h_1920,q_auto,vc_h264,w_1920/v1/hero-video-123.mp4",
   });
 });
 
