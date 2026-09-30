@@ -7,6 +7,8 @@ import type { ComponentProps } from "react";
 import { locales, type AppLocale } from "@/config/i18n";
 import { Link, usePathname } from "@/i18n/navigation";
 
+import { usePublicHeader } from "./public-header";
+
 type PublicLanguageSwitcherProps = {
   label: string;
   localeNames: Record<AppLocale, string>;
@@ -20,11 +22,17 @@ export function PublicLanguageSwitcher({ label, localeNames }: PublicLanguageSwi
   const activeLocale = useLocale() as AppLocale;
   const pathname = usePathname();
   const params = useParams();
+  const { isTransparent } = usePublicHeader();
   // The params always belong to the current route, so they match `pathname`.
   const href = { pathname, params } as unknown as ComponentProps<typeof Link>["href"];
 
   return (
-    <nav aria-label={label} className="flex items-center rounded-full border border-white/85 bg-white/60 p-1 text-xs font-semibold">
+    <nav
+      aria-label={label}
+      className={`flex items-center rounded-full border p-1 text-xs font-semibold transition-colors duration-500 ${
+        isTransparent ? "border-white/30 bg-white/10 backdrop-blur-sm" : "border-white/85 bg-white/60"
+      }`}
+    >
       {locales.map((locale) => {
         const isActive = locale === activeLocale;
 
@@ -38,7 +46,11 @@ export function PublicLanguageSwitcher({ label, localeNames }: PublicLanguageSwi
             aria-current={isActive ? "true" : undefined}
             title={localeNames[locale]}
             className={`rounded-full px-2.5 py-1.5 uppercase tracking-[0.14em] transition ${
-              isActive ? "bg-emerald-800 text-white" : "text-slate-600 hover:bg-white hover:text-slate-950"
+              isActive
+                ? "bg-emerald-800 text-white"
+                : isTransparent
+                  ? "text-white/80 hover:bg-white/15 hover:text-white"
+                  : "text-slate-600 hover:bg-white hover:text-slate-950"
             }`}
           >
             <span aria-hidden="true">{locale}</span>

@@ -6,6 +6,8 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import type { AdminSession } from "@/lib/admin-session";
 
+import { usePublicHeader } from "./public-header";
+
 export type PublicHeaderControlsLabels = {
   accountMenuLabel: string;
   accountMenuTitle: string;
@@ -30,6 +32,7 @@ type ProfileAvatarProps = {
   imageUrl: string | null | undefined;
   initial: string;
   useUserIcon?: boolean;
+  iconClassName?: string;
 };
 
 const POPOVER_EXIT_DURATION_MS = 180;
@@ -42,7 +45,14 @@ function UserAvatarIcon({ className }: { className: string }) {
   );
 }
 
-function ProfileAvatar({ className, fallbackClassName, imageUrl, initial, useUserIcon = false }: ProfileAvatarProps) {
+function ProfileAvatar({
+  className,
+  fallbackClassName,
+  imageUrl,
+  initial,
+  useUserIcon = false,
+  iconClassName = "text-slate-950",
+}: ProfileAvatarProps) {
   if (imageUrl) {
     return (
       <Image
@@ -62,7 +72,7 @@ function ProfileAvatar({ className, fallbackClassName, imageUrl, initial, useUse
   if (useUserIcon) {
     return (
       <span aria-hidden="true" className={fallbackClassName}>
-        <UserAvatarIcon className="h-7 w-7 text-slate-950" />
+        <UserAvatarIcon className={`h-7 w-7 ${iconClassName}`} />
       </span>
     );
   }
@@ -81,6 +91,7 @@ export function PublicHeaderControls({
   const rootRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const closeTimeoutRef = useRef<number | null>(null);
+  const { isTransparent } = usePublicHeader();
   const panelId = useId();
   const titleId = useId();
   const descriptionId = useId();
@@ -91,7 +102,11 @@ export function PublicHeaderControls({
   const profileInitial = profileLabel.charAt(0).toUpperCase() || "P";
   const profileName = session?.displayName?.trim() || session?.email;
   const triggerClassName =
-    "relative flex h-10 w-10 cursor-pointer select-none items-center justify-center overflow-hidden rounded-full border border-white/85 bg-white/60 text-sm font-semibold tracking-[0.18em] text-slate-600 shadow-[0_14px_32px_-28px_rgba(15,23,42,0.34)] transition duration-150 ease-out hover:border-emerald-200 hover:bg-white hover:text-slate-950 focus-visible:bg-white focus-visible:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none";
+    `relative flex h-10 w-10 cursor-pointer select-none items-center justify-center overflow-hidden rounded-full border text-sm font-semibold tracking-[0.18em] transition duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none ${
+    isTransparent
+      ? "border-white/30 bg-white/10 text-white backdrop-blur-sm hover:border-white/60 hover:bg-white/20"
+      : "border-white/85 bg-white/60 text-slate-600 shadow-[0_14px_32px_-28px_rgba(15,23,42,0.34)] hover:border-emerald-200 hover:bg-white hover:text-slate-950 focus-visible:bg-white focus-visible:text-slate-950"
+  }`;
   const panelClassName =
     "surface-dark-soft-strong absolute right-0 top-[calc(100%+0.75rem)] z-30 w-[min(21rem,calc(100vw-2rem))] origin-top-right rounded-[28px] border border-white/85 p-5 text-left shadow-[0_30px_80px_-45px_rgba(15,23,42,0.28)] motion-reduce:animate-none";
 
@@ -189,6 +204,7 @@ export function PublicHeaderControls({
             imageUrl={session?.imageUrl}
             initial={profileInitial}
             useUserIcon={!isSignedIn}
+            iconClassName={isTransparent ? "text-white" : "text-slate-950"}
           />
         </button>
 

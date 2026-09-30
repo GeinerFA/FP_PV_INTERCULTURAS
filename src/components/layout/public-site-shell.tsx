@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { buildAdminGoogleAuthUrl, getAdminSession } from "@/lib/admin-session";
+import { PublicHeader } from "./public-header";
 import { PublicHeaderControls } from "./public-header-controls";
 import { PublicLanguageSwitcher } from "./public-language-switcher";
 import { PublicNavbar } from "./public-navbar";
@@ -39,7 +40,7 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.32),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_36%,#eff6f1_100%)] text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-white/70 bg-white/70 backdrop-blur-xl">
+      <PublicHeader>
         <div className="mx-auto flex max-w-6xl items-start justify-between gap-3 px-6 py-3 md:flex-nowrap md:items-center md:gap-4 lg:gap-6">
           <div className="min-w-0 flex-1">
             <PublicNavbar navigationLabels={navigationLabels} />
@@ -58,7 +59,7 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
             />
           </div>
         </div>
-      </header>
+      </PublicHeader>
 
       <main
         id="public-main"

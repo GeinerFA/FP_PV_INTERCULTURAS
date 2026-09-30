@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
 
 import { siteConfig } from "@/config/site";
 import { Link as NextLink, usePathname } from "@/i18n/navigation";
+
+import { usePublicHeader } from "./public-header";
 
 type NavigationLabels = Record<(typeof siteConfig.publicNavigation)[number]["labelKey"] | "contact" | "admin", string>;
 
@@ -15,7 +16,7 @@ type PublicNavbarProps = {
 export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
   // Locale-less internal pathname ("/programs" on both / and /en).
   const normalizedPathname: string = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
+  const { isTransparent, menuOpen: isOpen, setMenuOpen: setIsOpen } = usePublicHeader();
 
   const navItems = siteConfig.publicNavigation.filter((item) => item.href !== "/");
 
@@ -32,7 +33,7 @@ export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
               alt={siteConfig.name}
               width={2420}
               height={778}
-              className="h-10 w-auto object-contain md:h-12"
+              className={`h-10 w-auto object-contain transition-[filter] duration-500 md:h-12 ${isTransparent ? "brightness-0 invert" : ""}`}
               priority
             />
           </NextLink>
@@ -43,7 +44,11 @@ export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
             aria-controls="public-navbar-links"
             aria-label="Toggle navigation"
             onClick={() => setIsOpen((current) => !current)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/45 text-slate-700 transition hover:bg-white/65 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-emerald-200 xl:hidden"
+            className={`inline-flex h-10 w-10 items-center justify-center rounded-full transition focus:outline-none focus:ring-2 focus:ring-emerald-200 xl:hidden ${
+              isTransparent
+                ? "border border-white/30 bg-white/10 text-white hover:bg-white/20"
+                : "bg-white/45 text-slate-700 hover:bg-white/65 hover:text-slate-950"
+            }`}
           >
             <span className="sr-only">Toggle navigation</span>
             <span className="flex flex-col gap-1">
@@ -70,8 +75,12 @@ export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
                 onClick={() => setIsOpen(false)}
                 className={`inline-flex items-center whitespace-nowrap py-1 text-sm font-medium transition ${
                   isActive
-                    ? "text-slate-950"
-                    : "text-slate-600 hover:text-slate-950"
+                    ? isTransparent
+                      ? "text-white"
+                      : "text-slate-950"
+                    : isTransparent
+                      ? "text-white/80 hover:text-white"
+                      : "text-slate-600 hover:text-slate-950"
                 }`}
               >
                 <span className="nav-underline pb-0.5" data-active={isActive}>
@@ -84,7 +93,9 @@ export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
           <NextLink
             href={{ pathname: "/", hash: "contact" }}
             onClick={() => setIsOpen(false)}
-            className="inline-flex items-center whitespace-nowrap py-1 text-sm font-semibold text-emerald-900 transition hover:text-emerald-700"
+            className={`inline-flex items-center whitespace-nowrap py-1 text-sm font-semibold transition ${
+              isTransparent ? "text-emerald-300 hover:text-emerald-200" : "text-emerald-900 hover:text-emerald-700"
+            }`}
           >
             <span className="border-b border-emerald-400/45 pb-0.5">{navigationLabels.contact}</span>
           </NextLink>

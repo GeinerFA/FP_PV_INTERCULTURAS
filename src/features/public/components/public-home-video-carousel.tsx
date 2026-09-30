@@ -97,7 +97,7 @@ export function PublicHomeVideoCarousel({
   );
 
   return (
-    // Ocupa toda la pantalla bajo el encabezado; el margen negativo anula el padding superior de <main>.
+    // El margen negativo anula el padding superior de <main> para que el hero llegue al borde de la pantalla.
     <section className="animate-fade-up relative left-1/2 isolate -mt-8 w-screen -translate-x-1/2 overflow-hidden bg-slate-950 text-white md:-mt-10 lg:-mt-12">
       <div className="absolute inset-0">
         {slides.map((slide, index) => (
@@ -133,9 +133,12 @@ export function PublicHomeVideoCarousel({
         ))}
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(2,6,23,0.7)_0%,rgba(15,23,42,0.3)_50%,rgba(6,78,59,0.4)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(2,6,23,0.85)_0%,rgba(2,6,23,0.35)_40%,transparent_70%)]" />
+        {/* Oscurece la franja superior para que el encabezado transparente se lea. */}
+        <div className="absolute inset-x-0 top-0 h-40 bg-[linear-gradient(180deg,rgba(2,6,23,0.6)_0%,transparent_100%)]" />
       </div>
 
-      <div className="relative mx-auto flex min-h-[max(34rem,calc(100svh_-_4rem))] w-full max-w-6xl flex-col justify-end px-6 pb-8 pt-24 md:min-h-[max(38rem,calc(100svh_-_4.5rem))] md:pb-10 lg:pb-12">
+      {/* El encabezado es fixed en inicio, así que el hero ocupa la pantalla completa detrás de él. */}
+      <div className="relative mx-auto flex min-h-[max(36rem,100svh)] w-full max-w-6xl flex-col justify-end px-6 pb-8 pt-32 md:min-h-[max(40rem,100svh)] md:pb-10 lg:pb-12">
         {children}
 
         {hasMultipleSlides ? (
