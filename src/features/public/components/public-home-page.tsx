@@ -16,6 +16,7 @@ type HomeMessages = {
     primaryAction: string;
     secondaryAction: string;
     contactAction: string;
+    scrollHint: string;
   };
   story: {
     eyebrow: string;
@@ -146,53 +147,57 @@ export async function PublicHomePage({
           mediaType: video.mediaType,
           displayDurationSeconds: video.displayDurationSeconds,
         }))}
-      />
-
-      <section className="-mt-2 md:-mt-6 lg:-mt-10">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)] lg:items-end lg:gap-10">
-          <div className="max-w-3xl pt-8 md:pt-10 lg:pt-12">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-emerald-800">
-              {home.hero.eyebrow}
-            </p>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 md:text-5xl lg:text-6xl">
-              {home.hero.title}
-            </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 md:text-lg">
-              {home.hero.description}
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-4">
-              <LocaleLink
-                href={programsHref}
-                className="inline-flex items-center justify-center rounded-full bg-emerald-800 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
-              >
-                {home.hero.primaryAction}
-              </LocaleLink>
-              <LocaleLink
-                href={applyHref}
-                className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white/90 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 hover:border-slate-400 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
-              >
-                {home.hero.secondaryAction}
-              </LocaleLink>
-            </div>
-          </div>
-
-          <aside className="rounded-[2rem] border border-white/80 bg-white/72 p-6 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.28)] backdrop-blur-sm md:p-7">
-            <p className="text-sm font-semibold text-emerald-900 md:text-base">
-              {home.cta.title}
-            </p>
-            <p className="mt-4 text-sm leading-7 text-slate-600 md:text-base">
-              {home.cta.description}
-            </p>
-            <LocaleLink
-              href={{ pathname: "/", hash: "contact" }}
-              className="mt-6 inline-flex text-sm font-semibold text-emerald-900 transition hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
-            >
-              {home.hero.contactAction}
-            </LocaleLink>
-          </aside>
+        scrollHintLabel={home.hero.scrollHint}
+      >
+        <div className="max-w-5xl">
+          <p className="flex items-center gap-4 text-xs font-semibold uppercase tracking-[0.3em] text-emerald-300 md:text-sm">
+            <span aria-hidden="true" className="h-px w-10 shrink-0 bg-emerald-300/70 md:w-14" />
+            {home.hero.eyebrow}
+          </p>
+          <h1 className="mt-6 text-4xl font-semibold leading-[1.05] tracking-tight text-white [text-wrap:balance] sm:text-5xl lg:text-6xl xl:text-7xl">
+            {home.hero.title}
+          </h1>
         </div>
-      </section>
+
+        <div className="mt-8 flex flex-col gap-8 md:mt-10 lg:flex-row lg:items-end lg:justify-between">
+          <p className="max-w-xl text-base leading-7 text-white/80 md:text-lg md:leading-8">
+            {home.hero.description}
+          </p>
+
+          <div className="flex flex-wrap gap-3 lg:shrink-0 lg:justify-end">
+            <LocaleLink
+              href={programsHref}
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-emerald-400 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-emerald-950 shadow-[0_18px_40px_-18px_rgba(52,211,153,0.8)] transition hover:-translate-y-0.5 hover:bg-emerald-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 motion-reduce:transition-none"
+            >
+              {home.hero.primaryAction}
+              <span aria-hidden="true" className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                ↗
+              </span>
+            </LocaleLink>
+            <LocaleLink
+              href={applyHref}
+              className="inline-flex items-center justify-center rounded-full border border-white/40 bg-white/10 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-white/70 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 motion-reduce:transition-none"
+            >
+              {home.hero.secondaryAction}
+            </LocaleLink>
+          </div>
+        </div>
+      </PublicHomeVideoCarousel>
+
+      <aside className="flex flex-col gap-4 rounded-[2rem] border border-white/80 bg-white/72 p-6 shadow-[0_24px_60px_-42px_rgba(15,23,42,0.28)] backdrop-blur-sm md:flex-row md:items-center md:justify-between md:gap-8 md:p-7">
+        <div>
+          <p className="text-sm font-semibold text-emerald-900 md:text-base">{home.cta.title}</p>
+          <p className="mt-2 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">
+            {home.cta.description}
+          </p>
+        </div>
+        <LocaleLink
+          href={{ pathname: "/", hash: "contact" }}
+          className="inline-flex shrink-0 items-center justify-center rounded-full border border-emerald-300 bg-white px-5 py-3 text-sm font-semibold text-emerald-900 transition hover:-translate-y-0.5 hover:border-emerald-400 hover:bg-emerald-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
+        >
+          {home.hero.contactAction}
+        </LocaleLink>
+      </aside>
 
       <div className="grid gap-14 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-12">
         <section>

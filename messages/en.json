@@ -1325,7 +1325,8 @@
       "description": "Pura Vida Interculturas supports volunteering, internships and Spanish learning from San Ramón, with a personal approach focused on human impact.",
       "primaryAction": "Explore programs",
       "secondaryAction": "Start your application",
-      "contactAction": "Talk to the team"
+      "contactAction": "Talk to the team",
+      "scrollHint": "Scroll"
     },
     "story": {
       "eyebrow": "Our story",

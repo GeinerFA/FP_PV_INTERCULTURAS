@@ -14,6 +14,8 @@ type CarouselSlide = {
 
 type PublicHomeVideoCarouselProps = {
   slides: CarouselSlide[];
+  scrollHintLabel: string;
+  children: React.ReactNode;
 };
 
 const AUTOPLAY_INTERVAL_MS = 7000;
@@ -33,6 +35,8 @@ function playVideo(video: HTMLVideoElement | null) {
 
 export function PublicHomeVideoCarousel({
   slides,
+  scrollHintLabel,
+  children,
 }: PublicHomeVideoCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -92,20 +96,17 @@ export function PublicHomeVideoCarousel({
     [activeIndex, slides.length],
   );
 
-  if (slides.length === 0) {
-    return null;
-  }
-
   return (
-    <section className="animate-fade-up relative left-1/2 isolate w-screen -translate-x-1/2 overflow-hidden bg-slate-950 text-white shadow-[0_30px_80px_-40px_rgba(15,23,42,0.9)]">
+    // Ocupa toda la pantalla bajo el encabezado; el margen negativo anula el padding superior de <main>.
+    <section className="animate-fade-up relative left-1/2 isolate -mt-8 w-screen -translate-x-1/2 overflow-hidden bg-slate-950 text-white md:-mt-10 lg:-mt-12">
       <div className="absolute inset-0">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-700 ${index === activeIndex ? "opacity-100" : "opacity-0"}`}
+            className={`absolute inset-0 transition-opacity duration-1000 ${index === activeIndex ? "opacity-100" : "opacity-0"}`}
           >
             {slide.mediaType === "image" ? (
-              <img src={slide.src} alt={slide.fileName} className="h-full w-full object-contain" />
+              <img src={slide.src} alt={slide.fileName} className="h-full w-full object-cover" />
             ) : (
               <AdaptiveVideo
                 ref={(node) => {
@@ -130,28 +131,40 @@ export function PublicHomeVideoCarousel({
             )}
           </div>
         ))}
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(2,6,23,0.82)_0%,rgba(15,23,42,0.45)_45%,rgba(6,78,59,0.52)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.22),transparent_34%),radial-gradient(circle_at_bottom_left,rgba(251,191,36,0.16),transparent_30%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(2,6,23,0.7)_0%,rgba(15,23,42,0.3)_50%,rgba(6,78,59,0.4)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(2,6,23,0.85)_0%,rgba(2,6,23,0.35)_40%,transparent_70%)]" />
       </div>
 
-      <div className="relative flex min-h-[22rem] flex-col justify-end px-6 py-6 sm:px-8 md:min-h-[30rem] md:px-10 md:py-8 lg:min-h-[38rem] lg:px-14 lg:py-10">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 border-t border-white/15 pt-5 text-sm text-slate-200">
-          <div className="flex items-center gap-3 rounded-full bg-slate-950/30 px-4 py-3 backdrop-blur-sm">
-            {slides.map((slide, index) => (
-              <button
-                key={slide.id}
-                type="button"
-                aria-label={`Mostrar slide ${index + 1}`}
-                aria-pressed={index === activeIndex}
-                onClick={() => setActiveIndex(index)}
-                className={`h-2.5 rounded-full transition-all ${index === activeIndex ? "w-10 bg-emerald-300" : "w-2.5 bg-white/45 hover:bg-white/70"}`}
-              />
-            ))}
+      <div className="relative mx-auto flex min-h-[max(34rem,calc(100svh_-_4rem))] w-full max-w-6xl flex-col justify-end px-6 pb-8 pt-24 md:min-h-[max(38rem,calc(100svh_-_4.5rem))] md:pb-10 lg:pb-12">
+        {children}
+
+        {hasMultipleSlides ? (
+          <div className="mt-10 flex items-center justify-between gap-4 border-t border-white/15 pt-5 text-xs text-white/70">
+            <div className="flex items-center gap-2.5">
+              {slides.map((slide, index) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  aria-label={`Mostrar slide ${index + 1}`}
+                  aria-pressed={index === activeIndex}
+                  onClick={() => setActiveIndex(index)}
+                  className={`h-1.5 rounded-full transition-all duration-500 ${index === activeIndex ? "w-10 bg-emerald-300" : "w-4 bg-white/40 hover:bg-white/70"}`}
+                />
+              ))}
+            </div>
+            <p className="font-medium uppercase tracking-[0.24em]">{statusLabel}</p>
           </div>
-          <p className="rounded-full bg-slate-950/30 px-4 py-3 font-medium uppercase tracking-[0.18em] text-white/80 backdrop-blur-sm">
-            {statusLabel}
-          </p>
-        </div>
+        ) : null}
+      </div>
+
+      <div
+        aria-hidden="true"
+        className="absolute bottom-10 right-8 hidden flex-col items-center gap-4 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-white/60 xl:flex"
+      >
+        <span className="[writing-mode:vertical-rl]">{scrollHintLabel}</span>
+        <span className="relative h-16 w-px overflow-hidden bg-white/20">
+          <span className="absolute inset-x-0 top-0 h-1/2 animate-[scroll-hint_2.2s_ease-in-out_infinite] bg-emerald-300" />
+        </span>
       </div>
     </section>
   );

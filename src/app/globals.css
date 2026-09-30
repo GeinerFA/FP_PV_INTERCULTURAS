@@ -845,6 +845,16 @@ a:focus-visible .nav-underline,
   }
 }
 
+@keyframes scroll-hint {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(200%);
+  }
+}
+
 @keyframes fade-in {
   from {
     opacity: 0;

@@ -1324,7 +1324,8 @@
       "description": "Pura Vida Interculturas acompaña voluntariados, pasantías y aprendizaje de español desde San Ramón, con una propuesta cercana y enfocada en impacto humano.",
       "primaryAction": "Explorar programas",
       "secondaryAction": "Comenzar aplicación",
-      "contactAction": "Hablar con el equipo"
+      "contactAction": "Hablar con el equipo",
+      "scrollHint": "Deslizá"
     },
     "story": {
       "eyebrow": "Nuestra historia",
