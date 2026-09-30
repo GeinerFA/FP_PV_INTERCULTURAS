@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
-import { redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
 import { PublicApplicationSuccess } from "@/features/applications/components/public-application-success";
@@ -10,6 +9,8 @@ import {
   publicApplicationSuccessCookieValue,
 } from "@/features/applications/public-application-flow";
 import { PublicPageTemplate } from "@/features/public/components/public-page-template";
+import { getPathname } from "@/i18n/navigation";
+import { redirect } from "next/navigation";
 import { buildMetadata } from "@/lib/metadata";
 
 type ApplySuccessPageProps = {
@@ -30,7 +31,7 @@ export default async function ApplySuccessPage({ params }: ApplySuccessPageProps
   ]);
 
   if (cookieStore.get(publicApplicationSuccessCookieName)?.value !== publicApplicationSuccessCookieValue) {
-    redirect("/apply");
+    redirect(getPathname({ href: "/apply", locale }));
   }
 
   return (

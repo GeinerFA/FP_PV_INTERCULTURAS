@@ -15,10 +15,11 @@ type ApplyPageProps = {
   params: Promise<{ locale: AppLocale }>;
 };
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Pages.apply");
+export async function generateMetadata({ params }: Pick<ApplyPageProps, "params">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Pages.apply" });
 
-  return buildMetadata({ title: t("title"), description: t("description") });
+  return buildMetadata({ title: t("title"), description: t("description"), locale, href: "/apply" });
 }
 
 export default async function ApplyPage({ params }: ApplyPageProps) {

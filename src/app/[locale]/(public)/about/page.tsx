@@ -9,10 +9,11 @@ type AboutPageProps = {
   params: Promise<{ locale: AppLocale }>;
 };
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Pages.about");
+export async function generateMetadata({ params }: Pick<AboutPageProps, "params">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Pages.about" });
 
-  return buildMetadata({ title: t("title"), description: t("description") });
+  return buildMetadata({ title: t("title"), description: t("description"), locale, href: "/about" });
 }
 
 export default async function AboutPage({ params }: AboutPageProps) {

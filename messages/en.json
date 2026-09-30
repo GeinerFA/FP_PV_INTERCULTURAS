@@ -1,0 +1,1765 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "about": "About us",
+    "programs": "Programs",
+    "apply": "Apply",
+    "contact": "Contact",
+    "admin": "Admin",
+    "faqs": "FAQ"
+  },
+  "Shell": {
+    "tagline": "",
+    "footer": "Pura Vida Interculturas connects educational and community experiences from a clear, close-knit base that is ready to grow.",
+    "contactAction": "Go to the contact section",
+    "accountMenuLabel": "Open admin access",
+    "accountMenuTitle": "Admin area",
+    "accountMenuDescription": "Access restricted to authorized administrators.",
+    "accountLoginAction": "Continue with Google",
+    "accountSignedInHint": "An admin session is already active.",
+    "accountAdminAction": "Admin panel",
+    "accountLogoutAction": "Sign out",
+    "languageSwitcherLabel": "Site language",
+    "localeNames": {
+      "es": "Español",
+      "en": "English"
+    }
+  },
+  "AdminShell": {
+    "accountMenuLabel": "Abrir control de la cuenta administrativa",
+    "accountMenuTitle": "Cuenta administrativa",
+    "accountMenuDescription": "Gestioná la sesión autorizada del panel desde este control lateral.",
+    "homeLabel": "Volver al inicio público",
+    "backLabel": "Volver a la página anterior",
+    "login": "Iniciar sesión",
+    "sessionActive": "Sesión iniciada",
+    "logout": "Cerrar sesión",
+    "loginNotice": "Iniciá sesión con una cuenta administrativa autorizada para usar las rutas protegidas.",
+    "continueWithGoogle": "Continuar con Google",
+    "navigation": {
+      "dashboard": "Panel",
+      "programs": "Programas",
+      "applications": "Solicitudes",
+      "activity": "Actividad",
+      "settings": "Configuración"
+    }
+  },
+  "AdminPages": {
+    "login": {
+      "title": "Acceso administrativo",
+      "description": "Ingresá con Google para acceder al área administrativa.",
+      "sections": [
+        "El acceso administrativo está separado del sitio público.",
+        "Solo pueden ingresar cuentas autorizadas.",
+        "Después de iniciar sesión, volvés a la sección que querías abrir."
+      ]
+    },
+    "dashboard": {
+      "title": "Panel administrativo",
+      "description": "Resumen general de programas y solicitudes en un solo lugar.",
+      "sections": [
+        "Reúne la información clave del día en una sola vista.",
+        "Facilita el acceso rápido a solicitudes y programas.",
+        "Te ayuda a ubicar lo importante sin rodeos."
+      ]
+    },
+    "programs": {
+      "title": "Gestión de programas",
+      "description": "Creá, editá, publicá o archivá los programas del sitio.",
+      "sections": [
+        "Desde acá administrás el catálogo y cada ficha de programa.",
+        "Podés ver si un programa está publicado, en borrador o archivado.",
+        "Las acciones principales quedan disponibles en la misma vista."
+      ]
+    },
+    "programsNew": {
+      "title": "Crear programa",
+      "description": "Completá la información del programa y elegí si querés guardarlo o publicarlo.",
+      "sections": [
+        "Podés guardar un borrador si todavía te falta información.",
+        "Publicar queda disponible cuando el contenido ya está listo.",
+        "Antes de publicar, los campos obligatorios tienen que estar completos."
+      ]
+    },
+    "programsEdit": {
+      "title": "Editar programa",
+      "description": "Actualizá un programa y elegí si querés publicarlo, archivarlo o reactivarlo.",
+      "sections": [
+        "Vas a encontrar la información actual del programa lista para editar.",
+        "Si el programa no existe, la página lo informa de forma clara.",
+        "Los cambios se verán en el sitio cuando vuelvas a publicar."
+      ]
+    },
+    "applications": {
+      "title": "Bandeja de solicitudes",
+      "description": "Bandeja operativa para revisar las solicitudes recibidas, detectar su estado actual y abrir el detalle administrativo de cada persona postulante.",
+      "sections": [
+        "Muestra nombre, contacto, fecha de envío y estado actual de cada solicitud registrada.",
+        "Permite detectar rápidamente si la bandeja está vacía o si hay trabajo pendiente por revisar.",
+        "Funciona sobre las solicitudes registradas desde el formulario público."
+      ]
+    },
+    "applicationDetail": {
+      "title": "Detalle de solicitud",
+      "description": "Vista individual para revisar los datos de la persona postulante, su estado actual y el historial de seguimiento.",
+      "sections": [
+        "Carga la solicitud registrada y la presenta en un formato claro para revisión administrativa.",
+        "Permite cambiar el estado dentro del conjunto aprobado: pendiente, en proceso, finalizado y cancelado.",
+        "Muestra el recorrido básico del estado para facilitar el seguimiento."
+      ]
+    },
+    "activity": {
+      "title": "Bitácora de actividad",
+      "description": "Vista operativa con movimientos administrativos reales para seguir cambios recientes sobre solicitudes y programas.",
+      "sections": [
+        "Ordena los eventos más recientes primero para facilitar el seguimiento diario.",
+        "Registra las acciones realizadas dentro del panel.",
+        "Ayuda a entender qué cambió y quién hizo cada acción reciente."
+      ]
+    },
+    "settings": {
+      "title": "Configuración del sitio",
+      "description": "Administrá contenidos y ajustes clave del sitio desde un solo lugar.",
+      "sections": [
+        "Reúne las secciones de configuración sin recargar la pantalla principal.",
+        "Cada sección tiene su propio espacio para trabajar con claridad.",
+        "Incluye categorías, videos de la home, preguntas frecuentes y control de usuarios."
+      ]
+    },
+    "settingsHomeVideos": {
+      "title": "Videos de la home",
+      "description": "Gestioná el carrusel principal de la portada: subí recursos, ordenalos y mantené actualizada la presentación.",
+      "sections": [
+        "Permite subir videos e imágenes directamente desde el dispositivo.",
+        "Guarda el orden visible y la información necesaria de cada recurso para la portada.",
+        "Mantiene una base segura para no dejar la home en blanco mientras se actualizan los recursos de portada."
+      ]
+    },
+    "settingsUsers": {
+      "title": "Usuarios administrativos",
+      "description": "Gestioná quién puede entrar al panel y qué permisos tiene cada persona administradora.",
+      "sections": [
+        "Google autentica la identidad y el acceso se valida según el registro administrativo activo.",
+        "Cada persona administradora puede tener permisos distintos por módulo y nivel de acción.",
+        "La seguridad protege que nunca desaparezca el último superadmin activo del panel."
+      ]
+    },
+    "programsEnglish": {
+      "title": "Versión en inglés del programa",
+      "description": "Revisá y corregí la traducción automática. Lo que guardes acá no se sobrescribe en los próximos guardados del español.",
+      "sections": []
+    },
+    "settingsTranslations": {
+      "title": "Traducción al inglés",
+      "description": "Estado de la traducción automática de programas, preguntas frecuentes y categorías.",
+      "sections": []
+    }
+  },
+  "AdminSettingsOverview": {
+    "eyebrow": "Módulos disponibles",
+    "title": "Configuraciones de la página",
+    "description": "Reúne accesos directos para actualizar contenidos y configuraciones clave del sitio.",
+    "backAction": "Volver a configuración",
+    "note": "Cada sección te permite actualizar una parte del sitio desde el área administrativa.",
+    "modules": {
+      "categories": {
+        "eyebrow": "Catálogo base",
+        "title": "Categorías de programas",
+        "description": "Creá, editá o eliminá categorías para organizar programas en el editor y en el catálogo público.",
+        "action": "Gestionar categorías"
+      },
+      "homeVideos": {
+        "eyebrow": "Portada pública",
+        "title": "Media del home",
+        "description": "Subí videos o imágenes, ordená la portada y quitá los recursos que ya no deban mostrarse.",
+        "action": "Gestionar portada"
+      },
+      "faqs": {
+        "eyebrow": "Contenido público",
+        "title": "Preguntas frecuentes",
+        "description": "Creá, editá, eliminá o reordená las preguntas frecuentes visibles en el sitio.",
+        "action": "Gestionar preguntas frecuentes"
+      },
+      "translations": {
+        "eyebrow": "Sitio en inglés",
+        "title": "Traducción automática",
+        "description": "Revisá qué contenidos ya tienen versión en inglés y traducí de una vez lo que falte.",
+        "action": "Ver traducciones"
+      },
+      "users": {
+        "eyebrow": "Acceso administrativo",
+        "title": "Usuarios",
+        "description": "Administrá quién puede ingresar, qué rol tiene y qué permisos conserva en cada sección.",
+        "action": "Gestionar usuarios"
+      }
+    }
+  },
+  "AdminUserSettings": {
+    "unavailable": {
+      "eyebrow": "Usuarios no disponibles",
+      "title": "No se pudo cargar la gestión de usuarios administrativos",
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+    },
+    "stats": {
+      "total": {
+        "label": "Usuarios registrados",
+        "description": "Total de personas con acceso administrativo registradas hoy."
+      },
+      "active": {
+        "label": "Usuarios activos",
+        "description": "Personas que hoy sí pueden ingresar al espacio administrativo si su correo de Google está verificado."
+      },
+      "superadmins": {
+        "label": "Superadmins activos",
+        "description": "Cantidad actual de superadmins activos protegidos por la regla de seguridad del último acceso crítico."
+      }
+    },
+    "create": {
+      "title": "Agregar usuario administrativo",
+      "description": "Registrá una nueva persona administradora con su estado y matriz de permisos por módulo.",
+      "disclosureHint": "Abrí este formulario solo cuando realmente necesites dar de alta a otra persona. El alta comparte la misma matriz de permisos que después podés ajustar desde la lista existente.",
+      "grantAllLabel": "Otorgar todo",
+      "grantAllHint": "Si lo marcás al crear, la matriz queda completa y el sistema guarda automáticamente a la persona como superadmin.",
+      "disclosureClosedLabel": "Agregar usuario",
+      "disclosureOpenLabel": "Cerrar formulario de nuevo usuario"
+    },
+    "list": {
+      "title": "Usuarios existentes",
+      "description": "Revisá quién tiene acceso al panel y actualizá sus datos o permisos, desactivá su acceso o eliminá definitivamente su registro cuando haga falta."
+    },
+    "fields": {
+      "email": "Correo electrónico",
+      "fullName": "Nombre completo",
+      "nationalId": "Identificación nacional",
+      "role": "Rol",
+      "roleDerived": "Este rol se calcula automáticamente según la matriz: acceso total equivale a superadmin; si falta cualquier permiso, queda como admin.",
+      "keepActive": "Mantener acceso activo"
+    },
+    "roles": {
+      "admin": "Admin",
+      "superadmin": "Superadmin"
+    },
+    "statuses": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "matrix": {
+      "title": "Matriz de permisos",
+      "description": "Marcá qué puede ver, gestionar o ejecutar como acción crítica esta persona en cada módulo administrativo.",
+      "module": "Módulo",
+      "superadminNote": "El rol ya no se elige a mano: si toda la matriz queda marcada, el sistema guarda a la persona como superadmin; si falta cualquier permiso, queda como admin.",
+      "deleteMeaning": "La columna Control total agrupa acciones sensibles o irreversibles según el módulo, como desactivar acceso, retirar registros o ejecutar cambios críticos.",
+      "usersDeleteMeaning": "En Usuarios, Control total significa poder desactivar el acceso administrativo o eliminar definitivamente a otra persona según la acción elegida.",
+      "actions": {
+        "view": "Ver",
+        "manage": "Gestionar",
+        "delete": "Control total"
+      }
+    },
+    "modules": {
+      "dashboard": {
+        "title": "Panel"
+      },
+      "programs": {
+        "title": "Programas"
+      },
+      "applications": {
+        "title": "Solicitudes"
+      },
+      "activity": {
+        "title": "Actividad"
+      },
+      "settings": {
+        "title": "Configuración"
+      },
+      "users": {
+        "title": "Usuarios"
+      }
+    },
+    "actions": {
+      "create": "Crear usuario",
+      "save": "Guardar cambios",
+      "activate": "Activar acceso",
+      "deactivate": "Desactivar acceso",
+      "delete": "Eliminar definitivamente"
+    },
+    "delete": {
+      "title": "Confirmar eliminación permanente",
+      "description": "Esta acción elimina el registro del usuario administrativo de forma definitiva.",
+      "warning": "Si solo querés quitar el acceso temporalmente, usá Desactivar acceso. La eliminación permanente no se puede deshacer.",
+      "confirm": "Sí, eliminar definitivamente",
+      "cancel": "Cancelar"
+    },
+    "entry": {
+      "nationalId": "Identificación",
+      "missingNationalId": "pendiente",
+      "permissions": "Permisos visibles",
+      "noPermissions": "sin permisos de acceso",
+      "disclosureClosedLabel": "Ver y editar detalles",
+      "disclosureOpenLabel": "Ocultar detalles",
+      "currentAdminDeleteBlocked": "No podés eliminar tu propio acceso desde esta sesión activa.",
+      "updatedAt": "Actualizado {updatedAt}"
+    },
+    "feedback": {
+      "created": "El usuario administrativo se creó correctamente.",
+      "updated": "Los permisos y datos del usuario se actualizaron correctamente.",
+      "activated": "El acceso administrativo quedó activado nuevamente.",
+      "deactivated": "El acceso administrativo quedó desactivado sin borrar la cuenta.",
+      "deleted": "El usuario administrativo se eliminó definitivamente.",
+      "invalid": "No se pudo interpretar el formulario. Revisá correo, nombre completo y permisos antes de reintentar.",
+      "save-failed": "No se pudo guardar este usuario administrativo en este momento. Intentá nuevamente en unos minutos.",
+      "toggle-failed": "No se pudo cambiar el estado activo de este usuario en este momento.",
+      "delete-failed": "No se pudo eliminar este usuario administrativo en este momento.",
+      "duplicate-email": "Ya existe otro usuario administrativo con ese correo.",
+      "last-superadmin-protected": "No se puede dejar al panel sin su último superadmin activo. Primero activá o promové a otra persona con ese rol.",
+      "self-delete-blocked": "No podés eliminar tu propio usuario administrativo mientras esta sesión siga activa.",
+      "destructive-confirmation-required": "Confirmá la eliminación permanente antes de ejecutar esta acción."
+    },
+    "placeholders": {
+      "email": "admin@correo.com",
+      "fullName": "Nombre completo del usuario",
+      "nationalId": "Documento o cédula"
+    },
+    "empty": "Todavía no hay personas con acceso administrativo. Cuando agregués la primera, aparecerá en esta lista."
+  },
+  "AdminCategorySettings": {
+    "unavailable": {
+      "eyebrow": "Categorías no disponibles",
+      "title": "No se pudo cargar la gestión de categorías",
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+    },
+    "stats": {
+      "total": {
+        "label": "Categorías activas",
+        "description": "Categorías disponibles para organizar los programas."
+      },
+      "inUse": {
+        "label": "En uso",
+        "description": "Cantidad de categorías que hoy están referenciadas por al menos un programa."
+      }
+    },
+    "live": {
+      "label": "Impacto inmediato",
+      "description": "Los cambios se reflejan en la configuración, en el editor administrativo de programas y en la presentación pública ligada a cada categoría."
+    },
+    "create": {
+      "title": "Crear categoría",
+      "description": "Definí una nueva categoría administrable para programas actuales o futuros.",
+      "disclosureHint": "El código interno se genera automáticamente desde el nombre y queda fijo después de crear la categoría para no romper programas ya vinculados.",
+      "disclosureClosedLabel": "Agregar categoría",
+      "disclosureOpenLabel": "Cerrar formulario de categoría"
+    },
+    "list": {
+      "title": "Categorías existentes",
+      "description": "Editá el nombre visible o el tema visual. La eliminación queda bloqueada si todavía existe algún programa que use la categoría."
+    },
+    "entry": {
+      "code": "Código {code}",
+      "programCount": "Programas vinculados: {count}",
+      "disclosureClosedLabel": "Ver y editar detalles",
+      "disclosureOpenLabel": "Ocultar detalles"
+    },
+    "fields": {
+      "name": "Nombre visible",
+      "nameEnglish": "Nombre en inglés",
+      "englishHint": "Dejalo vacío para traducirlo automáticamente. Si lo editás a mano, se conserva aunque cambie el nombre en español.",
+      "theme": "Tema visual"
+    },
+    "themes": {
+      "emerald": "Verde",
+      "sky": "Celeste",
+      "amber": "Ámbar",
+      "violet": "Violeta",
+      "rose": "Rosa",
+      "slate": "Pizarra"
+    },
+    "actions": {
+      "create": "Crear categoría",
+      "save": "Guardar cambios",
+      "delete": "Eliminar categoría"
+    },
+    "delete": {
+      "title": "Confirmar eliminación",
+      "description": "Eliminar esta categoría la quita de la configuración administrable.",
+      "warning": "Solo se puede eliminar si ningún programa la está usando actualmente.",
+      "blockedWarning": "Esta categoría sigue vinculada a uno o más programas. Primero reasigná esos programas antes de eliminarla.",
+      "confirm": "Sí, eliminar categoría",
+      "cancel": "Cancelar"
+    },
+    "feedback": {
+      "created": "La categoría se creó correctamente y ya forma parte de la fuente administrada del catálogo.",
+      "updated": "La categoría se actualizó correctamente.",
+      "deleted": "La categoría se eliminó correctamente.",
+      "invalid": "No se pudo interpretar el formulario. Revisá nombre y tema antes de reintentar.",
+      "save-failed": "No se pudo guardar la categoría en este momento. Intentá nuevamente en unos minutos.",
+      "delete-failed": "No se pudo eliminar la categoría en este momento. Intentá nuevamente desde esta vista.",
+      "delete-blocked": "No se puede eliminar la categoría porque todavía hay programas vinculados a ella.",
+      "duplicate-code": "Ya existe una categoría con un nombre que genera el mismo código interno. Elegí un nombre diferente."
+    },
+    "placeholders": {
+      "name": "Nombre visible de la categoría"
+    },
+    "empty": "Todavía no hay categorías administradas. Creá al menos una para habilitar la selección en programas."
+  },
+  "AdminDashboardOverview": {
+    "unavailable": {
+      "eyebrow": "Panel no disponible",
+      "title": "No se pudo cargar el panel administrativo",
+      "description": "No pudimos cargar este panel en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+    },
+    "applications": {
+      "eyebrow": "Carga de solicitudes",
+      "title": "Solicitudes activas",
+      "description": "Resumen real de la bandeja actual para detectar volumen, pendientes y seguimiento en proceso.",
+      "cta": "Abrir solicitudes",
+      "recentHeading": "Actividad reciente",
+      "empty": "Todavía no hay solicitudes registradas. Cuando lleguen nuevas postulaciones, esta vista mostrará el estado real de la bandeja.",
+      "stats": {
+        "total": {
+          "label": "Total recibidas",
+          "description": "Conteo actual de solicitudes disponibles en la bandeja administrativa."
+        },
+        "pending": {
+          "label": "Pendientes",
+          "description": "Solicitudes que todavía no avanzaron a una revisión en proceso."
+        },
+        "inProcess": {
+          "label": "En proceso",
+          "description": "Casos que ya tienen seguimiento administrativo activo."
+        }
+      },
+      "statuses": {
+        "pending": "Pendiente",
+        "in_process": "En proceso",
+        "resolved": "Finalizada",
+        "cancelled": "Cancelada"
+      }
+    },
+    "programs": {
+      "eyebrow": "Estado del catálogo",
+      "title": "Programas administrados",
+      "description": "Resumen del catálogo para ver qué ya está publicado y qué sigue en borrador.",
+      "cta": "Abrir programas",
+      "recentHeading": "Últimos programas actualizados",
+      "empty": "Todavía no hay programas en el catálogo administrativo. Cuando existan, esta vista resumirá su estado real.",
+      "stats": {
+        "total": {
+          "label": "Total en catálogo",
+          "description": "Cantidad actual de programas disponibles en la fuente administrativa."
+        },
+        "published": {
+          "label": "Publicados",
+          "description": "Programas que ya pueden aparecer en el catálogo público localizado."
+        },
+        "drafts": {
+          "label": "En borrador",
+          "description": "Programas que todavía requieren definición antes de publicarse."
+        }
+      },
+      "statuses": {
+        "draft": "Borrador",
+        "published": "Publicado",
+        "archived": "Archivado"
+      }
+    }
+  },
+  "AdminProgramsOverview": {
+    "yes": "Sí",
+    "no": "No",
+    "unavailable": {
+      "eyebrow": "Vista no disponible",
+      "title": "No se pudo cargar la sección de programas",
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+    },
+    "stats": {
+      "catalogSize": {
+        "label": "Tamaño del catálogo",
+        "description": "Cantidad total de programas cargados en el sitio."
+      },
+      "publishedNow": {
+        "label": "Publicados ahora",
+        "description": "Elementos publicados que aparecen en el catálogo público."
+      },
+      "draftBacklog": {
+        "label": "Borradores activos",
+        "description": "Programas que todavía no se publicaron."
+      },
+      "archivedNow": {
+        "label": "Archivados",
+        "description": "Programas que ya no se muestran en el sitio, pero siguen disponibles para consulta interna."
+      }
+    },
+    "summary": {
+      "heading": "Lectura rápida del catálogo",
+      "description": "Distribución actual por categoría para ver dónde ya hay oferta publicada y dónde todavía falta contenido."
+    },
+    "actions": {
+      "heading": "Siguiente movimiento",
+      "description": "Desde acá podés crear, editar y cambiar el estado de cada programa sin perder de vista lo que ya está visible en el sitio.",
+      "create": "Crear nuevo programa",
+      "showArchived": "Programas archivados",
+      "showActive": "Volver a programas activos",
+      "note": "Usá el editor para guardar borradores, publicar cuando el contenido esté listo y archivar sin borrar el registro."
+    },
+    "feedback": {
+      "archived": "El programa se archivó y dejó de mostrarse entre los programas activos.",
+      "deleted": "El programa se eliminó correctamente.",
+      "destructive-confirmation-required": "Para archivar desde la tabla primero confirmá la advertencia visible de esa fila.",
+      "draft-saved": "El borrador se guardó correctamente.",
+      "published": "El programa ya está visible en el sitio.",
+      "reactivated": "El programa volvió a borrador y ya podés seguir editándolo."
+    },
+    "table": {
+      "heading": "Programas actuales",
+      "description": "Cada fila muestra categoría, estado, destacado, disponibilidad y acciones rápidas para editar o cambiar el estado.",
+      "archivedHeading": "Programas archivados",
+      "archivedDescription": "Esta vista reúne solo los programas archivados para separarlos del trabajo activo.",
+      "newProgram": "Crear nuevo programa",
+      "showArchived": "Programas archivados",
+      "backToActive": "Volver a programas activos",
+      "showActive": "Ver programas activos",
+      "emptyActive": "No hay programas publicados ni en borrador en este momento. Podés revisar el historial archivado o crear un programa nuevo.",
+      "emptyArchived": "No hay programas archivados en este momento.",
+      "openEditor": "Abrir editor",
+      "openEnglish": "Inglés",
+      "archive": "Archivar",
+      "reactivate": "Reactivar",
+      "archiveConfirmation": {
+        "title": "Confirmar archivo",
+        "description": "Archivar retira el programa del sitio sin borrar el registro.",
+        "warning": "Dejará de estar visible hasta que lo reactives y vuelvas a publicarlo.",
+        "confirm": "Sí, archivar",
+        "cancel": "Cancelar"
+      }
+    },
+    "empty": {
+      "eyebrow": "Punto de partida",
+      "title": "Todavía no hay programas cargados",
+      "description": "Desde acá podés crear el primer programa y guardar un borrador cuando lo necesités.",
+      "note": "Cuando sumes programas, esta vista seguirá mostrando el resumen del catálogo y las acciones principales.",
+      "cta": "Crear primer programa"
+    },
+    "columns": {
+      "program": "Programa",
+      "category": "Categoría",
+      "status": "Estado",
+      "featured": "Destacado",
+      "availability": "Disponibilidad",
+      "actions": "Acciones"
+    },
+    "categories": {
+      "volunteer": "Voluntariado",
+      "internships": "Pasantía",
+      "spanish-classes": "Clases de español"
+    },
+    "statuses": {
+      "draft": "Borrador",
+      "published": "Publicado",
+      "archived": "Archivado"
+    },
+    "pagination": {
+      "previousLabel": "Página anterior",
+      "nextLabel": "Página siguiente",
+      "pageSummary": "Página {page} de {totalPages}",
+      "rangeSummary": "Mostrando {from} a {to} de {total} programas en esta vista."
+    }
+  },
+  "AdminActivityOverview": {
+    "unavailable": {
+      "eyebrow": "Bitácora no disponible",
+      "title": "No se pudo cargar la bitácora administrativa",
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+    },
+    "stats": {
+      "total": {
+        "label": "Eventos visibles",
+        "description": "Cantidad de movimientos recientes registrados en la bitácora."
+      },
+      "applications": {
+        "label": "Cambios en solicitudes",
+        "description": "Actualizaciones de estado registradas desde el detalle administrativo de postulaciones."
+      },
+      "programs": {
+        "label": "Movimientos en programas",
+        "description": "Creaciones y cambios registrados desde la sección de programas."
+      },
+      "settings": {
+        "label": "Movimientos en configuración",
+        "description": "Cambios reales registrados desde FAQs, categorías, usuarios y videos del inicio."
+      }
+    },
+    "entityTypes": {
+      "application": "Solicitud",
+      "faq": "Pregunta frecuente",
+      "program_category": "Categoría",
+      "admin_user": "Usuario administrador",
+      "home_hero_video": "Video de inicio",
+      "program": "Programa"
+    },
+    "actions": {
+      "applicationStatusUpdated": "Estado actualizado",
+      "faqCreated": "Creación",
+      "faqUpdated": "Edición",
+      "faqDeleted": "Eliminación",
+      "faqReordered": "Reordenamiento",
+      "programCategoryCreated": "Creación",
+      "programCategoryUpdated": "Edición",
+      "programCategoryDeleted": "Eliminación",
+      "adminUserCreated": "Creación",
+      "adminUserUpdated": "Edición",
+      "adminUserActivated": "Activación",
+      "adminUserDeactivated": "Desactivación",
+      "adminUserDeleted": "Eliminación",
+      "homeHeroVideoCreated": "Creación",
+      "homeHeroVideoReordered": "Reordenamiento",
+      "homeHeroVideoDeleted": "Eliminación",
+      "programCreated": "Creación",
+      "programUpdated": "Edición",
+      "programPublished": "Publicación",
+      "programArchived": "Archivo",
+      "programDeleted": "Eliminación",
+      "programReactivated": "Reactivación"
+    },
+    "changeFields": {
+      "featured": "Destacado",
+      "title": "Título",
+      "category": "Categoría",
+      "slug": "Slug"
+    },
+    "statuses": {
+      "pending": "Pendiente",
+      "in_process": "En proceso",
+      "resolved": "Finalizada",
+      "cancelled": "Cancelada"
+    },
+    "feed": {
+      "eyebrow": "Seguimiento reciente",
+      "title": "Movimientos administrativos",
+      "description": "Cada evento resume qué pasó, sobre qué registro ocurrió y quién realizó la acción cuando esa información está disponible.",
+      "latestLabel": "Último registro",
+      "empty": "Todavía no hay movimientos registrados en la bitácora. Cuando el panel ejecute cambios instrumentados, esta vista mostrará el historial real más reciente.",
+      "openRecord": "Ver historial completo",
+      "expandDetails": "Ver más detalles",
+      "systemActor": "Sistema",
+      "noValue": "sin valor",
+      "changeSummary": "{field}: {from} → {to}",
+      "boolean": {
+        "true": "Sí",
+        "false": "No"
+      },
+      "unknownPreviousStatus": "estado previo no disponible",
+      "unknownCurrentStatus": "estado actual no disponible",
+      "summary": {
+        "applicationStatusUpdated": "Estado actualizado en solicitud {target}.",
+        "faqCreated": "Pregunta frecuente creada: {target}.",
+        "faqUpdated": "Pregunta frecuente actualizada: {target}.",
+        "faqDeleted": "Pregunta frecuente eliminada: {target}.",
+        "faqReordered": "Pregunta frecuente reordenada: {target}.",
+        "programCategoryCreated": "Categoría creada: {target}.",
+        "programCategoryUpdated": "Categoría actualizada: {target}.",
+        "programCategoryDeleted": "Categoría eliminada: {target}.",
+        "adminCreated": "Admin creado: {target}.",
+        "adminUserCreated": "Usuario administrador creado: {target}.",
+        "adminUserUpdated": "Usuario administrador actualizado: {target}.",
+        "adminUserActivated": "Usuario administrador activado: {target}.",
+        "superadminCreated": "Superadmin creado: {target}.",
+        "adminUserDeactivated": "Usuario administrador desactivado: {target}.",
+        "adminUserDeleted": "Usuario administrador eliminado: {target}.",
+        "homeHeroVideoCreated": "Video de inicio creado: {target}.",
+        "homeHeroVideoReordered": "Video de inicio reordenado.",
+        "homeHeroVideoDeleted": "Video de inicio eliminado: {target}.",
+        "programCreated": "Programa creado: {target}.",
+        "programUpdated": "Cambio realizado a programa {target}.",
+        "programPublished": "Programa publicado: {target}.",
+        "programArchived": "Programa archivado: {target}.",
+        "programDeleted": "Programa eliminado: {target}.",
+        "programReactivated": "Programa reactivado: {target}."
+      }
+    },
+    "history": {
+      "title": "Historial de {target}",
+      "description": "Mostrando {count, number} registros reales del historial administrativo, del más reciente al más antiguo.",
+      "backToFeed": "Volver a actividad",
+      "metadata": {
+        "title": "Metadatos del cambio",
+        "actorLabel": "Responsable",
+        "dateTimeLabel": "Fecha y hora"
+      },
+      "detail": {
+        "applicationStatusUpdated": "Se cambió el estado de la solicitud {target} de {from} a {to}.",
+        "faqCreated": "Se creó la pregunta frecuente {target}.",
+        "faqUpdated": "Se actualizó la pregunta frecuente {target}.",
+        "faqDeleted": "Se eliminó la pregunta frecuente {target}.",
+        "faqReordered": "Se reordenó la pregunta frecuente {target}.",
+        "programCategoryCreated": "Se creó la categoría {target}.",
+        "programCategoryUpdated": "Se actualizó la categoría {target}.",
+        "programCategoryDeleted": "Se eliminó la categoría {target}.",
+        "adminCreated": "Se creó el admin {target}.",
+        "adminUserCreated": "Se creó el usuario administrador {target}.",
+        "adminUserUpdated": "Se actualizó el usuario administrador {target}.",
+        "adminUserActivated": "Se activó el usuario administrador {target}.",
+        "superadminCreated": "Se creó el superadmin {target}.",
+        "adminUserDeactivated": "Se desactivó el usuario administrador {target}.",
+        "adminUserDeleted": "Se eliminó el usuario administrador {target}.",
+        "homeHeroVideoCreated": "Se creó el video de inicio {target}.",
+        "homeHeroVideoReordered": "Se reordenó el video de inicio {target}.",
+        "homeHeroVideoReorderedWithPositions": "Se reordenó el video de inicio {target} de la posición {fromPosition} a la posición {toPosition}.",
+        "homeHeroVideoDeleted": "Se eliminó el video de inicio {target}.",
+        "programCreated": "Se creó el programa {target}.",
+        "programUpdated": "Se actualizó el programa {target}.",
+        "programPublished": "Se publicó el programa {target}.",
+        "programArchived": "Se archivó el programa {target}.",
+        "programDeleted": "Se eliminó el programa {target}.",
+        "programReactivated": "Se reactivó el programa {target}.",
+        "programFeaturedEnabled": "Se marcó el programa {target} como destacado.",
+        "programFeaturedDisabled": "Se desactivó el programa {target} de destacado.",
+        "programChangeFields": {
+          "title": "Se cambió el título del programa {target} de {from} a {to}.",
+          "category": "Se cambió la categoría del programa {target} de {from} a {to}.",
+          "slug": "Se cambió el slug del programa {target} de {from} a {to}."
+        }
+      }
+    },
+    "pagination": {
+      "previousLabel": "Página anterior",
+      "nextLabel": "Página siguiente",
+      "pageSummary": "Página {page} de {totalPages}",
+      "rangeSummary": "Mostrando {from} a {to} de {total} eventos."
+    }
+  },
+  "AdminProgramForm": {
+    "unavailable": {
+      "eyebrow": "Editor no disponible",
+      "title": "No se pudo cargar el editor de programas",
+      "description": "No pudimos cargar este editor en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+    },
+    "mode": {
+      "create": "Nuevo programa",
+      "edit": "Editar programa"
+    },
+    "intro": {
+      "create": "Completá primero la información visible del programa y dejá al final las decisiones de publicación.",
+      "edit": "Revisá primero el contenido visible del programa y usá al final las acciones para guardar, publicar o archivar."
+    },
+    "notice": {
+      "title": "Antes de guardar",
+      "body": "Podés guardar un borrador para seguir trabajando más tarde o publicar cuando el contenido ya esté listo para mostrarse en el sitio."
+    },
+    "required": {
+      "badge": "* Obligatorio",
+      "legend": "Completá estos campos antes de publicar.",
+      "help": "Si alguno falta, el programa no podrá publicarse. Si todavía no está listo, podés guardar un borrador."
+    },
+    "publishedEditWarning": {
+      "title": "Este programa sigue visible con su versión actual",
+      "description": "Estás editando cambios nuevos de un programa que ya está publicado.",
+      "saveBoundary": "Al actualizar y publicar, el sitio mostrará de inmediato esta nueva versión. Si todavía no querés hacerla visible, guardá un borrador.",
+      "liveBoundary": "Hasta volver a publicar, el sitio seguirá mostrando la versión actual."
+    },
+    "sections": {
+      "localizedPresentation": "Contenido principal del programa",
+      "operationalDetails": "Resumen visible del programa",
+      "coverImage": "Imagen de portada",
+      "workflow": "Publicación",
+      "editorialMeta": "Metadatos editoriales",
+      "boundaries": "Consideraciones importantes",
+      "requirements": "Requisitos",
+      "included": "Qué incluye",
+      "seoAuditPreview": "Buscadores y datos internos"
+    },
+    "descriptions": {
+      "localizedPresentation": "Título, descripciones y narrativa pública primero, siguiendo el orden base de la página pública.",
+      "operationalDetails": "Datos de apoyo que completan la ficha visible del programa: ubicación, duración, disponibilidad, categoría y destacado.",
+      "coverImage": "La imagen de portada se gestiona por separado para que el editor sea más claro.",
+      "requirements": "Cargá un requisito por línea para mantener la lectura pública clara y editable.",
+      "included": "Listá por línea lo que forma parte de la experiencia publicada.",
+      "editorialMeta": "Datos internos para organizar el programa sin distraer de la información principal."
+    },
+    "fields": {
+      "internalId": "ID interno",
+      "slug": "Slug",
+      "category": "Categoría",
+      "status": "Estado",
+      "featured": "Destacado",
+      "featuredToggle": "Marcar como destacado en el catálogo",
+      "coverImage": "Imagen de portada",
+      "title": "Título",
+      "shortDescription": "Descripción corta",
+      "fullDescription": "Descripción completa",
+      "location": "Ubicación",
+      "duration": "Duración",
+      "availability": "Disponibilidad",
+      "seoTitle": "Título para buscadores",
+      "seoDescription": "Descripción para buscadores"
+    },
+    "categoryEmptyState": "No hay categorías disponibles en este momento. Primero creá una categoría desde Configuración para poder guardar o publicar programas nuevos.",
+    "statuses": {
+      "draft": "Borrador",
+      "published": "Publicado",
+      "archived": "Archivado"
+    },
+    "actions": {
+      "saveDraft": "Guardar borrador",
+      "update": "Actualizar",
+      "addAndPublish": "Agregar y publicar",
+      "updateAndPublish": "Actualizar y publicar",
+      "publish": "Publicar",
+      "archive": "Archivar programa",
+      "delete": "Eliminar permanentemente",
+      "reactivate": "Reactivar como borrador",
+      "backToOverview": "Volver al listado"
+    },
+    "rail": {
+      "eyebrow": "Acciones del editor",
+      "statusLabel": "Estado",
+      "pendingDraftLabel": "Borrador pendiente",
+      "noteTitle": "Antes de salir",
+      "noteBody": "Desde este formulario podés guardar, publicar, archivar o eliminar. Las acciones más sensibles siempre te van a pedir confirmación."
+    },
+    "workflow": {
+      "description": "Publicar verifica los campos obligatorios y actualiza de inmediato la versión visible en el sitio. Guardar borrador te permite seguir trabajando sin hacer cambios públicos."
+    },
+    "destructive": {
+      "cancel": "Cancelar",
+      "archive": {
+        "title": "Confirmación de archivo",
+        "description": "Archivar retira el programa del sitio, pero conserva el registro.",
+        "warning": "Dejará de estar visible hasta que lo reactives y vuelvas a publicarlo.",
+        "confirm": "Sí, archivar programa"
+      },
+      "delete": {
+        "title": "Confirmación de eliminación",
+        "description": "Eliminar permanentemente borra el programa y no se puede deshacer desde este panel.",
+        "warning": "Se elimina el registro completo, incluido el borrador pendiente y cualquier versión pública asociada.",
+        "confirm": "Sí, eliminar definitivamente"
+      }
+    },
+    "feedback": {
+      "draft-saved": "El borrador se guardó correctamente.",
+      "published": "El programa ya está visible en el sitio.",
+      "archived": "El programa se archivó y dejó de estar visible en el sitio.",
+      "reactivated": "El programa volvió a borrador. Seguirá oculto hasta que vuelvas a publicarlo.",
+      "deleted": "El programa se eliminó correctamente y dejó de estar disponible en el sitio.",
+      "destructive-confirmation-required": "Antes de archivar o eliminar, confirmá la advertencia visible del panel para evitar cambios destructivos accidentales.",
+      "invalid": "No se pudo interpretar el formulario. Revisá categoría, slug y campos estructurados antes de reintentar.",
+      "invalid-image-type": "La imagen de portada debe ser JPG, PNG, WEBP, GIF o AVIF.",
+      "image-too-large": "La imagen de portada debe pesar 8 MB o menos.",
+      "save-failed": "No se pudo guardar el borrador. Verificá la conexión y el contenido obligatorio del formulario.",
+      "publish-failed": "No se pudo publicar. Revisá campos públicos obligatorios y recordá que el slug no puede cambiar después de la primera publicación.",
+      "delete-failed": "No se pudo eliminar el programa en este momento. Intentá nuevamente desde el editor."
+    },
+    "translationLocale": "Contenido {locale}",
+    "boundaries": {
+      "0": "Cada programa conserva un solo borrador pendiente; no hay historial completo de versiones.",
+      "1": "Archivar nunca elimina el registro: solo lo saca del sitio público hasta reactivarlo y publicar otra vez.",
+      "2": "Después de la primera publicación, el slug queda fijo para proteger las rutas públicas existentes."
+    },
+    "coverImageUpload": {
+      "description": "Subí una imagen local de portada en formato JPG, PNG, WEBP, GIF o AVIF de hasta 8 MB. No hace falta pegar una URL.",
+      "publishBoundary": "Si publicás, la nueva imagen se verá de inmediato en el sitio. Si todavía no querés mostrarla, guardá un borrador.",
+      "selectedPreview": "Vista previa antes de publicar",
+      "selectedPreviewAlt": "Vista previa local de la nueva imagen de portada",
+      "selectedFile": "Archivo seleccionado",
+      "currentDraft": "Imagen actual del borrador",
+      "currentDraftAlt": "Vista previa de la imagen de portada del borrador",
+      "currentPublished": "Imagen pública actual",
+      "currentPublishedAlt": "Vista previa de la imagen de portada publicada",
+      "openPublishedLarge": "Hacé clic en la imagen para verla más grande sin salir de esta página.",
+      "previewDialogTitle": "Vista ampliada de la imagen pública actual",
+      "closePreview": "Cerrar vista ampliada"
+    },
+    "seoAuditDescription": "Revisá cómo se verá este programa en buscadores y consultá sus datos internos de creación y actualización.",
+    "audit": {
+      "createdBy": "Creado por",
+      "updatedBy": "Actualizado por",
+      "createdAt": "Creado en",
+      "updatedAt": "Actualizado en",
+      "firstPublishedAt": "Primera publicación",
+      "pendingDraft": "Borrador pendiente"
+    },
+    "placeholders": {
+      "generatedOnSave": "Generado al guardar",
+      "futureSlug": "future-program-slug",
+      "categoryOptions": "volunteer | internships | spanish-classes",
+      "programTitle": "Título del programa",
+      "shortDescription": "Descripción corta para tarjetas y listados",
+      "fullDescription": "Descripción extensa del programa",
+      "localizedLocation": "Ubicación localizada",
+      "localizedDuration": "Duración localizada",
+      "localizedAvailability": "Disponibilidad localizada",
+      "pendingWorkflow": "pendiente de revisión administrativa",
+      "autoGenerated": "auto-generado",
+      "requirementsLines": "Un requisito por línea",
+      "includedLines": "Un elemento incluido por línea",
+      "seoTitle": "Título visible en buscadores",
+      "seoDescription": "Descripción visible en buscadores",
+      "notPublishedYet": "todavía no publicado"
+    },
+    "yes": "Sí",
+    "no": "No"
+  },
+  "AdminLogin": {
+    "title": "Acceso administrativo",
+    "description": "Ingresá con una cuenta de Google autorizada para abrir el espacio administrativo.",
+    "protectedNotice": "El acceso protege todo /{locale}/admin y te devuelve a la ruta solicitada después de validar la sesión.",
+    "nextLabel": "Destino después de iniciar sesión: {nextPath}",
+    "continueWithGoogle": "Continuar con Google",
+    "errors": {
+      "access_denied": "La cuenta de Google no está autorizada para ingresar al panel.",
+      "config": "Falta completar la configuración administrativa antes de iniciar sesión.",
+      "oauth": "No se pudo completar el acceso con Google. Intentá nuevamente.",
+      "state": "La validación del inicio de sesión expiró. Volvé a intentarlo."
+    }
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you requested does not exist or is not available right now.",
+    "backHome": "Back to home"
+  },
+  "Pages": {
+    "home": {
+      "eyebrow": "Main public site",
+      "title": "We connect people with intercultural programs in Costa Rica.",
+      "description": "Get to know the organization, explore its programs and find a clear way to express your interest, all in one place.",
+      "highlightOne": "Clear information about volunteering, internships and Spanish classes.",
+      "highlightTwo": "Clear information to compare programs and take the next step.",
+      "highlightThree": "A public experience focused on guidance and contact with the team."
+    },
+    "about": {
+      "eyebrow": "About the organization",
+      "title": "About Pura Vida Interculturas",
+      "description": "Learn how the organization started, what drives it today and how it supports intercultural experiences from a close local base.",
+      "history": {
+        "eyebrow": "History",
+        "title": "A journey built from San Ramón",
+        "description": "The organization grew alongside host families, community partners and participants looking for an experience with more context, care and human connection.",
+        "milestones": {
+          "origin": {
+            "year": "Beginnings",
+            "title": "A local network that started by welcoming arrivals",
+            "description": "The project began by organizing volunteering and learning experiences with close on-the-ground support, so every arrival had real guidance and not just basic logistics."
+          },
+          "community": {
+            "year": "Growth",
+            "title": "Closer ties with communities and partner organizations",
+            "description": "Over time, a way of working took shape that connects visitors with local initiatives, always seeking mutual respect, clarity and ongoing follow-up."
+          },
+          "today": {
+            "year": "Today",
+            "title": "An intercultural program with continuous support",
+            "description": "Today Pura Vida Interculturas presents programs, answers questions and prepares each participant for an experience that is better aligned with the reality of the area and the host community."
+          }
+        }
+      },
+      "mission": {
+        "eyebrow": "Mission",
+        "title": "Supporting experiences with purpose and context",
+        "description": "Our mission is to facilitate exchanges that bring learning, service and cultural closeness without losing sight of the well-being of everyone involved.",
+        "pillars": {
+          "care": "Personal support before, during and after each experience, so participation never feels improvised.",
+          "bridge": "Clear bridges between international participants, host families, partner organizations and the local team.",
+          "clarity": "Practical information and transparent expectations so every decision is made with better preparation."
+        }
+      },
+      "partners": {
+        "eyebrow": "Partner organizations",
+        "title": "Partner organizations",
+        "description": "These organizations help more people discover intercultural programs with clear information and recognizable signs of trust.",
+        "items": {
+          "volunteerWorld": {
+            "logoLabel": "Trusted partner",
+            "logoAlt": "Volunteer World logo",
+            "title": "Volunteer World",
+            "description": "An international volunteering directory that presents opportunities with clear context for people comparing responsible experiences abroad.",
+            "href": "https://www.volunteerworld.com/en",
+            "linkLabel": "Visit Volunteer World"
+          },
+          "omprakash": {
+            "logoLabel": "Partner network",
+            "logoAlt": "Omprakash logo",
+            "title": "Omprakash",
+            "description": "A global network focused on intercultural learning and responsible participation, with a recognized track record connecting people and grassroots organizations.",
+            "href": "https://www.omprakash.org/about?section=omprakash",
+            "linkLabel": "Visit Omprakash"
+          }
+        }
+      }
+    },
+    "programs": {
+      "eyebrow": "What we offer",
+      "title": "Available programs",
+      "description": "Explore volunteering, internship and Spanish class opportunities in a clear, easy-to-browse catalog.",
+      "highlightOne": "Organized by category, availability and featured programs.",
+      "highlightTwo": "Each program has its own page with clear information that is easy to share.",
+      "highlightThree": "Each listing sums up the essentials to help you choose better."
+    },
+    "programDetail": {
+      "eyebrow": "Program details",
+      "title": "Get to know each program in detail",
+      "description": "Find in one place what each program offers, where it takes place, how long it lasts and what you need to prepare.",
+      "highlightOne": "Helps you compare more clearly before deciding.",
+      "highlightTwo": "Brings together the key information to see whether the experience is right for you.",
+      "highlightThree": "From here you can take the next step when you are ready to apply."
+    },
+    "apply": {
+      "eyebrow": "Application",
+      "title": "Start your application",
+      "description": "Share your basic details so the team can review your interest and guide you through the next steps of the process.",
+      "highlightOne": "A simple way to tell us who you are and what interests you.",
+      "highlightTwo": "The team receives your information to review your case and guide you better.",
+      "highlightThree": "When you finish, you will see a confirmation with the next steps."
+    },
+    "applySuccess": {
+      "eyebrow": "Confirmation",
+      "title": "Application received",
+      "description": "We received your information successfully and it is ready for the team's initial review.",
+      "highlightOne": "This confirmation only appears after an accepted submission.",
+      "highlightTwo": "You can keep exploring programs or go back to the home page.",
+      "highlightThree": "The team will follow up as appropriate after reviewing your submission."
+    },
+    "contact": {
+      "eyebrow": "Getting in touch",
+      "title": "Contact",
+      "description": "A place to bring together the team's contact channels, location and ways to reach us.",
+      "highlightOne": "Gathers the key information to answer questions and find the team.",
+      "highlightTwo": "Keeps applications open without requiring user accounts.",
+      "highlightThree": "Helps answer questions before starting an application."
+    }
+  },
+  "ProgramsUi": {
+    "empty": "There are no published programs yet. Check back soon, or write to us if you need help choosing an experience.",
+    "featured": "Featured",
+    "viewDetails": "View details",
+    "backToPrograms": "Back to programs",
+    "applyNow": "Go to the application",
+    "categories": {
+      "volunteer": "Volunteering",
+      "internships": "Internships",
+      "spanish-classes": "Spanish classes"
+    },
+    "labels": {
+      "location": "Location",
+      "duration": "Duration",
+      "availability": "Availability",
+      "requirements": "Requirements",
+      "included": "What's included",
+      "programSnapshot": "Program overview"
+    }
+  },
+  "ApplicationFlow": {
+    "form": {
+      "introTitle": "Complete your general application",
+      "introDescription": "This first form lets us learn your basic details and the initial context of your interest before we coordinate the follow-up.",
+      "requiredLegend": "All fields are required except the message and the résumé.",
+      "requiredFieldWarning": {
+        "badge": "Check the form",
+        "title": "Some required information is missing",
+        "description": "One or more required fields are empty. Check the fields marked as required and complete them before submitting the form."
+      },
+      "privacyNotice": "By submitting this application you share basic information so the Pura Vida Interculturas team can review your interest and follow up with you during the process.",
+      "captchaLabel": "Security check",
+      "captchaHelp": "Complete the checkbox to enable submitting the application.",
+      "captchaExpired": "The verification expired. Complete it again to enable submitting.",
+      "captchaError": "We could not load the security check. Check your connection and try again.",
+      "submitLabel": "Submit application",
+      "submittingLabel": "Submitting application...",
+      "phoneDialCodeLabel": "Country code",
+      "searchableSelect": {
+        "searchPlaceholder": "Type to filter the list",
+        "noResults": "No matches found."
+      },
+      "validation": {
+        "required": "Complete this field to continue.",
+        "invalidEmail": "Enter a valid email address.",
+        "invalidDate": "Enter a valid date.",
+        "invalidSelection": "Select a valid option from the list.",
+        "invalidFileType": "Upload a valid PDF file.",
+        "fileTooLarge": "The file must be 5 MB or smaller."
+      },
+      "errors": {
+        "captchaFailed": "We could not validate the security check. Complete it again and try once more.",
+        "submissionFailed": "We could not register your application right now. Please try again in a few minutes."
+      },
+      "fields": {
+        "firstName": {
+          "label": "First name",
+          "placeholder": "Your first name"
+        },
+        "lastName": {
+          "label": "Last name",
+          "placeholder": "Your last name"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "name@email.com"
+        },
+        "phone": {
+          "label": "Phone",
+          "placeholder": "0000 0000"
+        },
+        "nationality": {
+          "label": "Nationality",
+          "placeholder": "Select your country"
+        },
+        "birthDate": {
+          "label": "Date of birth",
+          "placeholder": ""
+        },
+        "message": {
+          "label": "Message (optional)",
+          "placeholder": "Tell us why you are interested in applying and any context that would help the team",
+          "description": "Optional. If you like, tell us about your motivation or any context that would help the team."
+        },
+        "curriculum": {
+          "label": "Résumé",
+          "placeholder": "",
+          "description": "Optional. You can attach your résumé as a PDF of up to 5 MB."
+        }
+      }
+    },
+    "success": {
+      "badgeLabel": "Confirmed",
+      "title": "Your application has been sent",
+      "description": "Thank you for sharing your information. The team will review it and get in touch with you as appropriate.",
+      "nextStepsTitle": "What's next?",
+      "nextSteps": [
+        "Your application has reached the team.",
+        "They will review your details and write to you as appropriate.",
+        "In the meantime, you can keep exploring the programs and learn more about the organization."
+      ],
+      "primaryActionLabel": "Back to home",
+      "secondaryActionLabel": "Explore programs"
+    },
+    "admin": {
+      "list": {
+        "heading": "Solicitudes registradas",
+        "description": "Revisá la bandeja actual y abrí cada detalle para dar seguimiento a cada solicitud.",
+        "summaryCardDescription": "Coincidencias visibles con los filtros actuales.",
+        "pagination": {
+          "previousLabel": "Página anterior",
+          "nextLabel": "Página siguiente",
+          "pageSummary": "Página {page} de {totalPages}",
+          "rangeSummary": "Mostrando {from} a {to} de {total} solicitudes filtradas."
+        },
+        "openDetail": "Abrir detalle",
+        "emptyFiltered": "No encontramos solicitudes que coincidan con los filtros activos. Ajustá la búsqueda o limpiá los filtros para volver a la bandeja completa.",
+        "applicationTypes": {
+          "volunteering": "Voluntariado"
+        },
+        "filters": {
+          "heading": "Filtrar solicitudes",
+          "description": "Usá estos criterios para definir la bandeja visible y preparar exportaciones administrativas cuando las necesités.",
+          "disclosureClosedLabel": "Agregar filtros",
+          "disclosureOpenLabel": "Ocultar filtros",
+          "disclosureHint": "Desplegá los filtros cuando necesités refinar la bandeja o preparar una exportación.",
+          "searchLabel": "Buscar por nombre o correo",
+          "searchPlaceholder": "Ej. Ana o ana@correo.com",
+          "statusLabel": "Estado",
+          "applicationTypeLabel": "Tipo de solicitud",
+          "fromLabel": "Desde",
+          "toLabel": "Hasta",
+          "allStatuses": "Todos los estados",
+          "allApplicationTypes": "Todos los tipos",
+          "applyLabel": "Aplicar filtros",
+          "applyingLabel": "Aplicando filtros...",
+          "resetLabel": "Limpiar filtros",
+          "exportExcelLabel": "Exportar Excel",
+          "exportPdfLabel": "Exportar PDF",
+          "exportDisabledLabel": "No hay resultados para exportar con estos filtros.",
+          "activeBadge": "Filtros activos",
+          "activeSummary": "Hay {count} filtros activos en esta bandeja.",
+          "resultsSummary": "Mostrando {count} de {total} solicitudes.",
+          "updatingResultsLabel": "Actualizando resultados filtrados.",
+          "exportTitle": "Exportación completa de solicitudes",
+          "exportSummaryTitle": "Resumen de exportación",
+          "exportGeneratedAtLabel": "Generado",
+          "exportFiltersLabel": "Filtros aplicados",
+          "exportNoFiltersLabel": "Sin filtros",
+          "exportResultCountLabel": "Solicitudes exportadas",
+          "exportWorksheetName": "Solicitudes",
+          "exportApplicationHeading": "Solicitud",
+          "exportStatusesSummaryLabel": "Estados",
+          "exportUnavailableMessage": "No hay solicitudes para exportar con los filtros actuales.",
+          "exportNoneLabel": "Sin dato",
+          "exportAvailableLabel": "Archivo disponible",
+          "exportFields": {
+            "id": "ID",
+            "status": "Estado",
+            "applicationType": "Tipo de solicitud",
+            "applicationTypeCode": "Código de tipo",
+            "applicationTypeName": "Nombre de tipo",
+            "submittedAt": "Enviada",
+            "updatedAt": "Última actualización",
+            "firstName": "Nombre",
+            "lastName": "Apellido",
+            "fullName": "Nombre completo",
+            "residenceCountry": "País de residencia",
+            "residenceCity": "Ciudad de residencia",
+            "identityDocument": "Documento de identidad",
+            "curriculumFileName": "Nombre del curriculum",
+            "curriculumContentType": "Tipo de archivo del curriculum",
+            "curriculumSize": "Tamaño del curriculum",
+            "curriculumUploadedAt": "Curriculum subido",
+            "statusHistory": "Historial de estados",
+            "applicationTypeHistory": "Historial de tipos"
+          }
+        },
+        "unavailable": {
+          "eyebrow": "Vista no disponible",
+          "title": "No se pudo cargar la lista administrativa de solicitudes",
+          "description": "No pudimos cargar esta sección en este momento.",
+          "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+        },
+        "columns": {
+          "applicant": "Postulante",
+          "contact": "Contacto",
+          "submittedAt": "Enviado",
+          "status": "Estado",
+          "actions": "Acciones"
+        },
+        "empty": {
+          "eyebrow": "Estado de la bandeja",
+          "title": "Todavía no hay solicitudes registradas.",
+          "description": "Cuando llegue la primera solicitud desde el sitio público, esta bandeja mostrará su resumen y estado actual para revisión administrativa.",
+          "note": "La vista prioriza primero el estado general de la bandeja y después el acceso al detalle de cada caso."
+        },
+        "statuses": {
+          "pending": "Pendiente",
+          "in_process": "En proceso",
+          "resolved": "Finalizado",
+          "cancelled": "Cancelado"
+        }
+      },
+      "detail": {
+        "applicantLabel": "Postulante",
+        "submittedAt": "Enviada {value}",
+        "feedback": {
+          "updated": "El estado de la solicitud se actualizó correctamente.",
+          "updated-email-sent": "El estado se actualizó y la notificación por correo se envió correctamente.",
+          "updated-email-skipped": "El estado se actualizó sin enviar correo a la persona postulante.",
+          "updated-email-not-configured": "El estado se actualizó, pero el correo no se envió porque todavía no hay un proveedor configurado.",
+          "updated-email-failed": "El estado se actualizó, pero no pudimos enviar el correo en este momento.",
+          "invalid": "No pudimos procesar el estado enviado. Probá nuevamente desde la lista aprobada.",
+          "notification-invalid": "Completá asunto y mensaje antes de intentar enviar la notificación.",
+          "notification-required": "Antes de guardar este cambio a En proceso tenés que decidir si querés enviar o saltear la notificación.",
+          "no-change": "Elegí un estado diferente para registrar un nuevo cambio en el historial.",
+          "failed": "No pudimos actualizar la solicitud en este momento. Intentá nuevamente."
+        },
+        "fields": {
+          "email": "Correo electrónico",
+          "phone": "Teléfono",
+          "nationality": "Nacionalidad",
+          "birthDate": "Fecha de nacimiento",
+          "availability": "Disponibilidad",
+          "message": "Mensaje",
+          "curriculum": "Curriculum"
+        },
+        "curriculum": {
+          "downloadLabel": "Descargar curriculum"
+        },
+        "statusCard": {
+          "title": "Actualizar estado",
+          "description": "Guardá el siguiente paso administrativo usando solo los estados disponibles para esta solicitud.",
+          "selectLabel": "Estado de la solicitud",
+          "submitLabel": "Guardar estado",
+          "submittingLabel": "Guardando estado...",
+          "notificationDecisionRequired": "Si la solicitud pasa de pendiente a En proceso, primero vas a revisar el mensaje opcional para la persona postulante."
+        },
+        "notificationModal": {
+          "badge": "Notificación opcional",
+          "title": "Revisá el correo antes de guardar el cambio",
+          "description": "Podés editar el asunto y el mensaje antes de intentar enviarlo. Si preferís no avisar todavía, también podés saltear el correo y guardar igual el nuevo estado.",
+          "subjectLabel": "Asunto del correo",
+          "messageLabel": "Mensaje del correo",
+          "cancelLabel": "Seguir editando",
+          "sendAndSaveLabel": "Enviar y guardar estado",
+          "skipAndSaveLabel": "Guardar sin enviar"
+        },
+        "notificationTemplates": {
+          "in_process": {
+            "subject": "Tu solicitud ahora está en proceso",
+            "message": "Hola {name},\n\nQueremos informarte que recibimos tu solicitud y ahora se encuentra en proceso con el equipo de Pura Vida Interculturas.\n\nEstamos revisando la información que compartiste y, si necesitamos datos adicionales o tenemos una nueva actualización, nos pondremos en contacto contigo.\n\nSaludos cordiales,\nPura Vida Interculturas"
+          },
+          "resolved": {
+            "subject": "Hemos finalizado la revisión de tu solicitud",
+            "message": "Hola {name},\n\nQueremos informarte que hemos finalizado la revisión de tu solicitud. Gracias por compartir tu información y por tu interés en Pura Vida Interculturas.\n\nSi hay detalles adicionales por coordinar, nuestro equipo se pondrá en contacto con vos directamente.\n\nSaludos cordiales,\nPura Vida Interculturas"
+          },
+          "cancelled": {
+            "subject": "Actualización sobre tu solicitud",
+            "message": "Hola {name},\n\nQueremos informarte que tu solicitud ya no se encuentra activa dentro de nuestro proceso. Agradecemos tu interés en Pura Vida Interculturas y el tiempo que dedicaste a postularte.\n\nSi necesitás contexto adicional, podés responder este mensaje y nuestro equipo te dará seguimiento.\n\nSaludos cordiales,\nPura Vida Interculturas"
+          }
+        },
+        "history": {
+          "title": "Historial de estados",
+          "description": "Cada cambio aceptado queda reflejado en la línea de tiempo de esta solicitud.",
+          "changedBy": "Cambio registrado por {actor}"
+        },
+        "statuses": {
+          "pending": "Pendiente",
+          "in_process": "En proceso",
+          "resolved": "Finalizado",
+          "cancelled": "Cancelado"
+        }
+      },
+      "notFound": {
+        "title": "No encontramos esa solicitud.",
+        "description": "El identificador solicitado no coincide con un registro existente o ya no está disponible dentro de la bandeja administrativa actual.",
+        "backToList": "Volver a la bandeja"
+      }
+    }
+  },
+  "Home": {
+    "metadata": {
+      "title": "Home",
+      "description": "History, featured programs, frequently asked questions and next steps to live an intercultural experience with Pura Vida Interculturas."
+    },
+    "hero": {
+      "eyebrow": "Intercultural experiences in Costa Rica",
+      "title": "Live an experience with purpose, local support and a real connection with the community.",
+      "description": "Pura Vida Interculturas supports volunteering, internships and Spanish learning from San Ramón, with a personal approach focused on human impact.",
+      "primaryAction": "Explore programs",
+      "secondaryAction": "Start your application",
+      "contactAction": "Talk to the team"
+    },
+    "story": {
+      "eyebrow": "Our story",
+      "title": "An organization created to connect learning, service and local culture.",
+      "description": "We work so that every international experience has context, care and a respectful relationship with the communities that welcome participants.",
+      "points": {
+        "mission": "We support volunteering, internships and Spanish learning with a human, organized approach rooted in the local area.",
+        "bridge": "We build bridges between international visitors, local partners and shared learning goals.",
+        "support": "We prioritize clarity, guidance and follow-up so every person arrives better prepared for their experience."
+      }
+    },
+    "history": {
+      "eyebrow": "Our journey",
+      "title": "We built this program step by step together with the community.",
+      "description": "The project grew from concrete local relationships into a clearer offer for people looking for volunteering, internships or cultural immersion in Costa Rica.",
+      "milestones": {
+        "foundation": {
+          "year": "Origins",
+          "title": "Listening locally and first partnerships",
+          "description": "The initiative began by identifying real needs for support, cultural exchange and coordination with community actors in the southern region."
+        },
+        "growth": {
+          "year": "Development",
+          "title": "Programs with an educational and social focus",
+          "description": "Paths for volunteering, operational support and Spanish immersion took shape, with a clearer message for international audiences."
+        },
+        "today": {
+          "year": "Today",
+          "title": "A simpler, clearer way in",
+          "description": "This site brings together the organization's story, featured programs and next steps to support informed decisions."
+        }
+      }
+    },
+    "offerings": {
+      "eyebrow": "What we offer",
+      "title": "Three ways to get involved with Pura Vida Interculturas.",
+      "description": "Each path combines local support, practical clarity and room to build a meaningful experience based on your goals.",
+      "cards": {
+        "volunteer": {
+          "title": "Volunteering",
+          "description": "Take part in community projects with the support of the local team and an approach focused on respectful exchange and concrete impact."
+        },
+        "internships": {
+          "title": "Internships",
+          "description": "Gain hands-on experience in a social organization with real tasks, documentation and process improvement."
+        },
+        "spanish": {
+          "title": "Spanish and cultural immersion",
+          "description": "Learn Spanish in context while you gain local experiences, close support and goals adapted to your pace."
+        }
+      }
+    },
+    "info": {
+      "eyebrow": "Useful information",
+      "title": "We help you arrive with clear expectations.",
+      "description": "Before you apply or choose a program, we share the key information that usually determines whether an experience feels well supported and feasible.",
+      "cards": {
+        "readiness": {
+          "title": "Preparation",
+          "description": "We give guidance on timing, availability, type of participation and the level of support to expect before you confirm your interest."
+        },
+        "localSupport": {
+          "title": "Local support",
+          "description": "Our approach prioritizes local context, clear communication and personal coordination during your arrival and adjustment."
+        },
+        "fit": {
+          "title": "The right fit",
+          "description": "Not every program suits every person, so we make it easy to compare options, answer questions and decide better."
+        }
+      }
+    },
+    "featured": {
+      "eyebrow": "Featured programs",
+      "title": "Start with a curated selection of current experiences.",
+      "description": "We selected some published programs so you can quickly understand the kind of program, duration and context available today.",
+      "featuredLabel": "Featured",
+      "browsePrograms": "See all programs",
+      "viewProgram": "Learn about the program",
+      "previousPrograms": "Show previous featured programs",
+      "nextPrograms": "Show more featured programs",
+      "emptyTitle": "There are no featured programs to show yet.",
+      "emptyDescription": "The home page is still here to guide you. While the featured programs are being updated, you can browse the full catalog and choose the path that best fits your goals."
+    },
+    "cta": {
+      "title": "Already have an idea of what you are looking for?",
+      "description": "You can go straight to the application or browse the full catalog before deciding. The goal is for you to understand the context well before committing.",
+      "primaryAction": "Go to the application",
+      "secondaryAction": "Compare programs"
+    },
+    "contact": {
+      "eyebrow": "Contact",
+      "title": "Let's talk before you take the next step.",
+      "description": "If you are still comparing options, this section helps you answer questions and find your next step without leaving the home page.",
+      "cards": {
+        "questions": {
+          "title": "Answer common questions",
+          "description": "Use the FAQ page to clarify eligibility, timing, language and the kind of support available."
+        },
+        "programFit": {
+          "title": "Choose the right program",
+          "description": "Browse featured programs and the full catalog to see which option best matches your profile and interests."
+        },
+        "ready": {
+          "title": "Move forward when you are ready",
+          "description": "Once you are clear, the open application lets you share your initial interest and prepare a more concrete conversation with the team."
+        }
+      },
+      "actions": {
+        "programs": "Browse programs",
+        "apply": "Apply now",
+        "faqs": "See frequently asked questions",
+        "instagramLabel": "Open Pura Vida Interculturas on Instagram",
+        "whatsappLabel": "Open Pura Vida Interculturas on WhatsApp",
+        "whatsappMessage": "Hi, I would like to receive more information about Pura Vida Interculturas. Thank you."
+      }
+    }
+  },
+  "AdminFaqSettings": {
+    "unavailable": {
+      "eyebrow": "Gestión no disponible",
+      "title": "No se pudo cargar la configuración de preguntas frecuentes",
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+    },
+    "stats": {
+      "total": {
+        "label": "FAQs activas",
+        "description": "Cantidad actual de preguntas visibles en la página pública."
+      }
+    },
+    "live": {
+      "label": "Publicación inmediata",
+      "description": "Cada guardado impacta de inmediato la página pública de preguntas frecuentes."
+    },
+    "create": {
+      "title": "Agregar nueva pregunta frecuente",
+      "description": "Creá una nueva pregunta y después editála, eliminála o reordenála desde esta misma sección.",
+      "disclosureClosedLabel": "Agregar nueva pregunta frecuente",
+      "disclosureOpenLabel": "Ocultar formulario de nueva FAQ",
+      "disclosureHint": "Abrí este panel cuando necesites crear una nueva entrada sin ocupar espacio constante en la vista de administración."
+    },
+    "list": {
+      "title": "Preguntas frecuentes publicadas",
+      "description": "Cada tarjeta representa el orden real y el contenido visible en /faqs. Reordená para controlar la lectura pública y guardá cambios sin salir de Configuración."
+    },
+    "fields": {
+      "question": "Pregunta",
+      "answer": "Respuesta",
+      "questionEnglish": "Pregunta en inglés",
+      "answerEnglish": "Respuesta en inglés",
+      "englishHint": "Versión en inglés. Dejá los campos vacíos para traducirlos automáticamente al guardar; si los editás a mano, se conservan aunque cambie el español."
+    },
+    "placeholders": {
+      "question": "Escribí la pregunta visible en la página pública",
+      "answer": "Escribí la respuesta visible en la página pública"
+    },
+    "actions": {
+      "create": "Guardar nueva FAQ",
+      "save": "Guardar cambios",
+      "moveUp": "Subir",
+      "moveDown": "Bajar",
+      "delete": "Eliminar"
+    },
+    "entry": {
+      "position": "Posición {order}",
+      "helper": "El orden se publica tal como aparece acá. Si movés una entrada, el cambio se verá enseguida en la página pública."
+    },
+    "delete": {
+      "title": "Confirmación de eliminación",
+      "description": "Eliminar saca esta pregunta del panel y de la página pública inmediatamente.",
+      "warning": "No hay una papelera ni una versión de borrador para recuperarla después.",
+      "confirm": "Sí, eliminar FAQ",
+      "cancel": "Cancelar"
+    },
+    "feedback": {
+      "created": "La nueva pregunta frecuente ya quedó guardada y publicada.",
+      "updated": "La pregunta frecuente se actualizó correctamente y ya se ve en el sitio.",
+      "deleted": "La pregunta frecuente se eliminó y el orden público ya se ajustó.",
+      "reordered": "El orden de las preguntas frecuentes se actualizó correctamente.",
+      "invalid": "Completá tanto la pregunta como la respuesta antes de guardar.",
+      "save-failed": "No se pudo guardar la pregunta frecuente en este momento. Intentá nuevamente.",
+      "delete-failed": "No se pudo eliminar la pregunta frecuente en este momento. Intentá nuevamente.",
+      "reorder-failed": "No se pudo actualizar el orden de las preguntas frecuentes. Intentá nuevamente."
+    },
+    "empty": "Todavía no hay preguntas frecuentes cargadas. Cuando agregués la primera, aparecerá enseguida en la página pública."
+  },
+  "AdminHomeHeroVideoSettings": {
+    "unavailable": {
+      "eyebrow": "Recursos no disponibles",
+      "title": "No se pudo cargar la gestión de recursos del hero de la home",
+      "description": "No pudimos cargar esta sección en este momento.",
+      "note": "Probá de nuevo en unos minutos. Si el problema sigue, revisá la configuración del panel."
+    },
+    "stats": {
+      "total": {
+        "label": "Recursos configurados",
+        "description": "Total actual de recursos ordenados para el hero principal de la portada."
+      },
+      "images": {
+        "label": "Imágenes configuradas",
+        "description": "Cantidad de imágenes que hoy rotan como slides estáticos dentro del hero público."
+      },
+      "cloudinary": {
+        "label": "Hospedados en Cloudinary",
+        "description": "Cantidad de recursos alojados en Cloudinary y disponibles para la portada pública."
+      }
+    },
+    "live": {
+      "label": "Impacto inmediato",
+      "description": "El orden y las eliminaciones se reflejan de inmediato en la portada. No hay un paso separado de publicación.",
+      "note": "Las nuevas subidas quedan disponibles apenas termina el guardado del recurso."
+    },
+    "upload": {
+      "title": "Subir un nuevo recurso",
+      "description": "Agregá un nuevo recurso al carrusel principal desde tu dispositivo.",
+      "descriptionBody": "Al subirlo, quedará disponible para ordenarlo dentro del carrusel de la portada.",
+      "chooseFile": "Archivo de video o imagen",
+      "helper": "Límite de carga: hasta 100 MB para videos y 10 MB para imágenes.",
+      "acceptedFormats": "Formatos aceptados: JPG, PNG, WEBP, AVIF, MP4 y MOV.",
+      "previewTitle": "Vista previa local",
+      "selectedFile": "Archivo elegido",
+      "fileSize": "Tamaño",
+      "action": "Cargar",
+      "uploading": "Subiendo…",
+      "failed": "No se pudo completar la subida del recurso en este momento. Reintentá en unos minutos.",
+      "emptySelection": "Elegí un archivo antes de subirlo.",
+      "invalidMimeType": "Este espacio acepta imágenes compatibles y videos MP4 o MOV.",
+      "fileTooLarge": "El archivo supera el límite permitido. Reducí el peso o reemplazalo por una versión optimizada.",
+      "imageDuration": "Duración de la imagen (segundos)",
+      "imageDurationHelper": "Ingresá un número entero mayor o igual a 1 para definir cuánto tiempo se muestra esta imagen."
+    },
+    "list": {
+      "title": "Recursos configurados",
+      "description": "Cada tarjeta representa el orden real del hero público. Cambiá la posición con un número entero y guardá para reorganizar el carrusel."
+    },
+    "fields": {
+      "order": "Posición pública",
+      "displayDuration": "Duración visible (segundos)"
+    },
+    "actions": {
+      "saveOrder": "Guardar posición",
+      "delete": "Eliminar recurso"
+    },
+    "storageProviders": {
+      "local": "archivo local del sitio",
+      "cloudinary": "Cloudinary"
+    },
+    "entry": {
+      "position": "Posición {order}",
+      "mediaType": "Tipo: {type}",
+      "storageProvider": "Origen: {provider}",
+      "fileSize": "Tamaño: {size}",
+      "displayDuration": "Duración visible: {seconds} segundos"
+    },
+    "mediaTypes": {
+      "image": "Imagen",
+      "video": "Video"
+    },
+    "delete": {
+      "title": "Confirmar eliminación",
+      "description": "Eliminar quita este recurso del panel y del carrusel de la home pública.",
+      "cloudinaryWarning": "Al eliminar este recurso, también se quitará su archivo alojado en Cloudinary.",
+      "localWarning": "Al eliminar este recurso, se quitará del listado visible en esta configuración. El archivo local del proyecto no se borra desde esta interfaz.",
+      "confirm": "Sí, eliminar recurso",
+      "cancel": "Cancelar"
+    },
+    "permissions": {
+      "manageRequired": "Tu sesión puede ver este módulo, pero no tiene permisos para subir, reordenar o eliminar recursos."
+    },
+    "feedback": {
+      "created": "El recurso se subió correctamente y ya forma parte del hero público.",
+      "reordered": "El orden de los recursos se actualizó correctamente.",
+      "deleted": "El recurso se eliminó correctamente del hero público.",
+      "invalid": "Ingresá una posición válida mayor o igual a 1 antes de guardar.",
+      "save-failed": "No se pudo guardar el recurso en este momento. Reintentá nuevamente.",
+      "delete-failed": "No se pudo eliminar el recurso en este momento. Reintentá nuevamente.",
+      "reorder-failed": "No se pudo actualizar el orden de los recursos. Reintentá nuevamente."
+    },
+    "empty": "Todavía no hay recursos cargados en este módulo. Cuando subas el primero, aparecerá enseguida en la portada pública."
+  },
+  "Faqs": {
+    "metadata": {
+      "title": "Frequently asked questions",
+      "description": "Clear answers about programs, timing, language and next steps at Pura Vida Interculturas."
+    },
+    "eyebrow": "Quick guide",
+    "title": "Frequently asked questions to get started with more clarity.",
+    "description": "This page brings together initial answers so you can better understand how the experience works before choosing a program or starting an application.",
+    "emptyState": {
+      "title": "We have not published frequently asked questions in English yet.",
+      "description": "While we add content in English, you can browse programs, start an application or go to the contact section to keep moving forward."
+    },
+    "nextSteps": {
+      "title": "Still have questions?",
+      "description": "You can compare programs, start an application or go back to contact to choose your next step with more clarity."
+    },
+    "actions": {
+      "programs": "Explore programs",
+      "apply": "Start application",
+      "contact": "Go to contact"
+    }
+  },
+  "AdminTranslations": {
+    "englishLabel": "Inglés",
+    "statuses": {
+      "missing": "Sin traducir",
+      "machine": "Traducida",
+      "machine-stale": "Desactualizada",
+      "manual": "Editada a mano",
+      "manual-stale": "Editada a mano · revisar"
+    },
+    "statusDescriptions": {
+      "missing": "Todavía no tiene versión en inglés, así que no aparece en el sitio en inglés.",
+      "machine": "Traducida automáticamente y al día. Se vuelve a traducir sola cuando cambia el español.",
+      "machine-stale": "El español cambió después de la última traducción. Se actualiza al guardar el contenido en español.",
+      "manual": "Corregida a mano y al día. Los próximos guardados no la sobrescriben.",
+      "manual-stale": "Corregida a mano, pero el español cambió después. Revisala: la traducción automática no la reemplaza."
+    },
+    "notices": {
+      "translated": "Versión en inglés actualizada automáticamente.",
+      "manual": "La versión en inglés fue editada a mano y no se actualizó. Revisala para que coincida con el español.",
+      "not-configured": "La traducción automática no está configurada (falta DEEPL_API_KEY), así que la versión en inglés no se actualizó.",
+      "failed": "Los cambios se guardaron, pero no se pudo traducir al inglés: {message}",
+      "up-to-date": ""
+    }
+  },
+  "AdminProgramEnglish": {
+    "tabs": {
+      "label": "Idioma del programa",
+      "source": "Contenido en español",
+      "english": "Inglés"
+    },
+    "statuses": {
+      "missing": "sin traducir",
+      "machine": "traducida automáticamente",
+      "machine-stale": "desactualizada",
+      "manual": "editada a mano",
+      "manual-stale": "editada a mano, pendiente de revisión"
+    },
+    "statusDescriptions": {
+      "missing": "Este programa todavía no tiene versión en inglés y no aparece en el sitio en inglés. Traducilo automáticamente o completá los campos a mano.",
+      "machine": "La traducción está al día con el español. Si cambiás el español, se vuelve a traducir sola al guardar.",
+      "machine-stale": "El español cambió después de la última traducción. Se actualiza al guardar el programa, o podés retraducir ahora.",
+      "manual": "Esta traducción fue corregida a mano y coincide con el español actual. Los próximos guardados no la sobrescriben.",
+      "manual-stale": "Esta traducción fue corregida a mano, pero el español cambió después. Revisala y guardala, o retraducí para reemplazarla."
+    },
+    "status": {
+      "title": "Estado de la traducción: {status}",
+      "lastMachineTranslation": "Última traducción automática: {date}.",
+      "neverMachineTranslated": "Todavía no se tradujo automáticamente.",
+      "unpublishedSource": "El español tiene cambios sin publicar. Esta traducción se publica junto con ellos; la versión en inglés que se ve en el sitio sigue correspondiendo al español publicado.",
+      "notConfigured": "La traducción automática no está configurada (falta DEEPL_API_KEY). Podés escribir la versión en inglés a mano."
+    },
+    "actions": {
+      "translateNow": "Traducir ahora",
+      "retranslate": "Retraducir desde el español",
+      "save": "Guardar traducción"
+    },
+    "retranslateConfirmation": {
+      "title": "¿Reemplazar la traducción corregida?",
+      "description": "Se va a generar una traducción automática nueva a partir del español.",
+      "warning": "Se reemplazarán tus correcciones manuales. ¿Continuar?",
+      "confirm": "Sí, retraducir",
+      "cancel": "Cancelar"
+    },
+    "form": {
+      "title": "Textos en inglés",
+      "description": "Cada campo muestra el texto en español como referencia. Al guardar, la traducción queda marcada como editada a mano.",
+      "saveHint": "Si el español publicado coincide con el actual, el cambio se ve en el sitio de inmediato."
+    },
+    "sourceLabel": "Español",
+    "englishLabel": "Inglés",
+    "linesHelp": "Un elemento por línea.",
+    "fields": {
+      "title": "Título",
+      "shortDescription": "Descripción corta",
+      "fullDescription": "Descripción completa",
+      "location": "Ubicación",
+      "duration": "Duración",
+      "availability": "Disponibilidad",
+      "requirements": "Requisitos",
+      "included": "Qué incluye",
+      "seoTitle": "Título para buscadores",
+      "seoDescription": "Descripción para buscadores"
+    },
+    "feedback": {
+      "saved": "Traducción guardada. Quedó marcada como editada a mano.",
+      "invalid": "Completá todos los campos que tienen contenido en español antes de guardar.",
+      "save-failed": "No se pudo guardar la traducción. Intentá de nuevo.",
+      "retranslated": ""
+    }
+  },
+  "AdminTranslationSettings": {
+    "unavailable": {
+      "title": "No se pudo cargar el estado de las traducciones",
+      "description": "No pudimos leer los contenidos en este momento.",
+      "note": "Probá de nuevo en unos minutos."
+    },
+    "provider": {
+      "configuredTitle": "Traducción automática activa (DeepL)",
+      "configuredDescription": "Los contenidos se traducen al inglés al guardarlos en español.",
+      "missingTitle": "Traducción automática sin configurar",
+      "missingDescription": "Falta la variable DEEPL_API_KEY. El sitio funciona igual, pero la versión en inglés hay que escribirla a mano en cada contenido."
+    },
+    "howItWorks": {
+      "save": "Al guardar un programa, una pregunta frecuente o una categoría en español, se traduce automáticamente al inglés.",
+      "public": "El sitio en inglés solo muestra lo que ya tiene traducción: un programa sin traducir no aparece en /en.",
+      "manual": "Si corregís una traducción a mano, se conserva en los próximos guardados. Si después cambia el español, se marca como pendiente de revisión.",
+      "shortTexts": "En preguntas frecuentes y categorías, dejar vacíos los campos en inglés pide una traducción automática nueva."
+    },
+    "bulk": {
+      "action": "Traducir todo lo pendiente",
+      "pending": "{count, plural, one {# contenido sin traducir o desactualizado.} other {# contenidos sin traducir o desactualizados.}}",
+      "nothingPending": "No hay contenidos pendientes de traducir."
+    },
+    "summary": {
+      "title": "Estado por tipo de contenido",
+      "description": "Cantidad de contenidos en cada estado de traducción.",
+      "content": "Contenido",
+      "rows": {
+        "programs": "Programas",
+        "faqs": "Preguntas frecuentes",
+        "categories": "Categorías"
+      }
+    },
+    "review": {
+      "title": "Programas para revisar",
+      "description": "Programas sin traducir, desactualizados o editados a mano con cambios posteriores en el español.",
+      "open": "Abrir inglés"
+    },
+    "feedback": {
+      "translated": "Listo: {translated, plural, =0 {no hubo contenidos para traducir} one {se tradujo # contenido} other {se tradujeron # contenidos}}. {manual, plural, =0 {} one {# traducción editada a mano no se modificó.} other {# traducciones editadas a mano no se modificaron.}}",
+      "not-configured": "La traducción automática no está configurada (falta DEEPL_API_KEY).",
+      "failed": "No se pudo completar la traducción: {message}"
+    }
+  }
+}

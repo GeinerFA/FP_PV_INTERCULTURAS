@@ -1,6 +1,7 @@
 import { model, models, Schema, type InferSchemaType, type Model } from "mongoose";
 
-import { locales } from "@/config/i18n";
+import { locales, translationTargetLocales } from "@/config/i18n";
+import { translationSources } from "@/lib/translation/types";
 import { programStatuses } from "@/types/program";
 
 const localizedTextSchemaDefinition = Object.fromEntries(
@@ -92,6 +93,31 @@ const programImageAssetSchema = new Schema(
   { _id: false },
 );
 
+const translationMetaSchema = new Schema(
+  {
+    source: {
+      type: String,
+      enum: translationSources,
+      required: true,
+    },
+    sourceHash: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    translatedAt: {
+      type: Date,
+      default: null,
+    },
+  },
+  { _id: false },
+);
+
+const translationMetaMapSchema = new Schema(
+  Object.fromEntries(translationTargetLocales.map((locale) => [locale, { type: translationMetaSchema, default: null }])),
+  { _id: false },
+);
+
 const translationsSchemaDefinition = Object.fromEntries(
   locales.map((locale) => [locale, { type: programTranslationSchema, required: true }]),
 );
@@ -147,6 +173,10 @@ const programSnapshotSchema = new Schema(
     seo: {
       type: new Schema(seoSchemaDefinition, { _id: false }),
       required: true,
+    },
+    translationMeta: {
+      type: translationMetaMapSchema,
+      default: () => ({}),
     },
   },
   { _id: false },

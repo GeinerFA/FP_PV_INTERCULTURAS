@@ -4,6 +4,7 @@ import type { AppLocale } from "@/config/i18n";
 import { AdminPageTemplate } from "@/features/admin/components/admin-page-template";
 import { AdminCategorySettings } from "@/features/categories/components/admin-category-settings";
 import { requireAdminSession } from "@/lib/admin-session";
+import { parseTranslationNotice } from "@/services/translation/admin-translation";
 import { Link } from "@/i18n/navigation";
 
 type AdminCategorySettingsFeedback = NonNullable<Parameters<typeof AdminCategorySettings>[0]["feedback"]>;
@@ -29,11 +30,11 @@ function parseAdminCategorySettingsFeedback(status?: string): Parameters<typeof 
 
 type AdminSettingsCategoriesPageProps = {
   params: Promise<{ locale: AppLocale }>;
-  searchParams: Promise<{ category?: string; focus?: string; status?: string }>;
+  searchParams: Promise<{ category?: string; focus?: string; status?: string; translation?: string; translationError?: string }>;
 };
 
 export default async function AdminSettingsCategoriesPage({ params, searchParams }: AdminSettingsCategoriesPageProps) {
-  const [{ locale }, { category, focus, status }] = await Promise.all([params, searchParams]);
+  const [{ locale }, { category, focus, status, translation, translationError }] = await Promise.all([params, searchParams]);
   const feedback = parseAdminCategorySettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
 
@@ -54,7 +55,7 @@ export default async function AdminSettingsCategoriesPage({ params, searchParams
         </Link>
       }
     >
-      <AdminCategorySettings feedback={feedback} selectedCategoryId={category} session={session} shouldOpenCreateDisclosure={focus === "create"} />
+      <AdminCategorySettings translationNotice={parseTranslationNotice(translation, translationError)} feedback={feedback} selectedCategoryId={category} session={session} shouldOpenCreateDisclosure={focus === "create"} />
     </AdminPageTemplate>
   );
 }

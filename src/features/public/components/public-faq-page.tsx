@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getMessages } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
@@ -47,7 +46,6 @@ export async function PublicFaqPage({
     ? []
     : persistedEntries.filter((entry) => entry.question.trim().length > 0 && entry.answer.trim().length > 0);
   const hasEntries = entries.length > 0;
-  const contactHref = "/#contact";
 
   return (
     <div lang={locale} className="space-y-16 lg:space-y-20">
@@ -134,15 +132,15 @@ export async function PublicFaqPage({
                 →
               </span>
             </LocaleLink>
-            <Link
-              href={contactHref}
+            <LocaleLink
+              href={{ pathname: "/", hash: "contact" }}
               className="group flex min-h-full flex-col justify-between rounded-[1.5rem] border border-white/80 bg-white/78 p-5 text-left shadow-[0_18px_40px_-36px_rgba(15,23,42,0.22)] transition hover:-translate-y-1 hover:border-amber-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
             >
               <span className="text-sm font-semibold text-slate-950">{faqs.actions.contact}</span>
               <span className="mt-8 text-sm font-semibold text-amber-800 transition group-hover:text-amber-700">
                 →
               </span>
-            </Link>
+            </LocaleLink>
           </div>
         </div>
       </section>

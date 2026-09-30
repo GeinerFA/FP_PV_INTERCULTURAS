@@ -1,4 +1,5 @@
-import type { AppLocale } from "@/config/i18n";
+import type { AppLocale, TranslationTargetLocale } from "@/config/i18n";
+import type { TranslationMeta } from "@/lib/translation/types";
 import type { ProgramCategory, ProgramCategorySummary } from "@/types/category";
 
 export const programStatuses = ["draft", "published", "archived"] as const;
@@ -48,6 +49,24 @@ export type ProgramSnapshot = {
   availability: LocalizedText;
   translations: Record<AppLocale, ProgramTranslation>;
   seo: Record<AppLocale, ProgramSeoEntry>;
+  /** Origin and freshness of each translated locale; absent until the locale is first translated. */
+  translationMeta?: ProgramTranslationMetaMap;
+};
+
+export type ProgramTranslationMetaMap = Partial<Record<TranslationTargetLocale, TranslationMeta>>;
+
+/** Every translatable text of a program in one locale: the same list is hashed, translated and edited. */
+export type ProgramTranslatableContent = {
+  title: string;
+  shortDescription: string;
+  fullDescription: string;
+  requirements: string[];
+  included: string[];
+  location: string;
+  duration: string;
+  availability: string;
+  seoTitle: string;
+  seoDescription: string;
 };
 
 export type ProgramSourceEntry = ProgramSnapshot & {

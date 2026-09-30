@@ -2,6 +2,7 @@ import { AdminPageTemplate } from "@/features/admin/components/admin-page-templa
 import { AdminFaqSettings } from "@/features/faqs/components/admin-faq-settings";
 import type { AppLocale } from "@/config/i18n";
 import { requireAdminSession } from "@/lib/admin-session";
+import { parseTranslationNotice } from "@/services/translation/admin-translation";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 
@@ -28,11 +29,11 @@ function parseAdminSettingsFeedback(status?: string): Parameters<typeof AdminFaq
 
 type AdminSettingsFaqPageProps = {
   params: Promise<{ locale: AppLocale }>;
-  searchParams: Promise<{ faq?: string; focus?: string; status?: string }>;
+  searchParams: Promise<{ faq?: string; focus?: string; status?: string; translation?: string; translationError?: string }>;
 };
 
 export default async function AdminSettingsFaqPage({ params, searchParams }: AdminSettingsFaqPageProps) {
-  const [{ locale }, { faq, focus, status }] = await Promise.all([params, searchParams]);
+  const [{ locale }, { faq, focus, status, translation, translationError }] = await Promise.all([params, searchParams]);
   const feedback = parseAdminSettingsFeedback(status);
   const t = await getTranslations("AdminSettingsOverview");
 
@@ -53,7 +54,7 @@ export default async function AdminSettingsFaqPage({ params, searchParams }: Adm
         </Link>
       }
     >
-      <AdminFaqSettings feedback={feedback} selectedFaqId={faq} session={session} shouldOpenCreateDisclosure={focus === "create"} />
+      <AdminFaqSettings translationNotice={parseTranslationNotice(translation, translationError)} feedback={feedback} selectedFaqId={faq} session={session} shouldOpenCreateDisclosure={focus === "create"} />
     </AdminPageTemplate>
   );
 }

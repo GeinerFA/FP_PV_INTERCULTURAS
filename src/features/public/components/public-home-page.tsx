@@ -1,4 +1,3 @@
-import NextLink from "next/link";
 import { getMessages } from "next-intl/server";
 
 import type { AppLocale } from "@/config/i18n";
@@ -96,6 +95,7 @@ type HomeMessages = {
       faqs: string;
       instagramLabel: string;
       whatsappLabel: string;
+      whatsappMessage: string;
     };
   };
 };
@@ -111,8 +111,6 @@ export async function PublicHomePage({
 }: PublicHomePageProps) {
   const instagramHref =
     "https://www.instagram.com/voluntariado_pvi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==";
-  const whatsappHref =
-    "https://wa.me/50689511665?text=Hola%2C%20me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20Pura%20Vida%20Interculturas.%20Muchas%20gracias.";
   const [messages, featuredPrograms, heroVideos] = await Promise.all([
     getMessages(),
     forceEmptyFeatured ? Promise.resolve([]) : listFeaturedPublicPrograms(locale),
@@ -120,6 +118,7 @@ export async function PublicHomePage({
   ]);
 
   const home = messages.Home as HomeMessages;
+  const whatsappHref = `https://wa.me/50689511665?text=${encodeURIComponent(home.contact.actions.whatsappMessage)}`;
   const programsUi = messages.ProgramsUi as {
     labels: {
       location: string;
@@ -136,7 +135,6 @@ export async function PublicHomePage({
   const programsHref = "/programs" as const;
   const applyHref = "/apply" as const;
   const faqsHref = "/faqs" as const;
-  const contactHref = "/#contact";
 
   return (
     <div className="flex flex-col gap-16 lg:gap-20">
@@ -186,12 +184,12 @@ export async function PublicHomePage({
             <p className="mt-4 text-sm leading-7 text-slate-600 md:text-base">
               {home.cta.description}
             </p>
-            <NextLink
-              href={contactHref}
+            <LocaleLink
+              href={{ pathname: "/", hash: "contact" }}
               className="mt-6 inline-flex text-sm font-semibold text-emerald-900 transition hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
             >
               {home.hero.contactAction}
-            </NextLink>
+            </LocaleLink>
           </aside>
         </div>
       </section>

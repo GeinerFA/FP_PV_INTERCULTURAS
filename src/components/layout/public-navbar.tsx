@@ -1,14 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import NextLink from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import { locales } from "@/config/i18n";
 import { siteConfig } from "@/config/site";
-
-const localePrefixPattern = new RegExp(`^/(?:${locales.join("|")})(?=/|$)`);
+import { Link as NextLink, usePathname } from "@/i18n/navigation";
 
 type NavigationLabels = Record<(typeof siteConfig.publicNavigation)[number]["labelKey"] | "contact" | "admin", string>;
 
@@ -16,20 +12,9 @@ type PublicNavbarProps = {
   navigationLabels: NavigationLabels;
 };
 
-function getNormalizedPathname(pathname: string | null) {
-  if (!pathname || pathname === "/") {
-    return "/";
-  }
-
-  const withoutLocale = pathname.replace(localePrefixPattern, "");
-
-  return withoutLocale || "/";
-}
-
 export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
-  const pathname = usePathname();
-  const normalizedPathname = getNormalizedPathname(pathname);
-  const contactHref = "/#contact";
+  // Locale-less internal pathname ("/programs" on both / and /en).
+  const normalizedPathname: string = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = siteConfig.publicNavigation.filter((item) => item.href !== "/");
@@ -97,7 +82,7 @@ export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
           })}
 
           <NextLink
-            href={contactHref}
+            href={{ pathname: "/", hash: "contact" }}
             onClick={() => setIsOpen(false)}
             className="inline-flex items-center whitespace-nowrap py-1 text-sm font-semibold text-emerald-900 transition hover:text-emerald-700"
           >

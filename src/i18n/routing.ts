@@ -6,6 +6,9 @@ export const routing = defineRouting({
   locales: [...locales],
   defaultLocale,
   localePrefix: "as-needed",
+  // The language comes only from the URL ("/" Spanish, "/en" English) and the header switcher. No
+  // Accept-Language redirects: they confuse crawlers and would bounce the Spanish-only admin to /en.
+  localeDetection: false,
   pathnames: {
     "/": "/",
     "/about": "/about",
@@ -20,6 +23,7 @@ export const routing = defineRouting({
     "/admin/programs": "/admin/programs",
     "/admin/programs/new": "/admin/programs/new",
     "/admin/programs/[id]/edit": "/admin/programs/[id]/edit",
+    "/admin/programs/[id]/english": "/admin/programs/[id]/english",
     "/admin/applications": "/admin/applications",
     "/admin/applications/[id]": "/admin/applications/[id]",
     "/admin/activity": "/admin/activity",
@@ -28,6 +32,7 @@ export const routing = defineRouting({
     "/admin/settings/categories": "/admin/settings/categories",
     "/admin/settings/faqs": "/admin/settings/faqs",
     "/admin/settings/home-videos": "/admin/settings/home-videos",
+    "/admin/settings/translations": "/admin/settings/translations",
     "/admin/settings/users": "/admin/settings/users",
   },
 });

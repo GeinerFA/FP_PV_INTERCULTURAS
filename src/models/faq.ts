@@ -1,5 +1,9 @@
 import { model, models, Schema, type InferSchemaType, type Model } from "mongoose";
 
+import { faqTranslatableFields } from "@/types/faq";
+
+import { createShortTextTranslationsSchema } from "./translation-schema";
+
 const faqSchema = new Schema(
   {
     question: {
@@ -11,6 +15,10 @@ const faqSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    translations: {
+      type: createShortTextTranslationsSchema(faqTranslatableFields),
+      default: () => ({}),
     },
     active: {
       type: Boolean,

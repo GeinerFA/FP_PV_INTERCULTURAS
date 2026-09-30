@@ -1,8 +1,10 @@
 import {
   programCategoryThemes,
+  programCategoryTranslatableFields,
   type ProgramCategoryRecord,
   type ProgramCategoryTheme,
 } from "@/types/category";
+import { parseShortTextTranslations } from "@/validators/translation";
 
 type PlainObject = Record<string, unknown>;
 
@@ -102,6 +104,7 @@ export function parseProgramCategoryRecord(value: unknown, path = "programCatego
     id: assertString(object.id, `${path}.id`),
     code: assertCategoryCode(object.code, `${path}.code`),
     name: assertString(object.name, `${path}.name`),
+    translations: parseShortTextTranslations(object.translations, programCategoryTranslatableFields),
     theme: assertTheme(object.theme, `${path}.theme`),
     order: assertInteger(object.order, `${path}.order`),
     createdBy: assertString(object.createdBy, `${path}.createdBy`),

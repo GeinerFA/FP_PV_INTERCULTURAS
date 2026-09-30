@@ -1,5 +1,6 @@
 import { type HydratedDocument, Types } from "mongoose";
 
+import type { TranslationTargetLocale } from "@/config/i18n";
 import { connectToDatabase } from "@/lib/mongoose";
 import { ProgramCategoryModel, type ProgramCategoryDocument } from "@/models/category";
 import { ProgramModel } from "@/models/program";
@@ -8,6 +9,7 @@ import type {
   CreateProgramCategoryInput,
   DeleteProgramCategoryInput,
   ProgramCategoryRecord,
+  ProgramCategoryTranslation,
   UpdateProgramCategoryInput,
 } from "@/types/category";
 import {
@@ -15,6 +17,7 @@ import {
   parseProgramCategoryRecord,
   parseProgramCategoryUpdateContent,
 } from "@/validators/category";
+import { toStoredShortTextTranslation } from "@/validators/translation";
 
 import { legacyProgramCategorySeeds } from "./category-source";
 
@@ -23,6 +26,7 @@ type RawProgramCategoryDocument = {
   code: unknown;
   slug?: unknown;
   name: unknown;
+  translations?: unknown;
   theme: unknown;
   order: unknown;
   createdBy: unknown;
@@ -64,6 +68,7 @@ function mapProgramCategoryDocument(document: RawProgramCategoryDocument): Progr
     id: document._id.toString(),
     code: assertString(document.code) || assertString(document.slug),
     name: assertString(document.name),
+    translations: document.translations,
     theme: assertString(document.theme, "slate"),
     order: typeof document.order === "number" ? document.order : 1,
     createdBy: assertString(document.createdBy, "legacy-bootstrap"),
@@ -186,6 +191,11 @@ export type ProgramCategoryRepository = {
   create(input: CreateProgramCategoryInput): Promise<ProgramCategoryRecord>;
   update(input: UpdateProgramCategoryInput): Promise<ProgramCategoryRecord | null>;
   delete(input: DeleteProgramCategoryInput): Promise<ProgramCategoryRecord | null>;
+  saveTranslation(
+    id: string,
+    locale: TranslationTargetLocale,
+    translation: ProgramCategoryTranslation,
+  ): Promise<ProgramCategoryRecord | null>;
 };
 
 const mongoProgramCategoryRepository: ProgramCategoryRepository = {
@@ -290,6 +300,24 @@ const mongoProgramCategoryRepository: ProgramCategoryRepository = {
     await ProgramCategoryModel.findByIdAndDelete(id).exec();
 
     return existingCategory;
+  },
+  async saveTranslation(id, locale, translation) {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    await ensureProgramCategoryBootstrap();
+
+    // Translations do not bump updatedAt, which reflects edits to the source content.
+    const document = await ProgramCategoryModel.findByIdAndUpdate(
+      id,
+      { $set: { [`translations.${locale}`]: toStoredShortTextTranslation(translation) } },
+      { returnDocument: "after", timestamps: false },
+    )
+      .lean()
+      .exec();
+
+    return document ? mapProgramCategoryDocument(document as RawProgramCategoryDocument) : null;
   },
 };
 

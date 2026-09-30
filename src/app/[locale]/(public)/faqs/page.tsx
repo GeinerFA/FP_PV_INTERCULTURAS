@@ -10,10 +10,11 @@ type FaqPageProps = {
   searchParams: Promise<{ entries?: string }>;
 };
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Faqs.metadata");
+export async function generateMetadata({ params }: Pick<FaqPageProps, "params">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Faqs.metadata" });
 
-  return buildMetadata({ title: t("title"), description: t("description") });
+  return buildMetadata({ title: t("title"), description: t("description"), locale, href: "/faqs" });
 }
 
 export default async function FaqPage({ params, searchParams }: FaqPageProps) {

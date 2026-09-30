@@ -1,6 +1,6 @@
 import { type HydratedDocument, Types } from "mongoose";
 
-import { defaultLocale, locales } from "@/config/i18n";
+import { defaultLocale, locales, type TranslationTargetLocale } from "@/config/i18n";
 import { connectToDatabase } from "@/lib/mongoose";
 import { ProgramModel, type ProgramDocument } from "@/models/program";
 import { getProgramCategoryRepository } from "@/services/categories/category-repository";
@@ -459,6 +459,40 @@ async function getCurrentRecordOrNull(
   return document ? mapProgramRecord(document as RawProgramDocument) : null;
 }
 
+type ProgramSnapshotPath = "draftSnapshot" | "publishedSnapshot";
+
+/** $set entries for one locale of one snapshot, leaving every other field (cover image data included) untouched. */
+function buildLocaleContentUpdate(
+  path: ProgramSnapshotPath,
+  locale: TranslationTargetLocale,
+  snapshot: ProgramSnapshot,
+): Record<string, unknown> {
+  const meta = snapshot.translationMeta?.[locale] ?? null;
+
+  return {
+    [`${path}.translations.${locale}`]: snapshot.translations[locale],
+    [`${path}.seo.${locale}`]: snapshot.seo[locale],
+    [`${path}.location.${locale}`]: snapshot.location[locale],
+    [`${path}.duration.${locale}`]: snapshot.duration[locale],
+    [`${path}.availability.${locale}`]: snapshot.availability[locale],
+    [`${path}.translationMeta.${locale}`]: meta
+      ? {
+          source: meta.source,
+          sourceHash: meta.sourceHash,
+          translatedAt: meta.translatedAt ? new Date(meta.translatedAt) : null,
+        }
+      : null,
+  };
+}
+
+export type SaveProgramLocaleContentInput = {
+  id: string;
+  locale: TranslationTargetLocale;
+  /** Snapshots whose `locale` content should be persisted; null leaves that snapshot untouched. */
+  draftSnapshot: ProgramSnapshot | null;
+  publishedSnapshot: ProgramSnapshot | null;
+};
+
 export type ProgramRepository = {
   list(options?: { seedBootstrap?: boolean }): Promise<ProgramRecord[]>;
   findById(id: string): Promise<ProgramRecord | null>;
@@ -470,6 +504,7 @@ export type ProgramRepository = {
   archive(input: ProgramWorkflowMutationInput): Promise<ProgramRecord | null>;
   delete(input: DeleteProgramInput): Promise<ProgramRecord | null>;
   reactivate(input: ProgramWorkflowMutationInput): Promise<ProgramRecord | null>;
+  saveLocaleContent(input: SaveProgramLocaleContentInput): Promise<ProgramRecord | null>;
 };
 
 const mongoProgramRepository: ProgramRepository = {
@@ -719,6 +754,30 @@ const mongoProgramRepository: ProgramRepository = {
       },
       { returnDocument: "after" },
     )
+      .select(programCoverImageProjection)
+      .lean()
+      .exec();
+
+    return document ? mapProgramRecord(document as RawProgramDocument) : null;
+  },
+  async saveLocaleContent({ id, locale, draftSnapshot, publishedSnapshot }) {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    await ensureProgramRepositoryMaintenance();
+
+    const update = {
+      ...(draftSnapshot ? buildLocaleContentUpdate("draftSnapshot", locale, draftSnapshot) : {}),
+      ...(publishedSnapshot ? buildLocaleContentUpdate("publishedSnapshot", locale, publishedSnapshot) : {}),
+    };
+
+    if (Object.keys(update).length === 0) {
+      return getCurrentRecordOrNull(id);
+    }
+
+    // Translations do not bump updatedAt: it drives the public ordering and the admin "last edited" data.
+    const document = await ProgramModel.findByIdAndUpdate(id, { $set: update }, { returnDocument: "after", timestamps: false })
       .select(programCoverImageProjection)
       .lean()
       .exec();

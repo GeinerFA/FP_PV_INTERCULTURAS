@@ -5,14 +5,19 @@ import type { AppLocale } from "@/config/i18n";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
+import { AdminTranslationNoticeBanner } from "@/features/translations/components/admin-translation-notice-banner";
+import { TranslationStatusBadge } from "@/features/translations/components/translation-status-badge";
 import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 import { listAdminFaqEntries } from "@/services/faqs/faq-service";
+import type { AdminTranslationNotice } from "@/services/translation/admin-translation";
+import { getShortTextTranslationStatus } from "@/services/translation/short-text-translation";
 
 type AdminFaqSettingsProps = {
   feedback?: "created" | "updated" | "deleted" | "reordered" | "invalid" | "save-failed" | "delete-failed" | "reorder-failed";
   selectedFaqId?: string;
   session: AdminSession;
   shouldOpenCreateDisclosure?: boolean;
+  translationNotice?: AdminTranslationNotice | null;
 };
 
 function ChevronDownIcon({ className }: { className?: string }) {
@@ -39,7 +44,13 @@ function ArrowDownIcon({ className }: { className?: string }) {
   );
 }
 
-export async function AdminFaqSettings({ feedback, selectedFaqId, session, shouldOpenCreateDisclosure = false }: AdminFaqSettingsProps) {
+export async function AdminFaqSettings({
+  feedback,
+  selectedFaqId,
+  session,
+  shouldOpenCreateDisclosure = false,
+  translationNotice = null,
+}: AdminFaqSettingsProps) {
   const [t, locale] = await Promise.all([getTranslations("AdminFaqSettings"), getLocale()]);
 
   let faqs: Awaited<ReturnType<typeof listAdminFaqEntries>>;
@@ -81,6 +92,7 @@ export async function AdminFaqSettings({ feedback, selectedFaqId, session, shoul
           {t(`feedback.${feedback}`)}
         </div>
       ) : null}
+      <AdminTranslationNoticeBanner notice={translationNotice} />
 
       <div className="grid gap-4 xl:grid-cols-3">
         <article className="admin-inner-panel rounded-[28px] p-5">
@@ -153,6 +165,10 @@ export async function AdminFaqSettings({ feedback, selectedFaqId, session, shoul
                   <div className="space-y-2">
                     <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("entry.position", { order: faq.order })}</p>
                     <h3 className="text-lg font-semibold text-slate-950 md:text-xl">{faq.question}</h3>
+                    <TranslationStatusBadge
+                      status={getShortTextTranslationStatus({ question: faq.question, answer: faq.answer }, faq.translations.en)}
+                      withLanguage
+                    />
                     <p className="text-sm leading-7 text-slate-600">{t("entry.helper")}</p>
                   </div>
                   <div className="flex items-center justify-between gap-3 lg:flex-col lg:items-end">
@@ -209,6 +225,26 @@ export async function AdminFaqSettings({ feedback, selectedFaqId, session, shoul
                              className="admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
                            />
                          </label>
+                         <div className="space-y-4 rounded-2xl border border-emerald-900/10 bg-white/50 p-4">
+                           <p className="text-xs leading-6 text-slate-500">{t("fields.englishHint")}</p>
+                           <label className="block space-y-2.5">
+                             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">{t("fields.questionEnglish")}</span>
+                             <input
+                               name="question.en"
+                               defaultValue={faq.translations.en?.content.question ?? ""}
+                               className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                             />
+                           </label>
+                           <label className="block space-y-2.5">
+                             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">{t("fields.answerEnglish")}</span>
+                             <textarea
+                               name="answer.en"
+                               defaultValue={faq.translations.en?.content.answer ?? ""}
+                               rows={5}
+                               className="admin-inner-input w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                             />
+                           </label>
+                         </div>
                          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                            <button
                              type="submit"

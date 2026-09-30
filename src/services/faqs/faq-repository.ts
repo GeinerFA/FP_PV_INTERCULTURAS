@@ -1,9 +1,11 @@
 import { type HydratedDocument, Types } from "mongoose";
 
+import type { TranslationTargetLocale } from "@/config/i18n";
 import { connectToDatabase } from "@/lib/mongoose";
 import { FaqModel, type FaqDocument } from "@/models/faq";
-import type { CreateFaqInput, DeleteFaqInput, FaqEntry, MoveFaqInput, UpdateFaqInput } from "@/types/faq";
+import type { CreateFaqInput, DeleteFaqInput, FaqEntry, FaqTranslation, MoveFaqInput, UpdateFaqInput } from "@/types/faq";
 import { parseFaqContent, parseFaqRecord } from "@/validators/faq";
+import { toStoredShortTextTranslation } from "@/validators/translation";
 
 import { getLegacyFaqSeedEntries } from "./faq-source";
 
@@ -11,6 +13,7 @@ type RawFaqDocument = {
   _id: Types.ObjectId;
   question: unknown;
   answer: unknown;
+  translations?: unknown;
   order: unknown;
   seedKey?: unknown;
   createdBy: unknown;
@@ -52,6 +55,7 @@ function mapFaqDocument(document: RawFaqDocument): FaqEntry {
     id: document._id.toString(),
     question: assertString(document.question),
     answer: assertString(document.answer),
+    translations: document.translations,
     order: typeof document.order === "number" ? document.order : 1,
     createdBy: assertString(document.createdBy, "legacy-bootstrap"),
     updatedBy: assertString(document.updatedBy, "legacy-bootstrap"),
@@ -161,6 +165,8 @@ export type FaqRepository = {
   update(input: UpdateFaqInput): Promise<FaqEntry | null>;
   delete(input: DeleteFaqInput): Promise<FaqEntry | null>;
   move(input: MoveFaqInput): Promise<FaqEntry[] | null>;
+  findById(id: string): Promise<FaqEntry | null>;
+  saveTranslation(id: string, locale: TranslationTargetLocale, translation: FaqTranslation): Promise<FaqEntry | null>;
 };
 
 const mongoFaqRepository: FaqRepository = {
@@ -256,6 +262,29 @@ const mongoFaqRepository: FaqRepository = {
     );
 
     return listFaqDocuments();
+  },
+  async findById(id) {
+    await ensureFaqBootstrap({ seedBootstrap: true });
+
+    return getFaqById(id);
+  },
+  async saveTranslation(id, locale, translation) {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
+    }
+
+    await ensureFaqBootstrap();
+
+    // Translations do not bump updatedAt, which reflects edits to the source content.
+    const document = await FaqModel.findByIdAndUpdate(
+      id,
+      { $set: { [`translations.${locale}`]: toStoredShortTextTranslation(translation) } },
+      { returnDocument: "after", timestamps: false },
+    )
+      .lean()
+      .exec();
+
+    return document ? mapFaqDocument(document as RawFaqDocument) : null;
   },
 };
 

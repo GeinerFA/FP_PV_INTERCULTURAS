@@ -1,4 +1,5 @@
-import { locales, type AppLocale } from "@/config/i18n";
+import { locales, sourceLocale, type AppLocale } from "@/config/i18n";
+import { parseTranslationMetaMap } from "@/validators/translation";
 import {
   programStatuses,
   type ProgramImageAsset,
@@ -146,12 +147,29 @@ function assertBinaryData(value: unknown, path: string): Buffer {
   return Buffer.from(value);
 }
 
+// Only the source locale is mandatory: translated locales may be missing on documents stored before
+// they existed, and are filled in by the translation flow.
+function isOptionalLocaleValue(locale: AppLocale, value: unknown): boolean {
+  return locale !== sourceLocale && (value === undefined || value === null);
+}
+
 function assertLocalizedText(value: unknown, path: string, allowEmpty = false): LocalizedText {
   const object = assertPlainObject(value, path);
 
   return Object.fromEntries(
-    locales.map((locale) => [locale, assertString(object[locale], `${path}.${locale}`, allowEmpty)]),
+    locales.map((locale) => [
+      locale,
+      isOptionalLocaleValue(locale, object[locale]) ? "" : assertString(object[locale], `${path}.${locale}`, allowEmpty),
+    ]),
   ) as LocalizedText;
+}
+
+function assertSourceLocalizedText(value: LocalizedText, path: string): void {
+  assertString(value[sourceLocale], `${path}.${sourceLocale}`);
+}
+
+function createEmptyProgramTranslation(): ProgramTranslation {
+  return { title: "", shortDescription: "", fullDescription: "", requirements: [], included: [] };
 }
 
 function assertProgramTranslation(value: unknown, path: string, allowEmpty = false): ProgramTranslation {
@@ -183,7 +201,12 @@ function assertTranslations(
   const object = assertPlainObject(value, path);
 
   return Object.fromEntries(
-    locales.map((locale) => [locale, assertProgramTranslation(object[locale], `${path}.${locale}`, allowEmpty)]),
+    locales.map((locale) => [
+      locale,
+      isOptionalLocaleValue(locale, object[locale])
+        ? createEmptyProgramTranslation()
+        : assertProgramTranslation(object[locale], `${path}.${locale}`, allowEmpty),
+    ]),
   ) as Record<AppLocale, ProgramTranslation>;
 }
 
@@ -195,7 +218,12 @@ function assertSeo(
   const object = assertPlainObject(value, path);
 
   return Object.fromEntries(
-    locales.map((locale) => [locale, assertProgramSeoEntry(object[locale], `${path}.${locale}`, allowEmpty)]),
+    locales.map((locale) => [
+      locale,
+      isOptionalLocaleValue(locale, object[locale])
+        ? { title: "", description: "" }
+        : assertProgramSeoEntry(object[locale], `${path}.${locale}`, allowEmpty),
+    ]),
   ) as Record<AppLocale, ProgramSeoEntry>;
 }
 
@@ -266,11 +294,12 @@ function assertProgramSnapshotPublishable(snapshot: ProgramSnapshot, path: strin
     throw new Error(`${path}.coverImageAsset is required for internal cover image URLs.`);
   }
 
-  assertLocalizedText(snapshot.location, `${path}.location`);
-  assertLocalizedText(snapshot.duration, `${path}.duration`);
-  assertLocalizedText(snapshot.availability, `${path}.availability`);
-  assertTranslations(snapshot.translations, `${path}.translations`);
-  assertSeo(snapshot.seo, `${path}.seo`);
+  // Publishing only requires the source locale; translations never block a publish.
+  assertSourceLocalizedText(snapshot.location, `${path}.location`);
+  assertSourceLocalizedText(snapshot.duration, `${path}.duration`);
+  assertSourceLocalizedText(snapshot.availability, `${path}.availability`);
+  assertProgramTranslation(snapshot.translations[sourceLocale], `${path}.translations.${sourceLocale}`);
+  assertProgramSeoEntry(snapshot.seo[sourceLocale], `${path}.seo.${sourceLocale}`);
 
   return snapshot;
 }
@@ -292,6 +321,7 @@ export function parseProgramSnapshot(value: unknown, path = "programSnapshot"): 
     availability: assertLocalizedText(object.availability, `${path}.availability`, true),
     translations: assertTranslations(object.translations, `${path}.translations`, true),
     seo: assertSeo(object.seo, `${path}.seo`, true),
+    translationMeta: parseTranslationMetaMap(object.translationMeta),
   };
 }
 

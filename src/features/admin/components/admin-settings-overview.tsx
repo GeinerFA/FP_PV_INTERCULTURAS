@@ -32,6 +32,13 @@ export async function AdminSettingsOverview({ session }: AdminSettingsOverviewPr
           action: t("modules.faqs.action"),
         }
       : null,
+    hasAdminPermission(session, "settings.view")
+      ? {
+          key: "translations",
+          href: "/admin/settings/translations",
+          action: t("modules.translations.action"),
+        }
+      : null,
     hasAdminPermission(session, "users.view")
       ? {
           key: "users",
@@ -40,11 +47,12 @@ export async function AdminSettingsOverview({ session }: AdminSettingsOverviewPr
         }
       : null,
   ].filter(Boolean) as Array<{
-    key: "categories" | "faqs" | "homeVideos" | "users";
+    key: "categories" | "faqs" | "homeVideos" | "translations" | "users";
     href:
       | "/admin/settings/categories"
       | "/admin/settings/faqs"
       | "/admin/settings/home-videos"
+      | "/admin/settings/translations"
       | "/admin/settings/users";
     action: string;
   }>;

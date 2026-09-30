@@ -33,6 +33,18 @@ The admin workspace and persisted program flows require these environment variab
 - `EMAIL_GMAIL_USER`: Gmail sender account used by the temporary SMTP provider.
 - `EMAIL_GMAIL_APP_PASSWORD`: Gmail App Password for the sender account. Use a local-only secret in `.env.local`; do not commit it.
 - `EMAIL_FROM`: Sender address shown on outbound application confirmation and admin status-update emails.
+- `DEEPL_API_KEY`: DeepL API key for the automatic Spanish → English translation of programs, FAQs and categories. Free-plan keys end in `:fx`. Without it the site still works and the English versions are written by hand from the admin.
+- `TRANSLATION_PROVIDER`: Optional, defaults to `deepl` (the only provider implemented).
+
+## Translation (Spanish → English)
+
+- The public site is served in Spanish at `/` and in English at `/en`. The admin is Spanish-only (`/en/admin` redirects to `/admin`).
+- Interface copy lives in `messages/es.json` and `messages/en.json`.
+- Dynamic content (programs, FAQs, categories) is written in Spanish in the admin. On save, the server translates it with DeepL and stores the English version in MongoDB; public pages only read from the database.
+- A translation corrected by hand (program "Inglés" tab, or the English fields of FAQs and categories) is never overwritten by later saves. If the Spanish changes afterwards it is flagged for review. "Retraducir" replaces it on purpose.
+- A failed translation (quota, invalid key, provider down) never blocks saving the Spanish content; it is shown as a warning.
+- `Configuración → Traducción automática` shows the status of every item and translates everything pending in one click.
+- The per-admin translation rate limit (30 calls / 10 min) is in memory, which is fine for a single server; with several instances or serverless it would need a shared store.
 
 Notes:
 

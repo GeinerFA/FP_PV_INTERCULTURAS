@@ -10,13 +10,11 @@ type LocaleHomePageProps = {
   searchParams: Promise<{ featured?: string }>;
 };
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Home.metadata");
+export async function generateMetadata({ params }: Pick<LocaleHomePageProps, "params">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Home.metadata" });
 
-  return buildMetadata({
-    title: t("title"),
-    description: t("description"),
-  });
+  return buildMetadata({ title: t("title"), description: t("description"), locale, href: "/" });
 }
 
 export default async function LocaleHomePage({ params, searchParams }: LocaleHomePageProps) {

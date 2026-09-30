@@ -9,8 +9,12 @@ import type { AppLocale } from "@/config/i18n";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
+import { AdminTranslationNoticeBanner } from "@/features/translations/components/admin-translation-notice-banner";
+import { TranslationStatusBadge } from "@/features/translations/components/translation-status-badge";
 import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 import { listAdminProgramCategories } from "@/services/categories/category-service";
+import type { AdminTranslationNotice } from "@/services/translation/admin-translation";
+import { getShortTextTranslationStatus } from "@/services/translation/short-text-translation";
 import { programCategoryThemes } from "@/types/category";
 
 type AdminCategorySettingsProps = {
@@ -26,6 +30,7 @@ type AdminCategorySettingsProps = {
   selectedCategoryId?: string;
   session: AdminSession;
   shouldOpenCreateDisclosure?: boolean;
+  translationNotice?: AdminTranslationNotice | null;
 };
 
 function ChevronDownIcon({ className }: { className?: string }) {
@@ -38,6 +43,7 @@ function ChevronDownIcon({ className }: { className?: string }) {
 
 export async function AdminCategorySettings({
   feedback,
+  translationNotice = null,
   selectedCategoryId,
   session,
   shouldOpenCreateDisclosure = false,
@@ -88,6 +94,7 @@ export async function AdminCategorySettings({
           {t(`feedback.${feedback}`)}
         </div>
       ) : null}
+      <AdminTranslationNoticeBanner notice={translationNotice} />
 
       <div className="grid gap-4 xl:grid-cols-3">
         <article className="admin-inner-panel rounded-[28px] p-5">
@@ -175,6 +182,10 @@ export async function AdminCategorySettings({
                       <span className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
                         {t(`themes.${category.theme}`)}
                       </span>
+                      <TranslationStatusBadge
+                        status={getShortTextTranslationStatus({ name: category.name }, category.translations.en)}
+                        withLanguage
+                      />
                     </div>
                     <p className="text-sm text-slate-600">{t("entry.code", { code: category.code })}</p>
                     <p className="text-sm text-slate-600">{t("entry.programCount", { count: category.programCount })}</p>
@@ -200,6 +211,15 @@ export async function AdminCategorySettings({
                            defaultValue={category.name}
                            className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
                          />
+                       </label>
+                       <label className="block space-y-2.5">
+                         <span className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800">{t("fields.nameEnglish")}</span>
+                         <input
+                           name="name.en"
+                           defaultValue={category.translations.en?.content.name ?? ""}
+                           className="admin-inner-input min-h-12 w-full rounded-2xl px-4 py-3 text-sm outline-none transition"
+                         />
+                         <span className="block text-xs leading-6 text-slate-500">{t("fields.englishHint")}</span>
                        </label>
                        <label className="block space-y-2.5">
                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{t("fields.theme")}</span>

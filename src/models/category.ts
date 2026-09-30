@@ -1,6 +1,8 @@
 import { model, models, Schema, type InferSchemaType, type Model } from "mongoose";
 
-import { programCategoryThemes } from "@/types/category";
+import { programCategoryThemes, programCategoryTranslatableFields } from "@/types/category";
+
+import { createShortTextTranslationsSchema } from "./translation-schema";
 
 const programCategorySchema = new Schema(
   {
@@ -14,6 +16,10 @@ const programCategorySchema = new Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    translations: {
+      type: createShortTextTranslationsSchema(programCategoryTranslatableFields),
+      default: () => ({}),
     },
     theme: {
       type: String,

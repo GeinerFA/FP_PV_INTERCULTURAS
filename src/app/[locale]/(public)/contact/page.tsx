@@ -1,6 +1,7 @@
+import type { AppLocale } from "@/config/i18n";
 import { redirect } from "next/navigation";
 
-import type { AppLocale } from "@/config/i18n";
+import { getPathname } from "@/i18n/navigation";
 
 type ContactPageProps = {
   params: Promise<{ locale: AppLocale }>;
@@ -9,5 +10,5 @@ type ContactPageProps = {
 export default async function ContactPage({ params }: ContactPageProps) {
   const { locale } = await params;
 
-  redirect("/#contact");
+  redirect(`${getPathname({ href: "/", locale })}#contact`);
 }

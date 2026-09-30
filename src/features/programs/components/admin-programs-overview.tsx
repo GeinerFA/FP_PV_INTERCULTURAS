@@ -8,9 +8,13 @@ import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known
 import { ADMIN_LIST_PAGE_SIZE, buildPaginationState, paginateItems } from "@/features/admin/lib/pagination";
 import { getProgramCategoryName } from "@/features/programs/lib/program-category-presentation";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
+import { AdminTranslationNoticeBanner } from "@/features/translations/components/admin-translation-notice-banner";
+import { TranslationStatusBadge } from "@/features/translations/components/translation-status-badge";
 import { Link } from "@/i18n/navigation";
 import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
 import { listAdminPrograms } from "@/services/programs/program-service";
+import { getProgramTranslationStatus } from "@/services/programs/program-translation-content";
+import type { AdminTranslationNotice } from "@/services/translation/admin-translation";
 
 const statusTheme = {
   draft: "bg-amber-50 text-amber-700 ring-amber-200",
@@ -36,9 +40,16 @@ type AdminProgramsOverviewProps = {
   view?: "archived";
   page: number;
   session: AdminSession;
+  translationNotice?: AdminTranslationNotice | null;
 };
 
-export async function AdminProgramsOverview({ feedback, view, page, session }: AdminProgramsOverviewProps) {
+export async function AdminProgramsOverview({
+  feedback,
+  view,
+  page,
+  session,
+  translationNotice = null,
+}: AdminProgramsOverviewProps) {
   const [t, locale] = await Promise.all([getTranslations("AdminProgramsOverview"), getLocale()]);
 
   let programs: Awaited<ReturnType<typeof listAdminPrograms>>;
@@ -138,6 +149,7 @@ export async function AdminProgramsOverview({ feedback, view, page, session }: A
             {t(`feedback.${feedback}`)}
           </div>
         ) : null}
+        <AdminTranslationNoticeBanner notice={translationNotice} />
 
         <AdminWorkspaceSection
           title={tableHeading}
@@ -250,6 +262,7 @@ export async function AdminProgramsOverview({ feedback, view, page, session }: A
             {t(`feedback.${feedback}`)}
           </div>
         ) : null}
+        <AdminTranslationNoticeBanner notice={translationNotice} />
 
         <div className="grid gap-4 xl:grid-cols-4">
           {[
@@ -297,6 +310,7 @@ export async function AdminProgramsOverview({ feedback, view, page, session }: A
           {t(`feedback.${feedback}`)}
         </div>
       ) : null}
+      <AdminTranslationNoticeBanner notice={translationNotice} />
 
       <div className="grid gap-4 xl:grid-cols-4">
         {[
@@ -387,6 +401,9 @@ export async function AdminProgramsOverview({ feedback, view, page, session }: A
                     <p className="mt-2 max-w-sm text-sm text-slate-600">
                       {program.translations[activeLocale].shortDescription}
                     </p>
+                    <div className="mt-3">
+                      <TranslationStatusBadge status={getProgramTranslationStatus(program.draftSnapshot, "en")} withLanguage />
+                    </div>
                   </td>
                   <td className="px-6 py-5 text-slate-700">{getProgramCategoryName(program.categoryDetails, program.category)}</td>
                   <td className="px-6 py-5">
@@ -413,6 +430,15 @@ export async function AdminProgramsOverview({ feedback, view, page, session }: A
                            className={programRowActionLinkClassName}
                          >
                            {t("table.openEditor")}
+                         </Link>
+                         <Link
+                           href={{
+                             pathname: "/admin/programs/[id]/english",
+                             params: { id: program.id },
+                           }}
+                           className={programRowActionLinkClassName}
+                         >
+                           {t("table.openEnglish")}
                          </Link>
                          {program.status === "archived" ? (
                            <form action={reactivateProgramAction.bind(null, activeLocale, program.id)}>

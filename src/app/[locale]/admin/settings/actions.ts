@@ -5,7 +5,8 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { isHTTPAccessFallbackError } from "next/dist/client/components/http-access-fallback/http-access-fallback";
 import { redirect } from "next/navigation";
 
-import type { AppLocale } from "@/config/i18n";
+import type { AppLocale, TranslationTargetLocale } from "@/config/i18n";
+import { isTranslationConfigured } from "@/lib/translation";
 import { requireAdminAreaSession } from "@/lib/admin-session";
 import {
   createAdminActivityActor,
@@ -18,10 +19,28 @@ import {
   deleteAdminProgramCategory,
   ProgramCategoryDuplicateFieldError,
   ProgramCategoryInUseError,
+  syncPendingProgramCategoryTranslations,
+  syncProgramCategoryTranslation,
   updateAdminProgramCategory,
 } from "@/services/categories/category-service";
-import { createAdminFaq, deleteAdminFaq, moveAdminFaq, updateAdminFaq } from "@/services/faqs/faq-service";
+import {
+  createAdminFaq,
+  deleteAdminFaq,
+  moveAdminFaq,
+  syncFaqTranslation,
+  syncPendingFaqTranslations,
+  updateAdminFaq,
+} from "@/services/faqs/faq-service";
+import { syncPendingProgramTranslations } from "@/services/programs/program-translation-service";
+import {
+  buildTranslationNoticeParams,
+  consumeAdminTranslationQuota,
+  runAdminTranslation,
+} from "@/services/translation/admin-translation";
+import { TranslationError } from "@/lib/translation/types";
 import { parseFaqMoveDirection } from "@/validators/faq";
+
+const settingsTranslationLocale: TranslationTargetLocale = "en";
 
 function buildFaqSettingsPath(locale: AppLocale): string {
   return "/admin/settings/faqs";
@@ -77,9 +96,21 @@ function readString(formData: FormData, key: string): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+/** Target-locale fields of a settings form (`<field>.en`), or null when the form did not render them. */
+function readSubmittedTranslation<K extends string>(formData: FormData, fields: readonly K[]): Record<K, string> | null {
+  if (!fields.every((field) => formData.has(`${field}.${settingsTranslationLocale}`))) {
+    return null;
+  }
+
+  return Object.fromEntries(
+    fields.map((field) => [field, readString(formData, `${field}.${settingsTranslationLocale}`)]),
+  ) as Record<K, string>;
+}
+
 function revalidateFaqPaths(locale: AppLocale): void {
   revalidatePath(buildFaqSettingsPath(locale));
   revalidatePath(buildPublicFaqPath(locale));
+  revalidatePath("/", "layout");
 }
 
 function revalidateCategoryPaths(locale: AppLocale): void {
@@ -89,6 +120,7 @@ function revalidateCategoryPaths(locale: AppLocale): void {
   revalidatePath(buildProgramsCreatePath(locale));
   revalidatePath(buildPublicProgramsPath(locale));
   revalidatePath(buildPublicHomePath(locale));
+  revalidatePath("/", "layout");
 }
 
 export async function createFaqAction(locale: AppLocale, formData: FormData): Promise<void> {
@@ -116,6 +148,14 @@ export async function createFaqAction(locale: AppLocale, formData: FormData): Pr
       actor: createAdminActivityActor(session),
       happenedAt: createdFaq.updatedAt,
     });
+
+    params = buildTranslationNoticeParams(
+      await runAdminTranslation(
+        session.email,
+        (beforeTranslate) => syncFaqTranslation(createdFaq.id, settingsTranslationLocale, { beforeTranslate }),
+        `faq ${createdFaq.id}`,
+      ),
+    );
 
     revalidateFaqPaths(locale);
   } catch (error) {
@@ -159,6 +199,18 @@ export async function updateFaqAction(locale: AppLocale, id: string, formData: F
         actor: createAdminActivityActor(session),
         happenedAt: updatedFaq.updatedAt,
       });
+
+      params = buildTranslationNoticeParams(
+        await runAdminTranslation(
+          session.email,
+          (beforeTranslate) =>
+            syncFaqTranslation(updatedFaq.id, settingsTranslationLocale, {
+              beforeTranslate,
+              submitted: readSubmittedTranslation(formData, ["question", "answer"]),
+            }),
+          `faq ${updatedFaq.id}`,
+        ),
+      );
 
       revalidateFaqPaths(locale);
     }
@@ -270,6 +322,15 @@ export async function createProgramCategoryAction(locale: AppLocale, formData: F
       happenedAt: createdCategory.updatedAt,
     });
 
+    params = buildTranslationNoticeParams(
+      await runAdminTranslation(
+        session.email,
+        (beforeTranslate) =>
+          syncProgramCategoryTranslation(createdCategory.id, settingsTranslationLocale, { beforeTranslate }),
+        `category ${createdCategory.id}`,
+      ),
+    );
+
     revalidateCategoryPaths(locale);
   } catch (error) {
     rethrowFrameworkNavigation(error);
@@ -318,6 +379,18 @@ export async function updateProgramCategoryAction(locale: AppLocale, id: string,
         actor: createAdminActivityActor(session),
         happenedAt: updatedCategory.updatedAt,
       });
+
+      params = buildTranslationNoticeParams(
+        await runAdminTranslation(
+          session.email,
+          (beforeTranslate) =>
+            syncProgramCategoryTranslation(updatedCategory.id, settingsTranslationLocale, {
+              beforeTranslate,
+              submitted: readSubmittedTranslation(formData, ["name"]),
+            }),
+          `category ${updatedCategory.id}`,
+        ),
+      );
 
       revalidateCategoryPaths(locale);
     }
@@ -372,4 +445,51 @@ export async function deleteProgramCategoryAction(locale: AppLocale, id: string)
   }
 
   redirect(buildStatusUrl(nextPath, status, params, hash));
+}
+
+/** Translates every program, FAQ entry and category that is missing a translation or has a stale machine one. */
+export async function translatePendingContentAction(locale: AppLocale): Promise<void> {
+  const nextPath = "/admin/settings/translations";
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "settings", action: "manage" });
+
+  if (!isTranslationConfigured()) {
+    redirect(buildStatusUrl(nextPath, "not-configured"));
+  }
+
+  let status = "translated";
+  let params: Record<string, string | undefined> | undefined;
+
+  try {
+    // The whole batch counts as one use of the admin's translation quota.
+    consumeAdminTranslationQuota(session.email);
+
+    const [programSummary, faqResults, categoryResults] = [
+      await syncPendingProgramTranslations(settingsTranslationLocale),
+      await syncPendingFaqTranslations(settingsTranslationLocale),
+      await syncPendingProgramCategoryTranslations(settingsTranslationLocale),
+    ];
+    const count = (results: string[], outcome: string) => results.filter((result) => result === outcome).length;
+
+    params = {
+      translatedCount: String(
+        programSummary.translated + count(faqResults, "translated") + count(categoryResults, "translated"),
+      ),
+      manualCount: String(programSummary.manual + count(faqResults, "manual") + count(categoryResults, "manual")),
+    };
+
+    revalidatePath("/", "layout");
+  } catch (error) {
+    rethrowFrameworkNavigation(error);
+
+    if (!(error instanceof TranslationError)) {
+      console.error("[settings] translatePendingContentAction failed", error);
+    }
+
+    status = "failed";
+    params = {
+      translationError: error instanceof TranslationError ? error.message : "error inesperado.",
+    };
+  }
+
+  redirect(buildStatusUrl(nextPath, status, params));
 }

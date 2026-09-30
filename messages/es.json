@@ -18,7 +18,12 @@
     "accountLoginAction": "Continuar con Google",
     "accountSignedInHint": "Ya hay una sesión administrativa activa.",
     "accountAdminAction": "Panel administrativo",
-    "accountLogoutAction": "Cerrar sesión"
+    "accountLogoutAction": "Cerrar sesión",
+    "languageSwitcherLabel": "Idioma del sitio",
+    "localeNames": {
+      "es": "Español",
+      "en": "English"
+    }
   },
   "AdminShell": {
     "accountMenuLabel": "Abrir control de la cuenta administrativa",
@@ -138,6 +143,16 @@
         "Cada persona administradora puede tener permisos distintos por módulo y nivel de acción.",
         "La seguridad protege que nunca desaparezca el último superadmin activo del panel."
       ]
+    },
+    "programsEnglish": {
+      "title": "Versión en inglés del programa",
+      "description": "Revisá y corregí la traducción automática. Lo que guardes acá no se sobrescribe en los próximos guardados del español.",
+      "sections": []
+    },
+    "settingsTranslations": {
+      "title": "Traducción al inglés",
+      "description": "Estado de la traducción automática de programas, preguntas frecuentes y categorías.",
+      "sections": []
     }
   },
   "AdminSettingsOverview": {
@@ -164,6 +179,12 @@
         "title": "Preguntas frecuentes",
         "description": "Creá, editá, eliminá o reordená las preguntas frecuentes visibles en el sitio.",
         "action": "Gestionar preguntas frecuentes"
+      },
+      "translations": {
+        "eyebrow": "Sitio en inglés",
+        "title": "Traducción automática",
+        "description": "Revisá qué contenidos ya tienen versión en inglés y traducí de una vez lo que falte.",
+        "action": "Ver traducciones"
       },
       "users": {
         "eyebrow": "Acceso administrativo",
@@ -342,6 +363,8 @@
     },
     "fields": {
       "name": "Nombre visible",
+      "nameEnglish": "Nombre en inglés",
+      "englishHint": "Dejalo vacío para traducirlo automáticamente. Si lo editás a mano, se conserva aunque cambie el nombre en español.",
       "theme": "Tema visual"
     },
     "themes": {
@@ -501,6 +524,7 @@
       "emptyActive": "No hay programas publicados ni en borrador en este momento. Podés revisar el historial archivado o crear un programa nuevo.",
       "emptyArchived": "No hay programas archivados en este momento.",
       "openEditor": "Abrir editor",
+      "openEnglish": "Inglés",
       "archive": "Archivar",
       "reactivate": "Reactivar",
       "archiveConfirmation": {
@@ -1413,7 +1437,8 @@
         "apply": "Aplicar ahora",
         "faqs": "Ver preguntas frecuentes",
         "instagramLabel": "Abrir Instagram de Pura Vida Interculturas",
-        "whatsappLabel": "Abrir WhatsApp de Pura Vida Interculturas"
+        "whatsappLabel": "Abrir WhatsApp de Pura Vida Interculturas",
+        "whatsappMessage": "Hola, me gustaría recibir más información sobre Pura Vida Interculturas. Muchas gracias."
       }
     }
   },
@@ -1447,7 +1472,10 @@
     },
     "fields": {
       "question": "Pregunta",
-      "answer": "Respuesta"
+      "answer": "Respuesta",
+      "questionEnglish": "Pregunta en inglés",
+      "answerEnglish": "Respuesta en inglés",
+      "englishHint": "Versión en inglés. Dejá los campos vacíos para traducirlos automáticamente al guardar; si los editás a mano, se conservan aunque cambie el español."
     },
     "placeholders": {
       "question": "Escribí la pregunta visible en la página pública",
@@ -1615,6 +1643,140 @@
       "programs": "Explorar programas",
       "apply": "Iniciar aplicación",
       "contact": "Ir al contacto"
+    }
+  },
+  "AdminTranslations": {
+    "englishLabel": "Inglés",
+    "statuses": {
+      "missing": "Sin traducir",
+      "machine": "Traducida",
+      "machine-stale": "Desactualizada",
+      "manual": "Editada a mano",
+      "manual-stale": "Editada a mano · revisar"
+    },
+    "statusDescriptions": {
+      "missing": "Todavía no tiene versión en inglés, así que no aparece en el sitio en inglés.",
+      "machine": "Traducida automáticamente y al día. Se vuelve a traducir sola cuando cambia el español.",
+      "machine-stale": "El español cambió después de la última traducción. Se actualiza al guardar el contenido en español.",
+      "manual": "Corregida a mano y al día. Los próximos guardados no la sobrescriben.",
+      "manual-stale": "Corregida a mano, pero el español cambió después. Revisala: la traducción automática no la reemplaza."
+    },
+    "notices": {
+      "translated": "Versión en inglés actualizada automáticamente.",
+      "manual": "La versión en inglés fue editada a mano y no se actualizó. Revisala para que coincida con el español.",
+      "not-configured": "La traducción automática no está configurada (falta DEEPL_API_KEY), así que la versión en inglés no se actualizó.",
+      "failed": "Los cambios se guardaron, pero no se pudo traducir al inglés: {message}",
+      "up-to-date": ""
+    }
+  },
+  "AdminProgramEnglish": {
+    "tabs": {
+      "label": "Idioma del programa",
+      "source": "Contenido en español",
+      "english": "Inglés"
+    },
+    "statuses": {
+      "missing": "sin traducir",
+      "machine": "traducida automáticamente",
+      "machine-stale": "desactualizada",
+      "manual": "editada a mano",
+      "manual-stale": "editada a mano, pendiente de revisión"
+    },
+    "statusDescriptions": {
+      "missing": "Este programa todavía no tiene versión en inglés y no aparece en el sitio en inglés. Traducilo automáticamente o completá los campos a mano.",
+      "machine": "La traducción está al día con el español. Si cambiás el español, se vuelve a traducir sola al guardar.",
+      "machine-stale": "El español cambió después de la última traducción. Se actualiza al guardar el programa, o podés retraducir ahora.",
+      "manual": "Esta traducción fue corregida a mano y coincide con el español actual. Los próximos guardados no la sobrescriben.",
+      "manual-stale": "Esta traducción fue corregida a mano, pero el español cambió después. Revisala y guardala, o retraducí para reemplazarla."
+    },
+    "status": {
+      "title": "Estado de la traducción: {status}",
+      "lastMachineTranslation": "Última traducción automática: {date}.",
+      "neverMachineTranslated": "Todavía no se tradujo automáticamente.",
+      "unpublishedSource": "El español tiene cambios sin publicar. Esta traducción se publica junto con ellos; la versión en inglés que se ve en el sitio sigue correspondiendo al español publicado.",
+      "notConfigured": "La traducción automática no está configurada (falta DEEPL_API_KEY). Podés escribir la versión en inglés a mano."
+    },
+    "actions": {
+      "translateNow": "Traducir ahora",
+      "retranslate": "Retraducir desde el español",
+      "save": "Guardar traducción"
+    },
+    "retranslateConfirmation": {
+      "title": "¿Reemplazar la traducción corregida?",
+      "description": "Se va a generar una traducción automática nueva a partir del español.",
+      "warning": "Se reemplazarán tus correcciones manuales. ¿Continuar?",
+      "confirm": "Sí, retraducir",
+      "cancel": "Cancelar"
+    },
+    "form": {
+      "title": "Textos en inglés",
+      "description": "Cada campo muestra el texto en español como referencia. Al guardar, la traducción queda marcada como editada a mano.",
+      "saveHint": "Si el español publicado coincide con el actual, el cambio se ve en el sitio de inmediato."
+    },
+    "sourceLabel": "Español",
+    "englishLabel": "Inglés",
+    "linesHelp": "Un elemento por línea.",
+    "fields": {
+      "title": "Título",
+      "shortDescription": "Descripción corta",
+      "fullDescription": "Descripción completa",
+      "location": "Ubicación",
+      "duration": "Duración",
+      "availability": "Disponibilidad",
+      "requirements": "Requisitos",
+      "included": "Qué incluye",
+      "seoTitle": "Título para buscadores",
+      "seoDescription": "Descripción para buscadores"
+    },
+    "feedback": {
+      "saved": "Traducción guardada. Quedó marcada como editada a mano.",
+      "invalid": "Completá todos los campos que tienen contenido en español antes de guardar.",
+      "save-failed": "No se pudo guardar la traducción. Intentá de nuevo.",
+      "retranslated": ""
+    }
+  },
+  "AdminTranslationSettings": {
+    "unavailable": {
+      "title": "No se pudo cargar el estado de las traducciones",
+      "description": "No pudimos leer los contenidos en este momento.",
+      "note": "Probá de nuevo en unos minutos."
+    },
+    "provider": {
+      "configuredTitle": "Traducción automática activa (DeepL)",
+      "configuredDescription": "Los contenidos se traducen al inglés al guardarlos en español.",
+      "missingTitle": "Traducción automática sin configurar",
+      "missingDescription": "Falta la variable DEEPL_API_KEY. El sitio funciona igual, pero la versión en inglés hay que escribirla a mano en cada contenido."
+    },
+    "howItWorks": {
+      "save": "Al guardar un programa, una pregunta frecuente o una categoría en español, se traduce automáticamente al inglés.",
+      "public": "El sitio en inglés solo muestra lo que ya tiene traducción: un programa sin traducir no aparece en /en.",
+      "manual": "Si corregís una traducción a mano, se conserva en los próximos guardados. Si después cambia el español, se marca como pendiente de revisión.",
+      "shortTexts": "En preguntas frecuentes y categorías, dejar vacíos los campos en inglés pide una traducción automática nueva."
+    },
+    "bulk": {
+      "action": "Traducir todo lo pendiente",
+      "pending": "{count, plural, one {# contenido sin traducir o desactualizado.} other {# contenidos sin traducir o desactualizados.}}",
+      "nothingPending": "No hay contenidos pendientes de traducir."
+    },
+    "summary": {
+      "title": "Estado por tipo de contenido",
+      "description": "Cantidad de contenidos en cada estado de traducción.",
+      "content": "Contenido",
+      "rows": {
+        "programs": "Programas",
+        "faqs": "Preguntas frecuentes",
+        "categories": "Categorías"
+      }
+    },
+    "review": {
+      "title": "Programas para revisar",
+      "description": "Programas sin traducir, desactualizados o editados a mano con cambios posteriores en el español.",
+      "open": "Abrir inglés"
+    },
+    "feedback": {
+      "translated": "Listo: {translated, plural, =0 {no hubo contenidos para traducir} one {se tradujo # contenido} other {se tradujeron # contenidos}}. {manual, plural, =0 {} one {# traducción editada a mano no se modificó.} other {# traducciones editadas a mano no se modificaron.}}",
+      "not-configured": "La traducción automática no está configurada (falta DEEPL_API_KEY).",
+      "failed": "No se pudo completar la traducción: {message}"
     }
   }
 }

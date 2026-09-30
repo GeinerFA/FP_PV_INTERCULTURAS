@@ -14,6 +14,7 @@ import type {
 import type { ProgramCategorySummary } from "@/types/category";
 
 import { getProgramRepository } from "./program-repository";
+import { hasProgramLocaleContent } from "./program-translation-content";
 
 function isRecoverablePublicProgramReadError(error: unknown): boolean {
   if (!(error instanceof Error)) {
@@ -117,15 +118,24 @@ export function createEmptyProgramSnapshot(): ProgramSnapshot {
   };
 }
 
+/**
+ * Returns the program in the requested locale, or null when that locale has no content yet: an
+ * untranslated program is left out of the English site instead of showing Spanish text inside it.
+ */
 function localizeProgramSnapshot(
   record: ProgramRecord,
   snapshot: ProgramSnapshot,
   locale: AppLocale,
   categoryMap: Map<string, ProgramCategorySummary>,
-): LocalizedProgram {
+): LocalizedProgram | null {
   const resolvedLocale = resolveProgramLocale(locale);
-  const translation = snapshot.translations[resolvedLocale] ?? snapshot.translations[defaultLocale];
-  const seo = snapshot.seo[resolvedLocale] ?? snapshot.seo[defaultLocale];
+
+  if (!hasProgramLocaleContent(snapshot, resolvedLocale)) {
+    return null;
+  }
+
+  const translation = snapshot.translations[resolvedLocale];
+  const seo = snapshot.seo[resolvedLocale];
 
   return {
     id: record.id,
@@ -136,16 +146,16 @@ function localizeProgramSnapshot(
     workflowState: record.workflowState,
     featured: snapshot.featured,
     coverImage: snapshot.coverImage,
-    location: snapshot.location[resolvedLocale] ?? snapshot.location[defaultLocale],
-    duration: snapshot.duration[resolvedLocale] ?? snapshot.duration[defaultLocale],
-    availability: snapshot.availability[resolvedLocale] ?? snapshot.availability[defaultLocale],
+    location: snapshot.location[resolvedLocale] || snapshot.location[defaultLocale],
+    duration: snapshot.duration[resolvedLocale] || snapshot.duration[defaultLocale],
+    availability: snapshot.availability[resolvedLocale] || snapshot.availability[defaultLocale],
     title: translation.title,
     shortDescription: translation.shortDescription,
     fullDescription: translation.fullDescription,
     requirements: translation.requirements,
     included: translation.included,
-    seoTitle: seo.title,
-    seoDescription: seo.description,
+    seoTitle: seo.title || translation.title,
+    seoDescription: seo.description || translation.shortDescription,
     firstPublishedAt: record.firstPublishedAt,
     createdBy: record.createdBy,
     updatedBy: record.updatedBy,
@@ -158,7 +168,7 @@ export async function listPublicPrograms(locale: AppLocale): Promise<LocalizedPr
   try {
     const [programs, categoryMap] = await Promise.all([
       getProgramRepository().list({ seedBootstrap: true }),
-      getProgramCategoryMap(),
+      getProgramCategoryMap(locale),
     ]);
 
     return sortProgramRecords(programs)
@@ -174,7 +184,8 @@ export async function listPublicPrograms(locale: AppLocale): Promise<LocalizedPr
           snapshot: ProgramSnapshot;
         } => program.record.workflowState === "published" && program.snapshot !== null,
       )
-      .map(({ record, snapshot }) => localizeProgramSnapshot(record, snapshot, locale, categoryMap));
+      .map(({ record, snapshot }) => localizeProgramSnapshot(record, snapshot, locale, categoryMap))
+      .filter((program): program is LocalizedProgram => program !== null);
   } catch (error) {
     return handleRecoverablePublicProgramReadError("listPublicPrograms", error, []);
   }
@@ -198,7 +209,7 @@ export async function getPublicProgramBySlug(
   try {
     const [program, categoryMap] = await Promise.all([
       getProgramRepository().findPublishedBySlug(slug),
-      getProgramCategoryMap(),
+      getProgramCategoryMap(locale),
     ]);
 
     if (!program || program.workflowState !== "published" || !program.publishedSnapshot) {
@@ -208,6 +219,31 @@ export async function getPublicProgramBySlug(
     return localizeProgramSnapshot(program, program.publishedSnapshot, locale, categoryMap);
   } catch (error) {
     return handleRecoverablePublicProgramReadError("getPublicProgramBySlug", error, null);
+  }
+}
+
+/** Published programs that have content in the given locale, for the sitemap and hreflang links. */
+export async function listPublishedProgramSlugsWithLocales(): Promise<Array<{ slug: string; locales: AppLocale[]; updatedAt: string }>> {
+  try {
+    const programs = await getProgramRepository().list({ seedBootstrap: true });
+
+    return programs.flatMap((program) => {
+      const snapshot = program.publishedSnapshot;
+
+      if (program.workflowState !== "published" || !snapshot) {
+        return [];
+      }
+
+      return [
+        {
+          slug: snapshot.slug,
+          locales: locales.filter((locale) => hasProgramLocaleContent(snapshot, locale)),
+          updatedAt: program.updatedAt,
+        },
+      ];
+    });
+  } catch (error) {
+    return handleRecoverablePublicProgramReadError("listPublishedProgramSlugsWithLocales", error, []);
   }
 }
 

@@ -1,9 +1,10 @@
-import NextLink from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { siteConfig } from "@/config/site";
+import { Link } from "@/i18n/navigation";
 import { buildAdminGoogleAuthUrl, getAdminSession } from "@/lib/admin-session";
 import { PublicHeaderControls } from "./public-header-controls";
+import { PublicLanguageSwitcher } from "./public-language-switcher";
 import { PublicNavbar } from "./public-navbar";
 
 type PublicSiteShellProps = {
@@ -16,7 +17,6 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
   const adminHref = "/admin";
   const loginHref = buildAdminGoogleAuthUrl(adminHref);
   const logoutHref = `/api/admin/auth/logout?next=${encodeURIComponent(homeHref)}`;
-  const contactHref = "/#contact";
   const navigationLabels = {
     home: t("Navigation.home"),
     about: t("Navigation.about"),
@@ -43,7 +43,11 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
           <div className="min-w-0 flex-1">
             <PublicNavbar navigationLabels={navigationLabels} />
           </div>
-          <div className="shrink-0">
+          <div className="flex shrink-0 items-center gap-2">
+            <PublicLanguageSwitcher
+              label={t("Shell.languageSwitcherLabel")}
+              localeNames={{ es: t("Shell.localeNames.es"), en: t("Shell.localeNames.en") }}
+            />
             <PublicHeaderControls
               adminHref={adminHref}
               loginHref={loginHref}
@@ -63,9 +67,12 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-8 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
           <div>
             <p>{t("Shell.footer")}</p>
-            <NextLink href={contactHref} className="mt-2 inline-flex font-semibold text-emerald-800 transition hover:text-emerald-700">
+            <Link
+              href={{ pathname: "/", hash: "contact" }}
+              className="mt-2 inline-flex font-semibold text-emerald-800 transition hover:text-emerald-700"
+            >
               {t("Shell.contactAction")}
-            </NextLink>
+            </Link>
           </div>
           <p>© 2026 {siteConfig.name}</p>
         </div>

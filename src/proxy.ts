@@ -1,7 +1,7 @@
 import createMiddleware from "next-intl/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { locales } from "@/config/i18n";
+import { defaultLocale, locales } from "@/config/i18n";
 import { routing } from "@/i18n/routing";
 import {
   buildAdminLoginPath,
@@ -22,6 +22,17 @@ export async function proxy(request: NextRequest) {
 
     if (!locales.includes(requestedLocale as (typeof locales)[number])) {
       return NextResponse.next();
+    }
+
+    // The admin workspace is Spanish-only: /en/admin/... goes back to /admin/...
+    const pathWithoutLocale = request.nextUrl.pathname.slice(localePrefixMatch[0].length) || "/";
+
+    if (requestedLocale !== defaultLocale && /^\/admin(?=\/|$)/.test(pathWithoutLocale)) {
+      const adminUrl = request.nextUrl.clone();
+
+      adminUrl.pathname = pathWithoutLocale;
+
+      return NextResponse.redirect(adminUrl);
     }
   }
 

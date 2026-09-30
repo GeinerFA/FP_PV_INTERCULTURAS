@@ -5,9 +5,16 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { isHTTPAccessFallbackError } from "next/dist/client/components/http-access-fallback/http-access-fallback";
 import { notFound, redirect } from "next/navigation";
 
-import { defaultLocale, locales, type AppLocale } from "@/config/i18n";
+import { locales, sourceLocale, type AppLocale, type TranslationTargetLocale } from "@/config/i18n";
 import { requireAdminAreaSession } from "@/lib/admin-session";
 import { recordAdminActivitySafely } from "@/services/admin/activity-service";
+import { extractProgramTranslatableContent } from "@/services/programs/program-translation-content";
+import { saveProgramManualTranslation, syncProgramTranslation } from "@/services/programs/program-translation-service";
+import {
+  buildTranslationNoticeParams,
+  runAdminTranslation,
+  type AdminTranslationNotice,
+} from "@/services/translation/admin-translation";
 import {
   archiveAdminProgram,
   createAdminProgram,
@@ -18,8 +25,16 @@ import {
   saveAdminProgramDraft,
 } from "@/services/programs/program-service";
 import type { AdminProgramActivityChange } from "@/types/admin-activity";
-import type { LocalizedText, Program, ProgramImageAssetUpload, ProgramSnapshot } from "@/types/program";
+import type {
+  LocalizedText,
+  Program,
+  ProgramImageAssetUpload,
+  ProgramSnapshot,
+  ProgramTranslatableContent,
+} from "@/types/program";
 import { parseProgramSnapshot } from "@/validators/program";
+
+const programTranslationLocale: TranslationTargetLocale = "en";
 
 const supportedCoverImageContentTypes = new Set([
   "image/jpeg",
@@ -45,16 +60,25 @@ function buildProgramEditPath(locale: AppLocale, id: string): string {
   return `/admin/programs/${id}/edit`;
 }
 
-function buildProgramPublicListPath(locale: AppLocale): string {
-  return "/programs";
+function buildProgramEnglishPath(id: string): string {
+  return `/admin/programs/${id}/english`;
 }
 
-function buildProgramPublicDetailPath(locale: AppLocale, slug: string): string {
-  return `/programs/${slug}`;
+function buildStatusUrl(path: string, status: string, params?: Record<string, string>): string {
+  return `${path}?${new URLSearchParams({ status, ...params }).toString()}`;
 }
 
-function buildStatusUrl(path: string, status: string): string {
-  return `${path}?status=${encodeURIComponent(status)}`;
+/** Translates the saved draft; the outcome is reported as a notice and never undoes the save. */
+async function translateProgramAfterSave(
+  programId: string,
+  adminEmail: string,
+  force = false,
+): Promise<AdminTranslationNotice> {
+  return runAdminTranslation(
+    adminEmail,
+    (beforeTranslate) => syncProgramTranslation(programId, programTranslationLocale, { force, beforeTranslate }),
+    `program ${programId}`,
+  );
 }
 
 function rethrowFrameworkNavigation(error: unknown): void {
@@ -170,8 +194,21 @@ function hasConfirmedDestructiveIntent(formData: FormData, intent: "archive" | "
   return readString(formData, "destructiveIntent") === intent;
 }
 
-function readLocalizedText(formData: FormData, key: "location" | "duration" | "availability"): LocalizedText {
-  return Object.fromEntries(locales.map((locale) => [locale, readString(formData, `${key}.${locale}`)])) as LocalizedText;
+/**
+ * The main form only edits the source locale. Translated locales are kept from the current snapshot
+ * (they are produced by the translation flow or edited in the English tab), never read from this form.
+ */
+function readLocalizedText(
+  formData: FormData,
+  key: "location" | "duration" | "availability",
+  currentSnapshot: ProgramSnapshot | null,
+): LocalizedText {
+  return Object.fromEntries(
+    locales.map((locale) => [
+      locale,
+      locale === sourceLocale ? readString(formData, `${key}.${locale}`) : (currentSnapshot?.[key][locale] ?? ""),
+    ]),
+  ) as LocalizedText;
 }
 
 function readCoverImageFile(formData: FormData): File | null {
@@ -224,17 +261,7 @@ function normalizeProgramSlug(value: string): string {
 }
 
 function resolveProgramTitleSeed(translations: ProgramSnapshot["translations"]): string {
-  const defaultTitle = translations[defaultLocale]?.title?.trim();
-
-  if (defaultTitle) {
-    return defaultTitle;
-  }
-
-  return (
-    Object.values(translations)
-      .map((translation) => translation.title.trim())
-      .find((title) => title.length > 0) ?? ""
-  );
+  return translations[sourceLocale]?.title?.trim() ?? "";
 }
 
 function buildProgramSeoFromFormData(
@@ -242,13 +269,17 @@ function buildProgramSeoFromFormData(
   translations: ProgramSnapshot["translations"],
   currentSnapshot: ProgramSnapshot | null,
 ): ProgramSnapshot["seo"] {
-  const defaultTitle = translations[defaultLocale]?.title?.trim() ?? "";
-  const defaultDescription = translations[defaultLocale]?.shortDescription?.trim() ?? "";
+  const defaultTitle = translations[sourceLocale]?.title?.trim() ?? "";
+  const defaultDescription = translations[sourceLocale]?.shortDescription?.trim() ?? "";
 
   return Object.fromEntries(
     locales.map((locale) => {
       const translation = translations[locale];
       const currentSeo = currentSnapshot?.seo[locale];
+
+      if (locale !== sourceLocale) {
+        return [locale, currentSeo ?? { title: "", description: "" }];
+      }
       const explicitTitle = readString(formData, `seo.${locale}.title`);
       const explicitDescription = readString(formData, `seo.${locale}.description`);
 
@@ -279,13 +310,21 @@ function parseProgramSnapshotFromFormData(
   const translations = Object.fromEntries(
     locales.map((locale) => [
       locale,
-      {
-        title: readString(formData, `translations.${locale}.title`),
-        shortDescription: readString(formData, `translations.${locale}.shortDescription`),
-        fullDescription: readString(formData, `translations.${locale}.fullDescription`),
-        requirements: readLineArray(formData, `translations.${locale}.requirements`),
-        included: readLineArray(formData, `translations.${locale}.included`),
-      },
+      locale === sourceLocale
+        ? {
+            title: readString(formData, `translations.${locale}.title`),
+            shortDescription: readString(formData, `translations.${locale}.shortDescription`),
+            fullDescription: readString(formData, `translations.${locale}.fullDescription`),
+            requirements: readLineArray(formData, `translations.${locale}.requirements`),
+            included: readLineArray(formData, `translations.${locale}.included`),
+          }
+        : (currentSnapshot?.translations[locale] ?? {
+            title: "",
+            shortDescription: "",
+            fullDescription: "",
+            requirements: [],
+            included: [],
+          }),
     ]),
   ) as ProgramSnapshot["translations"];
   const explicitSlug = readString(formData, "slug");
@@ -297,11 +336,12 @@ function parseProgramSnapshotFromFormData(
     featured: readBoolean(formData, "featured"),
     coverImage: readString(formData, "coverImage"),
     coverImageAsset,
-    location: readLocalizedText(formData, "location"),
-    duration: readLocalizedText(formData, "duration"),
-    availability: readLocalizedText(formData, "availability"),
+    location: readLocalizedText(formData, "location", currentSnapshot),
+    duration: readLocalizedText(formData, "duration", currentSnapshot),
+    availability: readLocalizedText(formData, "availability", currentSnapshot),
     translations,
     seo: buildProgramSeoFromFormData(formData, translations, currentSnapshot),
+    translationMeta: currentSnapshot?.translationMeta ?? {},
   });
 }
 
@@ -309,11 +349,9 @@ function revalidateProgramPaths(locale: AppLocale, program: Pick<Program, "id" |
   revalidatePath(buildProgramsOverviewPath(locale));
   revalidatePath(buildProgramCreatePath(locale));
   revalidatePath(buildProgramEditPath(locale, program.id));
-  revalidatePath(buildProgramPublicListPath(locale));
-
-  if (program.publishedSnapshot?.slug) {
-    revalidatePath(buildProgramPublicDetailPath(locale, program.publishedSnapshot.slug));
-  }
+  revalidatePath(buildProgramEnglishPath(program.id));
+  // Public pages exist in every locale (/programs, /en/programs, detail pages, featured programs on home).
+  revalidatePath("/", "layout");
 }
 
 export async function saveProgramDraftAction(
@@ -374,8 +412,12 @@ export async function saveProgramDraftAction(
         },
       });
 
+      const translationNotice = await translateProgramAfterSave(createdProgram.id, actorEmail);
+
       revalidateProgramPaths(locale, createdProgram);
-      redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "draft-saved"));
+      redirect(
+        buildStatusUrl(buildProgramsOverviewPath(locale), "draft-saved", buildTranslationNoticeParams(translationNotice)),
+      );
     }
 
     const existingProgram = currentProgram;
@@ -401,8 +443,12 @@ export async function saveProgramDraftAction(
       program: updatedProgram,
     });
 
+    const translationNotice = await translateProgramAfterSave(updatedProgram.id, actorEmail);
+
     revalidateProgramPaths(locale, updatedProgram);
-    redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "draft-saved"));
+    redirect(
+      buildStatusUrl(buildProgramsOverviewPath(locale), "draft-saved", buildTranslationNoticeParams(translationNotice)),
+    );
   } catch (error) {
     rethrowFrameworkNavigation(error);
     redirect(buildStatusUrl(nextPath, "save-failed"));
@@ -488,6 +534,9 @@ export async function publishProgramAction(
       });
     }
 
+    // Translate the draft before publishing so the published snapshot carries the same translation.
+    const translationNotice = await translateProgramAfterSave(persistedProgram.id, actorEmail);
+
     const publishedProgram = await publishAdminProgram({
       id: persistedProgram.id,
       updatedBy: actorEmail,
@@ -514,7 +563,9 @@ export async function publishProgramAction(
     });
 
     revalidateProgramPaths(locale, publishedProgram);
-    redirect(buildStatusUrl(buildProgramsOverviewPath(locale), "published"));
+    redirect(
+      buildStatusUrl(buildProgramsOverviewPath(locale), "published", buildTranslationNoticeParams(translationNotice)),
+    );
   } catch (error) {
     rethrowFrameworkNavigation(error);
     if (id) {
@@ -523,6 +574,91 @@ export async function publishProgramAction(
 
     redirect(buildStatusUrl(id ? buildProgramEditPath(locale, id) : buildProgramCreatePath(locale), "publish-failed"));
   }
+}
+
+function readProgramTranslatableContent(formData: FormData): ProgramTranslatableContent {
+  return {
+    title: readString(formData, "title"),
+    shortDescription: readString(formData, "shortDescription"),
+    fullDescription: readString(formData, "fullDescription"),
+    requirements: readLineArray(formData, "requirements"),
+    included: readLineArray(formData, "included"),
+    location: readString(formData, "location"),
+    duration: readString(formData, "duration"),
+    availability: readString(formData, "availability"),
+    seoTitle: readString(formData, "seoTitle"),
+    seoDescription: readString(formData, "seoDescription"),
+  };
+}
+
+/** A hand-edited translation must fill every field that has content in the source locale. */
+function hasRequiredTranslatedFields(content: ProgramTranslatableContent, source: ProgramTranslatableContent): boolean {
+  const scalarFields = [
+    "title",
+    "shortDescription",
+    "fullDescription",
+    "location",
+    "duration",
+    "availability",
+    "seoTitle",
+    "seoDescription",
+  ] as const;
+
+  return (
+    scalarFields.every((field) => source[field].trim().length === 0 || content[field].length > 0) &&
+    (source.requirements.length === 0 || content.requirements.length > 0) &&
+    (source.included.length === 0 || content.included.length > 0)
+  );
+}
+
+export async function saveProgramEnglishAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {
+  const nextPath = buildProgramEnglishPath(id);
+  await requireAdminAreaSession({ locale, nextPath, area: "programs", action: "manage" });
+  const currentProgram = await getAdminProgramById(id);
+
+  if (!currentProgram) {
+    notFound();
+  }
+
+  const content = readProgramTranslatableContent(formData);
+
+  if (!hasRequiredTranslatedFields(content, extractProgramTranslatableContent(currentProgram.draftSnapshot, sourceLocale))) {
+    redirect(buildStatusUrl(nextPath, "invalid"));
+  }
+
+  try {
+    const savedProgram = await saveProgramManualTranslation(id, programTranslationLocale, content);
+
+    if (!savedProgram) {
+      notFound();
+    }
+
+    revalidateProgramPaths(locale, savedProgram);
+  } catch (error) {
+    rethrowFrameworkNavigation(error);
+    redirect(buildStatusUrl(nextPath, "save-failed"));
+  }
+
+  redirect(buildStatusUrl(nextPath, "saved"));
+}
+
+/** Forces a machine translation from the source, replacing any manual corrections. */
+export async function retranslateProgramAction(locale: AppLocale, id: string): Promise<void> {
+  const nextPath = buildProgramEnglishPath(id);
+  const session = await requireAdminAreaSession({ locale, nextPath, area: "programs", action: "manage" });
+  const currentProgram = await getAdminProgramById(id);
+
+  if (!currentProgram) {
+    notFound();
+  }
+
+  const translationNotice = await translateProgramAfterSave(id, session.email, true);
+
+  if (translationNotice.outcome === "translated") {
+    revalidateProgramPaths(locale, currentProgram);
+  }
+
+  redirect(buildStatusUrl(nextPath, "retranslated", buildTranslationNoticeParams(translationNotice)));
 }
 
 export async function archiveProgramAction(locale: AppLocale, id: string, formData: FormData): Promise<void> {

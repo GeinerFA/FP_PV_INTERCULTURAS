@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 
 import { getLocale, getTranslations } from "next-intl/server";
 
-import { locales, type AppLocale } from "@/config/i18n";
+import { sourceLocale, type AppLocale } from "@/config/i18n";
 import {
   archiveProgramAction,
   deleteProgramAction,
@@ -12,11 +12,13 @@ import {
 } from "@/app/[locale]/admin/programs/actions";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
+import { AdminProgramLanguageTabs } from "@/features/programs/components/admin-program-language-tabs";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
 import { ProgramCoverImageFileInputPreview } from "@/features/programs/components/program-cover-image-file-input-preview";
 import { ProgramCoverImageLightbox } from "@/features/programs/components/program-cover-image-lightbox";
 import { Link } from "@/i18n/navigation";
 import { listAdminProgramCategories } from "@/services/categories/category-service";
+import { getProgramTranslationStatus } from "@/services/programs/program-translation-content";
 import type { Program, ProgramSnapshot } from "@/types/program";
 import { isProgramPublishRequiredField } from "@/validators/program";
 
@@ -269,6 +271,14 @@ export async function AdminProgramFormShell({
       <div aria-hidden="true" className="admin-program-preview-overlay" />
 
       <div className="admin-program-preview-content space-y-8 lg:space-y-10">
+        {program ? (
+          <AdminProgramLanguageTabs
+            programId={program.id}
+            active="source"
+            englishStatus={getProgramTranslationStatus(program.draftSnapshot, "en")}
+          />
+        ) : null}
+
         {feedback ? (
           <div
             className={`admin-program-preview-banner rounded-[28px] border px-5 py-4 text-sm leading-7 shadow-[0_18px_40px_-32px_rgba(15,23,42,0.9)] ${feedbackTone}`}
@@ -382,7 +392,7 @@ export async function AdminProgramFormShell({
                 contentClassName={previewSectionContentClassName}
               >
                 <div className="space-y-6">
-                  {locales.map((locale) => (
+                  {[sourceLocale].map((locale) => (
                     <div key={locale} className={contentCardClassName}>
                       <div className="border-b border-emerald-900/8 pb-4">
                         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-800/80">
@@ -458,19 +468,19 @@ export async function AdminProgramFormShell({
                       {
                         key: "location",
                         label: t("fields.location"),
-                        value: program ? program.location[activeLocale] : "",
+                        value: program ? program.location[sourceLocale] : "",
                         placeholder: t("placeholders.localizedLocation"),
                       },
                       {
                         key: "duration",
                         label: t("fields.duration"),
-                        value: program ? program.duration[activeLocale] : "",
+                        value: program ? program.duration[sourceLocale] : "",
                         placeholder: t("placeholders.localizedDuration"),
                       },
                       {
                         key: "availability",
                         label: t("fields.availability"),
-                        value: program ? program.availability[activeLocale] : "",
+                        value: program ? program.availability[sourceLocale] : "",
                         placeholder: t("placeholders.localizedAvailability"),
                       },
                     ].map((field) => (
@@ -482,7 +492,7 @@ export async function AdminProgramFormShell({
                           className={fieldLabelClassName}
                         />
                         <input
-                          name={`${field.key}.${activeLocale}`}
+                          name={`${field.key}.${sourceLocale}`}
                           defaultValue={field.value}
                           placeholder={field.placeholder}
                           className={fieldInputClassName}
@@ -579,8 +589,8 @@ export async function AdminProgramFormShell({
                   className="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
                 />
                 <textarea
-                  name={`translations.${activeLocale}.requirements`}
-                  defaultValue={getLines(program?.translations[activeLocale].requirements)}
+                  name={`translations.${sourceLocale}.requirements`}
+                  defaultValue={getLines(program?.translations[sourceLocale].requirements)}
                   placeholder={t("placeholders.requirementsLines")}
                   rows={8}
                   className={textareaClassName}
@@ -602,8 +612,8 @@ export async function AdminProgramFormShell({
                   className="mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500"
                 />
                 <textarea
-                  name={`translations.${activeLocale}.included`}
-                  defaultValue={getLines(program?.translations[activeLocale].included)}
+                  name={`translations.${sourceLocale}.included`}
+                  defaultValue={getLines(program?.translations[sourceLocale].included)}
                   placeholder={t("placeholders.includedLines")}
                   rows={8}
                   className={textareaClassName}

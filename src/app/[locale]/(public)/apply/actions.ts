@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import type { AppLocale } from "@/config/i18n";
+import { getPathname } from "@/i18n/navigation";
 import {
   applicationFormFieldNames,
   emptyApplicationFormValues,
@@ -279,8 +280,9 @@ export async function submitApplicationAction(
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     maxAge: publicApplicationSuccessCookieMaxAgeSeconds,
-    path: "/apply",
+    // Scope the cookie to the visitor's localized apply URLs (/apply or /en/apply).
+    path: getPathname({ href: "/apply", locale }),
   });
 
-  redirect("/apply/success");
+  redirect(getPathname({ href: "/apply/success", locale }));
 }

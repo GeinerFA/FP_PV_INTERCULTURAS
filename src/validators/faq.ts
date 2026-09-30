@@ -1,4 +1,5 @@
-import { faqMoveDirections, type FaqEntry, type FaqMoveDirection } from "@/types/faq";
+import { faqMoveDirections, faqTranslatableFields, type FaqEntry, type FaqMoveDirection } from "@/types/faq";
+import { parseShortTextTranslations } from "@/validators/translation";
 
 type PlainObject = Record<string, unknown>;
 
@@ -63,6 +64,7 @@ export function parseFaqRecord(value: unknown, path = "faqRecord"): FaqEntry {
     id: assertString(object.id, `${path}.id`),
     question: assertString(object.question, `${path}.question`),
     answer: assertString(object.answer, `${path}.answer`),
+    translations: parseShortTextTranslations(object.translations, faqTranslatableFields),
     order: assertInteger(object.order, `${path}.order`),
     createdBy: assertString(object.createdBy, `${path}.createdBy`),
     updatedBy: assertString(object.updatedBy, `${path}.updatedBy`),

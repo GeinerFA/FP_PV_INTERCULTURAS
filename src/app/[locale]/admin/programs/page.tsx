@@ -4,16 +4,23 @@ import { AdminProgramsOverview } from "@/features/programs/components/admin-prog
 import type { AppLocale } from "@/config/i18n";
 import { Link } from "@/i18n/navigation";
 import { hasAdminPermission, requireAdminSession } from "@/lib/admin-session";
+import { parseTranslationNotice } from "@/services/translation/admin-translation";
 
 type SearchParamValue = string | string[] | undefined;
 
 type AdminProgramsPageProps = {
   params: Promise<{ locale: AppLocale }>;
-  searchParams: Promise<{ status?: SearchParamValue; view?: SearchParamValue; page?: SearchParamValue }>;
+  searchParams: Promise<{
+    status?: SearchParamValue;
+    view?: SearchParamValue;
+    page?: SearchParamValue;
+    translation?: SearchParamValue;
+    translationError?: SearchParamValue;
+  }>;
 };
 
 export default async function AdminProgramsPage({ params, searchParams }: AdminProgramsPageProps) {
-  const [{ locale }, { status, view, page }] = await Promise.all([params, searchParams]);
+  const [{ locale }, { status, view, page, translation, translationError }] = await Promise.all([params, searchParams]);
   const feedback = typeof status === "string" ? status : undefined;
   const session = await requireAdminSession({ locale, nextPath: "/admin/programs", permission: "programs.view" });
 
@@ -38,6 +45,7 @@ export default async function AdminProgramsPage({ params, searchParams }: AdminP
         session={session}
         view={view === "archived" ? "archived" : undefined}
         page={normalizePageParam(page)}
+        translationNotice={parseTranslationNotice(translation, translationError)}
       />
     </AdminPageTemplate>
   );
