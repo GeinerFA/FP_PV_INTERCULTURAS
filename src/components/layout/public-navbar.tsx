@@ -74,7 +74,7 @@ export function PublicNavbar({ navigationLabels }: PublicNavbarProps) {
                     : "text-slate-600 hover:text-slate-950"
                 }`}
               >
-                <span className={isActive ? "border-b border-emerald-500/60 pb-0.5" : "pb-0.5"}>
+                <span className="nav-underline pb-0.5" data-active={isActive}>
                   {navigationLabels[item.labelKey]}
                 </span>
               </NextLink>

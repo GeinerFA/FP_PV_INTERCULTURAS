@@ -76,7 +76,7 @@ export function PublicFeaturedProgramsCarousel({
   }, []);
 
   return (
-    <div className="mt-8" role="region" aria-labelledby={featuredHeadingId}>
+    <div className="mt-8" role="region" data-no-reveal aria-labelledby={featuredHeadingId}>
       {hasNavigation ? (
         <div className="mb-5 flex items-center justify-end gap-3">
           <button

@@ -734,8 +734,87 @@ body {
   }
 }
 
-a {
-  transition: color 150ms ease;
+/* Transiciones globales: van en @layer base para que las clases de Tailwind
+   (transition, duration-*, hover:*) sigan teniendo prioridad. */
+@theme {
+  --default-transition-duration: 220ms;
+  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  a {
+    transition: color 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :where(
+      .admin-primary-action,
+      .admin-secondary-action,
+      .admin-outline-action,
+      .admin-info-action,
+      .admin-warning-action,
+      .admin-danger-action,
+      .admin-sidebar-nav-link,
+      .admin-sidebar-home-link,
+      .admin-disclosure-pill
+    ) {
+    transition-property: color, background-color, border-color, box-shadow, translate, scale, opacity;
+    transition-duration: 220ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :where(
+      .admin-primary-action,
+      .admin-secondary-action,
+      .admin-outline-action,
+      .admin-info-action,
+      .admin-warning-action,
+      .admin-danger-action,
+      .admin-sidebar-home-link,
+      .admin-disclosure-pill
+    ):not(:disabled):hover {
+    translate: 0 -1px;
+  }
+
+  /* Efecto de "presionar" en botones y enlaces con forma de botón. */
+  :where(
+      button,
+      [role="button"],
+      input[type="submit"],
+      a[class*="rounded-full"],
+      a[class*="-action"],
+      .admin-sidebar-nav-link
+    ):not(:disabled):active {
+    scale: 0.97;
+  }
+}
+
+/* Subrayado animado del menú público. */
+.nav-underline {
+  background-image: linear-gradient(rgb(16 185 129 / 0.7), rgb(16 185 129 / 0.7));
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 1px;
+  transition: background-size 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+a:hover .nav-underline,
+a:focus-visible .nav-underline,
+.nav-underline[data-active="true"] {
+  background-size: 100% 1px;
+}
+
+/* Menú móvil: aparece con un leve desplazamiento. */
+@media (max-width: 1279px) {
+  #public-navbar-links.flex {
+    animation: fade-down 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+/* Entrada del contenido en la primera carga. <main> persiste entre navegaciones,
+   así que solo se anima una vez; fill "backwards" evita dejar un transform
+   permanente (rompería los elementos position: fixed). */
+.public-main-enter {
+  animation: fade-up 600ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 ::selection {
@@ -746,6 +825,18 @@ a {
   from {
     opacity: 0;
     transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
   }
 
   to {

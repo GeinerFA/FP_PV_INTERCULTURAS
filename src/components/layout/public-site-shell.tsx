@@ -6,6 +6,7 @@ import { buildAdminGoogleAuthUrl, getAdminSession } from "@/lib/admin-session";
 import { PublicHeaderControls } from "./public-header-controls";
 import { PublicLanguageSwitcher } from "./public-language-switcher";
 import { PublicNavbar } from "./public-navbar";
+import { PublicScrollReveal } from "./public-scroll-reveal";
 
 type PublicSiteShellProps = {
   children: React.ReactNode;
@@ -59,9 +60,13 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
         </div>
       </header>
 
-      <main className="mx-auto flex max-w-6xl flex-1 flex-col gap-14 px-6 py-8 md:py-10 lg:py-12">
+      <main
+        id="public-main"
+        className="public-main-enter mx-auto flex max-w-6xl flex-1 flex-col gap-14 px-6 py-8 md:py-10 lg:py-12"
+      >
         {children}
       </main>
+      <PublicScrollReveal targetId="public-main" />
 
       <footer className="bg-white/18 backdrop-blur-sm">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-8 text-sm text-slate-600 md:flex-row md:items-center md:justify-between">
