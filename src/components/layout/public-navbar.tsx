@@ -29,7 +29,7 @@ export function PublicNavbar({ navigationLabels, mobileMenuFooter }: PublicNavba
         <div className="flex w-full min-w-0 items-center justify-between gap-3 md:gap-4 xl:w-auto xl:shrink-0 xl:justify-start">
           <NextLink
             href="/"
-            className="group inline-flex min-w-0 items-center rounded-2xl py-1 xl:pr-2 text-slate-950 transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-emerald-200/80 focus:ring-offset-2 focus:ring-offset-transparent"
+            className="group inline-flex min-w-0 items-center rounded-2xl py-1 xl:pr-2 text-slate-950 transition outline-none hover:opacity-90 focus-visible:ring-2 focus-visible:ring-emerald-200/80 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
           >
             <Image
               src="/branding/nuevo-logo.png"

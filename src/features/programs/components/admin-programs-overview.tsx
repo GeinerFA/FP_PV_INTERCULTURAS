@@ -416,15 +416,6 @@ export async function AdminProgramsOverview({
                          >
                            {t("table.openEditor")}
                          </Link>
-                         <Link
-                           href={{
-                             pathname: "/admin/programs/[id]/english",
-                             params: { id: program.id },
-                           }}
-                           className={programRowActionLinkClassName}
-                         >
-                           {t("table.openEnglish")}
-                         </Link>
                          {program.status === "archived" ? (
                            <form action={reactivateProgramAction.bind(null, activeLocale, program.id)}>
                              <button
