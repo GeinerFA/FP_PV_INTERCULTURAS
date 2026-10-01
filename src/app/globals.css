@@ -788,6 +788,227 @@ body {
   }
 }
 
+/* ---------- Transiciones del panel administrativo ----------
+   Complementan las de @layer base (elevación y "presionar" de los botones). */
+
+/* Entrada de cada página del admin (el template se vuelve a montar en cada navegación).
+   fill "backwards" no deja un transform permanente, que rompería los position: fixed. */
+.admin-page-enter {
+  animation: fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* Bloques del contenido escalonados: avisos, tarjetas de resumen y secciones. */
+.admin-page-enter .admin-inner-workspace > * > * {
+  animation: fade-up 480ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.admin-page-enter .admin-inner-workspace > * > :nth-child(1) { animation-delay: 60ms; }
+.admin-page-enter .admin-inner-workspace > * > :nth-child(2) { animation-delay: 110ms; }
+.admin-page-enter .admin-inner-workspace > * > :nth-child(3) { animation-delay: 160ms; }
+.admin-page-enter .admin-inner-workspace > * > :nth-child(4) { animation-delay: 210ms; }
+.admin-page-enter .admin-inner-workspace > * > :nth-child(n + 5) { animation-delay: 260ms; }
+
+/* Pantalla de carga mientras la página consulta los datos. */
+.admin-loading {
+  animation: fade-in 240ms ease-out backwards;
+}
+
+.admin-skeleton {
+  background: linear-gradient(
+    100deg,
+    rgb(255 255 255 / 0.28) 30%,
+    rgb(255 255 255 / 0.62) 50%,
+    rgb(255 255 255 / 0.28) 70%
+  );
+  background-size: 300% 100%;
+  animation: admin-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes admin-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Avisos de "guardado" o de error: entran desde arriba. */
+.admin-success-banner,
+.admin-warning-banner {
+  animation: fade-down 320ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@layer base {
+  /* Menú lateral: el enlace se desliza un poco y el ícono crece levemente. */
+  .admin-sidebar-nav-link:not(.admin-sidebar-nav-link-active):hover {
+    translate: 3px 0;
+  }
+
+  .admin-sidebar-nav-icon {
+    transition-property: background-color, box-shadow, scale;
+    transition-duration: 260ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .admin-sidebar-nav-link:hover .admin-sidebar-nav-icon {
+    scale: 1.06;
+  }
+
+  /* Sombra un poco más marcada en el botón principal al pasar el mouse. */
+  .admin-primary-action:not(:disabled):hover {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.24),
+      0 24px 46px -24px rgb(4 120 87 / 0.66);
+  }
+
+  /* Campos de formulario: el foco aparece con suavidad. */
+  .admin-inner-input {
+    transition-property: border-color, box-shadow, background-color;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+  }
+
+  /* Filas de las tablas del admin. */
+  .admin-inner-table-shell tbody tr {
+    transition: background-color 180ms ease;
+  }
+
+  .admin-inner-table-shell tbody tr:hover {
+    background-color: rgb(255 255 255 / 0.32);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Sin desplazamientos ni escalas; los cambios de color se mantienen. */
+  :where([class*="admin-"]):is(:hover, :active),
+  .admin-sidebar-nav-link:hover .admin-sidebar-nav-icon {
+    translate: none !important;
+    scale: none !important;
+  }
+
+  .admin-skeleton {
+    animation: none;
+  }
+}
+
+/* ---------- Botón flotante "volver arriba" (sitio público y admin) ----------
+   Verde sólido con borde blanco y sombra: se distingue sobre el video oscuro del inicio
+   y sobre las secciones claras. z-index 30: encima del encabezado (20), debajo de los modales (50). */
+.scroll-top-button {
+  position: fixed;
+  right: max(1.25rem, env(safe-area-inset-right));
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  z-index: 30;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 2px solid rgb(255 255 255 / 0.9);
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgb(4 120 87), rgb(16 185 129));
+  color: rgb(255 255 255);
+  box-shadow:
+    0 0 0 1px rgb(6 78 59 / 0.18),
+    0 18px 36px -14px rgb(2 44 34 / 0.55);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  translate: 0 12px;
+  scale: 0.9;
+  transition:
+    opacity 260ms ease,
+    translate 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    scale 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms ease;
+}
+
+.scroll-top-button[data-visible="true"] {
+  opacity: 1;
+  pointer-events: auto;
+  translate: 0 0;
+  scale: 1;
+}
+
+.scroll-top-button[data-visible="true"]:hover {
+  translate: 0 -2px;
+  box-shadow:
+    0 0 0 1px rgb(6 78 59 / 0.2),
+    0 22px 40px -14px rgb(2 44 34 / 0.62);
+}
+
+.scroll-top-button[data-visible="true"]:active {
+  scale: 0.94;
+}
+
+.scroll-top-button:focus-visible {
+  outline: 3px solid rgb(52 211 153 / 0.7);
+  outline-offset: 3px;
+}
+
+.scroll-top-button-ring {
+  position: absolute;
+  inset: -2px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  rotate: -90deg;
+  pointer-events: none;
+}
+
+.scroll-top-button-ring-track,
+.scroll-top-button-ring-progress {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.scroll-top-button-ring-track {
+  stroke: rgb(255 255 255 / 0.22);
+}
+
+.scroll-top-button-ring-progress {
+  stroke: rgb(255 255 255);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 120ms linear;
+}
+
+.scroll-top-button-arrow {
+  width: 1.25rem;
+  height: 1.25rem;
+  transition: translate 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-top-button:hover .scroll-top-button-arrow {
+  translate: 0 -2px;
+}
+
+@media (min-width: 1024px) {
+  .scroll-top-button {
+    right: max(2rem, env(safe-area-inset-right));
+    bottom: max(2rem, env(safe-area-inset-bottom));
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-top-button,
+  .scroll-top-button[data-visible="true"],
+  .scroll-top-button[data-visible="true"]:hover,
+  .scroll-top-button[data-visible="true"]:active,
+  .scroll-top-button:hover .scroll-top-button-arrow {
+    translate: none;
+    scale: none;
+  }
+}
+
+@media print {
+  .scroll-top-button {
+    display: none;
+  }
+}
+
 /* Subrayado animado del menú público. */
 .nav-underline {
   background-image: linear-gradient(rgb(16 185 129 / 0.7), rgb(16 185 129 / 0.7));

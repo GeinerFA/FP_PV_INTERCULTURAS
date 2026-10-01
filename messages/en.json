@@ -19,6 +19,7 @@
     "accountSignedInHint": "An admin session is already active.",
     "accountAdminAction": "Admin panel",
     "accountLogoutAction": "Sign out",
+    "backToTop": "Back to top",
     "languageSwitcherLabel": "Site language",
     "localeNames": {
       "es": "Español",
@@ -30,6 +31,8 @@
     "accountMenuTitle": "Cuenta administrativa",
     "accountMenuDescription": "Gestioná la sesión autorizada del panel desde este control lateral.",
     "homeLabel": "Volver al inicio público",
+    "loading": "Cargando…",
+    "backToTop": "Volver arriba",
     "backLabel": "Volver a la página anterior",
     "login": "Iniciar sesión",
     "sessionActive": "Sesión iniciada",

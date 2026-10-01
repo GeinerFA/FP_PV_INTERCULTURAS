@@ -8,6 +8,7 @@ import { PublicHeaderControls } from "./public-header-controls";
 import { PublicLanguageSwitcher } from "./public-language-switcher";
 import { PublicNavbar } from "./public-navbar";
 import { PublicScrollReveal } from "./public-scroll-reveal";
+import { ScrollToTopButton } from "./scroll-to-top-button";
 
 type PublicSiteShellProps = {
   children: React.ReactNode;
@@ -57,7 +58,10 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
   );
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.32),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_36%,#eff6f1_100%)] text-slate-900">
+    // overflow-x-clip: el hero de inicio ocupa 100vw, que en escritorio incluye el ancho de la barra de
+    // desplazamiento vertical y generaba una barra horizontal. "clip" (y no "hidden") mantiene el
+    // encabezado sticky funcionando.
+    <div className="min-h-screen overflow-x-clip bg-[radial-gradient(circle_at_top,rgba(209,250,229,0.32),transparent_32%),linear-gradient(180deg,#eef8f1_0%,#f8f4e8_36%,#eff6f1_100%)] text-slate-900">
       <PublicHeader>
         <div className="mx-auto flex max-w-6xl items-start justify-between gap-3 px-6 py-3 md:flex-nowrap md:items-center md:gap-4 lg:gap-6">
           <div className="min-w-0 flex-1">
@@ -99,6 +103,8 @@ export async function PublicSiteShell({ children }: PublicSiteShellProps) {
           <p>© 2026 {siteConfig.name}</p>
         </div>
       </footer>
+
+      <ScrollToTopButton label={t("Shell.backToTop")} />
     </div>
   );
 }

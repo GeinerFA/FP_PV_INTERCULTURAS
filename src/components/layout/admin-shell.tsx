@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { siteConfig } from "@/config/site";
 import { AdminSidebarAccountControl } from "@/components/layout/admin-sidebar-account-control";
 import { AdminSidebarNav } from "@/components/layout/admin-sidebar-nav";
+import { ScrollToTopButton } from "@/components/layout/scroll-to-top-button";
 import { Link } from "@/i18n/navigation";
 import { buildAdminGoogleAuthUrl, canAccessAdminNavigationItem, type AdminSession } from "@/lib/admin-session";
 
@@ -105,12 +106,15 @@ export async function AdminShell({ children, session }: AdminShellProps) {
           </div>
         </aside>
 
-        <main className="min-w-0 py-2 lg:min-h-0 lg:overflow-y-auto lg:py-4">
+        <main id="admin-main" className="min-w-0 py-2 lg:min-h-0 lg:overflow-y-auto lg:py-4">
           <div className="flex max-w-none flex-col gap-4 lg:min-h-full xl:pr-2 2xl:pr-4">
             <div className="flex flex-col gap-6">{children}</div>
           </div>
         </main>
       </div>
+
+      {/* On desktop <main> is the scroll container; on mobile the window scrolls. */}
+      <ScrollToTopButton label={t("backToTop")} scrollContainerId="admin-main" />
     </div>
   );
 }
