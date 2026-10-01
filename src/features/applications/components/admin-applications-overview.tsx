@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { AdminRowDetailsCell } from "@/components/common/admin-row-details-cell";
 import { AdminPagination } from "@/features/admin/components/admin-pagination";
 import { AdminWorkspaceSection } from "@/features/admin/components/admin-workspace-section";
 import { isKnownAdminMongoUnavailableError } from "@/features/admin/lib/is-known-admin-mongo-unavailable-error";
@@ -217,7 +218,7 @@ export async function AdminApplicationsOverview({ filters, page }: AdminApplicat
       <AdminWorkspaceSection
         title={t("heading")}
         description={t("description")}
-        contentClassName="px-0 pb-0"
+        flush
         action={
           hasActiveFilters ? (
             <span className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
@@ -277,7 +278,7 @@ export async function AdminApplicationsOverview({ filters, page }: AdminApplicat
           ) : null}
           <div className="overflow-x-auto">
             {visibleApplications.length > 0 ? (
-              <table className="admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
+              <table className="admin-responsive-table admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
                 <thead className="admin-table-head text-xs uppercase tracking-[0.18em] text-slate-500">
                   <tr>
                     <th className="px-6 py-4 font-semibold">{t("columns.applicant")}</th>
@@ -290,26 +291,26 @@ export async function AdminApplicationsOverview({ filters, page }: AdminApplicat
                 <tbody className="divide-y divide-emerald-900/8 bg-transparent">
                   {visibleApplications.map((application) => (
                     <tr key={application.id} className="align-top">
-                      <td className="px-6 py-5">
+                      <td data-cell="primary" className="px-6 py-5">
                         <p className="font-semibold text-slate-950">{application.fullName}</p>
                         <p className="mt-1 text-xs uppercase tracking-[0.16em] text-slate-500">
                           {application.applicationType.name}
                         </p>
                         <p className="mt-2 text-sm text-slate-600">{application.nationality}</p>
                       </td>
-                      <td className="px-6 py-5 text-slate-700">
+                      <td data-label={t("columns.contact")} className="px-6 py-5 text-slate-700">
                         <p>{application.email}</p>
                         <p className="mt-2 text-slate-600">{application.phone}</p>
                       </td>
-                      <td className="px-6 py-5 text-slate-700">{formatDate(application.createdAt, locale)}</td>
-                      <td className="px-6 py-5">
+                      <td data-label={t("columns.submittedAt")} className="px-6 py-5 text-slate-700">{formatDate(application.createdAt, locale)}</td>
+                      <td data-label={t("columns.status")} data-keep className="px-6 py-5">
                         <span
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[application.status]}`}
                         >
                           {t(`statuses.${application.status}`)}
                         </span>
                       </td>
-                      <td className="px-6 py-5">
+                      <td data-cell="actions" className="px-6 py-5">
                         <Link
                           href={{
                             pathname: "/admin/applications/[id]",
@@ -324,6 +325,7 @@ export async function AdminApplicationsOverview({ filters, page }: AdminApplicat
                           {t("openDetail")}
                         </Link>
                       </td>
+                      <AdminRowDetailsCell />
                     </tr>
                   ))}
                 </tbody>

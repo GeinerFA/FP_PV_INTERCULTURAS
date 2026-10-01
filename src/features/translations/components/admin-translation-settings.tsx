@@ -45,6 +45,7 @@ export async function AdminTranslationSettings({
   errorMessage,
 }: AdminTranslationSettingsProps) {
   const t = await getTranslations("AdminTranslationSettings");
+  const tStatus = await getTranslations("AdminTranslations");
   let programs: Awaited<ReturnType<typeof listAdminPrograms>>;
   let faqs: Awaited<ReturnType<typeof listAdminFaqEntries>>;
   let categories: Awaited<ReturnType<typeof listProgramCategories>>;
@@ -126,9 +127,9 @@ export async function AdminTranslationSettings({
         </div>
       </AdminWorkspaceSection>
 
-      <AdminWorkspaceSection title={t("summary.title")} description={t("summary.description")} contentClassName="px-0 pb-0">
+      <AdminWorkspaceSection title={t("summary.title")} description={t("summary.description")} flush>
         <div className="overflow-x-auto">
-          <table className="admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
+          <table className="admin-responsive-table admin-responsive-table-compact admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
             <thead className="admin-table-head text-xs uppercase tracking-[0.18em] text-slate-500">
               <tr>
                 <th className="px-6 py-4 font-semibold">{t("summary.content")}</th>
@@ -142,9 +143,9 @@ export async function AdminTranslationSettings({
             <tbody className="divide-y divide-emerald-900/8">
               {rows.map((row) => (
                 <tr key={row.key}>
-                  <td className="px-6 py-4 font-semibold text-slate-950">{t(`summary.rows.${row.key}`)}</td>
+                  <td data-cell="primary" className="px-6 py-4 font-semibold text-slate-950">{t(`summary.rows.${row.key}`)}</td>
                   {translationStatusOrder.map((status) => (
-                    <td key={status} className="px-6 py-4 text-slate-700">
+                    <td key={status} data-label={tStatus(`statuses.${status}`)} className="px-6 py-4 text-slate-700">
                       {row.counts[status]}
                     </td>
                   ))}

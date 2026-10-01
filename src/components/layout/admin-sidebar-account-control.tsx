@@ -282,3 +282,45 @@ export function AdminSidebarAccountControl({
     </div>
   );
 }
+
+type AdminMobileAccountSummaryProps = {
+  logoutHref: string;
+  labels: Pick<AdminSidebarAccountControlLabels, "accountLogoutAction" | "sessionActive">;
+  session: AdminSession;
+};
+
+/** Cuenta dentro del menú hamburguesa del admin en celular: foto, nombre, correo y cerrar sesión. */
+export function AdminMobileAccountSummary({ logoutHref, labels, session }: AdminMobileAccountSummaryProps) {
+  const profileName = session.displayName?.trim() || session.email;
+  const profileInitial = profileName.charAt(0).toUpperCase() || "P";
+
+  return (
+    <div className="admin-sidebar-session-card flex items-center gap-3 rounded-[24px] p-3 md:hidden">
+      <span className="relative shrink-0">
+        <ProfileAvatar
+          className="block h-11 w-11 rounded-full border border-white/80 object-cover shadow-sm"
+          fallbackClassName="flex h-11 w-11 items-center justify-center rounded-full border border-white/80 bg-white/80 text-sm font-semibold uppercase text-emerald-900 shadow-sm"
+          imageUrl={session.imageUrl}
+          initial={profileInitial}
+        />
+        <span
+          aria-hidden="true"
+          className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-emerald-500"
+        />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold text-slate-950">{profileName}</p>
+        <p className="truncate text-xs text-slate-600">{session.email}</p>
+        <p className="sr-only">{labels.sessionActive}</p>
+      </div>
+      <form action={logoutHref} method="post" className="shrink-0">
+        <button
+          type="submit"
+          className="admin-danger-action inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-semibold transition"
+        >
+          {labels.accountLogoutAction}
+        </button>
+      </form>
+    </div>
+  );
+}

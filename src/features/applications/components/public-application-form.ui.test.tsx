@@ -407,7 +407,9 @@ test("phone dial-code trigger stays compact while the open list keeps country na
   assert.match(dialCodeLabel.className, /sr-only/);
   const compactTriggerText = dialCodeTrigger.textContent?.replace(/\s+/g, " ").trim() ?? "";
 
-  assert.ok(compactTriggerText.startsWith(`${selectedPhoneOption.flag} ${selectedPhoneOption.dialCode}`));
+  // The flag is an image (Windows can't render flag emoji), so the text is just the dial code.
+  assert.ok(compactTriggerText.startsWith(selectedPhoneOption.dialCode));
+  assert.match(dialCodeTrigger.querySelector("img")?.getAttribute("src") ?? "", /\/cr\.svg$/);
   assert.ok(!compactTriggerText.includes(selectedPhoneOption.name));
   assert.match(dialCodeTrigger.className, /w-auto/);
 
@@ -448,16 +450,17 @@ test("shared dial codes use a neutral closed-state indicator", async () => {
   ) as HTMLButtonElement | undefined;
 
   assert.ok(sharedListOption, "Expected the +1 option to exist in the open list");
-  assert.match(sharedListOption.textContent ?? "", /🌐 \+1/);
-  assert.doesNotMatch(sharedListOption.textContent ?? "", /🇦🇬 \+1/);
+  assert.ok(sharedListOption.querySelector("svg"), "Expected the neutral multi-country icon");
+  assert.equal(sharedListOption.querySelector("img"), null);
 
   await act(async () => {
     sharedListOption.click();
   });
 
   const compactTriggerText = dialCodeTrigger.textContent?.replace(/\s+/g, " ").trim() ?? "";
-  assert.ok(compactTriggerText.startsWith("🌐 +1"));
-  assert.doesNotMatch(compactTriggerText, /🇦🇬/);
+  assert.ok(compactTriggerText.startsWith("+1"));
+  assert.ok(dialCodeTrigger.querySelector("svg"), "Expected the neutral multi-country icon in the trigger");
+  assert.equal(dialCodeTrigger.querySelector("img"), null);
 });
 
 test("phone field keeps the number input wide without increasing its height", () => {

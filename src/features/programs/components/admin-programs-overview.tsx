@@ -9,6 +9,7 @@ import { ADMIN_LIST_PAGE_SIZE, buildPaginationState, paginateItems } from "@/fea
 import { getProgramCategoryName } from "@/features/programs/lib/program-category-presentation";
 import { DestructiveActionConfirmation } from "@/features/programs/components/destructive-action-confirmation";
 import { AdminTranslationNoticeBanner } from "@/features/translations/components/admin-translation-notice-banner";
+import { AdminRowDetailsCell } from "@/components/common/admin-row-details-cell";
 import { TranslationStatusBadge } from "@/features/translations/components/translation-status-badge";
 import { Link } from "@/i18n/navigation";
 import { hasAdminPermission, type AdminSession } from "@/lib/admin-session";
@@ -118,24 +119,7 @@ export async function AdminProgramsOverview({
     >
       {t("table.showActive")}
     </Link>
-  ) : (
-    <div className="flex flex-wrap items-center gap-3">
-      <Link
-        href={{ pathname: "/admin/programs", query: { view: "archived" } }}
-        className="admin-outline-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-      >
-        {t("table.showArchived")}
-      </Link>
-      {canManage ? (
-        <Link
-          href="/admin/programs/new"
-          className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-        >
-          {t("table.newProgram")}
-        </Link>
-      ) : null}
-    </div>
-  );
+  ) : null; // En la vista activa, crear y ver archivados ya están en "Siguiente movimiento".
 
   const feedbackTone = feedback === "destructive-confirmation-required" ? "admin-warning-banner" : "admin-success-banner";
 
@@ -156,14 +140,14 @@ export async function AdminProgramsOverview({
           description={tableDescription}
           action={tableAction}
           className="border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,244,232,0.84))] shadow-[0_32px_80px_-58px_rgba(15,23,42,0.14)]"
-          contentClassName="px-0 pb-0"
+          flush
         >
           {visiblePrograms.length === 0 ? (
             <div className="px-6 py-8 text-sm leading-7 text-slate-600">{emptyTableMessage}</div>
           ) : null}
           <div className="overflow-x-auto">
             {visiblePrograms.length > 0 ? (
-              <table className="admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
+              <table className="admin-responsive-table admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
                 <thead className="admin-table-head text-xs uppercase tracking-[0.18em] text-slate-500">
                   <tr>
                     <th className="px-6 py-4 font-semibold">{t("columns.program")}</th>
@@ -177,27 +161,27 @@ export async function AdminProgramsOverview({
                 <tbody className="divide-y divide-emerald-900/8 bg-transparent">
                   {visiblePrograms.map((program) => (
                     <tr key={program.id} className="align-top">
-                      <td className="px-6 py-5">
+                      <td data-cell="primary" className="px-6 py-5">
                         <p className="font-semibold text-slate-950">{program.translations[activeLocale].title}</p>
                         <p className="mt-2 max-w-sm text-sm text-slate-600">
                           {program.translations[activeLocale].shortDescription}
                         </p>
                       </td>
-                      <td className="px-6 py-5 text-slate-700">{getProgramCategoryName(program.categoryDetails, program.category)}</td>
-                      <td className="px-6 py-5">
+                      <td data-label={t("columns.category")} className="px-6 py-5 text-slate-700">{getProgramCategoryName(program.categoryDetails, program.category)}</td>
+                      <td data-label={t("columns.status")} data-keep className="px-6 py-5">
                         <span
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[program.status]}`}
                         >
                           {t(`statuses.${program.status}`)}
                         </span>
                       </td>
-                      <td className="px-6 py-5 text-slate-700">
+                      <td data-label={t("columns.featured")} className="px-6 py-5 text-slate-700">
                         <span className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
                           {program.featured ? t("yes") : t("no")}
                         </span>
                       </td>
-                      <td className="px-6 py-5 text-slate-700">{program.availability[activeLocale]}</td>
-                      <td className="px-6 py-5">
+                      <td data-label={t("columns.availability")} className="px-6 py-5 text-slate-700">{program.availability[activeLocale]}</td>
+                      <td data-cell="actions" className="px-6 py-5">
                          {canManage ? (
                            <div className="flex flex-wrap gap-2">
                              <Link
@@ -222,6 +206,7 @@ export async function AdminProgramsOverview({
                            <span aria-hidden="true">—</span>
                          )}
                        </td>
+                      <AdminRowDetailsCell />
                     </tr>
                   ))}
                 </tbody>
@@ -264,7 +249,7 @@ export async function AdminProgramsOverview({
         ) : null}
         <AdminTranslationNoticeBanner notice={translationNotice} />
 
-        <div className="grid gap-4 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {[
             { key: "catalogSize", value: 0 },
             { key: "publishedNow", value: 0 },
@@ -312,7 +297,7 @@ export async function AdminProgramsOverview({
       ) : null}
       <AdminTranslationNoticeBanner notice={translationNotice} />
 
-      <div className="grid gap-4 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { key: "catalogSize", value: programs.length },
           { key: "publishedNow", value: publishedCount },
@@ -375,14 +360,14 @@ export async function AdminProgramsOverview({
         description={tableDescription}
         action={tableAction}
         className="border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(248,244,232,0.84))] shadow-[0_32px_80px_-58px_rgba(15,23,42,0.14)]"
-        contentClassName="px-0 pb-0"
+        flush
         >
           {visiblePrograms.length === 0 ? (
             <div className="px-6 py-8 text-sm leading-7 text-slate-600">{emptyTableMessage}</div>
           ) : null}
           <div className="overflow-x-auto">
           {visiblePrograms.length > 0 ? (
-          <table className="admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
+          <table className="admin-responsive-table admin-inner-table-shell min-w-full divide-y divide-emerald-900/8 text-left text-sm text-slate-700">
             <thead className="admin-table-head text-xs uppercase tracking-[0.18em] text-slate-500">
               <tr>
                 <th className="px-6 py-4 font-semibold">{t("columns.program")}</th>
@@ -396,7 +381,7 @@ export async function AdminProgramsOverview({
             <tbody className="divide-y divide-emerald-900/8 bg-transparent">
               {visiblePrograms.map((program) => (
                 <tr key={program.id} className="align-top">
-                  <td className="px-6 py-5">
+                  <td data-cell="primary" className="px-6 py-5">
                     <p className="font-semibold text-slate-950">{program.translations[activeLocale].title}</p>
                     <p className="mt-2 max-w-sm text-sm text-slate-600">
                       {program.translations[activeLocale].shortDescription}
@@ -405,21 +390,21 @@ export async function AdminProgramsOverview({
                       <TranslationStatusBadge status={getProgramTranslationStatus(program.draftSnapshot, "en")} withLanguage />
                     </div>
                   </td>
-                  <td className="px-6 py-5 text-slate-700">{getProgramCategoryName(program.categoryDetails, program.category)}</td>
-                  <td className="px-6 py-5">
+                  <td data-label={t("columns.category")} className="px-6 py-5 text-slate-700">{getProgramCategoryName(program.categoryDetails, program.category)}</td>
+                  <td data-label={t("columns.status")} data-keep className="px-6 py-5">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${statusTheme[program.status]}`}
                     >
                       {t(`statuses.${program.status}`)}
                     </span>
                   </td>
-                  <td className="px-6 py-5 text-slate-700">
+                  <td data-label={t("columns.featured")} className="px-6 py-5 text-slate-700">
                     <span className="inline-flex rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
                       {program.featured ? t("yes") : t("no")}
                     </span>
                   </td>
-                  <td className="px-6 py-5 text-slate-700">{program.availability[activeLocale]}</td>
-                  <td className="px-6 py-5">
+                  <td data-label={t("columns.availability")} className="px-6 py-5 text-slate-700">{program.availability[activeLocale]}</td>
+                  <td data-cell="actions" className="px-6 py-5">
                      {canManage ? (
                        <div className="flex flex-wrap gap-2">
                          <Link
@@ -471,6 +456,7 @@ export async function AdminProgramsOverview({
                        <span aria-hidden="true">—</span>
                      )}
                    </td>
+                  <AdminRowDetailsCell />
                 </tr>
               ))}
             </tbody>

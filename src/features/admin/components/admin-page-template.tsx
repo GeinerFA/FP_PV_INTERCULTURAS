@@ -28,10 +28,10 @@ export async function AdminPageTemplate({
 
   return (
     <section
-      className={`relative overflow-hidden rounded-[32px] border border-white/70 ${
+      className={`relative overflow-hidden rounded-[24px] border border-white/70 sm:rounded-[32px] ${
         isWorkspace
-          ? "admin-workspace-page px-6 py-6 md:px-8 md:py-8 xl:px-10 xl:py-9"
-          : "surface-dark-soft p-8"
+          ? "admin-workspace-page px-4 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8 xl:px-10 xl:py-9"
+          : "surface-dark-soft p-5 sm:p-8"
       } ${className ?? ""}`.trim()}
     >
       {isWorkspace ? (
@@ -44,10 +44,10 @@ export async function AdminPageTemplate({
       <div className="relative flex min-w-0 flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 max-w-4xl xl:max-w-5xl">
           <div className="mb-4 h-px w-20 bg-gradient-to-r from-emerald-700/70 to-transparent" />
-          <h1 className="text-3xl font-semibold tracking-tight text-slate-950 md:text-4xl">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl md:text-4xl">
             {t(`${pageKey}.title`)}
           </h1>
-          <p className="mt-4 text-base leading-7 text-slate-600 md:text-lg">
+          <p className="mt-3 text-sm leading-6 text-slate-600 sm:mt-4 sm:text-base sm:leading-7 md:text-lg">
             {t(`${pageKey}.description`)}
           </p>
         </div>
@@ -70,7 +70,7 @@ export async function AdminPageTemplate({
       ) : null}
 
       {children ? (
-        <div className={`relative mt-10 min-w-0 ${useInnerWorkspace ? "admin-inner-workspace" : ""}`.trim()}>
+        <div className={`relative mt-6 min-w-0 sm:mt-10 ${useInnerWorkspace ? "admin-inner-workspace" : ""}`.trim()}>
           {children}
         </div>
       ) : null}

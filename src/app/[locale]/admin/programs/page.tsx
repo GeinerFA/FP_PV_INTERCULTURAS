@@ -2,8 +2,7 @@ import { AdminPageTemplate } from "@/features/admin/components/admin-page-templa
 import { normalizePageParam } from "@/features/admin/lib/pagination";
 import { AdminProgramsOverview } from "@/features/programs/components/admin-programs-overview";
 import type { AppLocale } from "@/config/i18n";
-import { Link } from "@/i18n/navigation";
-import { hasAdminPermission, requireAdminSession } from "@/lib/admin-session";
+import { requireAdminSession } from "@/lib/admin-session";
 import { parseTranslationNotice } from "@/services/translation/admin-translation";
 
 type SearchParamValue = string | string[] | undefined;
@@ -29,16 +28,6 @@ export default async function AdminProgramsPage({ params, searchParams }: AdminP
       pageKey="programs"
       variant="workspace"
       useInnerWorkspace
-      headerAction={
-        hasAdminPermission(session, "programs.manage") ? (
-          <Link
-            href="/admin/programs/new"
-            className="admin-primary-action inline-flex rounded-full px-5 py-3 text-sm font-semibold transition"
-          >
-            Nuevo programa
-          </Link>
-        ) : null
-      }
     >
       <AdminProgramsOverview
         feedback={feedback as Parameters<typeof AdminProgramsOverview>[0]["feedback"]}

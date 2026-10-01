@@ -1,7 +1,9 @@
 import type { MetadataRoute } from "next";
 
+import { getSiteOrigin } from "@/config/site-origin";
+
 export default function robots(): MetadataRoute.Robots {
-  const origin = (process.env.APP_ORIGIN ?? "http://localhost:3000").replace(/\/+$/, "");
+  const origin = getSiteOrigin();
 
   return {
     rules: {

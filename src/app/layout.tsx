@@ -3,23 +3,23 @@ import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
 import "./globals.css";
 
-function resolveMetadataBase(): URL | undefined {
-  try {
-    return process.env.APP_ORIGIN ? new URL(process.env.APP_ORIGIN) : undefined;
-  } catch {
-    return undefined;
-  }
-}
+import { siteConfig } from "@/config/site";
+import { getSiteOrigin } from "@/config/site-origin";
+
+// Google Search Console: código de la etiqueta HTML de verificación (opcional).
+const googleSiteVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
 
 export const metadata: Metadata = {
   // Resolves canonical/hreflang/OpenGraph paths into absolute URLs.
-  metadataBase: resolveMetadataBase(),
+  metadataBase: new URL(getSiteOrigin()),
+  applicationName: siteConfig.name,
   title: {
-    default: "Pura Vida Interculturas",
-    template: "%s | Pura Vida Interculturas",
+    default: siteConfig.name,
+    template: `%s | ${siteConfig.name}`,
   },
   description:
     "Programas y experiencias interculturales con orientación clara para explorar oportunidades, postular y contactar a Pura Vida Interculturas.",
+  ...(googleSiteVerification ? { verification: { google: googleSiteVerification } } : {}),
   icons: {
     icon: "/branding/logo-sin-fondo.png",
     shortcut: "/branding/logo-sin-fondo.png",

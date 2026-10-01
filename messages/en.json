@@ -26,7 +26,12 @@
       "en": "English"
     }
   },
+  "AdminTableDetails": {
+    "show": "Ver detalle",
+    "hide": "Ocultar detalle"
+  },
   "AdminShell": {
+    "menuLabel": "Menú",
     "accountMenuLabel": "Abrir control de la cuenta administrativa",
     "accountMenuTitle": "Cuenta administrativa",
     "accountMenuDescription": "Gestioná la sesión autorizada del panel desde este control lateral.",
@@ -1319,8 +1324,8 @@
   },
   "Home": {
     "metadata": {
-      "title": "Home",
-      "description": "History, featured programs, frequently asked questions and next steps to live an intercultural experience with Pura Vida Interculturas."
+      "title": "Pura Vida Interculturas | Volunteering, internships and Spanish in Costa Rica",
+      "description": "Pura Vida Interculturas: volunteering, internships and Spanish classes in San Ramón, Costa Rica, with local support and meaningful intercultural experiences."
     },
     "hero": {
       "eyebrow": "Intercultural experiences in Costa Rica",

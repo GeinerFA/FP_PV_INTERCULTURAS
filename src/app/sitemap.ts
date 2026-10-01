@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { locales, type AppLocale } from "@/config/i18n";
+import { getSiteOrigin } from "@/config/site-origin";
 import { getPathname } from "@/i18n/navigation";
 import { listPublishedProgramSlugsWithLocales } from "@/services/programs/program-service";
 
@@ -12,7 +13,7 @@ const staticPublicHrefs = ["/", "/about", "/programs", "/faqs", "/apply"] as con
 export const revalidate = 3600;
 
 function resolveOrigin(): string {
-  return (process.env.APP_ORIGIN ?? "http://localhost:3000").replace(/\/+$/, "");
+  return getSiteOrigin();
 }
 
 function buildEntries(

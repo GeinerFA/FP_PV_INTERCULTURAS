@@ -19,6 +19,7 @@ import {
   publicPhoneCountryOptions,
   type PhoneCountryOption,
 } from "@/features/applications/phone-country-options";
+import { CountryFlag, MultiCountryIcon } from "@/features/applications/components/country-flag";
 import {
   SearchableSelect,
   type SearchableSelectOption,
@@ -233,7 +234,7 @@ function PhoneField({
               value: option.dialCode,
               label: formatPhoneCountryOption(option),
               optionLabel: renderPhoneCountryOption(option),
-              selectedLabel: formatPhoneCountryTriggerOption(option),
+              selectedLabel: renderPhoneCountryTriggerOption(option),
               searchText: `${option.countries.join(" ")} ${option.dialCode}`,
             }))}
             copy={copy.searchableSelect}
@@ -264,35 +265,27 @@ function PhoneField({
 }
 
 function formatPhoneCountryOption(option: PhoneCountryOption): string {
-  const indicator = option.countries.length > 1 ? "🌐" : option.flag;
-
-  if (option.countries.length === 1) {
-    return `${option.name} ${indicator} ${option.dialCode}`;
-  }
-
-  const [firstCountry, secondCountry] = option.countries;
-  const remainingCountries = option.countries.length - 2;
-
-  if (remainingCountries > 0) {
-    return `${firstCountry}, ${secondCountry} +${remainingCountries} ${indicator} ${option.dialCode}`;
-  }
-
-  return `${firstCountry}, ${secondCountry} ${indicator} ${option.dialCode}`;
+  return `${formatPhoneCountryOptionName(option)} ${option.dialCode}`;
 }
 
-function getPhoneCountryIndicator(option: PhoneCountryOption): string {
-  return option.countries.length > 1 ? "🌐" : option.flag;
+function renderPhoneCountryIndicator(option: PhoneCountryOption): ReactNode {
+  return option.countries.length > 1 ? <MultiCountryIcon /> : <CountryFlag flag={option.flag} />;
 }
 
-function formatPhoneCountryTriggerOption(option: PhoneCountryOption): string {
-  return `${getPhoneCountryIndicator(option)} ${option.dialCode}`;
+function renderPhoneCountryTriggerOption(option: PhoneCountryOption): ReactNode {
+  return (
+    <span className="inline-flex items-center gap-2">
+      {renderPhoneCountryIndicator(option)}
+      {option.dialCode}
+    </span>
+  );
 }
 
 function renderPhoneCountryOption(option: PhoneCountryOption): ReactNode {
   return (
     <span className="flex items-center justify-between gap-3 overflow-hidden whitespace-nowrap">
       <span className="truncate text-slate-900">{formatPhoneCountryOptionName(option)}</span>
-      <span className="shrink-0 font-medium text-slate-700">{formatPhoneCountryTriggerOption(option)}</span>
+      <span className="shrink-0 font-medium text-slate-700">{renderPhoneCountryTriggerOption(option)}</span>
     </span>
   );
 }
@@ -312,8 +305,13 @@ function formatPhoneCountryOptionName(option: PhoneCountryOption): string {
   return `${firstCountry}, ${secondCountry}`;
 }
 
-function formatCountryOption(option: CountryOption): string {
-  return `${option.flag} ${option.name}`;
+function renderCountryOption(option: CountryOption): ReactNode {
+  return (
+    <span className="inline-flex min-w-0 items-center gap-2">
+      <CountryFlag flag={option.flag} />
+      <span className="truncate">{option.name}</span>
+    </span>
+  );
 }
 
 function CountryField({
@@ -338,7 +336,9 @@ function CountryField({
         autoComplete="country-name"
         options={publicCountryOptions.map<SearchableSelectOption>((option) => ({
           value: option.name,
-          label: formatCountryOption(option),
+          label: option.name,
+          optionLabel: renderCountryOption(option),
+          selectedLabel: renderCountryOption(option),
           searchText: option.name,
         }))}
         copy={copy.searchableSelect}

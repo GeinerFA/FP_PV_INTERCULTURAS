@@ -9,6 +9,8 @@ type AdminWorkspaceSectionProps = {
   tone?: "default" | "subtle" | "warning";
   className?: string;
   contentClassName?: string;
+  /** Contenido pegado a los bordes laterales e inferior (tablas). */
+  flush?: boolean;
 };
 
 const toneClassName = {
@@ -26,11 +28,12 @@ export function AdminWorkspaceSection({
   tone = "default",
   className,
   contentClassName,
+  flush = false,
 }: AdminWorkspaceSectionProps) {
   return (
     <section className={[toneClassName[tone], className].filter(Boolean).join(" ")}>
-      <div className="flex flex-col gap-4 border-b border-emerald-900/8 px-6 py-6 md:flex-row md:items-start md:justify-between">
-        <div className="max-w-3xl space-y-3">
+      <div className="flex flex-col gap-4 border-b border-emerald-900/8 px-4 py-5 sm:px-6 sm:py-6 md:flex-row md:items-start md:justify-between">
+        <div className="min-w-0 max-w-3xl space-y-3">
           {eyebrow ? (
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-800/85">{eyebrow}</p>
           ) : null}
@@ -42,7 +45,7 @@ export function AdminWorkspaceSection({
         {action ? <div className="md:shrink-0">{action}</div> : null}
       </div>
 
-      <div className={["px-6 py-6", contentClassName].filter(Boolean).join(" ")}>{children}</div>
+      <div className={[flush ? "pt-5 sm:pt-6" : "px-4 py-5 sm:px-6 sm:py-6", contentClassName].filter(Boolean).join(" ")}>{children}</div>
     </section>
   );
 }

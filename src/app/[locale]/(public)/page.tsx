@@ -14,7 +14,8 @@ export async function generateMetadata({ params }: Pick<LocaleHomePageProps, "pa
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Home.metadata" });
 
-  return buildMetadata({ title: t("title"), description: t("description"), locale, href: "/" });
+  // El inicio ya empieza con la marca: sin el sufijo "| Pura Vida Interculturas".
+  return buildMetadata({ title: t("title"), description: t("description"), locale, href: "/", absoluteTitle: true });
 }
 
 export default async function LocaleHomePage({ params, searchParams }: LocaleHomePageProps) {

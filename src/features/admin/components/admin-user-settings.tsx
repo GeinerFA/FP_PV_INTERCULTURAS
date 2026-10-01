@@ -132,7 +132,7 @@ function UserEntry({
         </div>
       </summary>
 
-      <div className="border-t border-emerald-900/8 px-5 pb-5 pt-5 md:px-6 md:pb-6">
+      <div className="border-t border-emerald-900/8 px-4 pb-4 pt-4 sm:px-5 sm:pb-5 sm:pt-5 md:px-6 md:pb-6">
         {canViewOnly ? (
           <div className="space-y-5">
             <div className="grid gap-4 md:grid-cols-2">

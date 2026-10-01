@@ -1009,6 +1009,313 @@ body {
   }
 }
 
+/* ------------------------------------------------------------------
+   Tablas del admin responsive (debajo de 1280px): cada fila es una tarjeta.
+   - data-cell="primary": título de la tarjeta.
+   - data-keep: dato siempre visible (el estado).
+   - data-cell="toggle": botón "Ver detalle"; muestra el resto de las celdas (cada una con
+     su encabezado vía data-label) y data-cell="actions" (botones).
+   Las filas sin botón (p. ej. el resumen de traducciones) muestran todo.
+   ------------------------------------------------------------------ */
+
+@media (max-width: 1279px) {
+  .admin-responsive-table,
+  .admin-responsive-table tbody,
+  .admin-responsive-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-responsive-table {
+    border: 0;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .admin-responsive-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .admin-responsive-table tbody {
+    display: grid;
+    gap: 0.875rem;
+    padding: 0 1rem 1.25rem;
+    border: 0;
+  }
+
+  .admin-responsive-table tr {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgb(255 255 255 / 0.65);
+    border-radius: 1.5rem;
+    padding: 1rem 1.125rem;
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.86), rgb(248 250 252 / 0.64));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.7),
+      0 18px 40px -32px rgb(15 23 42 / 0.3);
+  }
+
+  /* Orden visual: título, estado, detalle, acciones y por último el botón. */
+  .admin-responsive-table td[data-cell="primary"] {
+    order: -2;
+  }
+
+  .admin-responsive-table td[data-keep] {
+    order: -1;
+  }
+
+  .admin-responsive-table td[data-cell="actions"] {
+    order: 1;
+  }
+
+  .admin-responsive-table td[data-cell="toggle"] {
+    order: 2;
+  }
+
+  /* Etiqueta arriba y valor abajo: el valor usa todo el ancho de la tarjeta. */
+  .admin-responsive-table td {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 0.625rem 0;
+    border-top: 1px solid rgb(6 78 59 / 0.07);
+    overflow-wrap: break-word;
+    word-break: normal;
+  }
+
+  .admin-responsive-table td > * {
+    max-width: 100%;
+  }
+
+  .admin-responsive-table td::before {
+    content: attr(data-label);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgb(100 116 139);
+  }
+
+  .admin-responsive-table td:is(:not([data-label]), [data-cell])::before {
+    content: none;
+  }
+
+
+  .admin-responsive-table td[data-cell="primary"] {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  /* El estado va pegado al título, sin etiqueta ni separador. */
+  .admin-responsive-table td[data-keep] {
+    border-top: 0;
+    padding-top: 0.25rem;
+  }
+
+  .admin-responsive-table td[data-keep]::before {
+    content: none;
+  }
+
+  .admin-responsive-table td[data-cell="actions"],
+  .admin-responsive-table td[data-cell="toggle"] {
+    align-items: stretch;
+    padding-top: 0.875rem;
+    padding-bottom: 0;
+  }
+
+  /* Correos y textos largos sin espacios: se cortan solo si no entran. */
+  .admin-responsive-table td p {
+    overflow-wrap: anywhere;
+  }
+
+  /* Tabla dentro de un contenedor que ya tiene margen lateral (filtros de solicitudes). */
+  .admin-table-inset .admin-responsive-table tbody {
+    padding-inline: 0;
+  }
+
+  .admin-responsive-table td[data-cell="toggle"] {
+    border-top: 0;
+  }
+
+  /* Plegado: sin "Ver detalle" abierto solo se ven título, estado y el botón. */
+  .admin-responsive-table tr:has(td[data-cell="toggle"]):not([data-expanded="true"]) td:not([data-cell="primary"], [data-keep], [data-cell="toggle"]) {
+    display: none;
+  }
+
+  .admin-responsive-table tr[data-expanded="true"] td:not([data-cell="primary"], [data-keep], [data-cell="toggle"]) {
+    animation: fade-down 220ms ease-out;
+  }
+
+  .admin-responsive-table td[data-cell="actions"] > .flex > :is(a, button, form) {
+    flex: 1 1 auto;
+  }
+
+  .admin-responsive-table td[data-cell="actions"] :is(a, button) {
+    justify-content: center;
+  }
+
+  .admin-responsive-table td[data-cell="actions"] form > button {
+    width: 100%;
+  }
+}
+
+/* En tablet las tarjetas se acomodan en dos columnas. */
+@media (min-width: 768px) and (max-width: 1279px) {
+  .admin-responsive-table tbody {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    padding-inline: 1.5rem;
+  }
+}
+
+/* Crear/editar programa en celular y tablet: título y descripción con los mismos colores
+   que el resto de las páginas del admin (en escritorio van claros sobre la imagen). */
+@media (max-width: 1023px) {
+  .admin-program-preview-page h1 {
+    color: rgb(2 6 23);
+    text-shadow: none;
+  }
+
+  .admin-program-preview-page h1 + p {
+    color: rgb(71 85 105);
+  }
+}
+
+/* Variante compacta (valores cortos, p. ej. conteos): etiqueta y valor en la misma línea. */
+@media (max-width: 1279px) {
+  .admin-responsive-table-compact td:not([data-cell]) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* Contenido de los módulos en celular: los paneles internos van anidados dentro de la página
+   y la sección, así que su relleno grande se reduce para que el contenido use el ancho. */
+@media (max-width: 639px) {
+  .admin-shell-preview :is(.admin-inner-section, .admin-inner-panel, .admin-inner-panel-subtle, .admin-program-preview-legend, .admin-program-preview-hero-note):is(.p-5, .p-6, .p-7) {
+    padding: 1rem;
+  }
+
+  .admin-shell-preview :is(.admin-inner-panel, .admin-inner-panel-subtle, .admin-program-preview-legend, .admin-program-preview-hero-note):is(.px-5, .px-6) {
+    padding-inline: 1rem;
+  }
+
+  .admin-program-preview-content {
+    padding: 0.75rem 0 0;
+  }
+
+  /* Editor de programas: sin el recuadro de vista previa, el contenido se alinea con el
+     título de la página igual que en los demás módulos. */
+  .admin-program-preview-shell {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  .admin-program-preview-shell > :is(.admin-program-preview-background, .admin-program-preview-overlay) {
+    display: none;
+  }
+
+  .admin-program-preview-hero h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  /* Campo de archivo: botón arriba y nombre del archivo abajo, sin cortarse. */
+  .admin-shell-preview input[type="file"].admin-inner-input::file-selector-button {
+    display: block;
+    margin: 0 0 0.5rem;
+  }
+}
+
+/* Matrices de permisos en celular: cada módulo es una tarjeta con sus permisos como
+   tres botones del mismo ancho (casilla arriba, nombre abajo); el permiso marcado se resalta. */
+@media (max-width: 639px) {
+  .admin-responsive-matrix,
+  .admin-responsive-matrix tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-responsive-matrix thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .admin-responsive-matrix tr {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.5rem;
+    padding: 0.875rem 0.875rem 1rem;
+  }
+
+  .admin-responsive-matrix td {
+    display: block;
+    padding: 0;
+  }
+
+  .admin-responsive-matrix td:first-child {
+    grid-column: 1 / -1;
+    font-weight: 600;
+  }
+
+  .admin-responsive-matrix label[data-label] {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    width: 100%;
+    min-height: 3.75rem;
+    padding: 0.5rem 0.25rem;
+    border: 1px solid rgb(6 78 59 / 0.12);
+    border-radius: 0.875rem;
+    background: rgb(255 255 255 / 0.7);
+    text-align: center;
+    cursor: pointer;
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease;
+  }
+
+  .admin-responsive-matrix label[data-label]::after {
+    content: attr(data-label);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.1;
+    color: rgb(71 85 105);
+  }
+
+  .admin-responsive-matrix label[data-label]:has(input:checked) {
+    border-color: rgb(16 185 129 / 0.45);
+    background: rgb(236 253 245 / 0.9);
+  }
+
+  .admin-responsive-matrix label[data-label]:has(input:checked)::after {
+    color: rgb(6 95 70);
+  }
+
+  .admin-responsive-matrix label[data-label]:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
 /* Subrayado animado del menú público. */
 .nav-underline {
   background-image: linear-gradient(rgb(16 185 129 / 0.7), rgb(16 185 129 / 0.7));

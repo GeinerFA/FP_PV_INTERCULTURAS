@@ -1,6 +1,8 @@
 import { getMessages } from "next-intl/server";
 
+import { SiteStructuredData } from "@/components/seo/site-structured-data";
 import type { AppLocale } from "@/config/i18n";
+import { siteConfig } from "@/config/site";
 import { Link as LocaleLink } from "@/i18n/navigation";
 import { listPublicHomeHeroVideos } from "@/services/home-hero-videos/home-hero-video-service";
 import { listFeaturedPublicPrograms } from "@/services/programs/program-service";
@@ -110,8 +112,7 @@ export async function PublicHomePage({
   locale,
   forceEmptyFeatured = false,
 }: PublicHomePageProps) {
-  const instagramHref =
-    "https://www.instagram.com/voluntariado_pvi?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==";
+  const instagramHref = siteConfig.contact.instagramUrl;
   const [messages, featuredPrograms, heroVideos] = await Promise.all([
     getMessages(),
     forceEmptyFeatured ? Promise.resolve([]) : listFeaturedPublicPrograms(locale),
@@ -119,7 +120,7 @@ export async function PublicHomePage({
   ]);
 
   const home = messages.Home as HomeMessages;
-  const whatsappHref = `https://wa.me/50689511665?text=${encodeURIComponent(home.contact.actions.whatsappMessage)}`;
+  const whatsappHref = `https://wa.me/${siteConfig.contact.whatsappNumber}?text=${encodeURIComponent(home.contact.actions.whatsappMessage)}`;
   const programsUi = messages.ProgramsUi as {
     labels: {
       location: string;
@@ -139,6 +140,7 @@ export async function PublicHomePage({
 
   return (
     <div className="flex flex-col gap-16 lg:gap-20">
+      <SiteStructuredData locale={locale} description={home.hero.description} />
       <PublicHomeVideoCarousel
         slides={heroVideos.map((video) => ({
           id: video.id,

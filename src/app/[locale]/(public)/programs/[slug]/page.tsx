@@ -38,6 +38,7 @@ export async function generateMetadata({
     locale,
     href: { pathname: "/programs/[slug]", params: { slug } },
     availableLocales: await listProgramLocales(slug),
+    image: program.coverImage,
   });
 }
 

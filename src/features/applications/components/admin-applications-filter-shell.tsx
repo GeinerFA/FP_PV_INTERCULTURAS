@@ -90,7 +90,7 @@ export function AdminApplicationsFilterShell({
   };
 
   return (
-    <div className="px-6 pb-6">
+    <div className="admin-table-inset px-4 pb-5 sm:px-6 sm:pb-6">
       <details className="group" open={hasActiveFilters || isPending}>
         <summary className="admin-disclosure-pill inline-flex max-w-full cursor-pointer list-none items-center gap-2 rounded-full px-4 py-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white [&::-webkit-details-marker]:hidden">
           <span className="text-sm font-semibold text-slate-950">

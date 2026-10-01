@@ -54,7 +54,7 @@ export function EditAdminUserPermissionMatrix({
         <p className="text-sm leading-7 text-slate-600">{grantAllHint}</p>
       </div>
 
-      <table className="min-w-full border-collapse text-sm">
+      <table className="admin-responsive-matrix min-w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-emerald-900/8 text-left text-xs uppercase tracking-[0.18em] text-slate-500">
             <th className="px-4 py-3 font-semibold">{moduleLabel}</th>
@@ -75,7 +75,7 @@ export function EditAdminUserPermissionMatrix({
 
                 return (
                   <td key={fieldName} className="px-4 py-3">
-                    <label className="inline-flex items-center gap-2 text-slate-700">
+                    <label data-label={actionLabels[action]} className="inline-flex items-center gap-2 text-slate-700">
                       <input
                         type="checkbox"
                         name={fieldName}
